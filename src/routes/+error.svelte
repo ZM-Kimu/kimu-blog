@@ -8,9 +8,9 @@
 
 <SeoHead title={`错误 ${status}`} description="页面发生错误。" />
 
-<section class="page-intro">
-	<p class="eyebrow">Error</p>
+<section class="panel mission-intro">
+	<p class="eyebrow">System Error</p>
 	<h1>{status}</h1>
 	<p>{error?.message ?? '发生了未知错误。'}</p>
-	<p><a class="button-primary" href={resolve('/')}>返回首页</a></p>
+	<p><a class="button-primary" href={resolve('/')}>返回主界面</a></p>
 </section>

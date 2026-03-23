@@ -1,4 +1,4 @@
-import { getPostBySlug, getPostEntries } from '$lib/server/content/posts';
+import { getPostBySlug, getPostEntries, getRelatedPosts } from '$lib/server/content/posts';
 import { error } from '@sveltejs/kit';
 
 export const prerender = true;
@@ -14,5 +14,8 @@ export function load({ params }) {
 		throw error(404, '文章不存在');
 	}
 
-	return { post };
+	return {
+		post,
+		relatedPosts: getRelatedPosts(post)
+	};
 }

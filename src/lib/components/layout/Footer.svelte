@@ -6,9 +6,9 @@
 	<div class="shell site-footer__inner">
 		<div>
 			<strong>{siteConfig.name}</strong>
-			<small>Content-first scaffold for SvelteKit + Cloudflare Pages.</small>
+			<small>Light futuristic command center for articles, logs, and curated references.</small>
 		</div>
 
-		<small>Built with mdsvex, schema validation and prerender-first routing.</small>
+		<small>Built with SvelteKit, mdsvex, schema validation, and prerender-first routing.</small>
 	</div>
 </footer>

@@ -1,5 +1,5 @@
 import { postFrontmatterSchema } from '$lib/content/schema';
-import type { BlogPost, TagResult, TagSummary } from '$lib/types/content';
+import type { BlogPost, CategorySummary, TagResult, TagSummary } from '$lib/types/content';
 
 type BlogModule = {
 	metadata?: unknown;
@@ -11,6 +11,7 @@ const modules = import.meta.glob('/src/lib/content/blog/*.{md,svx}', {
 }) as Record<string, BlogModule>;
 
 const normalizeTag = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
+const normalizeCategory = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
 
 const rawPosts = Object.entries(modules)
 	.map(([path, mod]) => {
@@ -20,7 +21,8 @@ const rawPosts = Object.entries(modules)
 			...frontmatter,
 			path,
 			permalink: `/blog/${frontmatter.slug}` as `/blog/${string}`,
-			tagSlugs: frontmatter.tags.map(normalizeTag)
+			tagSlugs: frontmatter.tags.map(normalizeTag),
+			categorySlug: frontmatter.category ? normalizeCategory(frontmatter.category) : null
 		} satisfies BlogPost;
 	})
 	.sort((left, right) => right.date.localeCompare(left.date));
@@ -77,6 +79,31 @@ export function getAllTags() {
 	return Array.from(bucket.values()).sort((left, right) => left.name.localeCompare(right.name));
 }
 
+export function getAllCategories() {
+	const bucket = new Map<string, CategorySummary>();
+
+	for (const post of publishedPosts) {
+		if (!post.category || !post.categorySlug) {
+			continue;
+		}
+
+		const existing = bucket.get(post.categorySlug);
+
+		if (existing) {
+			existing.count += 1;
+			continue;
+		}
+
+		bucket.set(post.categorySlug, {
+			name: post.category,
+			slug: post.categorySlug,
+			count: 1
+		});
+	}
+
+	return Array.from(bucket.values()).sort((left, right) => left.name.localeCompare(right.name));
+}
+
 export function getTagEntries() {
 	return getAllTags().map((tag) => ({ tag: tag.slug }));
 }
@@ -95,4 +122,27 @@ export function getPostsByTag(slug: string): TagResult | null {
 	}
 
 	return { tag, posts };
+}
+
+export function getRelatedPosts(post: BlogPost, limit = 3) {
+	return publishedPosts
+		.filter((candidate) => candidate.slug !== post.slug)
+		.map((candidate) => {
+			let score = 0;
+
+			if (candidate.categorySlug && candidate.categorySlug === post.categorySlug) {
+				score += 2;
+			}
+
+			score += candidate.tagSlugs.filter((tag) => post.tagSlugs.includes(tag)).length;
+
+			return { candidate, score };
+		})
+		.filter((entry) => entry.score > 0)
+		.sort(
+			(left, right) =>
+				right.score - left.score || right.candidate.date.localeCompare(left.candidate.date)
+		)
+		.slice(0, limit)
+		.map((entry) => entry.candidate);
 }
