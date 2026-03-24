@@ -1,18 +1,14 @@
 <script lang="ts">
+	import './home.css';
 	import { resolve } from '$app/paths';
-	import {
-		commandNotices,
-		homeDockItems,
-		homeStatusFeed,
-		missionCatalog
-	} from '$lib/constants/command-center';
+	import { homeDockItems, homeQuickActions, missionCatalog } from '$lib/constants/command-center';
 	import { siteConfig } from '$lib/constants/site';
 	import SeoHead from '$lib/components/ui/SeoHead.svelte';
 
 	let { data } = $props();
+	let homeTopbarType = $state<'a' | 'b'>('b');
 
 	const totalCategories = $derived(data.categories.length);
-	const latestRecord = $derived(data.latestPosts[0] ?? null);
 	const missionPreview = $derived.by(() =>
 		missionCatalog.slice(0, 3).map((mission) => ({
 			...mission,
@@ -27,10 +23,26 @@
 	);
 
 	const topMetrics = $derived([
-		{ label: 'Logs', value: String(data.totalPosts).padStart(2, '0') },
-		{ label: 'Missions', value: String(totalCategories).padStart(2, '0') },
-		{ label: 'Mode', value: 'LIVE' }
+		{ label: 'Logs', value: String(data.totalPosts).padStart(2, '0'), accent: 'logs', abbr: 'Lg' },
+		{
+			label: 'Missions',
+			value: String(totalCategories).padStart(2, '0'),
+			accent: 'missions',
+			abbr: 'Ms'
+		},
+		{ label: 'Mode', value: 'LIVE', accent: 'mode', abbr: 'Md' }
 	]);
+
+	const topbarActions = [
+		{ href: '/updates', label: 'Live' },
+		{ href: '/favorites', label: 'Fav' },
+		{ href: '/about', label: 'Info' }
+	] as const;
+
+	function toggleHomeTopbar(event: MouseEvent) {
+		event.preventDefault();
+		homeTopbarType = homeTopbarType === 'a' ? 'b' : 'a';
+	}
 </script>
 
 <SeoHead
@@ -43,59 +55,88 @@
 		<div class="home-light home-light--left" aria-hidden="true"></div>
 		<div class="home-light home-light--right" aria-hidden="true"></div>
 
-		<header class="home-topbar">
-			<a class="home-profile-chip" href={resolve('/about')}>
-				<span class="home-profile-chip__level">Lv.</span>
-				<strong>90</strong>
-				<div class="home-profile-chip__copy">
-					<small>Operator</small>
-					<span>{siteConfig.author}</span>
-				</div>
-			</a>
-
-			<div class="home-topbar__resources">
-				{#each topMetrics as metric (metric.label)}
-					<div class="resource-chip">
-						<span>{metric.label}</span>
-						<strong>{metric.value}</strong>
+		{#if homeTopbarType === 'a'}
+			<header class="home-topbar home-topbar--a" aria-label="Home top bar type A">
+				<div class="home-topbar__lead">
+					<button
+						class="home-topbar__back"
+						type="button"
+						aria-label="Switch to type B top bar"
+						onclick={() => (homeTopbarType = 'b')}
+					>
+						<span class="home-topbar__back-glyph" aria-hidden="true"></span>
+					</button>
+					<div class="home-topbar__title-wrap">
+						<div class="home-topbar__title">{siteConfig.name}</div>
 					</div>
-				{/each}
-			</div>
-		</header>
-
-		<div class="home-left-tools">
-			{#each commandNotices.slice(0, 2) as notice, index (notice.title)}
-				{#if index === 0}
-					<a class="tool-button" href={resolve('/updates')}>
-						<span class="tool-button__icon"></span>
-						<span class="tool-button__label">{notice.title}</span>
-					</a>
-				{:else}
-					<a class="tool-button" href={resolve('/favorites')}>
-						<span class="tool-button__icon"></span>
-						<span class="tool-button__label">{notice.title}</span>
-					</a>
-				{/if}
-			{/each}
-		</div>
-
-		<section class="home-centerpiece">
-			<div class="home-avatar" aria-hidden="true">
-				<div class="home-avatar__stand"></div>
-				<div class="home-avatar__body"></div>
-				<div class="home-avatar__badge">portrait placeholder</div>
-			</div>
-
-			<div class="home-dialogue">
-				<p class="eyebrow">Main Page</p>
-				<h1>{siteConfig.name}</h1>
-				<p>把个人信息、文章、分类、动态与收藏组织成 game home screen，而不是传统博客首页。</p>
-				<div class="home-dialogue__actions">
-					<a class="button-primary" href={resolve('/blog')}>进入分类</a>
-					<a class="button-secondary" href={resolve('/blog/archive')}>查看归档</a>
 				</div>
-			</div>
-		</section>
+
+				<div class="home-topbar__aside home-topbar__aside--a">
+					<div class="home-topbar__resources" aria-label="Home resources">
+						{#each topMetrics as metric, index (metric.label)}
+							<div class="home-topbar__resource-slot">
+								<div class="resource-chip">
+									<span>{metric.label}</span>
+									<strong>{metric.value}</strong>
+								</div>
+								{#if index < topMetrics.length - 1}
+									<span class="home-topbar__resource-divider" aria-hidden="true">/</span>
+								{/if}
+							</div>
+						{/each}
+					</div>
+
+					<div class="home-topbar__tools" aria-label="Home top bar actions">
+						{#each topbarActions as action, index (action.href)}
+							<a class="home-topbar__tool-button" href={resolve(action.href)}>{action.label}</a>
+							{#if index < topbarActions.length - 1}
+								<span class="home-topbar__tool-divider" aria-hidden="true">/</span>
+							{/if}
+						{/each}
+					</div>
+				</div>
+			</header>
+		{:else}
+			<header class="home-topbar home-topbar--b" aria-label="Home top bar type B">
+				<a class="home-profile-chip" href={resolve('/about')}>
+					<span class="home-profile-chip__level">Lv.</span>
+					<strong>90</strong>
+					<div class="home-profile-chip__copy">
+						<small>Operator</small>
+						<span>{siteConfig.author}</span>
+					</div>
+				</a>
+
+				<div class="home-topbar__aside">
+					<div class="home-topbar__resources">
+						{#each topMetrics as metric (metric.label)}
+							<div class="resource-chip">
+								<span>{metric.label}</span>
+								<strong>{metric.value}</strong>
+							</div>
+						{/each}
+					</div>
+
+					<div class="home-topbar__tools" aria-label="Home top bar tools">
+						{#each topbarActions as action, index (action.href)}
+							<a class="home-topbar__tool-button" href={resolve(action.href)}>{action.label}</a>
+							{#if index < topbarActions.length - 1}
+								<span class="home-topbar__tool-divider" aria-hidden="true">/</span>
+							{/if}
+						{/each}
+					</div>
+				</div>
+			</header>
+		{/if}
+
+		<aside class="home-left-tools">
+			{#each homeQuickActions as action (action.href)}
+				<a class={`tool-chip tool-chip--${action.accent}`} href={resolve(action.href)}>
+					<span class="tool-chip__icon" aria-hidden="true"></span>
+					<span class="tool-chip__label">{action.label}</span>
+				</a>
+			{/each}
+		</aside>
 
 		<aside class="home-right-pane">
 			{#if data.featuredPost}
@@ -106,60 +147,54 @@
 				</a>
 			{/if}
 
-			<div class="home-status-card">
-				<p class="eyebrow">Status Feed</p>
-				<ul>
-					{#each homeStatusFeed as item (item.label)}
-						<li>
-							<span>{item.label}</span>
-							<strong>{item.value}</strong>
-						</li>
-					{/each}
-				</ul>
-			</div>
+			<a class="action--work" href={resolve('/blog')} onclick={toggleHomeTopbar}>
+				<span class="action__badge">Main</span>
+				<span class="action__label">进入内容</span>
+				<span class="action__label action__label--primary">分类界面</span>
+			</a>
 		</aside>
 
-		<section class="home-mission-strip">
-			{#each missionPreview as mission (mission.slug)}
-				<a class={`mission-strip-card mission-strip-card--${mission.tone}`} href={resolve('/blog')}>
-					<span>{mission.kicker}</span>
-					<strong>{mission.title}</strong>
-					<small>{String(mission.count).padStart(2, '0')} records</small>
-				</a>
-			{/each}
+		<section class="home-mission-strip" aria-label="Mission banner">
+			<div class="mission-strip__marquee">
+				{#each [false, true] as isClone}
+					<div class="mission-strip__group" aria-hidden={isClone}>
+						{#each missionPreview as mission (`${isClone ? 'clone' : 'base'}-${mission.slug}`)}
+							<a
+								class={`mission-strip__item mission-strip__item--${mission.tone}`}
+								href={mission.href}
+								tabindex={isClone ? -1 : undefined}
+							>
+								<span>{mission.kicker}</span>
+								<strong>{mission.title}</strong>
+								<small>{String(mission.count).padStart(2, '0')} records</small>
+								<em>{mission.state}</em>
+							</a>
+						{/each}
+					</div>
+				{/each}
+			</div>
 		</section>
 
-		{#if latestRecord}
-			<section class="home-record-callout">
-				<p class="eyebrow">Latest Record</p>
-				<h2>{latestRecord.title}</h2>
-				<p>{latestRecord.description}</p>
-				<a href={resolve(latestRecord.permalink)}>Open dossier</a>
-			</section>
-		{/if}
-
-		<div class="home-footer">
+		<footer class="home-footer">
 			<nav class="home-footer__dock" aria-label="主入口">
 				{#each homeDockItems as item (item.href)}
 					<a class={`dock-item dock-item--${item.accent}`} href={resolve(item.href)}>
 						<span class="dock-item__icon"></span>
+						<span class="dock-item__code">{item.code}</span>
 						<span class="dock-item__label">{item.label}</span>
 					</a>
 				{/each}
 			</nav>
-
-			<div class="home-footer__actions">
-				<a class="action--event-list" href={resolve('/updates')}>
-					<span class="action__badge">Live</span>
-					<span class="action__label">动态列表</span>
-				</a>
-
-				<a class="action--work" href={resolve('/blog')}>
-					<span class="action__badge">Main</span>
-					<span class="action__label">进入内容</span>
-					<span class="action__label action__label--primary">分类界面</span>
-				</a>
-			</div>
-		</div>
+		</footer>
 	</div>
+
+	<section class="home-height-guard panel" role="status" aria-live="polite">
+		<p class="eyebrow">Viewport Guard</p>
+		<h2>当前窗口高度不足</h2>
+		<p>Home shell 需要至少 500px 的可见高度。请增大浏览器窗口，或先切换到内容页。</p>
+		<div class="home-height-guard__actions">
+			<a class="button-primary" href={resolve('/blog')}>进入内容页</a>
+			<a class="section-link" href={resolve('/about')}>查看简介</a>
+		</div>
+	</section>
 </section>

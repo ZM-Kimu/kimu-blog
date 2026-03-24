@@ -15,28 +15,11 @@ export const hudStatusChips = [
 	{ label: 'Deploy', value: 'PAGES' }
 ] as const;
 
-export const commandNotices = [
-	{
-		kicker: 'Signal 01',
-		title: 'Current Build Focus',
-		copy: 'Command Center UI, mission board routing, and dossier-style reading mode are active.'
-	},
-	{
-		kicker: 'Signal 02',
-		title: 'Content Pipeline',
-		copy: 'Markdown, schema validation, prerender entries, and Cloudflare Pages delivery remain online.'
-	},
-	{
-		kicker: 'Signal 03',
-		title: 'Asset Policy',
-		copy: 'Illustration, card art, and banners stay placeholder-first in this phase.'
-	}
-] as const;
-
-export const homeStatusFeed = [
-	{ label: 'Status', value: 'Building the blog as a playable interface.' },
-	{ label: 'Focus', value: 'SvelteKit UI systems, motion, and content architecture.' },
-	{ label: 'Output', value: 'Articles, logs, references, and curated favorites.' }
+export const homeQuickActions = [
+	{ href: '/updates', label: '动态', accent: 'live' },
+	{ href: '/favorites', label: '收藏', accent: 'vault' },
+	{ href: '/blog/archive', label: '文章', accent: 'archive' },
+	{ href: '/about', label: '关于', accent: 'profile' }
 ] as const;
 
 export const commandHighlights = [
