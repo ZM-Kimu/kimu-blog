@@ -1,48 +1,4 @@
-/* Home right pane and mission strip. */
-
-.home-right-pane {
-	grid-area: right;
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	align-self: stretch;
-	min-height: 100%;
-	padding-top: var(--home-side-rail-offset);
-	gap: var(--home-right-pane-gap);
-	z-index: 1;
-}
-
-.home-event-banner {
-	padding: var(--home-card-padding);
-	border-radius: var(--home-card-radius);
-	background: rgba(255, 255, 255, 0.88);
-	border: 1px solid rgba(92, 148, 204, 0.18);
-	box-shadow: 0 18px 42px rgba(57, 116, 177, 0.1);
-}
-
-.home-event-banner {
-	display: grid;
-	gap: 0.35rem;
-}
-
-.home-event-banner__tag {
-	font-family: var(--font-mono);
-	font-size: 0.72rem;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--cyan-strong);
-}
-
-.home-event-banner strong {
-	font-family: var(--font-display);
-	font-size: 1rem;
-	line-height: 1.1;
-}
-
-.home-event-banner small {
-	color: var(--ink-faint);
-}
-
+/* Home mission strip. */
 .home-mission-strip {
 	grid-area: missions;
 	position: relative;
@@ -169,50 +125,6 @@
 
 .mission-strip__item--slate {
 	--mission-accent: #7b8ca5;
-}
-
-.action--work {
-	position: relative;
-	margin-top: auto;
-	border: 0;
-	border-radius: var(--home-action-radius);
-	background: linear-gradient(180deg, rgba(88, 190, 255, 0.94), rgba(57, 143, 228, 0.92));
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 0.25em;
-	cursor: pointer;
-	color: white;
-	min-height: calc(var(--home-action-min-height) + 1.25rem);
-	padding: 1.1rem 1rem;
-	box-shadow: 0 22px 40px rgba(57, 143, 228, 0.22);
-	transition:
-		transform var(--ease),
-		box-shadow var(--ease);
-}
-
-.action--work:hover {
-	transform: translateY(-2px);
-}
-
-.action__badge {
-	font-size: clamp(9px, 0.68vw, 13px);
-	white-space: nowrap;
-	font-family: var(--font-mono);
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-}
-
-.action__label {
-	font-size: clamp(11px, 0.8vw, 15px);
-	white-space: nowrap;
-}
-
-.action__label--primary {
-	font-size: clamp(16px, 1.05vw, 22px);
-	font-weight: 700;
-	line-height: 1;
 }
 
 @keyframes home-mission-marquee {

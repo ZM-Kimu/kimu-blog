@@ -70,17 +70,17 @@
 		grid-template-columns: 1fr;
 	}
 
-	.home-topbar--a {
+	.home-topbar--subpage {
 		align-items: start;
 	}
 
-	.home-topbar--b {
+	.home-topbar--main {
 		align-items: start;
 	}
 
-	.home-topbar--a .home-topbar__aside,
-	.home-topbar--b .home-topbar__aside,
-	.home-topbar--b .home-topbar__tools {
+	.home-topbar--subpage .home-topbar__aside,
+	.home-topbar--main .home-topbar__aside,
+	.home-topbar--main .home-topbar__tools {
 		justify-self: start;
 	}
 

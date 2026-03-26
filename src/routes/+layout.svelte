@@ -11,6 +11,9 @@
 	let { children } = $props();
 
 	const isHomeRoute = $derived(page.url.pathname === '/');
+	const isErrorRoute = $derived(page.status >= 400);
+	const isScreenRoute = $derived(isHomeRoute || isErrorRoute);
+	const showGlobalChrome = $derived(!isHomeRoute && !isErrorRoute);
 </script>
 
 <svelte:head>
@@ -18,13 +21,13 @@
 	<meta name="application-name" content={siteConfig.name} />
 </svelte:head>
 
-<div class:site-frame--home={isHomeRoute} class="site-frame">
-	{#if !isHomeRoute}
+<div class:site-frame--home={isScreenRoute} class="site-frame">
+	{#if showGlobalChrome}
 		<Header />
 	{/if}
 
-	<main class:site-main--home={isHomeRoute} class="site-main">
-		{#if isHomeRoute}
+	<main class:site-main--home={isScreenRoute} class="site-main">
+		{#if isScreenRoute}
 			{@render children()}
 		{:else}
 			<div class="shell site-main__inner">
@@ -33,7 +36,7 @@
 		{/if}
 	</main>
 
-	{#if !isHomeRoute}
+	{#if showGlobalChrome}
 		<DockNav />
 		<Footer />
 	{/if}

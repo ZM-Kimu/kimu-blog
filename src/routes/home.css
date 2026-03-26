@@ -1,6 +1,10 @@
 @import './home/scene.css';
-@import './home/topbar.css';
+@import './home/topbar/base.css';
+@import './home/topbar/main.css';
+@import './home/topbar/subpage.css';
+@import './home/topbar/motion.css';
 @import './home/tools.css';
-@import './home/panels.css';
+@import './home/panels/right-pane.css';
+@import './home/panels/mission-strip.css';
 @import './home/footer.css';
 @import './home/responsive.css';
