@@ -4,7 +4,14 @@ import remarkGfm from 'remark-gfm';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	kit: { adapter: adapter() },
+	kit: {
+		adapter: adapter({
+			routes: {
+				include: ['/api', '/api/*'],
+				exclude: ['<all>']
+			}
+		})
+	},
 	vitePlugin: {
 		dynamicCompileOptions: ({ filename }) =>
 			filename.includes('node_modules') ? undefined : { runes: true }

@@ -1,21 +1,23 @@
 import { postFrontmatterSchema } from '$lib/content/schema';
+import { parseContentFrontmatter } from '$lib/server/content/frontmatter';
 import type { BlogPost, CategorySummary, TagResult, TagSummary } from '$lib/types/content';
 
-type BlogModule = {
-	metadata?: unknown;
-	default: unknown;
-};
-
 const modules = import.meta.glob('/src/lib/content/blog/*.{md,svx}', {
+	query: '?raw',
+	import: 'default',
 	eager: true
-}) as Record<string, BlogModule>;
+}) as Record<string, string>;
 
 const normalizeTag = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
 const normalizeCategory = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-');
 
 const rawPosts = Object.entries(modules)
-	.map(([path, mod]) => {
-		const frontmatter = postFrontmatterSchema.parse(mod.metadata ?? {});
+	.map(([path, source]) => {
+		const { frontmatter: rawFrontmatter } = parseContentFrontmatter<Record<string, unknown>>(
+			source,
+			path
+		);
+		const frontmatter = postFrontmatterSchema.parse(rawFrontmatter);
 
 		return {
 			...frontmatter,
