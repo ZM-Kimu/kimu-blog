@@ -1,4 +1,4 @@
-import { siteConfig } from '$lib/constants/site';
+import { siteConfig } from '$lib/config/site';
 import type { BlogPost, TagSummary } from '$lib/types/content';
 
 export function buildSitemapXml(posts: BlogPost[], tags: TagSummary[]) {

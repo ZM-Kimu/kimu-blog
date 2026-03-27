@@ -1,4 +1,4 @@
-import { missionCatalog } from '$lib/constants/command-center';
+import { missionCatalog } from '$lib/features/blog/config';
 import type { ArchiveCategoryGroup, ArchiveYearGroup } from '$lib/types/content';
 
 import { getAllPosts } from './posts';

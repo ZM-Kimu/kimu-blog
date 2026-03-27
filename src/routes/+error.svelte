@@ -1,10 +1,10 @@
 <!-- eslint-disable svelte/valid-prop-names-in-kit-pages -->
 <script lang="ts">
-	import './home/topbar/base.css';
-	import './home/topbar/subpage.css';
-	import './home/responsive.css';
+	import '$lib/features/home/styles/topbar/base.css';
+	import '$lib/features/home/styles/topbar/subpage.css';
+	import '$lib/features/home/styles/responsive.css';
 	import { page } from '$app/state';
-	import FallbackErrorPage from '$lib/components/error/FallbackErrorPage.svelte';
+	import FallbackErrorPage from '$lib/features/error/FallbackErrorPage.svelte';
 	import SeoHead from '$lib/components/ui/SeoHead.svelte';
 
 	let { error: propError, status: propStatus } = $props();
@@ -25,4 +25,4 @@
 	noindex
 />
 
-<FallbackErrorPage {status} {message} pathname={page.url.pathname} />
+<FallbackErrorPage {status} {message} />

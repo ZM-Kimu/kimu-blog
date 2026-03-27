@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { siteConfig } from '$lib/constants/site';
+	import { siteConfig } from '$lib/config/site';
 
 	interface Props {
 		title?: string;

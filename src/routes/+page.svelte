@@ -1,6 +1,6 @@
 <script lang="ts">
-	import './home.css';
-	import HomeScreen from '$lib/components/home/HomeScreen.svelte';
+	import '$lib/features/home/styles/index.css';
+	import HomePage from '$lib/features/home/HomePage.svelte';
 	import SeoHead from '$lib/components/ui/SeoHead.svelte';
 	import type { PageData } from './$types';
 
@@ -11,4 +11,4 @@
 	description="Kimu Blog 的主界面。以 game home screen 的方式组织个人信息、动态和内容入口。"
 />
 
-<HomeScreen data={data} />
+<HomePage data={data} />

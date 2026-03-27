@@ -1,4 +1,4 @@
-import { siteConfig } from '$lib/constants/site';
+import { siteConfig } from '$lib/config/site';
 import type { BlogPost } from '$lib/types/content';
 
 const escapeXml = (value: string) =>

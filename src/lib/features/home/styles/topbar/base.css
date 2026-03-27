@@ -1,0 +1,158 @@
+/* Home topbar shared structure. */
+.home-topbar {
+	position: absolute;
+	top: var(--home-shell-padding);
+	left: var(--home-shell-padding);
+	right: var(--home-shell-padding);
+	z-index: 2;
+	min-height: var(--home-topbar-height);
+	will-change: transform, opacity, clip-path;
+}
+
+.home-topbar__lead {
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+	flex-wrap: wrap;
+}
+
+.home-topbar__title-wrap {
+	display: grid;
+	gap: 0.12rem;
+}
+
+.home-topbar__back {
+	width: 2.8rem;
+	height: 2.8rem;
+	border: 0;
+	border-radius: 999px;
+	display: grid;
+	place-items: center;
+	background: #466399;
+	color: white;
+	font-size: 1rem;
+	font-weight: 800;
+}
+
+.home-topbar__title {
+	font-family: var(--font-display);
+	font-size: clamp(1.35rem, 1.85vw, 1.7rem);
+	line-height: 1;
+	letter-spacing: -0.04em;
+	color: #1f3f7f;
+}
+
+.home-topbar__aside,
+.home-topbar__resources,
+.home-topbar__tools {
+	align-self: start;
+}
+
+.home-topbar__aside {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: start;
+	gap: var(--home-topbar-gap);
+	width: 100%;
+	min-width: 0;
+}
+
+.home-topbar__resources {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--home-resource-gap);
+	width: 100%;
+	max-width: none;
+	margin-left: 0;
+}
+
+.resource-chip {
+	display: inline-grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	justify-content: start;
+	gap: 0.62rem;
+	min-height: calc(var(--home-topbar-height) * 0.5);
+	padding: 0.42rem 0.72rem;
+	border-radius: 12px;
+}
+
+.home-topbar__icon {
+	display: block;
+	flex: 0 0 auto;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+}
+
+.home-topbar__icon--image {
+	background-image: var(--topbar-icon-src);
+}
+
+.home-topbar__icon--mask {
+	background-color: var(--topbar-icon-tint, currentColor);
+	-webkit-mask: var(--topbar-icon-src) center / contain no-repeat;
+	mask: var(--topbar-icon-src) center / contain no-repeat;
+}
+
+.resource-chip .home-topbar__icon {
+	width: 1.02rem;
+	height: 1.02rem;
+}
+
+.resource-chip strong {
+	font-family: var(--font-display);
+	font-size: 0.94rem;
+	line-height: 1;
+	justify-self: end;
+	color: #1f3f7f;
+}
+
+.home-topbar__tools {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr auto 1fr;
+	align-items: center;
+	justify-items: center;
+	gap: 0.65rem;
+	padding: 0rem 0.9rem;
+	border-radius: 12px;
+	min-height: calc(var(--home-topbar-height) * 0.5);
+}
+
+.home-topbar__tool-button {
+	display: grid;
+	place-items: center;
+	min-width: 1rem;
+	min-height: 1rem;
+	padding: 0.1rem;
+	border-radius: 8px;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	color: #3560a6;
+}
+
+.home-topbar__tool-button .home-topbar__icon {
+	width: 1.7rem;
+	height: 1.7rem;
+}
+
+.home-topbar__tool-divider {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--font-mono);
+	font-size: 0.62rem;
+	line-height: 1;
+	color: rgba(68, 98, 127, 0.58);
+}
+
+.home-topbar__tool-button:hover {
+	opacity: 0.96;
+}
+
+.home-topbar__tool-button:focus-visible {
+	outline: 2px solid rgba(79, 120, 255, 0.3);
+	outline-offset: 0.18rem;
+	border-radius: 6px;
+}

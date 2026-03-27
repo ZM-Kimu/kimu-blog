@@ -1,27 +1,31 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { hudStatusChips } from '$lib/constants/command-center';
-	import { siteConfig } from '$lib/constants/site';
+	import { translate, type LocaleMessages } from '$lib/i18n';
+	import { appShellNav, hudStatusChips } from '$lib/config/app-shell';
+	import { siteConfig } from '$lib/config/site';
+
+	let { messages }: { messages?: LocaleMessages } = $props();
 
 	let compact = $state(false);
+	const t = (key: string) => (messages ? translate(messages, key) : key);
 
 	const currentSection = $derived.by(() => {
 		const { pathname } = page.url;
 
 		if (pathname === '/blog/archive') {
-			return '归档';
+			return t('shell.section.archive');
 		}
 
 		if (pathname.startsWith('/blog/') && pathname !== '/blog') {
-			return '档案';
+			return t('shell.section.dossier');
 		}
 
-		return (
-			siteConfig.nav.find((item) =>
-				item.href === '/' ? pathname === item.href : pathname.startsWith(item.href)
-			)?.label ?? '界面'
+		const activeItem = appShellNav.find((item) =>
+			item.href === '/' ? pathname === item.href : pathname.startsWith(item.href)
 		);
+
+		return activeItem ? t(activeItem.labelKey) : t('shell.section.interface');
 	});
 
 	const toggleCompact = () => {
@@ -34,13 +38,13 @@
 		<a class="hud-brand" href={resolve('/')}>
 			<span class="hud-brand__mark">KB</span>
 			<span class="hud-brand__copy">
-				<small>Command Center</small>
+				<small>{t('shell.brand.tagline')}</small>
 				<strong>{siteConfig.name}</strong>
 			</span>
 		</a>
 
-		<nav class="hud-nav" aria-label="主导航">
-			{#each siteConfig.nav as item (item.href)}
+		<nav class="hud-nav" aria-label={t('shell.aria.primaryNav')}>
+			{#each appShellNav as item (item.href)}
 				<a
 					class:active={item.href === '/'
 						? page.url.pathname === item.href
@@ -48,28 +52,28 @@
 					href={resolve(item.href)}
 				>
 					<span>{item.code}</span>
-					<strong>{item.label}</strong>
+					<strong>{t(item.labelKey)}</strong>
 				</a>
 			{/each}
 		</nav>
 
 		<div class="hud-status">
 			<div class="hud-status__current">
-				<span>Current</span>
+				<span>{t('shell.status.current')}</span>
 				<strong>{currentSection}</strong>
 			</div>
 			{#if !compact}
 				<div class="hud-status__chips">
-					{#each hudStatusChips as chip (chip.label)}
+					{#each hudStatusChips as chip (chip.labelKey)}
 						<div class="hud-inline-chip">
-							<span>{chip.label}</span>
+							<span>{t(chip.labelKey)}</span>
 							<strong>{chip.value}</strong>
 						</div>
 					{/each}
 				</div>
 			{/if}
 			<button class="hud-toggle" type="button" onclick={toggleCompact}>
-				{compact ? 'Expand' : 'Collapse'}
+				{compact ? t('shell.toggle.expand') : t('shell.toggle.collapse')}
 			</button>
 		</div>
 	</div>
