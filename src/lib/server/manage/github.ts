@@ -53,7 +53,40 @@ interface GitHubRequestInit extends Omit<RequestInit, 'headers'> {
 }
 
 function normalizePrivateKey(privateKey: string) {
-	return privateKey.replace(/\\n/gu, '\n')
+	return privateKey.replace(/\\n/gu, '\n').replace(/\r\n/gu, '\n').trim()
+}
+
+function concatBytes(chunks: Uint8Array[]) {
+	const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0)
+	const result = new Uint8Array(totalLength)
+	let offset = 0
+
+	for (const chunk of chunks) {
+		result.set(chunk, offset)
+		offset += chunk.length
+	}
+
+	return result
+}
+
+function encodeDerLength(length: number) {
+	if (length < 0x80) {
+		return Uint8Array.of(length)
+	}
+
+	const bytes: number[] = []
+	let remaining = length
+
+	while (remaining > 0) {
+		bytes.unshift(remaining & 0xff)
+		remaining >>= 8
+	}
+
+	return Uint8Array.of(0x80 | bytes.length, ...bytes)
+}
+
+function encodeDer(tag: number, value: Uint8Array) {
+	return concatBytes([Uint8Array.of(tag), encodeDerLength(value.length), value])
 }
 
 function encodeGitHubPath(path: string) {
@@ -72,6 +105,81 @@ function bytesToBase64(bytes: Uint8Array) {
 	}
 
 	return btoa(binary)
+}
+
+function base64ToBytes(value: string) {
+	const binary = atob(value.replace(/\s+/gu, ''))
+
+	return Uint8Array.from(binary, (char) => char.charCodeAt(0))
+}
+
+function pemToDer(privateKey: string, label: string) {
+	const beginMarker = `-----BEGIN ${label}-----`
+	const endMarker = `-----END ${label}-----`
+
+	if (!privateKey.startsWith(beginMarker) || !privateKey.endsWith(endMarker)) {
+		throw new ManageError(
+			500,
+			'github_private_key_format_invalid',
+			`GITHUB_APP_PRIVATE_KEY 必须是 ${label} PEM`
+		)
+	}
+
+	const base64 = privateKey.slice(beginMarker.length, privateKey.length - endMarker.length)
+
+	return base64ToBytes(base64)
+}
+
+function derToPem(value: Uint8Array, label: string) {
+	const lines = bytesToBase64(value).match(/.{1,64}/gu) ?? []
+
+	return `-----BEGIN ${label}-----\n${lines.join('\n')}\n-----END ${label}-----`
+}
+
+function pkcs1ToPkcs8(privateKey: string) {
+	const version = Uint8Array.of(0x02, 0x01, 0x00)
+	const algorithmIdentifier = Uint8Array.of(
+		0x30,
+		0x0d,
+		0x06,
+		0x09,
+		0x2a,
+		0x86,
+		0x48,
+		0x86,
+		0xf7,
+		0x0d,
+		0x01,
+		0x01,
+		0x01,
+		0x05,
+		0x00
+	)
+	const privateKeyDer = pemToDer(privateKey, 'RSA PRIVATE KEY')
+
+	return derToPem(
+		encodeDer(
+			0x30,
+			concatBytes([version, algorithmIdentifier, encodeDer(0x04, privateKeyDer)])
+		),
+		'PRIVATE KEY'
+	)
+}
+
+function getPkcs8PrivateKey(privateKey: string) {
+	if (privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+		return privateKey
+	}
+
+	if (privateKey.includes('-----BEGIN RSA PRIVATE KEY-----')) {
+		return pkcs1ToPkcs8(privateKey)
+	}
+
+	throw new ManageError(
+		500,
+		'github_private_key_format_invalid',
+		'GITHUB_APP_PRIVATE_KEY 必须是 GitHub App 导出的 PEM 私钥，支持 PRIVATE KEY 和 RSA PRIVATE KEY'
+	)
 }
 
 function decodeBase64Text(content: string) {
@@ -104,7 +212,10 @@ async function parseGitHubError(response: Response) {
 }
 
 async function createGitHubAppJwt(config: ManageConfig) {
-	const privateKey = await importPKCS8(normalizePrivateKey(config.githubAppPrivateKey), 'RS256')
+	const privateKey = await importPKCS8(
+		getPkcs8PrivateKey(normalizePrivateKey(config.githubAppPrivateKey)),
+		'RS256'
+	)
 	const now = Math.floor(Date.now() / 1000)
 
 	return new SignJWT({})
