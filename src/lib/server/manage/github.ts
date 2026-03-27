@@ -5,6 +5,7 @@ import type { GitHubTreeEntry, ManageConfig } from '$lib/server/manage/types'
 
 const GITHUB_API_BASE = 'https://api.github.com'
 const GITHUB_API_VERSION = '2022-11-28'
+const GITHUB_USER_AGENT = 'kimu-blog-manage-api'
 
 interface GitHubRefResponse {
 	object: {
@@ -196,8 +197,17 @@ function buildGitHubUrl(config: ManageConfig, path: string) {
 }
 
 async function parseGitHubError(response: Response) {
+	const text = (await response.text()).trim()
+
+	if (!text) {
+		return {
+			details: null,
+			message: response.statusText
+		}
+	}
+
 	try {
-		const payload = (await response.json()) as Record<string, unknown>
+		const payload = JSON.parse(text) as Record<string, unknown>
 
 		return {
 			details: payload,
@@ -205,31 +215,17 @@ async function parseGitHubError(response: Response) {
 		}
 	} catch {
 		return {
-			details: null,
-			message: response.statusText
+			details: { raw: text },
+			message: text
 		}
 	}
-}
-
-async function createGitHubAppJwt(config: ManageConfig) {
-	const privateKey = await importPKCS8(
-		getPkcs8PrivateKey(normalizePrivateKey(config.githubAppPrivateKey)),
-		'RS256'
-	)
-	const now = Math.floor(Date.now() / 1000)
-
-	return new SignJWT({})
-		.setProtectedHeader({ alg: 'RS256', typ: 'JWT' })
-		.setIssuedAt(now - 60)
-		.setExpirationTime(now + 9 * 60)
-		.setIssuer(config.githubAppId)
-		.sign(privateKey)
 }
 
 async function githubRequest<T>(url: string, token: string, init?: GitHubRequestInit): Promise<T> {
 	const headers = new Headers(init?.headers)
 	headers.set('Accept', 'application/vnd.github+json')
 	headers.set('Authorization', `Bearer ${token}`)
+	headers.set('User-Agent', GITHUB_USER_AGENT)
 	headers.set('X-GitHub-Api-Version', GITHUB_API_VERSION)
 
 	const response = await fetch(url, {
@@ -247,6 +243,21 @@ async function githubRequest<T>(url: string, token: string, init?: GitHubRequest
 	}
 
 	return (await response.json()) as T
+}
+
+async function createGitHubAppJwt(config: ManageConfig) {
+	const privateKey = await importPKCS8(
+		getPkcs8PrivateKey(normalizePrivateKey(config.githubAppPrivateKey)),
+		'RS256'
+	)
+	const now = Math.floor(Date.now() / 1000)
+
+	return new SignJWT({})
+		.setProtectedHeader({ alg: 'RS256', typ: 'JWT' })
+		.setIssuedAt(now - 60)
+		.setExpirationTime(now + 9 * 60)
+		.setIssuer(config.githubAppId)
+		.sign(privateKey)
 }
 
 export interface GitHubBranchState {
