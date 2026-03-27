@@ -10,6 +10,13 @@ export interface ManageAccessActor {
 	audience: string[];
 }
 
+export interface ManageRepositoryInfo {
+	branch: string;
+	commitSha?: string;
+	name: string;
+	owner: string;
+}
+
 export interface ManageConfig {
 	cfAccessAud: string;
 	cfAccessTeamDomain: string;
@@ -68,6 +75,25 @@ export interface ManagePostResponse {
 	path: string;
 	sha: string;
 	slug: string;
+}
+
+export interface ManagePostListItem {
+	category?: string;
+	date: string;
+	description: string;
+	draft: boolean;
+	featured: boolean;
+	format: ManagedPostFormat;
+	sha: string;
+	slug: string;
+	title: string;
+	updated: string;
+}
+
+export interface ManageSessionResponse {
+	actor: ManageAccessActor;
+	csrfToken: string;
+	repository: ManageRepositoryInfo;
 }
 
 export interface RepositorySnapshot {

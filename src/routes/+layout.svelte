@@ -12,8 +12,12 @@
 
 	const isHomeRoute = $derived(page.url.pathname === '/');
 	const isErrorRoute = $derived(page.status >= 400);
+	const isManageRoute = $derived(
+		page.url.pathname === '/manage' || page.url.pathname.startsWith('/manage/')
+	);
 	const isScreenRoute = $derived(isHomeRoute || isErrorRoute);
-	const showGlobalChrome = $derived(!isHomeRoute && !isErrorRoute);
+	const isBareRoute = $derived(isScreenRoute || isManageRoute);
+	const showGlobalChrome = $derived(!isScreenRoute && !isManageRoute);
 </script>
 
 <svelte:head>
@@ -27,7 +31,7 @@
 	{/if}
 
 	<main class:site-main--home={isScreenRoute} class="site-main">
-		{#if isScreenRoute}
+		{#if isBareRoute}
 			{@render children()}
 		{:else}
 			<div class="shell site-main__inner">

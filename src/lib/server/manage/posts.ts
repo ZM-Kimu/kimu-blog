@@ -7,6 +7,7 @@ import {
 	serializeManagedPost,
 	validateMdsvexSource
 } from '$lib/server/manage/content';
+import { getManageConfig } from '$lib/server/manage/config';
 import { ManageError } from '$lib/server/manage/errors';
 import type { GitHubRepositoryClient } from '$lib/server/manage/github';
 import {
@@ -16,7 +17,9 @@ import {
 } from '$lib/server/manage/repository';
 import type {
 	ManageAccessActor,
+	ManagePostListItem,
 	ManagePostResponse,
+	ManageSessionResponse,
 	ManageWritePayload,
 	RepositoryManagedPost,
 	RepositorySnapshot
@@ -51,6 +54,25 @@ function toManagePostResponse(
 		sha: post.sha,
 		slug: post.slug
 	};
+}
+
+function toRepositoryInfo(platform: App.Platform | undefined, commitSha?: string) {
+	const config = getManageConfig(platform);
+
+	return {
+		branch: config.githubRepoBranch,
+		commitSha,
+		name: config.githubRepoName,
+		owner: config.githubRepoOwner
+	};
+}
+
+function compareManagedPosts(a: RepositoryManagedPost, b: RepositoryManagedPost) {
+	return (
+		b.frontmatter.updated.localeCompare(a.frontmatter.updated) ||
+		b.frontmatter.date.localeCompare(a.frontmatter.date) ||
+		a.slug.localeCompare(b.slug)
+	);
 }
 
 async function prepareManagedWrite(
@@ -88,17 +110,45 @@ export async function getManageHealth(
 	platform: App.Platform | undefined,
 	actor: ManageAccessActor
 ) {
-	const { config, snapshot } = await loadManageRepositoryContext(platform);
+	const { snapshot } = await loadManageRepositoryContext(platform);
 
 	return {
 		actor,
 		ok: true,
-		repository: {
-			branch: config.githubRepoBranch,
-			commitSha: snapshot.branchCommitSha,
-			name: config.githubRepoName,
-			owner: config.githubRepoOwner
-		}
+		repository: toRepositoryInfo(platform, snapshot.branchCommitSha)
+	};
+}
+
+export function getManageSession(
+	platform: App.Platform | undefined,
+	actor: ManageAccessActor,
+	csrfToken: string
+): ManageSessionResponse {
+	return {
+		actor,
+		csrfToken,
+		repository: toRepositoryInfo(platform)
+	};
+}
+
+export async function listManagedPosts(
+	platform: App.Platform | undefined
+): Promise<{ items: ManagePostListItem[] }> {
+	const { snapshot } = await loadManageRepositoryContext(platform);
+
+	return {
+		items: snapshot.posts.sort(compareManagedPosts).map((post) => ({
+			category: post.frontmatter.category,
+			date: post.frontmatter.date,
+			description: post.frontmatter.description,
+			draft: post.frontmatter.draft,
+			featured: post.frontmatter.featured,
+			format: post.format,
+			sha: post.sha,
+			slug: post.slug,
+			title: post.frontmatter.title,
+			updated: post.frontmatter.updated
+		}))
 	};
 }
 
