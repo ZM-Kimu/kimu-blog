@@ -1,5 +1,4 @@
-import { compile } from 'mdsvex'
-import remarkGfm from 'remark-gfm'
+import { marked } from 'marked'
 import { stringify } from 'yaml'
 
 import { postFrontmatterSchema } from '$lib/content/schema'
@@ -144,19 +143,68 @@ export function parseRepositoryPost(file: RepoFileRecord): RepositoryManagedPost
 	}
 }
 
-export async function validateMdsvexSource(source: string, filename: string) {
+type FenceState = {
+	marker: '`' | '~'
+	length: number
+}
+
+function validateBalancedCodeFences(source: string) {
+	const lines = source.split(/\r?\n/u)
+	let activeFence: FenceState | null = null
+
+	for (const line of lines) {
+		const match = /^[\t ]*(`{3,}|~{3,})/u.exec(line)
+
+		if (!match) {
+			continue
+		}
+
+		const marker = match[1][0] as FenceState['marker']
+		const length = match[1].length
+
+		if (!activeFence) {
+			activeFence = { marker, length }
+			continue
+		}
+
+		if (activeFence.marker === marker && length >= activeFence.length) {
+			activeFence = null
+		}
+	}
+
+	if (activeFence) {
+		throw new ManageError(422, 'invalid_source', '代码块围栏未闭合')
+	}
+}
+
+function validateBalancedBlockTag(source: string, tagName: 'script' | 'style') {
+	const openPattern = new RegExp(`<${tagName}\\b[^>]*>`, 'giu')
+	const closePattern = new RegExp(`</${tagName}>`, 'giu')
+	const openCount = source.match(openPattern)?.length ?? 0
+	const closeCount = source.match(closePattern)?.length ?? 0
+
+	if (openCount !== closeCount) {
+		throw new ManageError(422, 'invalid_source', `<${tagName}> 区块未正确闭合`)
+	}
+}
+
+export async function validateManageSource(source: string) {
 	if (!source.trim()) {
 		throw new ManageError(422, 'invalid_source', 'source 不能为空')
 	}
 
 	try {
-		await compile(source, {
-			filename,
-			remarkPlugins: [remarkGfm]
-		})
+		validateBalancedCodeFences(source)
+		validateBalancedBlockTag(source, 'script')
+		validateBalancedBlockTag(source, 'style')
+		marked.lexer(source, { gfm: true })
 	} catch (error) {
-		const message = error instanceof Error ? error.message : 'mdsvex 语法校验失败'
-		throw new ManageError(422, 'invalid_mdsvex', message)
+		if (error instanceof ManageError) {
+			throw error
+		}
+
+		const message = error instanceof Error ? error.message : 'Markdown 结构校验失败'
+		throw new ManageError(422, 'invalid_source', message)
 	}
 }
 

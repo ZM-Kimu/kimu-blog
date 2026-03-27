@@ -5,7 +5,7 @@ import {
 	extractAssetPaths,
 	prepareUploadedAssets,
 	serializeManagedPost,
-	validateMdsvexSource
+	validateManageSource
 } from '$lib/server/manage/content'
 import { getManageConfig } from '$lib/server/manage/config'
 import { ManageError } from '$lib/server/manage/errors'
@@ -79,8 +79,7 @@ async function prepareManagedWrite(
 	client: GitHubRepositoryClient,
 	snapshot: RepositorySnapshot,
 	payload: ManageWritePayload,
-	files: File[],
-	targetPath: string
+	files: File[]
 ): Promise<PreparedManagedWrite> {
 	const uploadedAssets = await prepareUploadedAssets(files, payload.slug)
 	const rewrittenPayload = applyUploadPlaceholders(payload, uploadedAssets)
@@ -88,7 +87,7 @@ async function prepareManagedWrite(
 	const newAssetPaths = new Set(uploadedAssets.map((asset) => asset.sitePath))
 
 	assertCoverPath(rewrittenPayload.cover, repositoryPaths, newAssetPaths)
-	await validateMdsvexSource(rewrittenPayload.source, targetPath)
+	await validateManageSource(rewrittenPayload.source)
 
 	const postBlobSha = await client.createTextBlob(serializeManagedPost(rewrittenPayload))
 	const assetBlobEntries = await Promise.all(
@@ -187,7 +186,7 @@ export async function createManagedPost(
 		throw new ManageError(409, 'path_conflict', `目标路径已存在: ${targetPath}`)
 	}
 
-	const prepared = await prepareManagedWrite(client, snapshot, payload, files, targetPath)
+	const prepared = await prepareManagedWrite(client, snapshot, payload, files)
 	const treeSha = await client.createTree(snapshot.branchTreeSha, [
 		{
 			path: targetPath,
@@ -241,7 +240,7 @@ export async function updateManagedPost(
 		throw new ManageError(409, 'path_conflict', `目标路径已存在: ${nextPath}`)
 	}
 
-	const prepared = await prepareManagedWrite(client, snapshot, payload, files, nextPath)
+	const prepared = await prepareManagedWrite(client, snapshot, payload, files)
 	const treeChanges: Array<{ path: string; sha: string | null }> = [
 		{
 			path: nextPath,

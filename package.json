@@ -16,7 +16,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"gen": "wrangler types",
-		"ci": "npm run gen && npm run check && npm run lint && npm run build"
+		"validate:mdsvex": "node ./scripts/validate-mdsvex.mjs",
+		"ci": "npm run gen && npm run check && npm run lint && npm run validate:mdsvex && npm run build"
 	},
 	"dependencies": {
 		"dompurify": "^3.3.3",
