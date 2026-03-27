@@ -1,4 +1,6 @@
 import type { ManageAccessActor } from '$lib/server/manage/types';
+import type { AppLocale } from '$lib/i18n/config';
+import type { I18nPayload } from '$lib/i18n';
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
@@ -27,8 +29,12 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			manageAccess: ManageAccessActor | null;
+			locale?: AppLocale;
 		}
-		// interface PageData {}
+
+		interface PageData {
+			i18n?: I18nPayload;
+		}
 		// interface PageState {}
 	}
 }

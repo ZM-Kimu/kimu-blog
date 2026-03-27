@@ -28,11 +28,10 @@
 	border-radius: 999px;
 	display: grid;
 	place-items: center;
-	background: linear-gradient(180deg, #2d61b3 0%, #4578c5 100%);
+	background: #466399;
 	color: white;
 	font-size: 1rem;
 	font-weight: 800;
-	box-shadow: 0 10px 22px rgba(45, 97, 179, 0.28);
 }
 
 .home-topbar__title {

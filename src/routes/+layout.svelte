@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	import '$lib/../app.css';
 
@@ -8,7 +9,7 @@
 	import Header from '$lib/components/layout/Header.svelte';
 	import { siteConfig } from '$lib/constants/site';
 
-	let { children } = $props();
+	let { children, data } = $props();
 
 	const isHomeRoute = $derived(page.url.pathname === '/');
 	const isErrorRoute = $derived(page.status >= 400);
@@ -18,6 +19,15 @@
 	const isScreenRoute = $derived(isHomeRoute || isErrorRoute);
 	const isBareRoute = $derived(isScreenRoute || isManageRoute);
 	const showGlobalChrome = $derived(!isScreenRoute && !isManageRoute);
+
+	$effect(() => {
+		if (!browser || !data?.i18n?.locale) {
+			return;
+		}
+
+		document.documentElement.lang = data.i18n.locale;
+		document.documentElement.dataset.locale = data.i18n.locale;
+	});
 </script>
 
 <svelte:head>

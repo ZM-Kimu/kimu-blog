@@ -1,7 +1,9 @@
 import {
 	backGradient,
+	backGradientVector,
 	backShellPath,
-	profileGradient
+	profileGradient,
+	profileGradientVector
 } from './home-topbar.constants';
 import type {
 	ElementBox,
@@ -127,20 +129,23 @@ export function createMorphOverlay({
 	const gradient = document.createElementNS(svgNamespace, 'linearGradient');
 	const gradientId = `home-topbar-motion-gradient-${Math.random().toString(36).slice(2)}`;
 	const gradientSource = fromMode === 'main' ? profileGradient : backGradient;
+	const gradientVectorSource = fromMode === 'main' ? profileGradientVector : backGradientVector;
 
 	gradient.setAttribute('id', gradientId);
-	gradient.setAttribute('x1', '0%');
-	gradient.setAttribute('y1', '0%');
-	gradient.setAttribute('x2', '100%');
-	gradient.setAttribute('y2', '100%');
+	gradient.setAttribute('x1', gradientVectorSource.x1);
+	gradient.setAttribute('y1', gradientVectorSource.y1);
+	gradient.setAttribute('x2', gradientVectorSource.x2);
+	gradient.setAttribute('y2', gradientVectorSource.y2);
 
 	const startStop = document.createElementNS(svgNamespace, 'stop');
 	startStop.setAttribute('offset', '0%');
-	startStop.setAttribute('stop-color', gradientSource.start);
+	startStop.setAttribute('stop-color', gradientSource.startColor);
+	startStop.setAttribute('stop-opacity', `${gradientSource.startOpacity}`);
 
 	const endStop = document.createElementNS(svgNamespace, 'stop');
 	endStop.setAttribute('offset', '100%');
-	endStop.setAttribute('stop-color', gradientSource.end);
+	endStop.setAttribute('stop-color', gradientSource.endColor);
+	endStop.setAttribute('stop-opacity', `${gradientSource.endOpacity}`);
 
 	gradient.appendChild(startStop);
 	gradient.appendChild(endStop);
@@ -187,5 +192,5 @@ export function createMorphOverlay({
 	wrapper.appendChild(glyph);
 	refs.motionLayer.appendChild(wrapper);
 
-	return { wrapper, path, startStop, endStop, text, glyph };
+	return { wrapper, gradient, path, startStop, endStop, text, glyph };
 }

@@ -28,6 +28,7 @@ export type MotionLibs = {
 
 export type MorphOverlay = {
 	wrapper: HTMLDivElement;
+	gradient: SVGLinearGradientElement;
 	path: SVGPathElement;
 	startStop: SVGStopElement;
 	endStop: SVGStopElement;
@@ -47,6 +48,7 @@ export type StripProxy = {
 export type HomeTopbarRefs = {
 	topbarRoot: HTMLElement | null;
 	backButton: HTMLButtonElement | null;
+	backGlyph: HTMLSpanElement | null;
 	profileChip: HTMLAnchorElement | null;
 	titleWrap: HTMLDivElement | null;
 	stripShell: HTMLDivElement | null;

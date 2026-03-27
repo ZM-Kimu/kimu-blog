@@ -54,6 +54,7 @@
 	let profileShellPath = $state(fallbackProfilePath);
 	let topbarRoot: HTMLElement | null = $state(null);
 	let backButton: HTMLButtonElement | null = $state(null);
+	let backGlyph: HTMLSpanElement | null = $state(null);
 	let profileChip: HTMLAnchorElement | null = $state(null);
 	let titleWrap: HTMLDivElement | null = $state(null);
 	let stripShell: HTMLDivElement | null = $state(null);
@@ -67,6 +68,7 @@
 		return {
 			topbarRoot,
 			backButton,
+			backGlyph,
 			profileChip,
 			titleWrap,
 			stripShell,
@@ -174,6 +176,7 @@
 		onBack={() => toggle('back')}
 		bind:topbarRoot
 		bind:backButton
+		bind:backGlyph
 		bind:titleWrap
 		bind:stripShell
 	/>

@@ -18,11 +18,10 @@
 	margin-left: calc(var(--home-shell-padding) * -1);
 	padding: var(--home-profile-padding);
 	padding-left: calc(var(--home-shell-padding) + 1rem);
-	background: linear-gradient(135deg, rgba(16, 77, 145, 0.94), rgba(36, 112, 191, 0.88));
+	background: #2d61b3;
 	color: white;
 	-webkit-mask: url('/icons/home-profile-chip-mask.svg') left center / 100% 100% no-repeat;
 	mask: url('/icons/home-profile-chip-mask.svg') left center / 100% 100% no-repeat;
-	filter: drop-shadow(0 16px 42px rgba(20, 78, 143, 0.24));
 }
 
 .home-profile-chip__level {

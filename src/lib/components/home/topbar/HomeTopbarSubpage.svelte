@@ -9,6 +9,7 @@
 		onBack,
 		topbarRoot = $bindable<HTMLElement | null>(null),
 		backButton = $bindable<HTMLButtonElement | null>(null),
+		backGlyph = $bindable<HTMLSpanElement | null>(null),
 		titleWrap = $bindable<HTMLDivElement | null>(null),
 		stripShell = $bindable<HTMLDivElement | null>(null)
 	}: {
@@ -19,6 +20,7 @@
 		onBack: () => void;
 		topbarRoot?: HTMLElement | null;
 		backButton?: HTMLButtonElement | null;
+		backGlyph?: HTMLSpanElement | null;
 		titleWrap?: HTMLDivElement | null;
 		stripShell?: HTMLDivElement | null;
 	} = $props();
@@ -36,7 +38,7 @@
 			bind:this={backButton}
 			onclick={onBack}
 		>
-			<span class="home-topbar__back-glyph" aria-hidden="true"></span>
+			<span class="home-topbar__back-glyph" aria-hidden="true" bind:this={backGlyph}></span>
 		</button>
 		<div class="home-topbar__title-wrap" bind:this={titleWrap}>
 			<div class="home-topbar__title">{siteName}</div>
