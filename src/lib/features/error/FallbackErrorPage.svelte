@@ -1,33 +1,43 @@
 <script lang="ts">
-	import HomeTopbarSubpage from '$lib/features/home/topbar/HomeTopbarSubpage.svelte';
-	import { getNavigationContext } from '$lib/navigation/context';
+	import HomeTopbarSubpage from '$lib/features/home/topbar/HomeTopbarSubpage.svelte'
+	import { getNavigationContext } from '$lib/navigation/context'
 
 	let {
 		status,
 		message
 	}: {
-		status: number;
-		message: string;
-	} = $props();
+		status: number
+		message: string
+	} = $props()
 
-	const { navigationManager } = getNavigationContext();
-	const topbarState = $derived(navigationManager.pageState.topbar);
+	const { navigationManager } = getNavigationContext()
+	const topbarState = $derived(navigationManager.pageState.topbar)
 
-	const isNotFound = $derived(status === 404);
-	const isServerFault = $derived(status >= 500);
-	const usesCompactHeadline = $derived(isNotFound || isServerFault);
-	const eyebrow = $derived(isNotFound ? 'Route Lost' : 'Unhandled Fault');
+	const isNotFound = $derived(status === 404)
+	const isServerFault = $derived(status >= 500)
+	const usesCompactHeadline = $derived(isNotFound || isServerFault)
+	const eyebrow = $derived(isNotFound ? 'Route Lost' : 'Unhandled Fault')
 	const headline = $derived(
-		isNotFound ? '未找到页面~ (´・ω・`)' : isServerFault ? '系统故障 (´；ω；`)' : '系统信号中断，页面未能完成装载。'
-	);
-	const detailMessage = $derived(message?.trim() || (isNotFound ? '请求的页面不存在。' : '发生了未知错误。'));
-	const visualSrc = $derived(isServerFault ? '/images/arona_embarrassed.png' : '/images/Popup_Image_Arona.png');
+		isNotFound
+			? '未找到页面~ (´・ω・`)'
+			: isServerFault
+				? '系统故障 (´；ω；`)'
+				: '系统信号中断，页面未能完成装载。'
+	)
+	const detailMessage = $derived(
+		message?.trim() || (isNotFound ? '请求的页面不存在。' : '发生了未知错误。')
+	)
+	const visualSrc = $derived(
+		isServerFault ? '/images/arona_embarrassed.png' : '/images/Popup_Image_Arona.png'
+	)
 	const visualAlt = $derived(
-		isServerFault ? 'Arona 表情插画，用于 500 错误页展示。' : 'Arona 的弹窗插画，用于错误页的引导展示。'
-	);
+		isServerFault
+			? 'Arona 表情插画，用于 500 错误页展示。'
+			: 'Arona 的弹窗插画，用于错误页的引导展示。'
+	)
 
 	async function handleBack() {
-		await navigationManager.goBack(topbarState.back);
+		await navigationManager.goBack(topbarState.back)
 	}
 </script>
 
@@ -48,12 +58,7 @@
 
 	<div class="error-screen__body">
 		<div class="error-screen__visual" aria-label="Fallback illustration">
-			<img
-				src={visualSrc}
-				alt={visualAlt}
-				loading="eager"
-				decoding="async"
-			/>
+			<img src={visualSrc} alt={visualAlt} loading="eager" decoding="async" />
 		</div>
 
 		<article class="error-screen__copy">
@@ -171,9 +176,7 @@
 		width: 100%;
 		min-height: 100%;
 		box-sizing: border-box;
-		padding:
-			calc(var(--home-topbar-height) + var(--error-stage-gap))
-			var(--home-shell-padding)
+		padding: calc(var(--home-topbar-height) + var(--error-stage-gap)) var(--home-shell-padding)
 			var(--error-stage-gap);
 		position: relative;
 		z-index: 1;
@@ -271,10 +274,7 @@
 		}
 
 		.error-screen__body {
-			padding:
-				calc(var(--home-topbar-height) + 1.8rem)
-				var(--home-shell-padding)
-				1.2rem;
+			padding: calc(var(--home-topbar-height) + 1.8rem) var(--home-shell-padding) 1.2rem;
 		}
 	}
 </style>

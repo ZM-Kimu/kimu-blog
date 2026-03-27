@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import type { BlogPost } from '$lib/types/content';
-	import { formatDate } from '$lib/utils/date';
-	import TagChip from './TagChip.svelte';
+	import { resolve } from '$app/paths'
+	import type { BlogPost } from '$lib/types/content'
+	import { formatDate } from '$lib/utils/date'
+	import TagChip from './TagChip.svelte'
 
 	interface Props {
-		post: BlogPost;
+		post: BlogPost
 	}
 
-	let { post }: Props = $props();
+	let { post }: Props = $props()
 </script>
 
 <article class="post-card">

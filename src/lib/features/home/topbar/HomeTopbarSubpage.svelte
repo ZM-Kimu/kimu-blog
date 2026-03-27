@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { HomeTopbarAction, HomeTopbarMetric } from './home-topbar.types';
+	import type { HomeTopbarAction, HomeTopbarMetric } from './home-topbar.types'
 
 	let {
 		metrics,
@@ -13,20 +13,24 @@
 		titleWrap = $bindable<HTMLDivElement | null>(null),
 		stripShell = $bindable<HTMLDivElement | null>(null)
 	}: {
-		metrics: readonly HomeTopbarMetric[];
-		actions: readonly HomeTopbarAction[];
-		title: string;
-		motionLocked: boolean;
-		onBack: () => void;
-		topbarRoot?: HTMLElement | null;
-		backButton?: HTMLButtonElement | null;
-		backGlyph?: HTMLSpanElement | null;
-		titleWrap?: HTMLDivElement | null;
-		stripShell?: HTMLDivElement | null;
-	} = $props();
+		metrics: readonly HomeTopbarMetric[]
+		actions: readonly HomeTopbarAction[]
+		title: string
+		motionLocked: boolean
+		onBack: () => void
+		topbarRoot?: HTMLElement | null
+		backButton?: HTMLButtonElement | null
+		backGlyph?: HTMLSpanElement | null
+		titleWrap?: HTMLDivElement | null
+		stripShell?: HTMLDivElement | null
+	} = $props()
 </script>
 
-<header class="home-topbar home-topbar--subpage" aria-label="Home top bar subpage style" bind:this={topbarRoot}>
+<header
+	class="home-topbar home-topbar--subpage"
+	aria-label="Home top bar subpage style"
+	bind:this={topbarRoot}
+>
 	<div class="home-topbar__strip-shell" aria-hidden="true" bind:this={stripShell}></div>
 
 	<div class="home-topbar__lead">

@@ -1,12 +1,12 @@
 export interface MissionDefinition {
-	slug: string;
-	title: string;
-	kicker: string;
-	description: string;
-	href: string;
-	matches: string[];
-	state: string;
-	tone: 'cyan' | 'blue' | 'amber' | 'slate';
+	slug: string
+	title: string
+	kicker: string
+	description: string
+	href: '/blog/archive' | '/favorites'
+	matches: string[]
+	state: string
+	tone: 'cyan' | 'blue' | 'amber' | 'slate'
 }
 
 export const missionCatalog: MissionDefinition[] = [
@@ -51,4 +51,4 @@ export const missionCatalog: MissionDefinition[] = [
 		state: 'Coming Soon',
 		tone: 'slate'
 	}
-];
+]

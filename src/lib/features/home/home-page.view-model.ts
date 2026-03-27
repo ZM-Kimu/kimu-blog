@@ -1,9 +1,9 @@
-import { missionCatalog } from '$lib/features/blog/config';
-import type { HomePageData, HomePageMissionPreviewItem } from './home-page.types';
+import { missionCatalog } from '$lib/features/blog/config'
+import type { HomePageData, HomePageMissionPreviewItem } from './home-page.types'
 
 export type HomePageViewModel = {
-	missionPreview: HomePageMissionPreviewItem[];
-};
+	missionPreview: HomePageMissionPreviewItem[]
+}
 
 export function createHomePageViewModel(data: HomePageData): HomePageViewModel {
 	return {
@@ -17,5 +17,5 @@ export function createHomePageViewModel(data: HomePageData): HomePageViewModel {
 					)
 					.reduce((total, category) => total + category.count, 0) ?? 0
 		}))
-	};
+	}
 }

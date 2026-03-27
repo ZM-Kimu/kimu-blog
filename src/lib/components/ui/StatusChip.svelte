@@ -1,10 +1,10 @@
 <script lang="ts">
 	interface Props {
-		label: string;
-		value: string;
+		label: string
+		value: string
 	}
 
-	let { label, value }: Props = $props();
+	let { label, value }: Props = $props()
 </script>
 
 <div class="status-chip">

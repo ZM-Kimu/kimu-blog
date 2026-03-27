@@ -1,17 +1,17 @@
 <script lang="ts">
 	let { assetPaths, category, cover, date, description, html, slug, tags, title, updated } =
 		$props<{
-			assetPaths: string[];
-			category: string;
-			cover: string;
-			date: string;
-			description: string;
-			html: string;
-			slug: string;
-			tags: string[];
-			title: string;
-			updated: string;
-		}>();
+			assetPaths: string[]
+			category: string
+			cover: string
+			date: string
+			description: string
+			html: string
+			slug: string
+			tags: string[]
+			title: string
+			updated: string
+		}>()
 </script>
 
 <section class="manage-preview panel">

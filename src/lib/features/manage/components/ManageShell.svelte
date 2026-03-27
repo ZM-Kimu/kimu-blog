@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
-	import type { ManageSessionResponse } from '$lib/features/manage/types';
+	import { resolve } from '$app/paths'
+	import { page } from '$app/state'
+	import type { ManageSessionResponse } from '$lib/features/manage/types'
 
 	let { children, session } = $props<{
-		children: () => unknown;
-		session: ManageSessionResponse;
-	}>();
+		children: () => unknown
+		session: ManageSessionResponse
+	}>()
 
-	const isPostsRoute = $derived(page.url.pathname.startsWith('/manage/posts'));
-	const actorLabel = $derived(session.actor.name ?? session.actor.email ?? session.actor.sub);
+	const isPostsRoute = $derived(page.url.pathname.startsWith('/manage/posts'))
+	const actorLabel = $derived(session.actor.name ?? session.actor.email ?? session.actor.sub)
 </script>
 
 <svelte:head>

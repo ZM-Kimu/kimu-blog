@@ -3,9 +3,9 @@ import {
 	getAllPosts,
 	getFeaturedPosts,
 	getLatestPosts
-} from '$lib/server/content/posts';
+} from '$lib/server/content/posts'
 
-export const prerender = true;
+export const prerender = true
 
 export function load() {
 	return {
@@ -13,5 +13,5 @@ export function load() {
 		latestPosts: getLatestPosts(3),
 		categories: getAllCategories(),
 		totalPosts: getAllPosts().length
-	};
+	}
 }

@@ -1,33 +1,31 @@
 import { assets } from '$app/paths'
-import
-	{
-		backGradient,
-		backGradientVector,
-		backShellPath,
-		compactDuration,
-		fallbackProfilePath,
-		glyphSwitchAt,
-		profileGradient,
-		profileGradientVector,
-		profileRevealAt,
-		reducedDuration,
-		richDuration,
-		stripDropOffset,
-		stripRetreatOffset,
-		stripRevealDuration,
-		textExitDuration,
-		titleRevealAt
-	} from './home-topbar.constants'
-import
-	{
-		clearMotionLayer,
-		createMorphOverlay,
-		createStripGhost,
-		createTitleGhost,
-		getHostElement,
-		getSharedTargets,
-		measureToHost
-	} from './home-topbar.dom'
+import {
+	backGradient,
+	backGradientVector,
+	backShellPath,
+	compactDuration,
+	fallbackProfilePath,
+	glyphSwitchAt,
+	profileGradient,
+	profileGradientVector,
+	profileRevealAt,
+	reducedDuration,
+	richDuration,
+	stripDropOffset,
+	stripRetreatOffset,
+	stripRevealDuration,
+	textExitDuration,
+	titleRevealAt
+} from './home-topbar.constants'
+import {
+	clearMotionLayer,
+	createMorphOverlay,
+	createStripGhost,
+	createTitleGhost,
+	getHostElement,
+	getSharedTargets,
+	measureToHost
+} from './home-topbar.dom'
 import type { HomeTopbarRefs, MotionLibs, TopbarMode } from './home-topbar.types'
 
 type TimelineRef = ReturnType<typeof import('gsap').gsap.timeline> | null
@@ -45,10 +43,8 @@ type BaseTransitionArgs = {
 	setCurrentTimeline: (timeline: TimelineRef) => void
 }
 
-function getProfileContentTargets (profileChip: HTMLAnchorElement | null)
-{
-	if (!profileChip)
-	{
+function getProfileContentTargets(profileChip: HTMLAnchorElement | null) {
+	if (!profileChip) {
 		return []
 	}
 
@@ -59,10 +55,8 @@ function getProfileContentTargets (profileChip: HTMLAnchorElement | null)
 	)
 }
 
-function captureSurfaceSkin (element: HTMLElement | null): SurfaceSkin | null
-{
-	if (!element)
-	{
+function captureSurfaceSkin(element: HTMLElement | null): SurfaceSkin | null {
+	if (!element) {
 		return null
 	}
 
@@ -75,16 +69,11 @@ function captureSurfaceSkin (element: HTMLElement | null): SurfaceSkin | null
 	}
 }
 
-function waitForNextPaint (frames = 1)
-{
-	return new Promise<void>((resolve) =>
-	{
-		const step = (remaining: number) =>
-		{
-			requestAnimationFrame(() =>
-			{
-				if (remaining <= 1)
-				{
+function waitForNextPaint(frames = 1) {
+	return new Promise<void>((resolve) => {
+		const step = (remaining: number) => {
+			requestAnimationFrame(() => {
+				if (remaining <= 1) {
 					resolve()
 					return
 				}
@@ -97,44 +86,35 @@ function waitForNextPaint (frames = 1)
 	})
 }
 
-export async function loadProfileShellPath ()
-{
-	try
-	{
+export async function loadProfileShellPath() {
+	try {
 		const response = await fetch(`${assets}/icons/home-profile-chip-mask.svg`)
-		if (!response.ok)
-		{
+		if (!response.ok) {
 			return fallbackProfilePath
 		}
 
 		const svgText = await response.text()
 		const svgDocument = new DOMParser().parseFromString(svgText, 'image/svg+xml')
 		return svgDocument.querySelector('path')?.getAttribute('d') ?? fallbackProfilePath
-	} catch
-	{
+	} catch {
 		return fallbackProfilePath
 	}
 }
 
-export async function loadMotionLibs (): Promise<MotionLibs | null>
-{
-	try
-	{
+export async function loadMotionLibs(): Promise<MotionLibs | null> {
+	try {
 		const [gsapModule, { interpolate }] = await Promise.all([import('gsap/all'), import('flubber')])
 		const { gsap, Flip } = gsapModule
 
 		gsap.registerPlugin(Flip)
 		return { gsap, Flip, interpolate }
-	} catch
-	{
+	} catch {
 		return null
 	}
 }
 
-export function resetTransitionStyles (libs: MotionLibs | null, refs: HomeTopbarRefs)
-{
-	if (!libs?.gsap)
-	{
+export function resetTransitionStyles(libs: MotionLibs | null, refs: HomeTopbarRefs) {
+	if (!libs?.gsap) {
 		return
 	}
 
@@ -155,12 +135,11 @@ export function resetTransitionStyles (libs: MotionLibs | null, refs: HomeTopbar
 	)
 }
 
-export function focusAfterTransition (refs: HomeTopbarRefs, nextMode: TopbarMode)
-{
-	(nextMode === 'subpage' ? refs.backButton : refs.profileChip)?.focus()
+export function focusAfterTransition(refs: HomeTopbarRefs, nextMode: TopbarMode) {
+	;(nextMode === 'subpage' ? refs.backButton : refs.profileChip)?.focus()
 }
 
-export async function runSimpleTransition ({
+export async function runSimpleTransition({
 	libs,
 	getRefs,
 	nextMode,
@@ -171,14 +150,12 @@ export async function runSimpleTransition ({
 }: BaseTransitionArgs & {
 	nextMode: TopbarMode
 	reducedMotionActive: boolean
-})
-{
+}) {
 	setMode(nextMode)
 	await afterModeChange()
 
 	const refs = getRefs()
-	if (!refs.topbarRoot)
-	{
+	if (!refs.topbarRoot) {
 		return
 	}
 
@@ -187,8 +164,7 @@ export async function runSimpleTransition ({
 		y: nextMode === 'subpage' ? -4 : 4
 	})
 
-	await new Promise<void>((resolvePromise) =>
-	{
+	await new Promise<void>((resolvePromise) => {
 		const timeline = libs.gsap.timeline({
 			defaults: { ease: 'power2.out' },
 			onComplete: resolvePromise,
@@ -207,7 +183,7 @@ export async function runSimpleTransition ({
 	setCurrentTimeline(null)
 }
 
-export async function runRichTransition ({
+export async function runRichTransition({
 	libs,
 	host,
 	getRefs,
@@ -228,15 +204,13 @@ export async function runRichTransition ({
 	profileLevel: string
 	authorName: string
 	subpageTitle: string
-})
-{
+}) {
 	const sourceRefs = getRefs()
 	const sourceRoot = sourceRefs.topbarRoot
 	const sourceAnchor = fromMode === 'subpage' ? sourceRefs.backButton : sourceRefs.profileChip
 	const sourceSharedTargets = getSharedTargets(sourceRefs)
 
-	if (!sourceRoot || !sourceAnchor || !sourceRefs.motionLayer || sourceSharedTargets.length === 0)
-	{
+	if (!sourceRoot || !sourceAnchor || !sourceRefs.motionLayer || sourceSharedTargets.length === 0) {
 		await runSimpleTransition({
 			libs,
 			getRefs,
@@ -254,7 +228,9 @@ export async function runRichTransition ({
 	const sourceHost = getHostElement(host, sourceRefs)
 	const sourceChipSkin =
 		fromMode === 'main'
-			? captureSurfaceSkin(sourceRoot.querySelector<HTMLElement>('.home-topbar__resources .resource-chip'))
+			? captureSurfaceSkin(
+					sourceRoot.querySelector<HTMLElement>('.home-topbar__resources .resource-chip')
+				)
 			: null
 	const sourceToolsSkin =
 		fromMode === 'main'
@@ -272,13 +248,14 @@ export async function runRichTransition ({
 	const stripGhost =
 		fromMode === 'subpage'
 			? createStripGhost(
-				sourceHost,
-				sourceHeaderBox,
-				'home-topbar home-topbar--subpage home-topbar-strip-proxy home-topbar-strip-proxy--background'
-			)
+					sourceHost,
+					sourceHeaderBox,
+					'home-topbar home-topbar--subpage home-topbar-strip-proxy home-topbar-strip-proxy--background'
+				)
 			: null
-	const titleGhost =
-		sourceTitleBox ? createTitleGhost(sourceRefs, sourceTitleBox, subpageTitle) : null
+	const titleGhost = sourceTitleBox
+		? createTitleGhost(sourceRefs, sourceTitleBox, subpageTitle)
+		: null
 
 	setMode(nextMode)
 	await afterModeChange()
@@ -288,8 +265,7 @@ export async function runRichTransition ({
 	const targetAnchor = nextMode === 'subpage' ? targetRefs.backButton : targetRefs.profileChip
 	const targetSharedTargets = getSharedTargets(targetRefs)
 
-	if (!targetRoot || !targetAnchor || targetSharedTargets.length === 0)
-	{
+	if (!targetRoot || !targetAnchor || targetSharedTargets.length === 0) {
 		stripGhost?.wrapper.remove()
 		clearMotionLayer(targetRefs)
 		resetTransitionStyles(libs, targetRefs)
@@ -315,8 +291,7 @@ export async function runRichTransition ({
 		profileLevel,
 		authorName
 	})
-	if (!morph)
-	{
+	if (!morph) {
 		stripGhost?.wrapper.remove()
 		clearMotionLayer(targetRefs)
 		resetTransitionStyles(libs, targetRefs)
@@ -336,28 +311,28 @@ export async function runRichTransition ({
 	const incomingStripProxy =
 		nextMode === 'subpage'
 			? createStripGhost(
-				targetHost,
-				targetHeaderBox,
-				'home-topbar home-topbar--subpage home-topbar-strip-proxy home-topbar-strip-proxy--background'
-			)
+					targetHost,
+					targetHeaderBox,
+					'home-topbar home-topbar--subpage home-topbar-strip-proxy home-topbar-strip-proxy--background'
+				)
 			: null
-	const incomingStripHeight =
-		incomingStripProxy
-			? `${incomingStripProxy.wrapper.getBoundingClientRect().height}px`
-			: `${targetHeaderBox.height}px`
-	const targetProfileContent = nextMode === 'main' ? getProfileContentTargets(targetRefs.profileChip) : []
+	const incomingStripHeight = incomingStripProxy
+		? `${incomingStripProxy.wrapper.getBoundingClientRect().height}px`
+		: `${targetHeaderBox.height}px`
+	const targetProfileContent =
+		nextMode === 'main' ? getProfileContentTargets(targetRefs.profileChip) : []
 	const targetResourceChips =
 		nextMode === 'subpage'
-			? Array.from(targetRoot.querySelectorAll<HTMLElement>('.home-topbar__resources .resource-chip'))
+			? Array.from(
+					targetRoot.querySelectorAll<HTMLElement>('.home-topbar__resources .resource-chip')
+				)
 			: []
 	const targetResourceDividers =
 		nextMode === 'subpage'
 			? Array.from(targetRoot.querySelectorAll<HTMLElement>('.home-topbar__resource-divider'))
 			: []
 	const targetToolsSurface =
-		nextMode === 'subpage'
-			? targetRoot.querySelector<HTMLElement>('.home-topbar__tools')
-			: null
+		nextMode === 'subpage' ? targetRoot.querySelector<HTMLElement>('.home-topbar__tools') : null
 	const pathInterpolator = libs.interpolate(
 		fromMode === 'main' ? profileShellPath : backShellPath,
 		nextMode === 'subpage' ? backShellPath : profileShellPath,
@@ -367,20 +342,17 @@ export async function runRichTransition ({
 	const targetGradient = nextMode === 'subpage' ? backGradient : profileGradient
 	const targetGradientVector = nextMode === 'subpage' ? backGradientVector : profileGradientVector
 
-	if (nextMode === 'subpage')
-	{
+	if (nextMode === 'subpage') {
 		targetRoot.style.height = incomingStripHeight
 		libs.gsap.set(targetRefs.stripShell, { autoAlpha: 0 })
-		if (sourceChipSkin)
-		{
+		if (sourceChipSkin) {
 			libs.gsap.set(targetResourceChips, {
 				backgroundColor: sourceChipSkin.backgroundColor,
 				borderColor: sourceChipSkin.borderColor,
 				boxShadow: sourceChipSkin.boxShadow
 			})
 		}
-		if (sourceToolsSkin && targetToolsSurface)
-		{
+		if (sourceToolsSkin && targetToolsSurface) {
 			libs.gsap.set(targetToolsSurface, {
 				backgroundColor: sourceToolsSkin.backgroundColor,
 				borderColor: sourceToolsSkin.borderColor,
@@ -388,8 +360,7 @@ export async function runRichTransition ({
 			})
 		}
 		libs.gsap.set(targetResourceDividers, { autoAlpha: 0 })
-		if (incomingStripProxy)
-		{
+		if (incomingStripProxy) {
 			libs.gsap.set(incomingStripProxy.wrapper, {
 				y: stripDropOffset,
 				autoAlpha: 1
@@ -405,8 +376,7 @@ export async function runRichTransition ({
 		libs.gsap.set(targetRefs.titleWrap, { autoAlpha: 0, x: -10 })
 		libs.gsap.set(morph.text, { autoAlpha: 1 })
 		libs.gsap.set(morph.glyph, { autoAlpha: 0, scale: 0.76 })
-	} else
-	{
+	} else {
 		libs.gsap.set(targetRefs.profileChip, {
 			autoAlpha: 0,
 			background: 'transparent',
@@ -417,27 +387,22 @@ export async function runRichTransition ({
 		libs.gsap.set(morph.glyph, { autoAlpha: 1, scale: 1 })
 	}
 
-	if (nextMode === 'subpage' && incomingStripProxy)
-	{
+	if (nextMode === 'subpage' && incomingStripProxy) {
 		// Let the proxy's true starting state paint before FLIP/timeline work begins.
 		await waitForNextPaint(2)
-	}
-	else if (fromMode === 'subpage')
-	{
+	} else if (fromMode === 'subpage') {
 		// Let the reverse-path glyph and back-shadow state paint before it begins fading out.
 		await waitForNextPaint(1)
 	}
 
-	await new Promise<void>((resolvePromise) =>
-	{
+	await new Promise<void>((resolvePromise) => {
 		const timeline = libs.gsap.timeline({
 			onComplete: resolvePromise,
 			onInterrupt: resolvePromise
 		})
 		setCurrentTimeline(timeline)
 
-		if (incomingStripProxy)
-		{
+		if (incomingStripProxy) {
 			timeline.to(
 				incomingStripProxy.wrapper,
 				{
@@ -459,8 +424,7 @@ export async function runRichTransition ({
 			)
 		}
 
-		if (stripGhost)
-		{
+		if (stripGhost) {
 			timeline.to(
 				stripGhost.wrapper,
 				{
@@ -482,8 +446,7 @@ export async function runRichTransition ({
 			)
 		}
 
-		if (incomingStripProxy && targetRefs.stripShell)
-		{
+		if (incomingStripProxy && targetRefs.stripShell) {
 			const stripHandoffAt = Math.max(stripRevealDuration - 0.06, 0.18)
 			const stripHandoffDuration = 0.1
 			const chipSkinHandoffAt = Math.min(stripHandoffAt + 0.04, richDuration - 0.18)
@@ -508,8 +471,7 @@ export async function runRichTransition ({
 				stripHandoffAt
 			)
 
-			if (targetResourceChips.length > 0)
-			{
+			if (targetResourceChips.length > 0) {
 				timeline.to(
 					targetResourceChips,
 					{
@@ -523,8 +485,7 @@ export async function runRichTransition ({
 				)
 			}
 
-			if (targetToolsSurface)
-			{
+			if (targetToolsSurface) {
 				timeline.to(
 					targetToolsSurface,
 					{
@@ -538,8 +499,7 @@ export async function runRichTransition ({
 				)
 			}
 
-			if (targetResourceDividers.length > 0)
-			{
+			if (targetResourceDividers.length > 0) {
 				timeline.to(
 					targetResourceDividers,
 					{
@@ -586,8 +546,7 @@ export async function runRichTransition ({
 				value: 1,
 				duration: richDuration,
 				ease: 'expo.inOut',
-				onUpdate: () =>
-				{
+				onUpdate: () => {
 					morph.path.setAttribute('d', pathInterpolator(pathProgress.value))
 				}
 			},
@@ -635,8 +594,7 @@ export async function runRichTransition ({
 			0
 		)
 
-		if (fromMode === 'main')
-		{
+		if (fromMode === 'main') {
 			const handoffAt = richDuration - 0.01
 
 			timeline.to(
@@ -694,10 +652,8 @@ export async function runRichTransition ({
 				},
 				titleRevealAt
 			)
-		} else
-		{
-			if (titleGhost)
-			{
+		} else {
+			if (titleGhost) {
 				timeline.to(
 					titleGhost.wrapper,
 					{

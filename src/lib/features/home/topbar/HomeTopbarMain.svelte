@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { HomeTopbarAction, HomeTopbarMetric } from './home-topbar.types';
+	import { resolve } from '$app/paths'
+	import type { HomeTopbarAction, HomeTopbarMetric } from './home-topbar.types'
 
 	let {
 		metrics,
@@ -10,18 +11,22 @@
 		topbarRoot = $bindable<HTMLElement | null>(null),
 		profileChip = $bindable<HTMLAnchorElement | null>(null)
 	}: {
-		metrics: readonly HomeTopbarMetric[];
-		actions: readonly HomeTopbarAction[];
-		authorName: string;
-		profileLevel: string;
-		profileHref: string;
-		topbarRoot?: HTMLElement | null;
-		profileChip?: HTMLAnchorElement | null;
-	} = $props();
+		metrics: readonly HomeTopbarMetric[]
+		actions: readonly HomeTopbarAction[]
+		authorName: string
+		profileLevel: string
+		profileHref: '/' | '/about'
+		topbarRoot?: HTMLElement | null
+		profileChip?: HTMLAnchorElement | null
+	} = $props()
 </script>
 
-<header class="home-topbar home-topbar--main" aria-label="Home top bar main style" bind:this={topbarRoot}>
-	<a class="home-profile-chip" href={profileHref} bind:this={profileChip}>
+<header
+	class="home-topbar home-topbar--main"
+	aria-label="Home top bar main style"
+	bind:this={topbarRoot}
+>
+	<a class="home-profile-chip" href={resolve(profileHref)} bind:this={profileChip}>
 		<span class="home-profile-chip__level">Lv.</span>
 		<strong>{profileLevel}</strong>
 		<div class="home-profile-chip__copy">

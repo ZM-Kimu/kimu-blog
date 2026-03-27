@@ -1,8 +1,8 @@
 <script lang="ts">
-	import BlogPostPage from '$lib/features/blog/BlogPostPage.svelte';
-	import SeoHead from '$lib/components/ui/SeoHead.svelte';
+	import BlogPostPage from '$lib/features/blog/BlogPostPage.svelte'
+	import SeoHead from '$lib/components/ui/SeoHead.svelte'
 
-	let { data } = $props();
+	let { data } = $props()
 </script>
 
 <SeoHead

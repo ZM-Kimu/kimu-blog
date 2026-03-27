@@ -1,11 +1,11 @@
-import type { RouteState } from './types';
+import type { RouteState } from './types'
 
 export function resolveRouteState({
 	pathname,
 	status = 200
 }: {
-	pathname: string;
-	status?: number;
+	pathname: string
+	status?: number
 }): RouteState {
 	if (status >= 400) {
 		return {
@@ -13,7 +13,7 @@ export function resolveRouteState({
 			pathname,
 			status,
 			isError: true
-		};
+		}
 	}
 
 	if (pathname === '/') {
@@ -22,7 +22,7 @@ export function resolveRouteState({
 			pathname,
 			status,
 			isError: false
-		};
+		}
 	}
 
 	if (pathname === '/blog') {
@@ -31,7 +31,7 @@ export function resolveRouteState({
 			pathname,
 			status,
 			isError: false
-		};
+		}
 	}
 
 	if (pathname === '/blog/archive') {
@@ -40,7 +40,7 @@ export function resolveRouteState({
 			pathname,
 			status,
 			isError: false
-		};
+		}
 	}
 
 	if (pathname.startsWith('/blog/')) {
@@ -50,7 +50,7 @@ export function resolveRouteState({
 			status,
 			isError: false,
 			slug: pathname.slice('/blog/'.length)
-		};
+		}
 	}
 
 	if (pathname.startsWith('/tags/')) {
@@ -60,7 +60,7 @@ export function resolveRouteState({
 			status,
 			isError: false,
 			tag: pathname.slice('/tags/'.length)
-		};
+		}
 	}
 
 	if (pathname === '/about') {
@@ -69,7 +69,7 @@ export function resolveRouteState({
 			pathname,
 			status,
 			isError: false
-		};
+		}
 	}
 
 	if (pathname === '/updates') {
@@ -78,7 +78,7 @@ export function resolveRouteState({
 			pathname,
 			status,
 			isError: false
-		};
+		}
 	}
 
 	if (pathname === '/favorites') {
@@ -87,7 +87,7 @@ export function resolveRouteState({
 			pathname,
 			status,
 			isError: false
-		};
+		}
 	}
 
 	return {
@@ -95,5 +95,5 @@ export function resolveRouteState({
 		pathname,
 		status,
 		isError: false
-	};
+	}
 }

@@ -1,103 +1,103 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import { onMount } from 'svelte';
-	import { siteConfig } from '$lib/config/site';
-	import { translate, type I18nPayload } from '$lib/i18n';
-	import { getNavigationContext } from '$lib/navigation/context';
-	import { createPageState } from '$lib/navigation/page-state';
-	import { resolveRouteState } from '$lib/navigation/route-state';
-	import { homeDockItems, homeQuickActions } from './config';
-	import { bindMediaQuery } from './home-page.media';
-	import type { HomePageData } from './home-page.types';
-	import { createHomePageViewModel } from './home-page.view-model';
-	import HomeTopbar from './topbar/HomeTopbar.svelte';
-	import type { TopbarMode } from './topbar/home-topbar.types';
+	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
+	import { onMount } from 'svelte'
+	import { siteConfig } from '$lib/config/site'
+	import { translate, type I18nPayload } from '$lib/i18n'
+	import { getNavigationContext } from '$lib/navigation/context'
+	import { createPageState } from '$lib/navigation/page-state'
+	import { resolveRouteState } from '$lib/navigation/route-state'
+	import { homeDockItems, homeQuickActions } from './config'
+	import { bindMediaQuery } from './home-page.media'
+	import type { HomePageData } from './home-page.types'
+	import { createHomePageViewModel } from './home-page.view-model'
+	import HomeTopbar from './topbar/HomeTopbar.svelte'
+	import type { TopbarMode } from './topbar/home-topbar.types'
 
 	type HomeTopbarHandle = {
-		transitionTo: (nextMode: TopbarMode, origin: 'cta' | 'back') => Promise<void>;
-	};
+		transitionTo: (nextMode: TopbarMode, origin: 'cta' | 'back') => Promise<void>
+	}
 
-	const compactQuery = '(max-width: 900px), (max-aspect-ratio: 145/100)';
-	const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
-	const homeWorkTarget = '/__debug/error-404';
-	const homeWorkTargetStatus = 404;
+	const compactQuery = '(max-width: 900px), (max-aspect-ratio: 145/100)'
+	const reducedMotionQuery = '(prefers-reduced-motion: reduce)'
+	const homeWorkTarget = '/__debug/error-404'
+	const homeWorkTargetStatus = 404
 
-	let { data }: { data: HomePageData & { i18n?: I18nPayload } } = $props();
-	let screenHome: HTMLDivElement | null = $state(null);
-	let homeTopbar: HomeTopbarHandle | null = $state(null);
-	let isCompactLayout = $state(false);
-	let prefersReducedMotion = $state(false);
-	let topbarMode = $state<TopbarMode>('main');
-	let topbarMotionLocked = $state(false);
+	let { data }: { data: HomePageData & { i18n?: I18nPayload } } = $props()
+	let screenHome: HTMLDivElement | null = $state(null)
+	let homeTopbar: HomeTopbarHandle | null = $state(null)
+	let isCompactLayout = $state(false)
+	let prefersReducedMotion = $state(false)
+	let topbarMode = $state<TopbarMode>('main')
+	let topbarMotionLocked = $state(false)
 
-	const { navigationManager } = getNavigationContext();
-	const messages = $derived(data.i18n?.messages);
-	const viewModel = $derived.by(() => createHomePageViewModel(data));
-	const currentTopbarState = $derived(navigationManager.pageState.topbar);
+	const { navigationManager } = getNavigationContext()
+	const messages = $derived(data.i18n?.messages)
+	const viewModel = $derived.by(() => createHomePageViewModel(data))
+	const currentTopbarState = $derived(navigationManager.pageState.topbar)
 	const pendingTopbarState = $derived(
 		navigationManager.pendingPageState?.topbar ?? currentTopbarState
-	);
-	const homeBodyPhase = $derived(navigationManager.phase === 'exiting' ? 'exiting' : 'idle');
-	const pageExitDurationMs = $derived(prefersReducedMotion ? 140 : 320);
+	)
+	const homeBodyPhase = $derived(navigationManager.phase === 'exiting' ? 'exiting' : 'idle')
+	const pageExitDurationMs = $derived(prefersReducedMotion ? 140 : 320)
 
 	function t(key: string) {
-		return messages ? translate(messages, key) : key;
+		return messages ? translate(messages, key) : key
 	}
 
 	function handleTopbarStateChange(event: CustomEvent<{ mode: TopbarMode; locked: boolean }>) {
-		topbarMode = event.detail.mode;
-		topbarMotionLocked = event.detail.locked;
+		topbarMode = event.detail.mode
+		topbarMotionLocked = event.detail.locked
 	}
 
 	async function handleWorkAction() {
 		if (topbarMotionLocked || navigationManager.phase !== 'idle' || !homeTopbar) {
-			return;
+			return
 		}
 
 		const targetPageState = createPageState({
 			routeState: resolveRouteState({ pathname: homeWorkTarget, status: homeWorkTargetStatus }),
 			data,
 			messages
-		});
+		})
 
 		const started = navigationManager.beginPageSwitch(homeWorkTarget, targetPageState, {
 			origin: 'home-work',
 			reducedMotion: prefersReducedMotion
-		});
+		})
 
 		if (!started) {
-			return;
+			return
 		}
 
 		try {
 			await Promise.all([
 				new Promise((resolvePromise) => {
-					setTimeout(resolvePromise, pageExitDurationMs);
+					setTimeout(resolvePromise, pageExitDurationMs)
 				}),
 				homeTopbar.transitionTo('subpage', 'cta')
-			]);
-			navigationManager.markNavigating();
-			await goto(homeWorkTarget);
+			])
+			navigationManager.markNavigating()
+			await goto(resolve(homeWorkTarget))
 		} catch {
-			navigationManager.cancelPageSwitch();
-			await homeTopbar.transitionTo('main', 'back').catch(() => undefined);
+			navigationManager.cancelPageSwitch()
+			await homeTopbar.transitionTo('main', 'back').catch(() => undefined)
 		}
 	}
 
 	onMount(() => {
 		const unbindCompact = bindMediaQuery(compactQuery, (matches) => {
-			isCompactLayout = matches;
-		});
+			isCompactLayout = matches
+		})
 		const unbindReducedMotion = bindMediaQuery(reducedMotionQuery, (matches) => {
-			prefersReducedMotion = matches;
-		});
+			prefersReducedMotion = matches
+		})
 
 		return () => {
-			unbindCompact();
-			unbindReducedMotion();
-		};
-	});
+			unbindCompact()
+			unbindReducedMotion()
+		}
+	})
 </script>
 
 <section class="home-shell">
@@ -138,7 +138,7 @@
 
 		<aside class="home-right-pane">
 			{#if data.featuredPost}
-				<a class="home-event-banner" href={data.featuredPost.permalink}>
+				<a class="home-event-banner" href={resolve(data.featuredPost.permalink)}>
 					<span class="home-event-banner__tag">Featured</span>
 					<strong>{data.featuredPost.title}</strong>
 					<small>{data.featuredPost.category ?? '未分类'}</small>
@@ -161,12 +161,12 @@
 
 		<section class="home-mission-strip" aria-label="Mission banner">
 			<div class="mission-strip__marquee">
-				{#each [false, true] as isClone}
+				{#each [false, true] as isClone (isClone)}
 					<div class="mission-strip__group" aria-hidden={isClone}>
 						{#each viewModel.missionPreview as mission (`${isClone ? 'clone' : 'base'}-${mission.slug}`)}
 							<a
 								class={`mission-strip__item mission-strip__item--${mission.tone}`}
-								href={mission.href}
+								href={resolve(mission.href)}
 								tabindex={isClone ? -1 : undefined}
 							>
 								<span>{mission.kicker}</span>

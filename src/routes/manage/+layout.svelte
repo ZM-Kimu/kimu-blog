@@ -1,7 +1,7 @@
 <script lang="ts">
-	import ManageShell from '$lib/components/manage/ManageShell.svelte';
+	import ManageShell from '$lib/features/manage/components/ManageShell.svelte'
 
-	let { children, data } = $props();
+	let { children, data } = $props()
 </script>
 
 <ManageShell session={data.session}>

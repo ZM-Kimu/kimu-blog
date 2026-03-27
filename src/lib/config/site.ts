@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/public';
+import { env } from '$env/dynamic/public'
 
 export const siteConfig = {
 	name: env.PUBLIC_SITE_NAME || 'Kimu Blog',
@@ -7,4 +7,4 @@ export const siteConfig = {
 	url: env.PUBLIC_SITE_URL || 'https://example.com',
 	author: 'Kimu',
 	ogImage: '/images/og-default.svg'
-} as const;
+} as const

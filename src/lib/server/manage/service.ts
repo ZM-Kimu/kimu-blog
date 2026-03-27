@@ -6,4 +6,4 @@ export {
 	getManageSession,
 	listManagedPosts,
 	updateManagedPost
-} from '$lib/server/manage/posts';
+} from '$lib/server/manage/posts'

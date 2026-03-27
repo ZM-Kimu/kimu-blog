@@ -1,36 +1,36 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
-	import { translate, type LocaleMessages } from '$lib/i18n';
-	import { appShellNav, hudStatusChips } from '$lib/config/app-shell';
-	import { siteConfig } from '$lib/config/site';
+	import { resolve } from '$app/paths'
+	import { page } from '$app/state'
+	import { translate, type LocaleMessages } from '$lib/i18n'
+	import { appShellNav, hudStatusChips } from '$lib/config/app-shell'
+	import { siteConfig } from '$lib/config/site'
 
-	let { messages }: { messages?: LocaleMessages } = $props();
+	let { messages }: { messages?: LocaleMessages } = $props()
 
-	let compact = $state(false);
-	const t = (key: string) => (messages ? translate(messages, key) : key);
+	let compact = $state(false)
+	const t = (key: string) => (messages ? translate(messages, key) : key)
 
 	const currentSection = $derived.by(() => {
-		const { pathname } = page.url;
+		const { pathname } = page.url
 
 		if (pathname === '/blog/archive') {
-			return t('shell.section.archive');
+			return t('shell.section.archive')
 		}
 
 		if (pathname.startsWith('/blog/') && pathname !== '/blog') {
-			return t('shell.section.dossier');
+			return t('shell.section.dossier')
 		}
 
 		const activeItem = appShellNav.find((item) =>
 			item.href === '/' ? pathname === item.href : pathname.startsWith(item.href)
-		);
+		)
 
-		return activeItem ? t(activeItem.labelKey) : t('shell.section.interface');
-	});
+		return activeItem ? t(activeItem.labelKey) : t('shell.section.interface')
+	})
 
 	const toggleCompact = () => {
-		compact = !compact;
-	};
+		compact = !compact
+	}
 </script>
 
 <header class:compact class="hud-header">

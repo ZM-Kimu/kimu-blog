@@ -1,3 +1,14 @@
+export type InternalHref =
+	| '/'
+	| '/about'
+	| '/blog'
+	| '/blog/archive'
+	| '/favorites'
+	| '/updates'
+	| '/__debug/error-404'
+	| '/__debug/error-500'
+	| `/blog/${string}`
+
 export type RouteKind =
 	| 'home'
 	| 'blog'
@@ -8,65 +19,65 @@ export type RouteKind =
 	| 'updates'
 	| 'favorites'
 	| 'error'
-	| 'unknown';
+	| 'unknown'
 
 export type RouteState = {
-	kind: RouteKind;
-	pathname: string;
-	status: number;
-	isError: boolean;
-	slug?: string;
-	tag?: string;
-};
+	kind: RouteKind
+	pathname: string
+	status: number
+	isError: boolean
+	slug?: string
+	tag?: string
+}
 
 export type TopbarMetric = {
-	key: string;
-	value: string;
-	ariaLabel: string;
+	key: string
+	value: string
+	ariaLabel: string
 	icon: {
-		src: string;
-		mode: 'mask' | 'image';
-		tint?: string;
-	};
-};
+		src: string
+		mode: 'mask' | 'image'
+		tint?: string
+	}
+}
 
 export type TopbarAction = {
-	key: string;
-	ariaLabel: string;
+	key: string
+	ariaLabel: string
 	icon: {
-		src: string;
-		mode: 'mask' | 'image';
-		tint?: string;
-	};
-	interactive?: boolean;
-};
+		src: string
+		mode: 'mask' | 'image'
+		tint?: string
+	}
+	interactive?: boolean
+}
 
 export type BackBehavior = {
-	kind: 'history';
-	fallbackHref: string;
-};
+	kind: 'history'
+	fallbackHref: InternalHref
+}
 
 export type TopbarState = {
-	variant: 'main' | 'subpage';
-	title: string;
-	metrics: readonly TopbarMetric[];
-	actions: readonly TopbarAction[];
-	back?: BackBehavior;
-	motionPolicy?: 'rich' | 'reduced';
-};
+	variant: 'main' | 'subpage'
+	title: string
+	metrics: readonly TopbarMetric[]
+	actions: readonly TopbarAction[]
+	back?: BackBehavior
+	motionPolicy?: 'rich' | 'reduced'
+}
 
 export type PageState = {
-	route: RouteState;
-	title: string;
-	transitionKey: string;
-	shellMode: 'screen' | 'shell';
-	showGlobalChrome: boolean;
-	topbar: TopbarState;
-};
+	route: RouteState
+	title: string
+	transitionKey: string
+	shellMode: 'screen' | 'shell'
+	showGlobalChrome: boolean
+	topbar: TopbarState
+}
 
-export type TransitionPhase = 'idle' | 'exiting' | 'navigating' | 'entering';
+export type TransitionPhase = 'idle' | 'exiting' | 'navigating' | 'entering'
 
 export type BeginPageSwitchOptions = {
-	origin: string;
-	reducedMotion?: boolean;
-};
+	origin: string
+	reducedMotion?: boolean
+}

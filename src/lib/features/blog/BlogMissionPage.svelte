@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import type { BlogPost, CategorySummary } from '$lib/types/content';
-	import { missionCatalog } from './config';
-	import MissionCard from './components/MissionCard.svelte';
-	import PostCard from './components/PostCard.svelte';
+	import { resolve } from '$app/paths'
+	import type { BlogPost, CategorySummary } from '$lib/types/content'
+	import { missionCatalog } from './config'
+	import MissionCard from './components/MissionCard.svelte'
+	import PostCard from './components/PostCard.svelte'
 
 	let {
 		data
 	}: {
 		data: {
-			categories: CategorySummary[];
-			latestPosts: BlogPost[];
-			totalPosts: number;
-		};
-	} = $props();
+			categories: CategorySummary[]
+			latestPosts: BlogPost[]
+			totalPosts: number
+		}
+	} = $props()
 
 	const missions = $derived.by(() =>
 		missionCatalog.map((mission) => ({
@@ -26,7 +26,7 @@
 					)
 					.reduce((total: number, category: CategorySummary) => total + category.count, 0) ?? 0
 		}))
-	);
+	)
 </script>
 
 <section class="mission-screen">

@@ -1,32 +1,32 @@
 <script module lang="ts">
-	import type { Component } from 'svelte';
+	import type { Component } from 'svelte'
 
 	type BlogContentModule = {
-		default: Component<Record<string, never>>;
-	};
+		default: Component<Record<string, never>>
+	}
 
 	const modules = import.meta.glob('/src/lib/content/blog/*.{md,svx}', {
 		eager: true
-	}) as Record<string, BlogContentModule>;
+	}) as Record<string, BlogContentModule>
 </script>
 
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import TagChip from './components/TagChip.svelte';
-	import { formatDate } from '$lib/utils/date';
-	import { error } from '@sveltejs/kit';
+	import { resolve } from '$app/paths'
+	import TagChip from './components/TagChip.svelte'
+	import { formatDate } from '$lib/utils/date'
+	import { error } from '@sveltejs/kit'
 
-	let { data } = $props();
+	let { data } = $props()
 
 	const Content = $derived.by(() => {
-		const contentModule = modules[data.post.path];
+		const contentModule = modules[data.post.path]
 
 		if (!contentModule) {
-			throw error(404, '文章模块不存在');
+			throw error(404, '文章模块不存在')
 		}
 
-		return contentModule.default;
-	});
+		return contentModule.default
+	})
 </script>
 
 <article class="dossier-shell">

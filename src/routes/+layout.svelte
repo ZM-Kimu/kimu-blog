@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { page } from '$app/state';
-	import { untrack } from 'svelte';
-	import '$lib/../app.css';
+	import { browser } from '$app/environment'
+	import { page } from '$app/state'
+	import { untrack } from 'svelte'
+	import '$lib/../app.css'
 
-	import favicon from '$lib/assets/favicon.svg';
-	import DockNav from '$lib/components/layout/DockNav.svelte';
-	import Footer from '$lib/components/layout/Footer.svelte';
-	import Header from '$lib/components/layout/Header.svelte';
-	import { siteConfig } from '$lib/config/site';
-	import { setNavigationContext } from '$lib/navigation/context';
-	import { createNavigationStateManager } from '$lib/navigation/navigation-state.svelte';
-	import { createPageState } from '$lib/navigation/page-state';
-	import { resolveRouteState } from '$lib/navigation/route-state';
+	import favicon from '$lib/assets/favicon.svg'
+	import DockNav from '$lib/components/layout/DockNav.svelte'
+	import Footer from '$lib/components/layout/Footer.svelte'
+	import Header from '$lib/components/layout/Header.svelte'
+	import { siteConfig } from '$lib/config/site'
+	import { setNavigationContext } from '$lib/navigation/context'
+	import { createNavigationStateManager } from '$lib/navigation/navigation-state.svelte'
+	import { createPageState } from '$lib/navigation/page-state'
+	import { resolveRouteState } from '$lib/navigation/route-state'
 
-	let { children, data } = $props();
+	let { children, data } = $props()
 	const navigationManager = createNavigationStateManager(
 		untrack(() => resolveRouteState({ pathname: page.url.pathname, status: page.status })),
 		untrack(() =>
@@ -24,39 +24,41 @@
 				messages: data.i18n?.messages
 			})
 		)
-	);
-	setNavigationContext({ navigationManager });
-	const messages = $derived(data.i18n?.messages);
-	const routeState = $derived(resolveRouteState({ pathname: page.url.pathname, status: page.status }));
+	)
+	setNavigationContext({ navigationManager })
+	const messages = $derived(data.i18n?.messages)
+	const routeState = $derived(
+		resolveRouteState({ pathname: page.url.pathname, status: page.status })
+	)
 	const pageState = $derived(
 		createPageState({
 			routeState,
 			data,
 			messages
 		})
-	);
+	)
 	const isManageRoute = $derived(
 		page.url.pathname === '/manage' || page.url.pathname.startsWith('/manage/')
-	);
-	const isScreenRoute = $derived(pageState.shellMode === 'screen');
-	const isBareRoute = $derived(isScreenRoute || isManageRoute);
-	const showGlobalChrome = $derived(pageState.showGlobalChrome && !isManageRoute);
+	)
+	const isScreenRoute = $derived(pageState.shellMode === 'screen')
+	const isBareRoute = $derived(isScreenRoute || isManageRoute)
+	const showGlobalChrome = $derived(pageState.showGlobalChrome && !isManageRoute)
 	const isShellEntering = $derived(
 		navigationManager.phase === 'entering' && navigationManager.pendingTarget === page.url.pathname
-	);
+	)
 
 	$effect(() => {
 		if (!browser || !data?.i18n?.locale) {
-			return;
+			return
 		}
 
-		document.documentElement.lang = data.i18n.locale;
-		document.documentElement.dataset.locale = data.i18n.locale;
-	});
+		document.documentElement.lang = data.i18n.locale
+		document.documentElement.dataset.locale = data.i18n.locale
+	})
 
 	$effect(() => {
-		navigationManager.sync(routeState, pageState);
-	});
+		navigationManager.sync(routeState, pageState)
+	})
 </script>
 
 <svelte:head>

@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import type { ManagePostListItem } from '$lib/features/manage/types';
-	import { formatDate } from '$lib/utils/date';
+	import { resolve } from '$app/paths'
+	import type { ManagePostListItem } from '$lib/features/manage/types'
+	import { formatDate } from '$lib/utils/date'
 
 	let { items } = $props<{
-		items: ManagePostListItem[];
-	}>();
+		items: ManagePostListItem[]
+	}>()
 
-	let query = $state('');
+	let query = $state('')
 
 	const filteredItems = $derived.by(() => {
-		const normalized = query.trim().toLowerCase();
+		const normalized = query.trim().toLowerCase()
 
 		if (!normalized) {
-			return items;
+			return items
 		}
 
 		return items.filter((item: ManagePostListItem) =>
@@ -21,8 +21,8 @@
 				.join(' ')
 				.toLowerCase()
 				.includes(normalized)
-		);
-	});
+		)
+	})
 </script>
 
 <section class="manage-list panel">

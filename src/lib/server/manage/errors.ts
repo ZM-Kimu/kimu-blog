@@ -5,11 +5,11 @@ export class ManageError extends Error {
 		message: string,
 		public readonly details?: unknown
 	) {
-		super(message);
-		this.name = 'ManageError';
+		super(message)
+		this.name = 'ManageError'
 	}
 }
 
 export function isManageError(error: unknown): error is ManageError {
-	return error instanceof ManageError;
+	return error instanceof ManageError
 }

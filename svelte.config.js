@@ -1,6 +1,6 @@
-import adapter from '@sveltejs/adapter-cloudflare';
-import { mdsvex } from 'mdsvex';
-import remarkGfm from 'remark-gfm';
+import adapter from '@sveltejs/adapter-cloudflare'
+import { mdsvex } from 'mdsvex'
+import remarkGfm from 'remark-gfm'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -23,6 +23,6 @@ const config = {
 		})
 	],
 	extensions: ['.svelte', '.md', '.svx']
-};
+}
 
-export default config;
+export default config

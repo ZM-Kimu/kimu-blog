@@ -1,18 +1,18 @@
-import { siteConfig } from '$lib/config/site';
-import { translate, type LocaleMessages } from '$lib/i18n';
+import { siteConfig } from '$lib/config/site'
+import { translate, type LocaleMessages } from '$lib/i18n'
 
-import type { PageState, RouteState, TopbarAction, TopbarMetric } from './types';
+import type { PageState, RouteState, TopbarAction, TopbarMetric } from './types'
 
 function t(messages: LocaleMessages | undefined, key: string, fallback: string): string {
 	if (!messages) {
-		return fallback;
+		return fallback
 	}
 
-	const translated = translate(messages, key);
-	return translated === key ? fallback : translated;
+	const translated = translate(messages, key)
+	return translated === key ? fallback : translated
 }
 
-const placeholderCount = '00';
+const placeholderCount = '00'
 
 const topbarMetricIcons = {
 	articles: {
@@ -28,7 +28,7 @@ const topbarMetricIcons = {
 		src: '/icons/topbar/tick_mark_yellow.png',
 		mode: 'image' as const
 	}
-};
+}
 
 const topbarToolIcons = {
 	language: {
@@ -51,7 +51,7 @@ const topbarToolIcons = {
 		mode: 'mask' as const,
 		tint: '#47639c'
 	}
-};
+}
 
 function createSharedMetrics(): readonly TopbarMetric[] {
 	return [
@@ -73,7 +73,7 @@ function createSharedMetrics(): readonly TopbarMetric[] {
 			ariaLabel: `最近 contribute 数 ${placeholderCount}`,
 			icon: topbarMetricIcons.contributes
 		}
-	];
+	]
 }
 
 function createHomeActions(): readonly TopbarAction[] {
@@ -96,7 +96,7 @@ function createHomeActions(): readonly TopbarAction[] {
 			icon: topbarToolIcons.settings,
 			interactive: false
 		}
-	];
+	]
 }
 
 function createDefaultSubpageActions(): readonly TopbarAction[] {
@@ -119,7 +119,7 @@ function createDefaultSubpageActions(): readonly TopbarAction[] {
 			icon: topbarToolIcons.home,
 			interactive: false
 		}
-	];
+	]
 }
 
 function resolvePageTitle(
@@ -129,35 +129,35 @@ function resolvePageTitle(
 ): string {
 	switch (route.kind) {
 		case 'home':
-			return siteConfig.name;
+			return siteConfig.name
 		case 'blog':
-			return t(messages, 'nav.blog', 'Blog');
+			return t(messages, 'nav.blog', 'Blog')
 		case 'archive':
-			return t(messages, 'shell.section.archive', 'Archive');
+			return t(messages, 'shell.section.archive', 'Archive')
 		case 'post':
 			return typeof data.post === 'object' &&
 				data.post !== null &&
 				'title' in data.post &&
 				typeof data.post.title === 'string'
 				? data.post.title
-				: t(messages, 'shell.section.dossier', 'Dossier');
+				: t(messages, 'shell.section.dossier', 'Dossier')
 		case 'tag':
 			return typeof data.tag === 'object' &&
 				data.tag !== null &&
 				'name' in data.tag &&
 				typeof data.tag.name === 'string'
 				? `#${data.tag.name}`
-				: '#tag';
+				: '#tag'
 		case 'about':
-			return t(messages, 'nav.about', 'About');
+			return t(messages, 'nav.about', 'About')
 		case 'updates':
-			return t(messages, 'nav.updates', 'Updates');
+			return t(messages, 'nav.updates', 'Updates')
 		case 'favorites':
-			return t(messages, 'nav.favorites', 'Favorites');
+			return t(messages, 'nav.favorites', 'Favorites')
 		case 'error':
-			return route.status === 404 ? 'Fallback Route' : 'System Recovery';
+			return route.status === 404 ? 'Fallback Route' : 'System Recovery'
 		default:
-			return siteConfig.name;
+			return siteConfig.name
 	}
 }
 
@@ -166,12 +166,12 @@ export function createPageState({
 	data,
 	messages
 }: {
-	routeState: RouteState;
-	data: Record<string, unknown>;
-	messages?: LocaleMessages;
+	routeState: RouteState
+	data: Record<string, unknown>
+	messages?: LocaleMessages
 }): PageState {
-	const title = resolvePageTitle(routeState, data, messages);
-	const isScreenRoute = routeState.kind === 'home' || routeState.kind === 'error';
+	const title = resolvePageTitle(routeState, data, messages)
+	const isScreenRoute = routeState.kind === 'home' || routeState.kind === 'error'
 
 	if (routeState.kind === 'home') {
 		return {
@@ -187,7 +187,7 @@ export function createPageState({
 				actions: createHomeActions(),
 				motionPolicy: 'rich'
 			}
-		};
+		}
 	}
 
 	if (routeState.kind === 'error') {
@@ -208,17 +208,23 @@ export function createPageState({
 				},
 				motionPolicy: 'rich'
 			}
-		};
+		}
 	}
 
 	const fallbackHref =
-		routeState.kind === 'archive' ? '/blog'
-		: routeState.kind === 'post' ? '/blog'
-		: routeState.kind === 'tag' ? '/blog'
-		: routeState.kind === 'about' ? '/'
-		: routeState.kind === 'updates' ? '/'
-		: routeState.kind === 'favorites' ? '/'
-		: '/';
+		routeState.kind === 'archive'
+			? '/blog'
+			: routeState.kind === 'post'
+				? '/blog'
+				: routeState.kind === 'tag'
+					? '/blog'
+					: routeState.kind === 'about'
+						? '/'
+						: routeState.kind === 'updates'
+							? '/'
+							: routeState.kind === 'favorites'
+								? '/'
+								: '/'
 
 	return {
 		route: routeState,
@@ -237,5 +243,5 @@ export function createPageState({
 			},
 			motionPolicy: 'rich'
 		}
-	};
+	}
 }

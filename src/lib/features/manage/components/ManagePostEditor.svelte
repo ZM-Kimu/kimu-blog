@@ -1,29 +1,29 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import { onDestroy, tick } from 'svelte';
+	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
+	import { onDestroy, tick } from 'svelte'
 
 	import {
 		createManagedPostRequest,
 		deleteManagedPostRequest,
 		ManageApiError,
 		updateManagedPostRequest
-	} from '$lib/features/manage/api';
+	} from '$lib/features/manage/api'
 	import {
 		createEmptyManagePostFormState,
 		createManagePostFormState,
 		toManageWritePayload
-	} from '$lib/features/manage/form';
-	import { renderManagePreviewHtml, resolvePreviewAssetPath } from '$lib/features/manage/preview';
-	import type { ManagePostDocument, ManagePostFormState } from '$lib/features/manage/types';
-	import ManagePreviewPane from '$lib/components/manage/ManagePreviewPane.svelte';
+	} from '$lib/features/manage/form'
+	import { renderManagePreviewHtml, resolvePreviewAssetPath } from '$lib/features/manage/preview'
+	import type { ManagePostDocument, ManagePostFormState } from '$lib/features/manage/types'
+	import ManagePreviewPane from '$lib/features/manage/components/ManagePreviewPane.svelte'
 
-	type EditorMode = 'create' | 'edit';
+	type EditorMode = 'create' | 'edit'
 
 	interface PendingUpload {
-		file: File;
-		placeholder: string;
-		previewUrl: string;
+		file: File
+		placeholder: string
+		previewUrl: string
 	}
 
 	let {
@@ -31,218 +31,218 @@
 		initialPost = null,
 		mode
 	} = $props<{
-		csrfToken: string;
-		initialPost?: ManagePostDocument | null;
-		mode: EditorMode;
-	}>();
+		csrfToken: string
+		initialPost?: ManagePostDocument | null
+		mode: EditorMode
+	}>()
 
-	let sourceTextarea: HTMLTextAreaElement | null = null;
-	let form = $state<ManagePostFormState>(createEmptyManagePostFormState());
-	let currentSlug = $state('');
-	let assetPaths = $state<string[]>([]);
-	let pendingUploads = $state<PendingUpload[]>([]);
-	let errorMessage = $state('');
-	let statusMessage = $state('');
-	let isSubmitting = $state(false);
-	let lastResetKey = $state('__boot__');
+	let sourceTextarea: HTMLTextAreaElement | null = null
+	let form = $state<ManagePostFormState>(createEmptyManagePostFormState())
+	let currentSlug = $state('')
+	let assetPaths = $state<string[]>([])
+	let pendingUploads = $state<PendingUpload[]>([])
+	let errorMessage = $state('')
+	let statusMessage = $state('')
+	let isSubmitting = $state(false)
+	let lastResetKey = $state('__boot__')
 
 	function revokePendingUpload(upload: PendingUpload) {
-		URL.revokeObjectURL(upload.previewUrl);
+		URL.revokeObjectURL(upload.previewUrl)
 	}
 
 	function clearPendingUploads() {
 		for (const upload of pendingUploads) {
-			revokePendingUpload(upload);
+			revokePendingUpload(upload)
 		}
 
-		pendingUploads = [];
+		pendingUploads = []
 	}
 
 	onDestroy(() => {
-		clearPendingUploads();
-	});
+		clearPendingUploads()
+	})
 
 	function resetFromPost(post: ManagePostDocument | null) {
-		clearPendingUploads();
-		form = post ? createManagePostFormState(post) : createEmptyManagePostFormState();
-		currentSlug = post?.slug ?? '';
-		assetPaths = post?.assetPaths ?? [];
-		errorMessage = '';
-		statusMessage = '';
-		lastResetKey = post?.sha ?? '__new__';
+		clearPendingUploads()
+		form = post ? createManagePostFormState(post) : createEmptyManagePostFormState()
+		currentSlug = post?.slug ?? ''
+		assetPaths = post?.assetPaths ?? []
+		errorMessage = ''
+		statusMessage = ''
+		lastResetKey = post?.sha ?? '__new__'
 	}
 
 	$effect(() => {
-		const nextKey = initialPost?.sha ?? '__new__';
+		const nextKey = initialPost?.sha ?? '__new__'
 
 		if (nextKey !== lastResetKey) {
-			resetFromPost(initialPost);
+			resetFromPost(initialPost)
 		}
-	});
+	})
 
 	const uploadMap = $derived.by(
 		() => new Map(pendingUploads.map((upload) => [upload.placeholder, upload.previewUrl]))
-	);
-	const previewHtml = $derived.by(() => renderManagePreviewHtml(form.source, uploadMap));
-	const previewCover = $derived.by(() => resolvePreviewAssetPath(form.cover, uploadMap));
+	)
+	const previewHtml = $derived.by(() => renderManagePreviewHtml(form.source, uploadMap))
+	const previewCover = $derived.by(() => resolvePreviewAssetPath(form.cover, uploadMap))
 	const previewTags = $derived.by(() =>
 		form.tagsInput
 			.split(',')
 			.map((tag) => tag.trim())
 			.filter(Boolean)
-	);
+	)
 	const previewAssetPaths = $derived.by(() => {
-		const uploaded = pendingUploads.map((upload) => upload.placeholder);
-		const base = form.cover ? [form.cover, ...assetPaths] : assetPaths;
+		const uploaded = pendingUploads.map((upload) => upload.placeholder)
+		const base = form.cover ? [form.cover, ...assetPaths] : assetPaths
 
-		return Array.from(new Set([...base, ...uploaded]));
-	});
-	const submitLabel = $derived(mode === 'create' ? '创建文章' : '保存更改');
+		return Array.from(new Set([...base, ...uploaded]))
+	})
+	const submitLabel = $derived(mode === 'create' ? '创建文章' : '保存更改')
 
 	function appendUploads(files: File[]) {
-		const nextUploads = [...pendingUploads];
+		const nextUploads = [...pendingUploads]
 
 		for (const file of files) {
-			const placeholder = `upload://${file.name}`;
-			const existingIndex = nextUploads.findIndex((entry) => entry.placeholder === placeholder);
+			const placeholder = `upload://${file.name}`
+			const existingIndex = nextUploads.findIndex((entry) => entry.placeholder === placeholder)
 
 			if (existingIndex >= 0) {
-				revokePendingUpload(nextUploads[existingIndex]);
-				nextUploads.splice(existingIndex, 1);
+				revokePendingUpload(nextUploads[existingIndex])
+				nextUploads.splice(existingIndex, 1)
 			}
 
 			nextUploads.push({
 				file,
 				placeholder,
 				previewUrl: URL.createObjectURL(file)
-			});
+			})
 		}
 
-		pendingUploads = nextUploads;
+		pendingUploads = nextUploads
 
 		if (!form.cover && nextUploads.length) {
-			form.cover = nextUploads[0].placeholder;
+			form.cover = nextUploads[0].placeholder
 		}
 	}
 
 	function handleFileSelection(event: Event) {
-		const input = event.currentTarget as HTMLInputElement;
-		const files = Array.from(input.files ?? []);
+		const input = event.currentTarget as HTMLInputElement
+		const files = Array.from(input.files ?? [])
 
 		if (files.length) {
-			appendUploads(files);
+			appendUploads(files)
 		}
 
-		input.value = '';
+		input.value = ''
 	}
 
 	function removeUpload(placeholder: string) {
-		const nextUploads: PendingUpload[] = [];
+		const nextUploads: PendingUpload[] = []
 
 		for (const upload of pendingUploads) {
 			if (upload.placeholder === placeholder) {
-				revokePendingUpload(upload);
-				continue;
+				revokePendingUpload(upload)
+				continue
 			}
 
-			nextUploads.push(upload);
+			nextUploads.push(upload)
 		}
 
-		pendingUploads = nextUploads;
+		pendingUploads = nextUploads
 
 		if (form.cover === placeholder) {
-			form.cover = '';
+			form.cover = ''
 		}
 	}
 
 	async function insertIntoSource(snippet: string) {
 		if (!sourceTextarea) {
-			form.source = `${form.source}\n${snippet}`.trimStart();
-			return;
+			form.source = `${form.source}\n${snippet}`.trimStart()
+			return
 		}
 
-		const start = sourceTextarea.selectionStart;
-		const end = sourceTextarea.selectionEnd;
-		form.source = `${form.source.slice(0, start)}${snippet}${form.source.slice(end)}`;
+		const start = sourceTextarea.selectionStart
+		const end = sourceTextarea.selectionEnd
+		form.source = `${form.source.slice(0, start)}${snippet}${form.source.slice(end)}`
 
-		await tick();
-		sourceTextarea.focus();
-		sourceTextarea.selectionStart = sourceTextarea.selectionEnd = start + snippet.length;
+		await tick()
+		sourceTextarea.focus()
+		sourceTextarea.selectionStart = sourceTextarea.selectionEnd = start + snippet.length
 	}
 
 	function useUploadAsCover(placeholder: string) {
-		form.cover = placeholder;
+		form.cover = placeholder
 	}
 
 	async function insertUploadIntoSource(placeholder: string) {
-		await insertIntoSource(`\n\n![image](${placeholder})\n`);
+		await insertIntoSource(`\n\n![image](${placeholder})\n`)
 	}
 
 	function toFriendlyError(error: unknown) {
 		if (!(error instanceof ManageApiError)) {
-			return error instanceof Error ? error.message : '保存失败，请稍后重试。';
+			return error instanceof Error ? error.message : '保存失败，请稍后重试。'
 		}
 
 		if (error.code === 'sha_conflict') {
-			return '仓库中的文章已经变化，请刷新当前页面后重新编辑。';
+			return '仓库中的文章已经变化，请刷新当前页面后重新编辑。'
 		}
 
-		return error.message;
+		return error.message
 	}
 
 	async function handleSubmit(event: SubmitEvent) {
-		event.preventDefault();
-		errorMessage = '';
-		statusMessage = '';
-		isSubmitting = true;
+		event.preventDefault()
+		errorMessage = ''
+		statusMessage = ''
+		isSubmitting = true
 
 		try {
-			const payload = toManageWritePayload(form);
-			const files = pendingUploads.map((upload) => upload.file);
+			const payload = toManageWritePayload(form)
+			const files = pendingUploads.map((upload) => upload.file)
 			const response =
 				mode === 'create'
 					? await createManagedPostRequest(fetch, csrfToken, payload, files)
-					: await updateManagedPostRequest(fetch, csrfToken, currentSlug, payload, files);
+					: await updateManagedPostRequest(fetch, csrfToken, currentSlug, payload, files)
 
-			clearPendingUploads();
-			assetPaths = response.assetPaths;
-			form.expectedSha = response.sha;
-			currentSlug = response.slug;
+			clearPendingUploads()
+			assetPaths = response.assetPaths
+			form.expectedSha = response.sha
+			currentSlug = response.slug
 
 			if (mode === 'create' || response.slug !== initialPost?.slug) {
-				await goto(resolve(`/manage/posts/${response.slug}`));
-				return;
+				await goto(resolve(`/manage/posts/${response.slug}`))
+				return
 			}
 
-			statusMessage = `已提交 ${response.commitSha.slice(0, 7)}，最新内容已同步到仓库。`;
+			statusMessage = `已提交 ${response.commitSha.slice(0, 7)}，最新内容已同步到仓库。`
 		} catch (error) {
-			errorMessage = toFriendlyError(error);
+			errorMessage = toFriendlyError(error)
 		} finally {
-			isSubmitting = false;
+			isSubmitting = false
 		}
 	}
 
 	async function handleDelete() {
 		if (mode !== 'edit' || !form.expectedSha || !currentSlug) {
-			return;
+			return
 		}
 
 		if (!window.confirm(`确认删除文章 ${currentSlug}？这会直接提交到仓库。`)) {
-			return;
+			return
 		}
 
-		errorMessage = '';
-		statusMessage = '';
-		isSubmitting = true;
+		errorMessage = ''
+		statusMessage = ''
+		isSubmitting = true
 
 		try {
-			await deleteManagedPostRequest(fetch, csrfToken, currentSlug, form.expectedSha);
-			clearPendingUploads();
-			await goto(resolve('/manage/posts'));
+			await deleteManagedPostRequest(fetch, csrfToken, currentSlug, form.expectedSha)
+			clearPendingUploads()
+			await goto(resolve('/manage/posts'))
 		} catch (error) {
-			errorMessage = toFriendlyError(error);
+			errorMessage = toFriendlyError(error)
 		} finally {
-			isSubmitting = false;
+			isSubmitting = false
 		}
 	}
 </script>

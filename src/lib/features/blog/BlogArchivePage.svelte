@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import TagChip from './components/TagChip.svelte';
-	import { formatDate } from '$lib/utils/date';
+	import { resolve } from '$app/paths'
+	import TagChip from './components/TagChip.svelte'
+	import { formatDate } from '$lib/utils/date'
 
-	let { data } = $props();
+	let { data } = $props()
 </script>
 
 <section class="archive-screen">

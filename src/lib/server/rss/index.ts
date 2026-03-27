@@ -1,5 +1,5 @@
-import { siteConfig } from '$lib/config/site';
-import type { BlogPost } from '$lib/types/content';
+import { siteConfig } from '$lib/config/site'
+import type { BlogPost } from '$lib/types/content'
 
 const escapeXml = (value: string) =>
 	value
@@ -7,7 +7,7 @@ const escapeXml = (value: string) =>
 		.replaceAll('<', '&lt;')
 		.replaceAll('>', '&gt;')
 		.replaceAll('"', '&quot;')
-		.replaceAll("'", '&apos;');
+		.replaceAll("'", '&apos;')
 
 export function buildRssXml(posts: BlogPost[]) {
 	const items = posts
@@ -21,7 +21,7 @@ export function buildRssXml(posts: BlogPost[]) {
 			<description>${escapeXml(post.description)}</description>
 		</item>`
 		)
-		.join('');
+		.join('')
 
 	return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
@@ -31,5 +31,5 @@ export function buildRssXml(posts: BlogPost[]) {
 		<description>${escapeXml(siteConfig.description)}</description>
 		${items}
 	</channel>
-</rss>`;
+</rss>`
 }

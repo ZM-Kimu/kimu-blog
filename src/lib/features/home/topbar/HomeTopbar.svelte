@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount, tick } from 'svelte';
-	import HomeTopbarMain from './HomeTopbarMain.svelte';
-	import HomeTopbarSubpage from './HomeTopbarSubpage.svelte';
-	import { fallbackProfilePath } from './home-topbar.constants';
+	import { createEventDispatcher, onMount, tick } from 'svelte'
+	import HomeTopbarMain from './HomeTopbarMain.svelte'
+	import HomeTopbarSubpage from './HomeTopbarSubpage.svelte'
+	import { fallbackProfilePath } from './home-topbar.constants'
 	import {
 		focusAfterTransition,
 		loadMotionLibs,
@@ -10,7 +10,7 @@
 		resetTransitionStyles,
 		runRichTransition,
 		runSimpleTransition
-	} from './home-topbar.motion';
+	} from './home-topbar.motion'
 	import type {
 		HomeTopbarAction,
 		HomeTopbarMetric,
@@ -19,7 +19,7 @@
 		MotionLibs,
 		TopbarMode,
 		TriggerOrigin
-	} from './home-topbar.types';
+	} from './home-topbar.types'
 
 	let {
 		host = null,
@@ -35,40 +35,40 @@
 		reducedMotion = false,
 		onSubpageBack
 	}: {
-		host?: HTMLElement | null;
-		mainMetrics: readonly HomeTopbarMetric[];
-		mainActions: readonly HomeTopbarAction[];
-		subpageMetrics: readonly HomeTopbarMetric[];
-		subpageActions: readonly HomeTopbarAction[];
-		subpageTitle: string;
-		authorName: string;
-		profileLevel?: string;
-		profileHref?: string;
-		compact?: boolean;
-		reducedMotion?: boolean;
-		onSubpageBack?: (() => void) | undefined;
-	} = $props();
+		host?: HTMLElement | null
+		mainMetrics: readonly HomeTopbarMetric[]
+		mainActions: readonly HomeTopbarAction[]
+		subpageMetrics: readonly HomeTopbarMetric[]
+		subpageActions: readonly HomeTopbarAction[]
+		subpageTitle: string
+		authorName: string
+		profileLevel?: string
+		profileHref?: '/' | '/about'
+		compact?: boolean
+		reducedMotion?: boolean
+		onSubpageBack?: (() => void) | undefined
+	} = $props()
 
 	const dispatch = createEventDispatcher<{
-		statechange: HomeTopbarStateDetail;
-	}>();
+		statechange: HomeTopbarStateDetail
+	}>()
 
-	let mode = $state<TopbarMode>('main');
-	let motionLocked = $state(false);
-	let motionLibs: MotionLibs | null = null;
-	let currentTimeline: ReturnType<typeof import('gsap').gsap.timeline> | null = null;
-	let profileShellPath = $state(fallbackProfilePath);
-	let topbarRoot: HTMLElement | null = $state(null);
-	let backButton: HTMLButtonElement | null = $state(null);
-	let backGlyph: HTMLSpanElement | null = $state(null);
-	let profileChip: HTMLAnchorElement | null = $state(null);
-	let titleWrap: HTMLDivElement | null = $state(null);
-	let stripShell: HTMLDivElement | null = $state(null);
-	let motionLayer: HTMLDivElement | null = $state(null);
+	let mode = $state<TopbarMode>('main')
+	let motionLocked = $state(false)
+	let motionLibs: MotionLibs | null = null
+	let currentTimeline: ReturnType<typeof import('gsap').gsap.timeline> | null = null
+	let profileShellPath = $state(fallbackProfilePath)
+	let topbarRoot: HTMLElement | null = $state(null)
+	let backButton: HTMLButtonElement | null = $state(null)
+	let backGlyph: HTMLSpanElement | null = $state(null)
+	let profileChip: HTMLAnchorElement | null = $state(null)
+	let titleWrap: HTMLDivElement | null = $state(null)
+	let stripShell: HTMLDivElement | null = $state(null)
+	let motionLayer: HTMLDivElement | null = $state(null)
 
 	$effect(() => {
-		dispatch('statechange', { mode, locked: motionLocked });
-	});
+		dispatch('statechange', { mode, locked: motionLocked })
+	})
 
 	function getRefs(): HomeTopbarRefs {
 		return {
@@ -79,33 +79,31 @@
 			titleWrap,
 			stripShell,
 			motionLayer
-		};
+		}
 	}
 
-	function setCurrentTimeline(
-		timeline: ReturnType<typeof import('gsap').gsap.timeline> | null
-	) {
-		currentTimeline = timeline;
+	function setCurrentTimeline(timeline: ReturnType<typeof import('gsap').gsap.timeline> | null) {
+		currentTimeline = timeline
 	}
 
 	async function requestTransition(nextMode: TopbarMode) {
 		if (motionLocked || nextMode === mode) {
-			return;
+			return
 		}
 
-		motionLocked = true;
-		let transitionSucceeded = false;
+		motionLocked = true
+		let transitionSucceeded = false
 
 		try {
-			const libs = motionLibs ?? (await loadMotionLibs());
+			const libs = motionLibs ?? (await loadMotionLibs())
 			if (libs && !motionLibs) {
-				motionLibs = libs;
+				motionLibs = libs
 			}
 
 			if (compact || reducedMotion || !libs) {
 				if (!libs) {
-					mode = nextMode;
-					await tick();
+					mode = nextMode
+					await tick()
 				} else {
 					await runSimpleTransition({
 						libs,
@@ -113,11 +111,11 @@
 						nextMode,
 						reducedMotionActive: reducedMotion,
 						setMode: (value) => {
-							mode = value;
+							mode = value
 						},
 						afterModeChange: async () => tick(),
 						setCurrentTimeline
-					});
+					})
 				}
 			} else {
 				await runRichTransition({
@@ -127,7 +125,7 @@
 					fromMode: mode,
 					nextMode,
 					setMode: (value) => {
-						mode = value;
+						mode = value
 					},
 					afterModeChange: async () => tick(),
 					setCurrentTimeline,
@@ -135,46 +133,46 @@
 					profileLevel,
 					authorName,
 					subpageTitle
-				});
+				})
 			}
 
-			transitionSucceeded = true;
+			transitionSucceeded = true
 		} catch {
-			resetTransitionStyles(motionLibs, getRefs());
-			getRefs().motionLayer?.replaceChildren();
+			resetTransitionStyles(motionLibs, getRefs())
+			getRefs().motionLayer?.replaceChildren()
 		} finally {
-			motionLocked = false;
-			currentTimeline = null;
+			motionLocked = false
+			currentTimeline = null
 
 			if (transitionSucceeded) {
-				focusAfterTransition(getRefs(), nextMode);
+				focusAfterTransition(getRefs(), nextMode)
 			}
 		}
 	}
 
 	export async function transitionTo(nextMode: TopbarMode, origin: TriggerOrigin) {
-		void origin;
-		await requestTransition(nextMode);
+		void origin
+		await requestTransition(nextMode)
 	}
 
 	export function toggle(origin: TriggerOrigin) {
-		const nextMode = mode === 'subpage' ? 'main' : 'subpage';
-		void transitionTo(nextMode, origin);
+		const nextMode = mode === 'subpage' ? 'main' : 'subpage'
+		void transitionTo(nextMode, origin)
 	}
 
 	onMount(() => {
 		void (async () => {
-			profileShellPath = await loadProfileShellPath();
-			motionLibs = await loadMotionLibs();
-		})();
+			profileShellPath = await loadProfileShellPath()
+			motionLibs = await loadMotionLibs()
+		})()
 
 		return () => {
-			currentTimeline?.kill();
-			currentTimeline = null;
-			getRefs().motionLayer?.replaceChildren();
-			resetTransitionStyles(motionLibs, getRefs());
-		};
-	});
+			currentTimeline?.kill()
+			currentTimeline = null
+			getRefs().motionLayer?.replaceChildren()
+			resetTransitionStyles(motionLibs, getRefs())
+		}
+	})
 </script>
 
 {#if mode === 'subpage'}
@@ -194,9 +192,9 @@
 	<HomeTopbarMain
 		metrics={mainMetrics}
 		actions={mainActions}
-		authorName={authorName}
-		profileLevel={profileLevel}
-		profileHref={profileHref}
+		{authorName}
+		{profileLevel}
+		{profileHref}
 		bind:topbarRoot
 		bind:profileChip
 	/>

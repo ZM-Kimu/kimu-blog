@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import PostCard from './components/PostCard.svelte';
-	import TagChip from './components/TagChip.svelte';
+	import { resolve } from '$app/paths'
+	import PostCard from './components/PostCard.svelte'
+	import TagChip from './components/TagChip.svelte'
 
-	let { data } = $props();
+	let { data } = $props()
 </script>
 
 <section class="tag-screen">

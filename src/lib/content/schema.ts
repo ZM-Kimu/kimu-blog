@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const datePattern = /^\d{4}-\d{2}-\d{2}$/
+const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 export const postFrontmatterSchema = z.object({
 	title: z.string().min(1),
@@ -19,6 +19,6 @@ export const postFrontmatterSchema = z.object({
 	toc: z.boolean().default(true),
 	readingTime: z.string().min(1).optional(),
 	canonical: z.url().optional()
-});
+})
 
-export type PostFrontmatter = z.infer<typeof postFrontmatterSchema>;
+export type PostFrontmatter = z.infer<typeof postFrontmatterSchema>

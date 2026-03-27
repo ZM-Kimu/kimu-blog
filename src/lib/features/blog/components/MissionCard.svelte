@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { resolve } from '$app/paths'
 
-	type Tone = 'cyan' | 'blue' | 'amber' | 'slate';
+	type Tone = 'cyan' | 'blue' | 'amber' | 'slate'
 
 	interface Props {
-		title: string;
-		kicker: string;
-		description: string;
-		href?: string;
-		state?: string;
-		tone?: Tone;
-		count?: number;
+		title: string
+		kicker: string
+		description: string
+		href?: string
+		state?: string
+		tone?: Tone
+		count?: number
 	}
 
 	let {
@@ -21,7 +21,7 @@
 		state = 'Live',
 		tone = 'cyan',
 		count = 0
-	}: Props = $props();
+	}: Props = $props()
 </script>
 
 {#if href === '/favorites'}

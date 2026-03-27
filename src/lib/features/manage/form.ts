@@ -2,23 +2,23 @@ import type {
 	ManagePostDocument,
 	ManagePostFormState,
 	ManagePostWritePayload
-} from '$lib/features/manage/types';
+} from '$lib/features/manage/types'
 
 function getTodayString() {
-	const now = new Date();
-	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);
+	const now = new Date()
+	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
 
-	return local.toISOString().slice(0, 10);
+	return local.toISOString().slice(0, 10)
 }
 
 function normalizeOptionalField(value: string) {
-	const normalized = value.trim();
+	const normalized = value.trim()
 
-	return normalized ? normalized : undefined;
+	return normalized ? normalized : undefined
 }
 
 export function createEmptyManagePostFormState(): ManagePostFormState {
-	const today = getTodayString();
+	const today = getTodayString()
 
 	return {
 		author: 'Kimu',
@@ -38,7 +38,7 @@ export function createEmptyManagePostFormState(): ManagePostFormState {
 		title: '',
 		toc: true,
 		updated: today
-	};
+	}
 }
 
 export function createManagePostFormState(post: ManagePostDocument): ManagePostFormState {
@@ -61,14 +61,14 @@ export function createManagePostFormState(post: ManagePostDocument): ManagePostF
 		title: post.frontmatter.title,
 		toc: post.frontmatter.toc,
 		updated: post.frontmatter.updated
-	};
+	}
 }
 
 export function toManageWritePayload(state: ManagePostFormState): ManagePostWritePayload {
 	const tags = state.tagsInput
 		.split(',')
 		.map((tag) => tag.trim())
-		.filter(Boolean);
+		.filter(Boolean)
 
 	return {
 		author: normalizeOptionalField(state.author),
@@ -89,5 +89,5 @@ export function toManageWritePayload(state: ManagePostFormState): ManagePostWrit
 		title: state.title.trim(),
 		toc: state.toc,
 		updated: state.updated.trim()
-	};
+	}
 }

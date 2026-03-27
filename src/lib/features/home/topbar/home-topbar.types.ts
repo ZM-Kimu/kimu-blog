@@ -1,56 +1,58 @@
-import type { TopbarAction, TopbarMetric } from '$lib/navigation/types';
+import type { InternalHref, TopbarAction, TopbarMetric } from '$lib/navigation/types'
 
-export type TopbarMode = 'subpage' | 'main';
+export type TopbarMode = 'subpage' | 'main'
 
-export type TriggerOrigin = 'cta' | 'back';
+export type TriggerOrigin = 'cta' | 'back'
 
-export type HomeTopbarMetric = TopbarMetric;
+export type HomeTopbarMetric = TopbarMetric
 
-export type HomeTopbarAction = TopbarAction;
+export type HomeTopbarAction = TopbarAction
+
+export type { InternalHref }
 
 export type ElementBox = {
-	left: number;
-	top: number;
-	width: number;
-	height: number;
-};
+	left: number
+	top: number
+	width: number
+	height: number
+}
 
 export type MotionLibs = {
-	gsap: typeof import('gsap').gsap;
-	Flip: typeof import('gsap/all').Flip;
-	interpolate: typeof import('flubber').interpolate;
-};
+	gsap: typeof import('gsap').gsap
+	Flip: typeof import('gsap/all').Flip
+	interpolate: typeof import('flubber').interpolate
+}
 
 export type MorphOverlay = {
-	wrapper: HTMLDivElement;
-	gradient: SVGLinearGradientElement;
-	path: SVGPathElement;
-	startStop: SVGStopElement;
-	endStop: SVGStopElement;
-	text: HTMLDivElement;
-	glyph: HTMLSpanElement;
-};
+	wrapper: HTMLDivElement
+	gradient: SVGLinearGradientElement
+	path: SVGPathElement
+	startStop: SVGStopElement
+	endStop: SVGStopElement
+	text: HTMLDivElement
+	glyph: HTMLSpanElement
+}
 
 export type TitleGhost = {
-	wrapper: HTMLDivElement;
-};
+	wrapper: HTMLDivElement
+}
 
 export type StripProxy = {
-	wrapper: HTMLDivElement;
-	shell: HTMLDivElement;
-};
+	wrapper: HTMLDivElement
+	shell: HTMLDivElement
+}
 
 export type HomeTopbarRefs = {
-	topbarRoot: HTMLElement | null;
-	backButton: HTMLButtonElement | null;
-	backGlyph: HTMLSpanElement | null;
-	profileChip: HTMLAnchorElement | null;
-	titleWrap: HTMLDivElement | null;
-	stripShell: HTMLDivElement | null;
-	motionLayer: HTMLDivElement | null;
-};
+	topbarRoot: HTMLElement | null
+	backButton: HTMLButtonElement | null
+	backGlyph: HTMLSpanElement | null
+	profileChip: HTMLAnchorElement | null
+	titleWrap: HTMLDivElement | null
+	stripShell: HTMLDivElement | null
+	motionLayer: HTMLDivElement | null
+}
 
 export type HomeTopbarStateDetail = {
-	mode: TopbarMode;
-	locked: boolean;
-};
+	mode: TopbarMode
+	locked: boolean
+}

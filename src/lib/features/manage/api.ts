@@ -5,58 +5,58 @@ import type {
 	ManagePostWritePayload,
 	ManagePostWriteResponse,
 	ManageSessionResponse
-} from '$lib/features/manage/types';
+} from '$lib/features/manage/types'
 
 export class ManageApiError extends Error {
-	code: string;
-	details: unknown;
-	status: number;
+	code: string
+	details: unknown
+	status: number
 
 	constructor(status: number, code: string, message: string, details: unknown = null) {
-		super(message);
-		this.name = 'ManageApiError';
-		this.status = status;
-		this.code = code;
-		this.details = details;
+		super(message)
+		this.name = 'ManageApiError'
+		this.status = status
+		this.code = code
+		this.details = details
 	}
 }
 
 async function parseManageJson<T>(response: Response): Promise<T> {
-	const payload = (await response.json().catch(() => null)) as T | ManageApiErrorPayload | null;
+	const payload = (await response.json().catch(() => null)) as T | ManageApiErrorPayload | null
 
 	if (!response.ok) {
-		const errorPayload = payload as ManageApiErrorPayload | null;
-		const code = errorPayload?.error?.code ?? 'manage_request_failed';
-		const message = errorPayload?.error?.message ?? `请求失败: ${response.status}`;
-		throw new ManageApiError(response.status, code, message, errorPayload?.error?.details ?? null);
+		const errorPayload = payload as ManageApiErrorPayload | null
+		const code = errorPayload?.error?.code ?? 'manage_request_failed'
+		const message = errorPayload?.error?.message ?? `请求失败: ${response.status}`
+		throw new ManageApiError(response.status, code, message, errorPayload?.error?.details ?? null)
 	}
 
-	return payload as T;
+	return payload as T
 }
 
 function buildManageWriteFormData(payload: ManagePostWritePayload, files: File[]) {
-	const formData = new FormData();
-	formData.append('payload', JSON.stringify(payload));
+	const formData = new FormData()
+	formData.append('payload', JSON.stringify(payload))
 
 	for (const file of files) {
-		formData.append('files[]', file, file.name);
+		formData.append('files[]', file, file.name)
 	}
 
-	return formData;
+	return formData
 }
 
 export async function fetchManageSession(fetchImpl: typeof fetch) {
-	return parseManageJson<ManageSessionResponse>(await fetchImpl('/api/manage/session'));
+	return parseManageJson<ManageSessionResponse>(await fetchImpl('/api/manage/session'))
 }
 
 export async function fetchManagedPostList(fetchImpl: typeof fetch) {
-	return parseManageJson<ManagePostListResponse>(await fetchImpl('/api/manage/posts'));
+	return parseManageJson<ManagePostListResponse>(await fetchImpl('/api/manage/posts'))
 }
 
 export async function fetchManagedPost(fetchImpl: typeof fetch, slug: string) {
 	return parseManageJson<ManagePostDocument>(
 		await fetchImpl(`/api/manage/posts/${encodeURIComponent(slug)}`)
-	);
+	)
 }
 
 export async function createManagedPostRequest(
@@ -73,7 +73,7 @@ export async function createManagedPostRequest(
 			},
 			method: 'POST'
 		})
-	);
+	)
 }
 
 export async function updateManagedPostRequest(
@@ -91,7 +91,7 @@ export async function updateManagedPostRequest(
 			},
 			method: 'PUT'
 		})
-	);
+	)
 }
 
 export async function deleteManagedPostRequest(
@@ -109,5 +109,5 @@ export async function deleteManagedPostRequest(
 			},
 			method: 'DELETE'
 		})
-	);
+	)
 }

@@ -1,6 +1,6 @@
-import { redirect } from '@sveltejs/kit';
-import type { PageLoad } from './$types';
+import { redirect } from '@sveltejs/kit'
+import type { PageLoad } from './$types'
 
 export const load: PageLoad = async () => {
-	throw redirect(307, '/manage/posts');
-};
+	throw redirect(307, '/manage/posts')
+}

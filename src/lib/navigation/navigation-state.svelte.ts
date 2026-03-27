@@ -1,8 +1,9 @@
-import { browser } from '$app/environment';
-import { goto } from '$app/navigation';
+import { browser } from '$app/environment'
+import { goto } from '$app/navigation'
+import { resolve } from '$app/paths'
 
-import { createPageState } from './page-state';
-import { resolveRouteState } from './route-state';
+import { createPageState } from './page-state'
+import { resolveRouteState } from './route-state'
 
 import type {
 	BackBehavior,
@@ -10,35 +11,35 @@ import type {
 	PageState,
 	RouteState,
 	TransitionPhase
-} from './types';
+} from './types'
 
 function createUnknownRouteState(): RouteState {
-	return resolveRouteState({ pathname: '/__unknown__', status: 200 });
+	return resolveRouteState({ pathname: '/__unknown__', status: 200 })
 }
 
 function createUnknownPageState(): PageState {
 	return createPageState({
 		routeState: createUnknownRouteState(),
 		data: {}
-	});
+	})
 }
 
 export class NavigationStateManager {
-	routeState = $state<RouteState>(createUnknownRouteState());
-	pageState = $state<PageState>(createUnknownPageState());
-	pendingTarget = $state<string | null>(null);
-	pendingPageState = $state<PageState | null>(null);
-	phase = $state<TransitionPhase>('idle');
-	enterDurationMs = $state(260);
+	routeState = $state<RouteState>(createUnknownRouteState())
+	pageState = $state<PageState>(createUnknownPageState())
+	pendingTarget = $state<string | null>(null)
+	pendingPageState = $state<PageState | null>(null)
+	phase = $state<TransitionPhase>('idle')
+	enterDurationMs = $state(260)
 
-	#enterTimer: ReturnType<typeof setTimeout> | null = null;
+	#enterTimer: ReturnType<typeof setTimeout> | null = null
 
 	sync(routeState: RouteState, pageState: PageState) {
-		this.routeState = routeState;
-		this.pageState = pageState;
+		this.routeState = routeState
+		this.pageState = pageState
 
 		if (this.phase === 'navigating' && this.pendingTarget === routeState.pathname) {
-			this.#startEntering();
+			this.#startEntering()
 		}
 	}
 
@@ -47,68 +48,68 @@ export class NavigationStateManager {
 		targetPageState: PageState,
 		options: BeginPageSwitchOptions
 	): boolean {
-		void options.origin;
+		void options.origin
 
 		if (this.phase !== 'idle') {
-			return false;
+			return false
 		}
 
-		this.#clearEnterTimer();
-		this.pendingTarget = targetPath;
-		this.pendingPageState = targetPageState;
-		this.enterDurationMs = options.reducedMotion ? 140 : 260;
-		this.phase = 'exiting';
+		this.#clearEnterTimer()
+		this.pendingTarget = targetPath
+		this.pendingPageState = targetPageState
+		this.enterDurationMs = options.reducedMotion ? 140 : 260
+		this.phase = 'exiting'
 
-		return true;
+		return true
 	}
 
 	markNavigating() {
 		if (this.phase === 'exiting') {
-			this.phase = 'navigating';
+			this.phase = 'navigating'
 		}
 	}
 
 	cancelPageSwitch() {
-		this.#clearEnterTimer();
-		this.phase = 'idle';
-		this.pendingTarget = null;
-		this.pendingPageState = null;
+		this.#clearEnterTimer()
+		this.phase = 'idle'
+		this.pendingTarget = null
+		this.pendingPageState = null
 	}
 
 	async goBack(back?: BackBehavior) {
 		if (browser && window.history.length > 1) {
-			window.history.back();
-			return;
+			window.history.back()
+			return
 		}
 
 		if (back?.fallbackHref) {
-			await goto(back.fallbackHref);
+			await goto(resolve(back.fallbackHref))
 		}
 	}
 
 	destroy() {
-		this.#clearEnterTimer();
+		this.#clearEnterTimer()
 	}
 
 	#startEntering() {
-		this.#clearEnterTimer();
-		this.phase = 'entering';
+		this.#clearEnterTimer()
+		this.phase = 'entering'
 		this.#enterTimer = setTimeout(() => {
-			this.finishEntering();
-		}, this.enterDurationMs);
+			this.finishEntering()
+		}, this.enterDurationMs)
 	}
 
 	private finishEntering() {
-		this.#clearEnterTimer();
-		this.phase = 'idle';
-		this.pendingTarget = null;
-		this.pendingPageState = null;
+		this.#clearEnterTimer()
+		this.phase = 'idle'
+		this.pendingTarget = null
+		this.pendingPageState = null
 	}
 
 	#clearEnterTimer() {
 		if (this.#enterTimer) {
-			clearTimeout(this.#enterTimer);
-			this.#enterTimer = null;
+			clearTimeout(this.#enterTimer)
+			this.#enterTimer = null
 		}
 	}
 }
@@ -117,15 +118,15 @@ export function createNavigationStateManager(
 	initialRouteState?: RouteState,
 	initialPageState?: PageState
 ) {
-	const manager = new NavigationStateManager();
+	const manager = new NavigationStateManager()
 
 	if (initialRouteState) {
-		manager.routeState = initialRouteState;
+		manager.routeState = initialRouteState
 	}
 
 	if (initialPageState) {
-		manager.pageState = initialPageState;
+		manager.pageState = initialPageState
 	}
 
-	return manager;
+	return manager
 }

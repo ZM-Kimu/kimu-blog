@@ -62,4 +62,4 @@ export const enUSMessages = {
 		notFound: 'Page not found~ (´・ω・`)',
 		failure: 'System fault detected (´；ω；`)'
 	}
-} as const;
+} as const

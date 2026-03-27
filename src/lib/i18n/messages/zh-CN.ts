@@ -62,4 +62,4 @@ export const zhCNMessages = {
 		notFound: '未找到页面~ (´・ω・`)',
 		failure: '系统故障了 (´；ω；`)'
 	}
-} as const;
+} as const

@@ -1,13 +1,13 @@
-import { ManageError } from '$lib/server/manage/errors';
-import type { ManageConfig } from '$lib/server/manage/types';
+import { ManageError } from '$lib/server/manage/errors'
+import type { ManageConfig } from '$lib/server/manage/types'
 
 function normalizeTeamDomain(value: string) {
-	return value.replace(/^https?:\/\//u, '').replace(/\/+$/u, '');
+	return value.replace(/^https?:\/\//u, '').replace(/\/+$/u, '')
 }
 
 export function getManageConfig(platform: App.Platform | undefined): ManageConfig {
 	if (!platform?.env) {
-		throw new ManageError(500, 'missing_platform_env', '当前运行时没有 Cloudflare env 绑定');
+		throw new ManageError(500, 'missing_platform_env', '当前运行时没有 Cloudflare env 绑定')
 	}
 
 	const requiredKeys = [
@@ -20,11 +20,11 @@ export function getManageConfig(platform: App.Platform | undefined): ManageConfi
 		'GITHUB_REPO_NAME',
 		'GITHUB_COMMITTER_NAME',
 		'GITHUB_COMMITTER_EMAIL'
-	] as const;
+	] as const
 
 	for (const key of requiredKeys) {
 		if (!platform.env[key]?.trim()) {
-			throw new ManageError(500, 'missing_manage_env', `缺少环境变量: ${key}`);
+			throw new ManageError(500, 'missing_manage_env', `缺少环境变量: ${key}`)
 		}
 	}
 
@@ -39,5 +39,5 @@ export function getManageConfig(platform: App.Platform | undefined): ManageConfi
 		githubRepoBranch: platform.env.GITHUB_REPO_BRANCH?.trim() || 'main',
 		githubRepoName: platform.env.GITHUB_REPO_NAME.trim(),
 		githubRepoOwner: platform.env.GITHUB_REPO_OWNER.trim()
-	};
+	}
 }
