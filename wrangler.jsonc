@@ -2,7 +2,7 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "kimu-blog",
 	"compatibility_date": "2026-03-23",
-	"compatibility_flags": ["nodejs_als"],
+	"compatibility_flags": ["nodejs_als", "nodejs_compat"],
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"vars": {
 		"CF_ACCESS_TEAM_DOMAIN": "zmkimu.cloudflareaccess.com",
