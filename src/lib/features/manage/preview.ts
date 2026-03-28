@@ -1,4 +1,3 @@
-import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 
 const CODE_FENCE_PATTERN = /(```[\s\S]*?```|~~~[\s\S]*?~~~)/gu
@@ -9,6 +8,12 @@ const COMPONENT_BLOCK_PATTERN = /<([A-Z][\w.]*(?::[\w-]+)?|svelte:[\w-]+)\b[^>]*
 const COMPONENT_SELF_CLOSING_PATTERN = /<([A-Z][\w.]*(?::[\w-]+)?|svelte:[\w-]+)\b[^>]*\/>/gu
 const BLOB_SAFE_URI_PATTERN =
 	/^(?:(?:https?|mailto|tel|blob):|\/(?!\/)|#|\.{1,2}\/|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/iu
+const DANGEROUS_BLOCK_PATTERN =
+	/<(?:script|style|iframe|object|embed|link|meta)\b[^>]*>[\s\S]*?<\/(?:script|style|iframe|object|embed|link|meta)>/giu
+const DANGEROUS_SELF_CLOSING_PATTERN =
+	/<(?:script|style|iframe|object|embed|link|meta)\b[^>]*\/?>/giu
+const EVENT_HANDLER_ATTR_PATTERN = /\son[a-z-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/giu
+const URI_ATTR_PATTERN = /\s(href|src|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)')/giu
 
 function buildPlaceholder(kind: 'component' | 'import' | 'script' | 'style', label: string) {
 	return `
@@ -51,6 +56,25 @@ function normalizeMdsvexForPreview(source: string) {
 	)
 }
 
+function sanitizePreviewHtml(html: string) {
+	return html
+		.replace(DANGEROUS_BLOCK_PATTERN, '')
+		.replace(DANGEROUS_SELF_CLOSING_PATTERN, '')
+		.replace(EVENT_HANDLER_ATTR_PATTERN, '')
+		.replace(
+			URI_ATTR_PATTERN,
+			(match, attribute: string, doubleQuoted?: string, singleQuoted?: string) => {
+				const value = doubleQuoted ?? singleQuoted ?? ''
+
+				if (BLOB_SAFE_URI_PATTERN.test(value)) {
+					return ` ${attribute}="${value}"`
+				}
+
+				return ` ${attribute}="#"`
+			}
+		)
+}
+
 export function resolvePreviewAssetPath(path: string, uploads: Map<string, string>) {
 	if (!path) {
 		return ''
@@ -65,8 +89,5 @@ export function renderManagePreviewHtml(source: string, uploads: Map<string, str
 		gfm: true
 	}) as string
 
-	return DOMPurify.sanitize(html, {
-		ALLOWED_URI_REGEXP: BLOB_SAFE_URI_PATTERN,
-		USE_PROFILES: { html: true }
-	})
+	return sanitizePreviewHtml(html)
 }

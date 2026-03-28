@@ -1,6 +1,7 @@
 import { browser } from '$app/environment'
-import { goto } from '$app/navigation'
+import { goto, invalidateAll } from '$app/navigation'
 import { resolve } from '$app/paths'
+import { DEFAULT_LOCALE, LOCALE_COOKIE, type AppLocale } from '$lib/i18n/config'
 
 import { createPageState } from './page-state'
 import { resolveRouteState } from './route-state'
@@ -31,12 +32,18 @@ export class NavigationStateManager {
 	pendingPageState = $state<PageState | null>(null)
 	phase = $state<TransitionPhase>('idle')
 	enterDurationMs = $state(260)
+	locale = $state<AppLocale>(DEFAULT_LOCALE)
+	topbarCollapsed = $state(false)
+	settingsOpen = $state(false)
+	cursorMode = $state<'custom' | 'system'>('custom')
 
 	#enterTimer: ReturnType<typeof setTimeout> | null = null
+	#clientRuntimeHydrated = false
 
-	sync(routeState: RouteState, pageState: PageState) {
+	sync(routeState: RouteState, pageState: PageState, locale?: AppLocale) {
 		this.routeState = routeState
 		this.pageState = pageState
+		this.locale = locale ?? this.locale
 
 		if (this.phase === 'navigating' && this.pendingTarget === routeState.pathname) {
 			this.#startEntering()
@@ -58,6 +65,7 @@ export class NavigationStateManager {
 		this.pendingTarget = targetPath
 		this.pendingPageState = targetPageState
 		this.enterDurationMs = options.reducedMotion ? 140 : 260
+		this.settingsOpen = false
 		this.phase = 'exiting'
 
 		return true
@@ -74,6 +82,61 @@ export class NavigationStateManager {
 		this.phase = 'idle'
 		this.pendingTarget = null
 		this.pendingPageState = null
+	}
+
+	hydrateClientRuntime() {
+		if (!browser || this.#clientRuntimeHydrated) {
+			return
+		}
+
+		this.#clientRuntimeHydrated = true
+
+		const savedCursorMode = window.localStorage.getItem('cursor-mode')
+		if (savedCursorMode === 'custom' || savedCursorMode === 'system') {
+			this.cursorMode = savedCursorMode
+		}
+	}
+
+	toggleTopbarCollapsed(force?: boolean) {
+		const nextValue = force ?? !this.topbarCollapsed
+		this.topbarCollapsed = nextValue
+
+		if (nextValue) {
+			this.settingsOpen = false
+		}
+	}
+
+	openTopbarSettings() {
+		this.topbarCollapsed = false
+		this.settingsOpen = true
+	}
+
+	closeTopbarSettings() {
+		this.settingsOpen = false
+	}
+
+	setCursorMode(mode: 'custom' | 'system') {
+		this.cursorMode = mode
+
+		if (browser) {
+			window.localStorage.setItem('cursor-mode', mode)
+		}
+	}
+
+	toggleCursorMode() {
+		this.setCursorMode(this.cursorMode === 'custom' ? 'system' : 'custom')
+	}
+
+	async toggleLocale() {
+		if (!browser) {
+			return
+		}
+
+		const nextLocale: AppLocale = this.locale === 'zh-CN' ? 'en-US' : 'zh-CN'
+		this.settingsOpen = false
+		document.cookie = `${LOCALE_COOKIE}=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax`
+		this.locale = nextLocale
+		await invalidateAll()
 	}
 
 	async goBack(back?: BackBehavior) {

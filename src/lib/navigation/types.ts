@@ -4,7 +4,9 @@ export type InternalHref =
 	| '/blog'
 	| '/blog/archive'
 	| '/favorites'
+	| '/manage'
 	| '/updates'
+	| '/__debug/manage'
 	| '/__debug/error-404'
 	| '/__debug/error-500'
 	| `/blog/${string}`
@@ -18,6 +20,7 @@ export type RouteKind =
 	| 'about'
 	| 'updates'
 	| 'favorites'
+	| 'debugManage'
 	| 'error'
 	| 'unknown'
 
@@ -33,6 +36,7 @@ export type RouteState = {
 export type TopbarMetric = {
 	key: string
 	value: string
+	label: string
 	ariaLabel: string
 	icon: {
 		src: string
@@ -44,12 +48,20 @@ export type TopbarMetric = {
 export type TopbarAction = {
 	key: string
 	ariaLabel: string
+	kind: 'command' | 'link'
 	icon: {
 		src: string
 		mode: 'mask' | 'image'
 		tint?: string
 	}
-	interactive?: boolean
+	href?: InternalHref
+	disabled?: boolean
+}
+
+export type TopbarMetricsData = {
+	articleCount: number
+	todoCount: number | null
+	recentPostActivityCount30d: number
 }
 
 export type BackBehavior = {

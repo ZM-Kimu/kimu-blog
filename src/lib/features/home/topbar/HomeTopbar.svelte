@@ -13,6 +13,7 @@
 	} from './home-topbar.motion'
 	import type {
 		HomeTopbarAction,
+		HomeTopbarActionDetail,
 		HomeTopbarMetric,
 		HomeTopbarRefs,
 		HomeTopbarStateDetail,
@@ -50,6 +51,7 @@
 	} = $props()
 
 	const dispatch = createEventDispatcher<{
+		action: HomeTopbarActionDetail
 		statechange: HomeTopbarStateDetail
 	}>()
 
@@ -65,6 +67,50 @@
 	let titleWrap: HTMLDivElement | null = $state(null)
 	let stripShell: HTMLDivElement | null = $state(null)
 	let motionLayer: HTMLDivElement | null = $state(null)
+	const preloadIcons = $derived.by(() => {
+		const icons: Array<{
+			key: string
+			src: string
+			mode: 'mask' | 'image'
+			tint?: string
+		}> = [
+			{
+				key: 'expand',
+				src: '/icons/topbar/expand.png',
+				mode: 'mask',
+				tint: '#47639c'
+			}
+		]
+		const pushUnique = (icon: { src: string; mode: 'mask' | 'image'; tint?: string }) => {
+			const key = `${icon.mode}:${icon.src}:${icon.tint ?? ''}`
+			if (!icons.some((entry) => entry.key === key)) {
+				icons.push({
+					key,
+					src: icon.src,
+					mode: icon.mode,
+					tint: icon.tint
+				})
+			}
+		}
+
+		for (const metric of mainMetrics) {
+			pushUnique(metric.icon)
+		}
+
+		for (const metric of subpageMetrics) {
+			pushUnique(metric.icon)
+		}
+
+		for (const action of mainActions) {
+			pushUnique(action.icon)
+		}
+
+		for (const action of subpageActions) {
+			pushUnique(action.icon)
+		}
+
+		return icons
+	})
 
 	$effect(() => {
 		dispatch('statechange', { mode, locked: motionLocked })
@@ -84,6 +130,10 @@
 
 	function setCurrentTimeline(timeline: ReturnType<typeof import('gsap').gsap.timeline> | null) {
 		currentTimeline = timeline
+	}
+
+	function handleAction(action: HomeTopbarAction) {
+		dispatch('action', { action })
 	}
 
 	async function requestTransition(nextMode: TopbarMode) {
@@ -182,6 +232,7 @@
 		title={subpageTitle}
 		{motionLocked}
 		onBack={() => (onSubpageBack ? onSubpageBack() : toggle('back'))}
+		onAction={handleAction}
 		bind:topbarRoot
 		bind:backButton
 		bind:backGlyph
@@ -195,6 +246,8 @@
 		{authorName}
 		{profileLevel}
 		{profileHref}
+		{motionLocked}
+		onAction={handleAction}
 		bind:topbarRoot
 		bind:profileChip
 	/>
@@ -206,3 +259,16 @@
 	aria-hidden="true"
 	bind:this={motionLayer}
 ></div>
+
+<div class="home-topbar__asset-bank" aria-hidden="true">
+	{#each preloadIcons as icon (icon.key)}
+		{#if icon.mode === 'mask'}
+			<span
+				class="home-topbar__icon home-topbar__icon--mask home-topbar__asset-bank-icon"
+				style={`--topbar-icon-src: url('${icon.src}'); --topbar-icon-tint: ${icon.tint ?? 'currentColor'};`}
+			></span>
+		{:else}
+			<img src={icon.src} alt="" loading="eager" decoding="async" />
+		{/if}
+	{/each}
+</div>

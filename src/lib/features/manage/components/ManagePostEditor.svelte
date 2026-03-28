@@ -29,11 +29,23 @@
 	let {
 		csrfToken,
 		initialPost = null,
-		mode
+		mode,
+		debugMode = false,
+		debugPreviewVisible = true,
+		debugDisabled = false,
+		debugSubmitting = false,
+		debugStatusMessage = '',
+		debugErrorMessage = ''
 	} = $props<{
 		csrfToken: string
 		initialPost?: ManagePostDocument | null
 		mode: EditorMode
+		debugMode?: boolean
+		debugPreviewVisible?: boolean
+		debugDisabled?: boolean
+		debugSubmitting?: boolean
+		debugStatusMessage?: string
+		debugErrorMessage?: string
 	}>()
 
 	let sourceTextarea: HTMLTextAreaElement | null = null
@@ -98,6 +110,10 @@
 		return Array.from(new Set([...base, ...uploaded]))
 	})
 	const submitLabel = $derived(mode === 'create' ? '创建文章' : '保存更改')
+	const effectiveStatusMessage = $derived(debugMode ? debugStatusMessage : statusMessage)
+	const effectiveErrorMessage = $derived(debugMode ? debugErrorMessage : errorMessage)
+	const effectiveSubmitting = $derived(debugMode ? debugSubmitting : isSubmitting)
+	const editorDisabled = $derived(debugDisabled || effectiveSubmitting)
 
 	function appendUploads(files: File[]) {
 		const nextUploads = [...pendingUploads]
@@ -192,6 +208,11 @@
 
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault()
+
+		if (debugMode) {
+			return
+		}
+
 		errorMessage = ''
 		statusMessage = ''
 		isSubmitting = true
@@ -223,6 +244,10 @@
 	}
 
 	async function handleDelete() {
+		if (debugMode) {
+			return
+		}
+
 		if (mode !== 'edit' || !form.expectedSha || !currentSlug) {
 			return
 		}
@@ -247,7 +272,11 @@
 	}
 </script>
 
-<section class="manage-editor">
+<section
+	class:manage-editor--disabled={debugDisabled}
+	class:manage-editor--preview-hidden={!debugPreviewVisible}
+	class="manage-editor"
+>
 	<form class="manage-editor__panel panel" onsubmit={handleSubmit}>
 		<div class="manage-editor__heading">
 			<div>
@@ -256,19 +285,21 @@
 			</div>
 
 			<div class="manage-editor__toolbar">
-				{#if statusMessage}
-					<p class="manage-editor__status manage-editor__status--success">{statusMessage}</p>
+				{#if effectiveStatusMessage}
+					<p class="manage-editor__status manage-editor__status--success">
+						{effectiveStatusMessage}
+					</p>
 				{/if}
-				{#if errorMessage}
-					<p class="manage-editor__status manage-editor__status--error">{errorMessage}</p>
+				{#if effectiveErrorMessage}
+					<p class="manage-editor__status manage-editor__status--error">{effectiveErrorMessage}</p>
 				{/if}
-				<button class="button-primary" disabled={isSubmitting} type="submit">
-					{isSubmitting ? '提交中…' : submitLabel}
+				<button class="button-primary" disabled={editorDisabled} type="submit">
+					{effectiveSubmitting ? '提交中…' : submitLabel}
 				</button>
 				{#if mode === 'edit'}
 					<button
 						class="button-secondary manage-editor__danger"
-						disabled={isSubmitting}
+						disabled={editorDisabled}
 						onclick={handleDelete}
 						type="button"
 					>
@@ -281,57 +312,73 @@
 		<div class="manage-editor__fields">
 			<label>
 				<span>标题</span>
-				<input bind:value={form.title} required type="text" />
+				<input bind:value={form.title} disabled={editorDisabled} required type="text" />
 			</label>
 
 			<label>
 				<span>Slug</span>
-				<input bind:value={form.slug} required type="text" />
+				<input bind:value={form.slug} disabled={editorDisabled} required type="text" />
 			</label>
 
 			<label class="manage-editor__field-wide">
 				<span>摘要</span>
-				<textarea bind:value={form.description} required rows="3"></textarea>
+				<textarea bind:value={form.description} disabled={editorDisabled} required rows="3"
+				></textarea>
 			</label>
 
 			<label>
 				<span>发布日期</span>
-				<input bind:value={form.date} required type="date" />
+				<input bind:value={form.date} disabled={editorDisabled} required type="date" />
 			</label>
 
 			<label>
 				<span>更新日期</span>
-				<input bind:value={form.updated} required type="date" />
+				<input bind:value={form.updated} disabled={editorDisabled} required type="date" />
 			</label>
 
 			<label>
 				<span>分类</span>
-				<input bind:value={form.category} placeholder="Engineering / Notes" type="text" />
+				<input
+					bind:value={form.category}
+					disabled={editorDisabled}
+					placeholder="Engineering / Notes"
+					type="text"
+				/>
 			</label>
 
 			<label>
 				<span>作者</span>
-				<input bind:value={form.author} type="text" />
+				<input bind:value={form.author} disabled={editorDisabled} type="text" />
 			</label>
 
 			<label>
 				<span>Series</span>
-				<input bind:value={form.series} type="text" />
+				<input bind:value={form.series} disabled={editorDisabled} type="text" />
 			</label>
 
 			<label>
 				<span>Reading Time</span>
-				<input bind:value={form.readingTime} placeholder="6 min" type="text" />
+				<input
+					bind:value={form.readingTime}
+					disabled={editorDisabled}
+					placeholder="6 min"
+					type="text"
+				/>
 			</label>
 
 			<label>
 				<span>Canonical</span>
-				<input bind:value={form.canonical} placeholder="https://..." type="url" />
+				<input
+					bind:value={form.canonical}
+					disabled={editorDisabled}
+					placeholder="https://..."
+					type="url"
+				/>
 			</label>
 
 			<label>
 				<span>格式</span>
-				<select bind:value={form.format}>
+				<select bind:value={form.format} disabled={editorDisabled}>
 					<option value="svx">svx</option>
 					<option value="md">md</option>
 				</select>
@@ -339,19 +386,33 @@
 
 			<label class="manage-editor__field-wide">
 				<span>Tags</span>
-				<input bind:value={form.tagsInput} placeholder="svelte, cloudflare, devlog" type="text" />
+				<input
+					bind:value={form.tagsInput}
+					disabled={editorDisabled}
+					placeholder="svelte, cloudflare, devlog"
+					type="text"
+				/>
 			</label>
 
 			<label class="manage-editor__field-wide">
 				<span>Cover</span>
-				<input bind:value={form.cover} placeholder="/images/... or upload://file.png" type="text" />
+				<input
+					bind:value={form.cover}
+					disabled={editorDisabled}
+					placeholder="/images/... or upload://file.png"
+					type="text"
+				/>
 			</label>
 		</div>
 
 		<div class="manage-editor__toggles">
-			<label><input bind:checked={form.draft} type="checkbox" /> Draft</label>
-			<label><input bind:checked={form.featured} type="checkbox" /> Featured</label>
-			<label><input bind:checked={form.toc} type="checkbox" /> TOC</label>
+			<label
+				><input bind:checked={form.draft} disabled={editorDisabled} type="checkbox" /> Draft</label
+			>
+			<label
+				><input bind:checked={form.featured} disabled={editorDisabled} type="checkbox" /> Featured</label
+			>
+			<label><input bind:checked={form.toc} disabled={editorDisabled} type="checkbox" /> TOC</label>
 		</div>
 
 		<section class="manage-editor__uploads">
@@ -366,6 +427,7 @@
 				<span>选择图片</span>
 				<input
 					accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+					disabled={editorDisabled}
 					multiple
 					onchange={handleFileSelection}
 					type="file"
@@ -382,13 +444,27 @@
 								<code>{upload.placeholder}</code>
 							</div>
 							<div class="manage-editor__upload-actions">
-								<button onclick={() => useUploadAsCover(upload.placeholder)} type="button"
-									>设为 cover</button
+								<button
+									disabled={editorDisabled}
+									onclick={() => useUploadAsCover(upload.placeholder)}
+									type="button"
 								>
-								<button onclick={() => insertUploadIntoSource(upload.placeholder)} type="button">
+									设为 cover
+								</button>
+								<button
+									disabled={editorDisabled}
+									onclick={() => insertUploadIntoSource(upload.placeholder)}
+									type="button"
+								>
 									插入正文
 								</button>
-								<button onclick={() => removeUpload(upload.placeholder)} type="button">移除</button>
+								<button
+									disabled={editorDisabled}
+									onclick={() => removeUpload(upload.placeholder)}
+									type="button"
+								>
+									移除
+								</button>
 							</div>
 						</div>
 					{/each}
@@ -402,22 +478,30 @@
 
 		<label class="manage-editor__source">
 			<span>Source</span>
-			<textarea bind:this={sourceTextarea} bind:value={form.source} required rows="24"></textarea>
+			<textarea
+				bind:this={sourceTextarea}
+				bind:value={form.source}
+				disabled={editorDisabled}
+				required
+				rows="24"
+			></textarea>
 		</label>
 	</form>
 
-	<ManagePreviewPane
-		assetPaths={previewAssetPaths}
-		category={form.category}
-		cover={previewCover}
-		date={form.date}
-		description={form.description}
-		html={previewHtml}
-		slug={form.slug}
-		tags={previewTags}
-		title={form.title}
-		updated={form.updated}
-	/>
+	{#if debugPreviewVisible}
+		<ManagePreviewPane
+			assetPaths={previewAssetPaths}
+			category={form.category}
+			cover={previewCover}
+			date={form.date}
+			description={form.description}
+			html={previewHtml}
+			slug={form.slug}
+			tags={previewTags}
+			title={form.title}
+			updated={form.updated}
+		/>
+	{/if}
 </section>
 
 <style>
@@ -426,6 +510,15 @@
 		grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.8fr);
 		gap: 1rem;
 		align-items: start;
+	}
+
+	.manage-editor--preview-hidden {
+		grid-template-columns: 1fr;
+	}
+
+	.manage-editor--disabled {
+		opacity: 0.72;
+		filter: saturate(0.74);
 	}
 
 	.manage-editor__panel {

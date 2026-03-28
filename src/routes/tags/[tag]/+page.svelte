@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SubpageScreen from '$lib/components/layout/SubpageScreen.svelte'
 	import TagPage from '$lib/features/blog/TagPage.svelte'
 	import SeoHead from '$lib/components/ui/SeoHead.svelte'
 
@@ -11,4 +12,6 @@
 	pathname={`/tags/${data.tag.slug}`}
 />
 
-<TagPage {data} />
+<SubpageScreen>
+	<TagPage {data} />
+</SubpageScreen>

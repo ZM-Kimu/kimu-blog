@@ -10,6 +10,10 @@ export type HomeTopbarAction = TopbarAction
 
 export type { InternalHref }
 
+export type HomeTopbarActionDetail = {
+	action: HomeTopbarAction
+}
+
 export type ElementBox = {
 	left: number
 	top: number

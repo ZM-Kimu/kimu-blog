@@ -2,14 +2,32 @@
 	import { resolve } from '$app/paths'
 	import { page } from '$app/state'
 	import type { ManageSessionResponse } from '$lib/features/manage/types'
+	import type { InternalHref } from '$lib/navigation/types'
 
-	let { children, session } = $props<{
+	let {
+		children,
+		session,
+		postsHref = '/manage/posts',
+		backHref = '/blog/archive'
+	} = $props<{
 		children: () => unknown
 		session: ManageSessionResponse
+		postsHref?: InternalHref | `#${string}`
+		backHref?: InternalHref | `#${string}`
 	}>()
 
-	const isPostsRoute = $derived(page.url.pathname.startsWith('/manage/posts'))
+	const isPostsRoute = $derived(
+		page.url.pathname.startsWith('/manage/posts') || postsHref.startsWith('#')
+	)
 	const actorLabel = $derived(session.actor.name ?? session.actor.email ?? session.actor.sub)
+
+	function followDebugHref(href: `#${string}`) {
+		if (typeof window === 'undefined') {
+			return
+		}
+
+		window.location.hash = href
+	}
 </script>
 
 <svelte:head>
@@ -30,13 +48,34 @@
 
 		<div class="manage-shell__actions">
 			<nav class="manage-shell__nav" aria-label="管理导航">
-				<a class:active={isPostsRoute} href={resolve('/manage/posts')}>
-					<span>Content</span>
-					<strong>Posts</strong>
-				</a>
+				{#if postsHref.startsWith('#')}
+					<button
+						class:active={isPostsRoute}
+						type="button"
+						onclick={() => followDebugHref(postsHref)}
+					>
+						<span>Content</span>
+						<strong>Posts</strong>
+					</button>
+				{:else}
+					<a class:active={isPostsRoute} href={resolve(postsHref)}>
+						<span>Content</span>
+						<strong>Posts</strong>
+					</a>
+				{/if}
 			</nav>
 
-			<a class="button-secondary manage-shell__back" href={resolve('/blog/archive')}>返回公开站</a>
+			{#if backHref.startsWith('#')}
+				<button
+					class="button-secondary manage-shell__back"
+					type="button"
+					onclick={() => followDebugHref(backHref)}
+				>
+					返回公开站
+				</button>
+			{:else}
+				<a class="button-secondary manage-shell__back" href={resolve(backHref)}>返回公开站</a>
+			{/if}
 		</div>
 	</header>
 
@@ -107,7 +146,8 @@
 		gap: 0.55rem;
 	}
 
-	.manage-shell__nav a {
+	.manage-shell__nav a,
+	.manage-shell__nav button {
 		display: grid;
 		gap: 0.2rem;
 		min-width: 9rem;
@@ -115,13 +155,17 @@
 		border: 1px solid var(--line);
 		border-radius: 20px;
 		background: rgba(255, 255, 255, 0.72);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
 		transition:
 			transform var(--ease),
 			border-color var(--ease),
 			background-color var(--ease);
 	}
 
-	.manage-shell__nav a span {
+	.manage-shell__nav a span,
+	.manage-shell__nav button span {
 		font-family: var(--font-mono);
 		font-size: 0.72rem;
 		letter-spacing: 0.08em;
@@ -129,13 +173,16 @@
 		color: var(--ink-faint);
 	}
 
-	.manage-shell__nav a strong {
+	.manage-shell__nav a strong,
+	.manage-shell__nav button strong {
 		font-family: var(--font-display);
 		font-size: 1rem;
 	}
 
 	.manage-shell__nav a:hover,
-	.manage-shell__nav a.active {
+	.manage-shell__nav button:hover,
+	.manage-shell__nav a.active,
+	.manage-shell__nav button.active {
 		transform: translateY(-2px);
 		border-color: rgba(79, 120, 255, 0.24);
 		background: rgba(255, 255, 255, 0.92);

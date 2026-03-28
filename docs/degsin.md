@@ -82,13 +82,13 @@ Cloudflare CDN 分发到用户
 - 文章详情页
 - 标签页
 - About
-- RSS / Sitemap / robots
+- Sitemap / robots
 
 这里要补一个当前已经实现的事实：
 
 - 首页虽然是**强交互主界面**，但仍然走内容站语境下的静态优先路线
 - 首页不是传统博客文章流，而是独立的 `screen-home` 入口场景
-- 非首页路由继续复用全局 Header / Dock / Footer
+- 非首页公开内容路由统一进入 shared subpage app shell
 - 主导航与一级入口切换以 **client-side navigation** 为目标体验
 
 ## 2. 强交互只放在需要的地方
@@ -133,7 +133,7 @@ Cloudflare CDN 分发到用户
 建议把这些逻辑都放进 `$lib/server`：
 
 - 内容读取
-- RSS / sitemap 生成辅助
+- sitemap 生成辅助
 - 私有环境变量读取
 - 未来的 webhook / token / 后台集成
 
@@ -173,7 +173,6 @@ blog-site/
 │  │  │  └─ pages/
 │  │  ├─ server/
 │  │  │  ├─ content/
-│  │  │  ├─ rss/
 │  │  │  └─ sitemap/
 │  │  ├─ utils/
 │  │  ├─ constants/
@@ -331,7 +330,6 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 
 - 搜索页：`src/routes/search/+page.svelte`
 - 友情链接页：`src/routes/links/+page.svelte`
-- RSS：`src/routes/rss.xml/+server.ts`
 - Sitemap：`src/routes/sitemap.xml/+server.ts`
 
 ## 当前布局约束
@@ -339,7 +337,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - 首页在 `src/routes/+layout.svelte` 中走特殊分支，不复用全局 Header / Dock / Footer
 - 首页使用 `screen-home` 的独立结构，而不是普通 `shell + section` 页面
 - 当 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时，首页退化成精简版布局
-- 非首页路由继续走全局布局壳，用于分类页、归档页、详情页、标签页和 About
+- 非首页公开内容路由统一走 shared subpage app shell，用于分类页、归档页、详情页、标签页和 About
 - 站内导航默认由 SvelteKit client router 接管：**PATH 变化，但不整页刷新**
 
 ## 渲染策略
@@ -366,6 +364,9 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 
 - 写成 SvelteKit 的 `+server.ts`
 - 不要额外依赖项目根目录 `/functions`
+- `/manage` 是唯一允许依赖 runtime function / Pages Functions 的路由域
+- `manage` 之外的公开页面和公开 API，不把 Function 当成数据层
+- `manage` 之外的 server load 只允许做本地内容装配；第三方数据优先改成浏览器直连或构建期产物
 
 对于 SvelteKit on Pages，这条边界最好在设计阶段就讲明白。
 
@@ -407,7 +408,6 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `src/lib/server/content/blog.ts`
 - `src/lib/server/content/tags.ts`
 - `src/lib/server/content/archive.ts`
-- `src/lib/server/rss/index.ts`
 - `src/lib/server/sitemap/index.ts`
 
 通用原则：
@@ -560,7 +560,6 @@ Git 集成部署时，建议写死这几个参数：
 - Open Graph
 - Twitter Card
 - sitemap
-- rss
 - `robots.txt`
 - 语义化 heading 结构
 - 图片 `alt`
@@ -647,7 +646,6 @@ Git 集成部署时，建议写死这几个参数：
 - Markdown / mdsvex 内容系统
 - Frontmatter schema 校验
 - SEO 基础
-- RSS
 - Sitemap
 - Cloudflare Pages 部署
 - 自定义域名接入
@@ -722,7 +720,7 @@ Git 集成部署时，建议写死这几个参数：
 16. 给文章详情页实现 `entries()`
 17. 给内容页接上 prerender 策略
 18. 接上动态 / 收藏占位页
-19. 配 SEO / rss / sitemap / robots
+19. 配 SEO / sitemap / robots
 20. 接 Cloudflare Pages：`Framework preset = SvelteKit`
 21. 设置 Build command：`npm run build`
 22. 设置 Build output directory：`.svelte-kit/cloudflare`

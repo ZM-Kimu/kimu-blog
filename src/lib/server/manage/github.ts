@@ -159,10 +159,7 @@ function pkcs1ToPkcs8(privateKey: string) {
 	const privateKeyDer = pemToDer(privateKey, 'RSA PRIVATE KEY')
 
 	return derToPem(
-		encodeDer(
-			0x30,
-			concatBytes([version, algorithmIdentifier, encodeDer(0x04, privateKeyDer)])
-		),
+		encodeDer(0x30, concatBytes([version, algorithmIdentifier, encodeDer(0x04, privateKeyDer)])),
 		'PRIVATE KEY'
 	)
 }

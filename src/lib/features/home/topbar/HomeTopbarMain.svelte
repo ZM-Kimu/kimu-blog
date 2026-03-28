@@ -8,6 +8,8 @@
 		authorName,
 		profileLevel,
 		profileHref,
+		motionLocked,
+		onAction,
 		topbarRoot = $bindable<HTMLElement | null>(null),
 		profileChip = $bindable<HTMLAnchorElement | null>(null)
 	}: {
@@ -16,6 +18,8 @@
 		authorName: string
 		profileLevel: string
 		profileHref: '/' | '/about'
+		motionLocked: boolean
+		onAction: (action: HomeTopbarAction) => void
 		topbarRoot?: HTMLElement | null
 		profileChip?: HTMLAnchorElement | null
 	} = $props()
@@ -44,12 +48,17 @@
 		>
 			{#each metrics as metric (metric.key)}
 				<div class="resource-chip" role="group" aria-label={metric.ariaLabel}>
-					<span
-						class={`home-topbar__icon home-topbar__icon--${metric.icon.mode}`}
-						aria-hidden="true"
-						style={`--topbar-icon-src: url('${metric.icon.src}');${metric.icon.tint ? ` --topbar-icon-tint: ${metric.icon.tint};` : ''}`}
-					></span>
-					<strong aria-hidden="true">{metric.value}</strong>
+					<div class="resource-chip__icon-wrap">
+						<span
+							class={`home-topbar__icon home-topbar__icon--${metric.icon.mode}`}
+							aria-hidden="true"
+							style={`--topbar-icon-src: url('${metric.icon.src}');${metric.icon.tint ? ` --topbar-icon-tint: ${metric.icon.tint};` : ''}`}
+						></span>
+						<span class="resource-chip__hint" aria-hidden="true">{metric.label}</span>
+					</div>
+					<div class="resource-chip__value">
+						<strong aria-hidden="true">{metric.value}</strong>
+					</div>
 				</div>
 			{/each}
 		</div>
@@ -61,13 +70,35 @@
 			data-flip-role="tools"
 		>
 			{#each actions as action, index (action.key)}
-				<div class="home-topbar__tool-button" role="img" aria-label={action.ariaLabel}>
-					<span
-						class={`home-topbar__icon home-topbar__icon--${action.icon.mode}`}
-						aria-hidden="true"
-						style={`--topbar-icon-src: url('${action.icon.src}');${action.icon.tint ? ` --topbar-icon-tint: ${action.icon.tint};` : ''}`}
-					></span>
-				</div>
+				{#if action.kind === 'link' && action.href}
+					<a
+						class="home-topbar__tool-button"
+						href={resolve(action.href)}
+						aria-label={action.ariaLabel}
+						aria-disabled={motionLocked || action.disabled ? 'true' : undefined}
+						tabindex={motionLocked || action.disabled ? -1 : undefined}
+					>
+						<span
+							class={`home-topbar__icon home-topbar__icon--${action.icon.mode}`}
+							aria-hidden="true"
+							style={`--topbar-icon-src: url('${action.icon.src}');${action.icon.tint ? ` --topbar-icon-tint: ${action.icon.tint};` : ''}`}
+						></span>
+					</a>
+				{:else}
+					<button
+						class="home-topbar__tool-button"
+						type="button"
+						aria-label={action.ariaLabel}
+						disabled={motionLocked || action.disabled}
+						onclick={() => onAction(action)}
+					>
+						<span
+							class={`home-topbar__icon home-topbar__icon--${action.icon.mode}`}
+							aria-hidden="true"
+							style={`--topbar-icon-src: url('${action.icon.src}');${action.icon.tint ? ` --topbar-icon-tint: ${action.icon.tint};` : ''}`}
+						></span>
+					</button>
+				{/if}
 				{#if index < actions.length - 1}
 					<span class="home-topbar__tool-divider" aria-hidden="true">/</span>
 				{/if}

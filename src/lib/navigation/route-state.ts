@@ -90,6 +90,15 @@ export function resolveRouteState({
 		}
 	}
 
+	if (pathname === '/__debug/manage') {
+		return {
+			kind: 'debugManage',
+			pathname,
+			status,
+			isError: false
+		}
+	}
+
 	return {
 		kind: 'unknown',
 		pathname,

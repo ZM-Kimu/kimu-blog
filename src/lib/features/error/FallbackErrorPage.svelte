@@ -1,6 +1,12 @@
 <script lang="ts">
+	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
+	import '$lib/features/home/styles/topbar/base.css'
+	import '$lib/features/home/styles/topbar/subpage.css'
 	import HomeTopbarSubpage from '$lib/features/home/topbar/HomeTopbarSubpage.svelte'
+	import TopbarReopenButton from '$lib/features/home/topbar/TopbarReopenButton.svelte'
 	import { getNavigationContext } from '$lib/navigation/context'
+	import type { HomeTopbarAction } from '$lib/features/home/topbar/home-topbar.types'
 
 	let {
 		status,
@@ -12,6 +18,10 @@
 
 	const { navigationManager } = getNavigationContext()
 	const topbarState = $derived(navigationManager.pageState.topbar)
+	const topbarCollapsed = $derived(navigationManager.topbarCollapsed)
+	const expandAriaLabel = $derived(
+		navigationManager.locale === 'en-US' ? 'Expand top bar' : '展开 topbar'
+	)
 
 	const isNotFound = $derived(status === 404)
 	const isServerFault = $derived(status >= 500)
@@ -39,6 +49,20 @@
 	async function handleBack() {
 		await navigationManager.goBack(topbarState.back)
 	}
+
+	async function handleAction(action: HomeTopbarAction) {
+		switch (action.key) {
+			case 'language':
+				await navigationManager.toggleLocale()
+				break
+			case 'collapse':
+				navigationManager.toggleTopbarCollapsed()
+				break
+			case 'home':
+				await goto(resolve('/'))
+				break
+		}
+	}
 </script>
 
 <section class="error-screen">
@@ -47,13 +71,23 @@
 	<div class="error-screen__light error-screen__light--right" aria-hidden="true"></div>
 
 	<div class="error-screen__topbar">
-		<HomeTopbarSubpage
-			metrics={topbarState.metrics}
-			actions={topbarState.actions}
-			title={topbarState.title}
-			motionLocked={false}
-			onBack={handleBack}
-		/>
+		<div class:home-topbar-stage--collapsed={topbarCollapsed} class="home-topbar-stage">
+			<HomeTopbarSubpage
+				metrics={topbarState.metrics}
+				actions={topbarState.actions}
+				title={topbarState.title}
+				motionLocked={false}
+				onBack={handleBack}
+				onAction={handleAction}
+			/>
+
+			{#if topbarCollapsed}
+				<TopbarReopenButton
+					ariaLabel={expandAriaLabel}
+					onActivate={() => navigationManager.toggleTopbarCollapsed(false)}
+				/>
+			{/if}
+		</div>
 	</div>
 
 	<div class="error-screen__body">

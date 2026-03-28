@@ -58,6 +58,30 @@ export const enUSMessages = {
 			enterContent: 'Enter content'
 		}
 	},
+	topbar: {
+		actions: {
+			language: 'Toggle language',
+			collapse: 'Collapse top bar',
+			settings: 'Open settings',
+			home: 'Return home',
+			expand: 'Expand top bar'
+		},
+		metrics: {
+			articles: 'Site articles',
+			todos: 'Open todos',
+			recentActivity: 'Posts added or updated in the last 30 days'
+		},
+		settings: {
+			title: 'Site Settings',
+			close: 'Close settings',
+			cursor: 'Cursor Style',
+			cursorDescription: 'Switch between the in-world pointer and the browser default cursor.',
+			custom: 'Custom',
+			system: 'System',
+			manageKicker: 'Control Route',
+			manage: 'Open manage'
+		}
+	},
 	error: {
 		notFound: 'Page not found~ (´・ω・`)',
 		failure: 'System fault detected (´；ω；`)'

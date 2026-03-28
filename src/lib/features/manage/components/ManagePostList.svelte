@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { resolve } from '$app/paths'
 	import type { ManagePostListItem } from '$lib/features/manage/types'
+	import type { InternalHref } from '$lib/navigation/types'
 	import { formatDate } from '$lib/utils/date'
 
-	let { items } = $props<{
+	let {
+		items,
+		createHref = '/manage/posts/new',
+		resolveItemHref = (slug: string) => `/manage/posts/${slug}` as InternalHref
+	} = $props<{
 		items: ManagePostListItem[]
+		createHref?: InternalHref | `#${string}`
+		resolveItemHref?: (slug: string) => InternalHref | `#${string}`
 	}>()
 
 	let query = $state('')
@@ -23,6 +30,14 @@
 				.includes(normalized)
 		)
 	})
+
+	function followDebugHref(href: `#${string}`) {
+		if (typeof window === 'undefined') {
+			return
+		}
+
+		window.location.hash = href
+	}
 </script>
 
 <section class="manage-list panel">
@@ -38,7 +53,13 @@
 				<input bind:value={query} placeholder="title / slug / category" type="search" />
 			</label>
 
-			<a class="button-primary" href={resolve('/manage/posts/new')}>新建文章</a>
+			{#if createHref.startsWith('#')}
+				<button class="button-primary" type="button" onclick={() => followDebugHref(createHref)}>
+					新建文章
+				</button>
+			{:else}
+				<a class="button-primary" href={resolve(createHref)}>新建文章</a>
+			{/if}
 		</div>
 	</div>
 
@@ -50,30 +71,58 @@
 	<div class="manage-list__rows">
 		{#if filteredItems.length}
 			{#each filteredItems as item (item.slug)}
-				<a class="manage-post-row" href={resolve(`/manage/posts/${item.slug}`)}>
-					<div class="manage-post-row__main">
-						<div class="manage-post-row__headline">
-							<h3>{item.title}</h3>
-							<div class="manage-post-row__chips">
-								{#if item.draft}
-									<span class="manage-chip manage-chip--draft">draft</span>
-								{/if}
-								{#if item.featured}
-									<span class="manage-chip manage-chip--featured">featured</span>
-								{/if}
-								<span class="manage-chip">{item.format}</span>
+				{@const itemHref = resolveItemHref(item.slug)}
+				{#if itemHref.startsWith('#')}
+					<button class="manage-post-row" type="button" onclick={() => followDebugHref(itemHref)}>
+						<div class="manage-post-row__main">
+							<div class="manage-post-row__headline">
+								<h3>{item.title}</h3>
+								<div class="manage-post-row__chips">
+									{#if item.draft}
+										<span class="manage-chip manage-chip--draft">draft</span>
+									{/if}
+									{#if item.featured}
+										<span class="manage-chip manage-chip--featured">featured</span>
+									{/if}
+									<span class="manage-chip">{item.format}</span>
+								</div>
 							</div>
+
+							<p>{item.description}</p>
 						</div>
 
-						<p>{item.description}</p>
-					</div>
+						<div class="manage-post-row__side">
+							<strong>{item.slug}</strong>
+							<span>{item.category ?? '未分类'}</span>
+							<small>更新于 {formatDate(item.updated)}</small>
+						</div>
+					</button>
+				{:else}
+					<a class="manage-post-row" href={resolve(itemHref)}>
+						<div class="manage-post-row__main">
+							<div class="manage-post-row__headline">
+								<h3>{item.title}</h3>
+								<div class="manage-post-row__chips">
+									{#if item.draft}
+										<span class="manage-chip manage-chip--draft">draft</span>
+									{/if}
+									{#if item.featured}
+										<span class="manage-chip manage-chip--featured">featured</span>
+									{/if}
+									<span class="manage-chip">{item.format}</span>
+								</div>
+							</div>
 
-					<div class="manage-post-row__side">
-						<strong>{item.slug}</strong>
-						<span>{item.category ?? '未分类'}</span>
-						<small>更新于 {formatDate(item.updated)}</small>
-					</div>
-				</a>
+							<p>{item.description}</p>
+						</div>
+
+						<div class="manage-post-row__side">
+							<strong>{item.slug}</strong>
+							<span>{item.category ?? '未分类'}</span>
+							<small>更新于 {formatDate(item.updated)}</small>
+						</div>
+					</a>
+				{/if}
 			{/each}
 		{:else}
 			<div class="manage-list__empty">
@@ -161,6 +210,13 @@
 			transform var(--ease),
 			border-color var(--ease),
 			background-color var(--ease);
+	}
+
+	.manage-post-row {
+		width: 100%;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
 	}
 
 	.manage-post-row:hover {

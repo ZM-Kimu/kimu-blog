@@ -1,3 +1,5 @@
+import type { TopbarMetricsData } from '$lib/navigation/types'
+
 export type HomePageCategory = {
 	slug: string
 	name: string
@@ -14,6 +16,7 @@ export type HomePageData = {
 	featuredPost: HomePageFeaturedPost | null
 	categories: HomePageCategory[]
 	totalPosts: number
+	topbarMetrics?: TopbarMetricsData
 }
 
 export type HomePageMissionPreviewItem = {

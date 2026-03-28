@@ -88,6 +88,23 @@
 	align-items: center;
 }
 
+.home-topbar__aside--subpage {
+	grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.home-topbar__aside-divider {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	align-self: center;
+	font-family: var(--font-mono);
+	font-size: 0.62rem;
+	line-height: 1;
+	color: rgba(68, 98, 127, 0.58);
+	transform: translateY(-0.02rem);
+	pointer-events: none;
+}
+
 .home-topbar__resource-slot {
 	position: relative;
 }

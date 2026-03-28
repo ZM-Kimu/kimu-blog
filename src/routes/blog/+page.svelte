@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SubpageScreen from '$lib/components/layout/SubpageScreen.svelte'
 	import BlogMissionPage from '$lib/features/blog/BlogMissionPage.svelte'
 	import SeoHead from '$lib/components/ui/SeoHead.svelte'
 
@@ -11,4 +12,6 @@
 	pathname="/blog"
 />
 
-<BlogMissionPage {data} />
+<SubpageScreen>
+	<BlogMissionPage {data} />
+</SubpageScreen>

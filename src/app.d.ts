@@ -1,6 +1,7 @@
 import type { ManageAccessActor } from '$lib/features/manage/contracts'
 import type { AppLocale } from '$lib/i18n/config'
 import type { I18nPayload } from '$lib/i18n'
+import type { TopbarMetricsData } from '$lib/navigation/types'
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
@@ -34,6 +35,7 @@ declare global {
 
 		interface PageData {
 			i18n?: I18nPayload
+			topbarMetrics?: TopbarMetricsData
 		}
 		// interface PageState {}
 	}

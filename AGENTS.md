@@ -26,7 +26,7 @@
 - 内容加载使用 `import.meta.glob(...)`
 - 博客详情路由必须提供明确的 `entries()` 或等效 prerender 方案
 - 内容页默认 `prerender = true`
-- 首页使用独立 `screen-home` 布局；非首页复用全局布局壳
+- 首页使用独立 `screen-home` 布局；公开二级内容页统一收敛到 shared subpage app shell
 - 首页在 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时切到精简版方案
 - “SPA-like 体验”不等于“纯 SPA 架构”；**不要**为了省事把根布局改成 `ssr = false`
 
@@ -53,6 +53,13 @@
 - `src/lib/components/`：可复用 UI 与布局组件
 - `static/`：必须保留原始文件名的静态资源
 - 不要把所有逻辑都堆进组件里，也不要把仅服务端代码混入客户端 UI 模块
+
+### 5.1 Pages Functions / Runtime 边界
+
+- `/manage` 是当前仓库中**唯一允许依赖 runtime function / Pages Functions / Worker 端服务逻辑**的路由域
+- `manage` 之外的公开路由与公开 API，**不得**依赖 Cloudflare Function 作为数据来源
+- `manage` 之外允许使用 `+layout.server.ts` / `+page.server.ts` 做 **build-safe 的本地内容装配**，例如 i18n、frontmatter 聚合、文章索引计数
+- `manage` 之外**不得**在 server load 或公开 `+server.ts` 中发起 GitHub、第三方服务、数据库或其他远端 API 请求
 
 ## 6.2 Frontmatter
 
@@ -90,7 +97,7 @@
 - `/blog`：分类界面，承担一级内容入口，不回退成传统文章流首页
 - `/blog/archive`：全部文章的完整浏览入口
 - `/blog/[slug]`：可直达、可分享的文章详情页
-- 首页走独立 `screen-home`；非首页继续复用全局 shell
+- 首页走独立 `screen-home`；公开二级内容页继续走 shared subpage app shell
 - 站内导航目标是 **path 会变化，但不触发整页刷新**
 
 ## 8. 动画与交互规则
@@ -123,7 +130,7 @@
 
 ### 11.2 SEO 与可访问性
 
-必须支持：唯一 page title、页面 description、在需要时提供 canonical、Open Graph、Twitter Card、sitemap、rss、robots、语义化标题结构、图片 `alt`、稳定 slug、在 `src/app.html` 中设置正确文档语言。
+必须支持：唯一 page title、页面 description、在需要时提供 canonical、Open Graph、Twitter Card、sitemap、robots、语义化标题结构、图片 `alt`、稳定 slug、在 `src/app.html` 中设置正确文档语言。
 
 可访问性是硬要求；动画优先，不代表可访问性可以放到最后。
 

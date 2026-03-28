@@ -27,7 +27,7 @@ author: 'Kimu Team'
 - 文章详情页
 - 标签页
 - About 页
-- RSS / Sitemap
+- Sitemap
 
 ## 下一步应该做什么
 

@@ -1,7 +1,7 @@
 import { siteConfig } from '$lib/config/site'
 import { translate, type LocaleMessages } from '$lib/i18n'
 
-import type { PageState, RouteState, TopbarAction, TopbarMetric } from './types'
+import type { PageState, RouteState, TopbarAction, TopbarMetric, TopbarMetricsData } from './types'
 
 function t(messages: LocaleMessages | undefined, key: string, fallback: string): string {
 	if (!messages) {
@@ -12,7 +12,7 @@ function t(messages: LocaleMessages | undefined, key: string, fallback: string):
 	return translated === key ? fallback : translated
 }
 
-const placeholderCount = '00'
+const placeholderCount = '-'
 
 const topbarMetricIcons = {
 	articles: {
@@ -20,11 +20,11 @@ const topbarMetricIcons = {
 		mode: 'mask' as const,
 		tint: '#4277be'
 	},
-	issues: {
+	todos: {
 		src: '/icons/topbar/question_mark_green.png',
 		mode: 'image' as const
 	},
-	contributes: {
+	recentActivity: {
 		src: '/icons/topbar/tick_mark_yellow.png',
 		mode: 'image' as const
 	}
@@ -53,71 +53,106 @@ const topbarToolIcons = {
 	}
 }
 
-function createSharedMetrics(): readonly TopbarMetric[] {
+function formatMetricValue(value: number | null | undefined) {
+	if (value === null || value === undefined || Number.isNaN(value)) {
+		return placeholderCount
+	}
+
+	return String(value)
+}
+
+function resolveTopbarMetricsData(data: Record<string, unknown>) {
+	const metrics = data.topbarMetrics
+
+	if (!metrics || typeof metrics !== 'object') {
+		return null
+	}
+
+	return metrics as TopbarMetricsData
+}
+
+function createSharedMetrics(
+	data: Record<string, unknown>,
+	messages?: LocaleMessages
+): readonly TopbarMetric[] {
+	const metricsData = resolveTopbarMetricsData(data)
+	const articleValue = formatMetricValue(metricsData?.articleCount)
+	const todoValue = formatMetricValue(metricsData?.todoCount)
+	const recentActivityValue = formatMetricValue(metricsData?.recentPostActivityCount30d)
+
 	return [
 		{
 			key: 'articles',
-			value: placeholderCount,
-			ariaLabel: `站点文章数 ${placeholderCount}`,
+			value: articleValue,
+			label: t(messages, 'topbar.metrics.articles', '站点文章数'),
+			ariaLabel: `${t(messages, 'topbar.metrics.articles', '站点文章数')} ${articleValue}`,
 			icon: topbarMetricIcons.articles
 		},
 		{
-			key: 'issues',
-			value: placeholderCount,
-			ariaLabel: `Issue 数 ${placeholderCount}`,
-			icon: topbarMetricIcons.issues
+			key: 'todos',
+			value: todoValue,
+			label: t(messages, 'topbar.metrics.todos', '待办事项数'),
+			ariaLabel: `${t(messages, 'topbar.metrics.todos', '待办事项数')} ${todoValue}`,
+			icon: topbarMetricIcons.todos
 		},
 		{
-			key: 'contributes',
-			value: placeholderCount,
-			ariaLabel: `最近 contribute 数 ${placeholderCount}`,
-			icon: topbarMetricIcons.contributes
+			key: 'recent-activity',
+			value: recentActivityValue,
+			label: t(messages, 'topbar.metrics.recentActivity', '最近 30 天更新/新增文章数'),
+			ariaLabel: `${t(messages, 'topbar.metrics.recentActivity', '最近 30 天更新/新增文章数')} ${recentActivityValue}`,
+			icon: topbarMetricIcons.recentActivity
 		}
 	]
 }
 
-function createHomeActions(): readonly TopbarAction[] {
+function createHomeActions(messages?: LocaleMessages): readonly TopbarAction[] {
 	return [
 		{
 			key: 'language',
-			ariaLabel: '语言切换',
+			ariaLabel: t(messages, 'topbar.actions.language', '语言切换'),
+			kind: 'command',
 			icon: topbarToolIcons.language,
-			interactive: false
+			disabled: false
 		},
 		{
 			key: 'collapse',
-			ariaLabel: '收起 topbar',
+			ariaLabel: t(messages, 'topbar.actions.collapse', '收起 topbar'),
+			kind: 'command',
 			icon: topbarToolIcons.collapse,
-			interactive: false
+			disabled: false
 		},
 		{
 			key: 'settings',
-			ariaLabel: '配置项',
+			ariaLabel: t(messages, 'topbar.actions.settings', '配置项'),
+			kind: 'command',
 			icon: topbarToolIcons.settings,
-			interactive: false
+			disabled: false
 		}
 	]
 }
 
-function createDefaultSubpageActions(): readonly TopbarAction[] {
+function createDefaultSubpageActions(messages?: LocaleMessages): readonly TopbarAction[] {
 	return [
 		{
 			key: 'language',
-			ariaLabel: '语言切换',
+			ariaLabel: t(messages, 'topbar.actions.language', '语言切换'),
+			kind: 'command',
 			icon: topbarToolIcons.language,
-			interactive: false
+			disabled: false
 		},
 		{
 			key: 'collapse',
-			ariaLabel: '收起 topbar',
+			ariaLabel: t(messages, 'topbar.actions.collapse', '收起 topbar'),
+			kind: 'command',
 			icon: topbarToolIcons.collapse,
-			interactive: false
+			disabled: false
 		},
 		{
 			key: 'home',
-			ariaLabel: '返回主页',
+			ariaLabel: t(messages, 'topbar.actions.home', '返回主页'),
+			kind: 'command',
 			icon: topbarToolIcons.home,
-			interactive: false
+			disabled: false
 		}
 	]
 }
@@ -154,6 +189,8 @@ function resolvePageTitle(
 			return t(messages, 'nav.updates', 'Updates')
 		case 'favorites':
 			return t(messages, 'nav.favorites', 'Favorites')
+		case 'debugManage':
+			return 'Manage Debug'
 		case 'error':
 			return route.status === 404 ? 'Fallback Route' : 'System Recovery'
 		default:
@@ -183,8 +220,8 @@ export function createPageState({
 			topbar: {
 				variant: 'main',
 				title,
-				metrics: createSharedMetrics(),
-				actions: createHomeActions(),
+				metrics: createSharedMetrics(data, messages),
+				actions: createHomeActions(messages),
 				motionPolicy: 'rich'
 			}
 		}
@@ -200,8 +237,8 @@ export function createPageState({
 			topbar: {
 				variant: 'subpage',
 				title,
-				metrics: createSharedMetrics(),
-				actions: createDefaultSubpageActions(),
+				metrics: createSharedMetrics(data, messages),
+				actions: createDefaultSubpageActions(messages),
 				back: {
 					kind: 'history',
 					fallbackHref: '/'
@@ -210,6 +247,16 @@ export function createPageState({
 			}
 		}
 	}
+
+	const usesSubpageScreen =
+		routeState.kind === 'blog' ||
+		routeState.kind === 'archive' ||
+		routeState.kind === 'post' ||
+		routeState.kind === 'tag' ||
+		routeState.kind === 'about' ||
+		routeState.kind === 'updates' ||
+		routeState.kind === 'favorites' ||
+		routeState.kind === 'debugManage'
 
 	const fallbackHref =
 		routeState.kind === 'archive'
@@ -224,19 +271,21 @@ export function createPageState({
 							? '/'
 							: routeState.kind === 'favorites'
 								? '/'
-								: '/'
+								: routeState.kind === 'debugManage'
+									? '/'
+									: '/'
 
 	return {
 		route: routeState,
 		title,
 		transitionKey: `${routeState.kind}:${routeState.pathname}`,
-		shellMode: isScreenRoute ? 'screen' : 'shell',
-		showGlobalChrome: !isScreenRoute,
+		shellMode: isScreenRoute || usesSubpageScreen ? 'screen' : 'shell',
+		showGlobalChrome: !(isScreenRoute || usesSubpageScreen),
 		topbar: {
 			variant: 'subpage',
 			title,
-			metrics: createSharedMetrics(),
-			actions: createDefaultSubpageActions(),
+			metrics: createSharedMetrics(data, messages),
+			actions: createDefaultSubpageActions(messages),
 			back: {
 				kind: 'history',
 				fallbackHref

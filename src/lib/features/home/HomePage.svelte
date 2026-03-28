@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
 	import { siteConfig } from '$lib/config/site'
 	import { translate, type I18nPayload } from '$lib/i18n'
 	import { getNavigationContext } from '$lib/navigation/context'
@@ -12,7 +12,9 @@
 	import type { HomePageData } from './home-page.types'
 	import { createHomePageViewModel } from './home-page.view-model'
 	import HomeTopbar from './topbar/HomeTopbar.svelte'
-	import type { TopbarMode } from './topbar/home-topbar.types'
+	import TopbarReopenButton from './topbar/TopbarReopenButton.svelte'
+	import TopbarSettingsModal from './topbar/TopbarSettingsModal.svelte'
+	import type { HomeTopbarActionDetail, TopbarMode } from './topbar/home-topbar.types'
 
 	type HomeTopbarHandle = {
 		transitionTo: (nextMode: TopbarMode, origin: 'cta' | 'back') => Promise<void>
@@ -22,6 +24,7 @@
 	const reducedMotionQuery = '(prefers-reduced-motion: reduce)'
 	const homeWorkTarget = '/__debug/error-404'
 	const homeWorkTargetStatus = 404
+	const topbarCollapseDurationMs = 220
 
 	let { data }: { data: HomePageData & { i18n?: I18nPayload } } = $props()
 	let screenHome: HTMLDivElement | null = $state(null)
@@ -40,6 +43,11 @@
 	)
 	const homeBodyPhase = $derived(navigationManager.phase === 'exiting' ? 'exiting' : 'idle')
 	const pageExitDurationMs = $derived(prefersReducedMotion ? 140 : 320)
+	const topbarCollapsed = $derived(navigationManager.topbarCollapsed)
+	const settingsOpen = $derived(
+		navigationManager.settingsOpen && topbarMode === 'main' && !topbarCollapsed
+	)
+	const cursorMode = $derived(navigationManager.cursorMode)
 
 	function t(key: string) {
 		return messages ? translate(messages, key) : key
@@ -50,10 +58,46 @@
 		topbarMotionLocked = event.detail.locked
 	}
 
+	async function ensureExpandedTopbar() {
+		if (!topbarCollapsed) {
+			return
+		}
+
+		navigationManager.toggleTopbarCollapsed(false)
+		await tick()
+		await new Promise((resolvePromise) => {
+			setTimeout(resolvePromise, prefersReducedMotion ? 140 : topbarCollapseDurationMs)
+		})
+	}
+
+	async function handleTopbarAction(event: CustomEvent<HomeTopbarActionDetail>) {
+		if (topbarMotionLocked) {
+			return
+		}
+
+		switch (event.detail.action.key) {
+			case 'language':
+				await navigationManager.toggleLocale()
+				break
+			case 'collapse':
+				navigationManager.toggleTopbarCollapsed()
+				break
+			case 'settings':
+				navigationManager.openTopbarSettings()
+				break
+			case 'home':
+				await goto(resolve('/'))
+				break
+		}
+	}
+
 	async function handleWorkAction() {
 		if (topbarMotionLocked || navigationManager.phase !== 'idle' || !homeTopbar) {
 			return
 		}
+
+		navigationManager.closeTopbarSettings()
+		await ensureExpandedTopbar()
 
 		const targetPageState = createPageState({
 			routeState: resolveRouteState({ pathname: homeWorkTarget, status: homeWorkTargetStatus }),
@@ -100,6 +144,14 @@
 	})
 </script>
 
+<svelte:window
+	onkeydown={(event) => {
+		if (settingsOpen && event.key === 'Escape') {
+			navigationManager.closeTopbarSettings()
+		}
+	}}
+/>
+
 <section class="home-shell">
 	<div
 		class="screen-home"
@@ -111,21 +163,47 @@
 		<div class="home-light home-light--left" aria-hidden="true"></div>
 		<div class="home-light home-light--right" aria-hidden="true"></div>
 
-		<HomeTopbar
-			host={screenHome}
-			mainMetrics={currentTopbarState.metrics}
-			mainActions={currentTopbarState.actions}
-			subpageMetrics={pendingTopbarState.metrics}
-			subpageActions={pendingTopbarState.actions}
-			subpageTitle={pendingTopbarState.title}
-			authorName={siteConfig.author}
-			profileLevel="90"
-			profileHref="/about"
-			compact={isCompactLayout}
-			reducedMotion={prefersReducedMotion}
-			bind:this={homeTopbar}
-			on:statechange={handleTopbarStateChange}
-		/>
+		<div class:home-topbar-stage--collapsed={topbarCollapsed} class="home-topbar-stage">
+			<HomeTopbar
+				host={screenHome}
+				mainMetrics={currentTopbarState.metrics}
+				mainActions={currentTopbarState.actions}
+				subpageMetrics={pendingTopbarState.metrics}
+				subpageActions={pendingTopbarState.actions}
+				subpageTitle={pendingTopbarState.title}
+				authorName={siteConfig.author}
+				profileLevel="90"
+				profileHref="/about"
+				compact={isCompactLayout}
+				reducedMotion={prefersReducedMotion}
+				bind:this={homeTopbar}
+				on:action={handleTopbarAction}
+				on:statechange={handleTopbarStateChange}
+			/>
+
+			{#if topbarCollapsed}
+				<TopbarReopenButton
+					ariaLabel={t('topbar.actions.expand')}
+					onActivate={() => navigationManager.toggleTopbarCollapsed(false)}
+				/>
+			{/if}
+		</div>
+
+		{#if settingsOpen}
+			<TopbarSettingsModal
+				title={t('topbar.settings.title')}
+				closeLabel={t('topbar.settings.close')}
+				cursorLabel={t('topbar.settings.cursor')}
+				cursorDescription={t('topbar.settings.cursorDescription')}
+				customLabel={t('topbar.settings.custom')}
+				systemLabel={t('topbar.settings.system')}
+				manageLabel={t('topbar.settings.manage')}
+				manageKicker={t('topbar.settings.manageKicker')}
+				{cursorMode}
+				onClose={() => navigationManager.closeTopbarSettings()}
+				onToggleCursor={() => navigationManager.toggleCursorMode()}
+			/>
+		{/if}
 
 		<aside class="home-left-tools">
 			{#each homeQuickActions as action (action.href)}
