@@ -274,6 +274,7 @@
 }
 
 .home-topbar__tool-button {
+	position: relative;
 	display: grid;
 	place-items: center;
 	min-width: 1rem;
@@ -322,6 +323,10 @@
 	opacity: 0.52;
 	transform: none;
 	background: transparent;
+}
+
+.home-topbar__tool-button[data-motion-locked='true'] {
+	opacity: 1;
 }
 
 .home-topbar-settings {

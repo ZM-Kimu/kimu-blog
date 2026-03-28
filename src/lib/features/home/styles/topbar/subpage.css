@@ -85,24 +85,29 @@
 }
 
 .home-topbar--subpage .home-topbar__resources {
+	position: relative;
 	align-items: center;
 }
 
-.home-topbar__aside--subpage {
-	grid-template-columns: minmax(0, 1fr) auto auto;
-}
-
-.home-topbar__aside-divider {
+.home-topbar--subpage .home-topbar__resources::after {
+	content: '/';
+	position: absolute;
+	left: calc(100% + var(--home-topbar-gap) / 2);
+	top: 50%;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	align-self: center;
 	font-family: var(--font-mono);
 	font-size: 0.62rem;
 	line-height: 1;
 	color: rgba(68, 98, 127, 0.58);
-	transform: translateY(-0.02rem);
+	transform: translate(-50%, -50%);
 	pointer-events: none;
+}
+
+.home-topbar__aside--subpage {
+	position: relative;
+	grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .home-topbar__resource-slot {

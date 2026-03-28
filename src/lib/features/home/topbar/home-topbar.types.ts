@@ -46,6 +46,12 @@ export type StripProxy = {
 	shell: HTMLDivElement
 }
 
+export type ToolIconTransitionOverlay = {
+	wrapper: HTMLSpanElement
+	sourceIcon: HTMLSpanElement
+	targetIcon: HTMLSpanElement
+}
+
 export type HomeTopbarRefs = {
 	topbarRoot: HTMLElement | null
 	backButton: HTMLButtonElement | null

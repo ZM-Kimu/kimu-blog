@@ -76,6 +76,7 @@
 						href={resolve(action.href)}
 						aria-label={action.ariaLabel}
 						aria-disabled={motionLocked || action.disabled ? 'true' : undefined}
+						data-motion-locked={motionLocked && !action.disabled ? 'true' : undefined}
 						tabindex={motionLocked || action.disabled ? -1 : undefined}
 					>
 						<span
@@ -89,6 +90,7 @@
 						class="home-topbar__tool-button"
 						type="button"
 						aria-label={action.ariaLabel}
+						data-motion-locked={motionLocked && !action.disabled ? 'true' : undefined}
 						disabled={motionLocked || action.disabled}
 						onclick={() => onAction(action)}
 					>

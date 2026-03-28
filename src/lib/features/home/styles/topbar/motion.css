@@ -132,3 +132,19 @@
 	-webkit-mask: url('/icons/home-topbar-back.svg') center / contain no-repeat;
 	mask: url('/icons/home-topbar-back.svg') center / contain no-repeat;
 }
+
+.home-topbar-motion-tool-icon {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	pointer-events: none;
+}
+
+.home-topbar-motion-tool-icon__icon {
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	width: 1.7rem;
+	height: 1.7rem;
+}

@@ -7,6 +7,7 @@ export const stripRetreatOffset = -16
 export const titleRevealAt = 0.34
 export const profileRevealAt = 0.36
 export const glyphSwitchAt = richDuration * 0.55
+export const toolIconSwitchAt = richDuration * 0.34
 export const textExitDuration = richDuration * 0.25
 export const fallbackProfilePath =
 	'M0 0H300Q312 0 312 12V62Q312 70 306 76L286 94Q280 100 272 100H0Z'

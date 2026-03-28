@@ -15,12 +15,14 @@ import {
 	stripRetreatOffset,
 	stripRevealDuration,
 	textExitDuration,
+	toolIconSwitchAt,
 	titleRevealAt
 } from './home-topbar.constants'
 import {
 	clearMotionLayer,
 	createMorphOverlay,
 	createStripGhost,
+	createToolIconTransitionOverlay,
 	createTitleGhost,
 	getHostElement,
 	getSharedTargets,
@@ -240,6 +242,11 @@ export async function runRichTransition({
 		fromMode === 'subpage' && sourceRefs.titleWrap
 			? measureToHost(host, sourceRefs, sourceRefs.titleWrap)
 			: null
+	const sourceToolButtons = Array.from(
+		sourceRoot.querySelectorAll<HTMLElement>('.home-topbar__tool-button')
+	)
+	const sourceLastToolIcon =
+		sourceToolButtons.at(-1)?.querySelector<HTMLElement>('.home-topbar__icon') ?? null
 	const flipState = libs.Flip.getState(sourceSharedTargets)
 
 	clearMotionLayer(sourceRefs)
@@ -321,6 +328,12 @@ export async function runRichTransition({
 		: `${targetHeaderBox.height}px`
 	const targetProfileContent =
 		nextMode === 'main' ? getProfileContentTargets(targetRefs.profileChip) : []
+	const targetToolButtons = Array.from(
+		targetRoot.querySelectorAll<HTMLElement>('.home-topbar__tool-button')
+	)
+	const targetLastToolButton = targetToolButtons.at(-1) ?? null
+	const targetLastToolIcon =
+		targetLastToolButton?.querySelector<HTMLElement>('.home-topbar__icon') ?? null
 	const targetResourceChips =
 		nextMode === 'subpage'
 			? Array.from(
@@ -341,6 +354,18 @@ export async function runRichTransition({
 	const pathProgress = { value: 0 }
 	const targetGradient = nextMode === 'subpage' ? backGradient : profileGradient
 	const targetGradientVector = nextMode === 'subpage' ? backGradientVector : profileGradientVector
+	const toolIconTransition =
+		sourceLastToolIcon &&
+		targetLastToolButton &&
+		targetLastToolIcon &&
+		sourceLastToolIcon.getAttribute('style') !== targetLastToolIcon.getAttribute('style')
+			? createToolIconTransitionOverlay(targetLastToolButton, sourceLastToolIcon, targetLastToolIcon)
+			: null
+
+	if (toolIconTransition && targetLastToolIcon) {
+		libs.gsap.set(targetLastToolIcon, { autoAlpha: 0 })
+		libs.gsap.set(toolIconTransition.targetIcon, { autoAlpha: 0 })
+	}
 
 	if (nextMode === 'subpage') {
 		targetRoot.style.height = incomingStripHeight
@@ -512,6 +537,28 @@ export async function runRichTransition({
 			}
 		}
 
+		if (toolIconTransition) {
+			timeline.to(
+				toolIconTransition.sourceIcon,
+				{
+					autoAlpha: 0,
+					duration: 0.1,
+					ease: 'power1.out'
+				},
+				toolIconSwitchAt
+			)
+
+			timeline.to(
+				toolIconTransition.targetIcon,
+				{
+					autoAlpha: 1,
+					duration: 0.12,
+					ease: 'power1.out'
+				},
+				toolIconSwitchAt + 0.02
+			)
+		}
+
 		timeline.add(
 			libs.Flip.from(flipState, {
 				targets: targetSharedTargets,
@@ -642,6 +689,26 @@ export async function runRichTransition({
 				handoffAt
 			)
 
+			if (targetLastToolIcon) {
+				timeline.set(
+					targetLastToolIcon,
+					{
+						clearProps: 'opacity,visibility'
+					},
+					handoffAt
+				)
+			}
+
+			if (toolIconTransition) {
+				timeline.set(
+					toolIconTransition.wrapper,
+					{
+						autoAlpha: 0
+					},
+					handoffAt
+				)
+			}
+
 			timeline.to(
 				targetRefs.titleWrap,
 				{
@@ -722,9 +789,34 @@ export async function runRichTransition({
 				},
 				richDuration
 			)
+
+			if (targetLastToolIcon) {
+				timeline.set(
+					targetLastToolIcon,
+					{
+						clearProps: 'opacity,visibility'
+					},
+					richDuration
+				)
+			}
+
+			if (toolIconTransition) {
+				timeline.set(
+					toolIconTransition.wrapper,
+					{
+						autoAlpha: 0
+					},
+					richDuration
+				)
+			}
 		}
 	})
 
+	if (targetLastToolIcon) {
+		libs.gsap.set(targetLastToolIcon, { clearProps: 'opacity,visibility' })
+	}
+
+	toolIconTransition?.wrapper.remove()
 	incomingStripProxy?.wrapper.remove()
 	stripGhost?.wrapper.remove()
 	clearMotionLayer(targetRefs)

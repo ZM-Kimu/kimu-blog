@@ -10,6 +10,7 @@ import type {
 	HomeTopbarRefs,
 	MorphOverlay,
 	StripProxy,
+	ToolIconTransitionOverlay,
 	TitleGhost,
 	TopbarMode
 } from './home-topbar.types'
@@ -197,4 +198,30 @@ export function createMorphOverlay({
 	refs.motionLayer.appendChild(wrapper)
 
 	return { wrapper, gradient, path, startStop, endStop, text, glyph }
+}
+
+export function createToolIconTransitionOverlay(
+	button: HTMLElement,
+	sourceIcon: HTMLElement,
+	targetIcon: HTMLElement
+): ToolIconTransitionOverlay {
+	const wrapper = document.createElement('span')
+	wrapper.className = 'home-topbar-motion-tool-icon'
+	wrapper.setAttribute('aria-hidden', 'true')
+
+	const sourceClone = sourceIcon.cloneNode(true) as HTMLSpanElement
+	sourceClone.classList.add('home-topbar-motion-tool-icon__icon')
+
+	const targetClone = targetIcon.cloneNode(true) as HTMLSpanElement
+	targetClone.classList.add('home-topbar-motion-tool-icon__icon')
+
+	wrapper.appendChild(sourceClone)
+	wrapper.appendChild(targetClone)
+	button.appendChild(wrapper)
+
+	return {
+		wrapper,
+		sourceIcon: sourceClone,
+		targetIcon: targetClone
+	}
 }
