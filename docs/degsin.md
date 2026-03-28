@@ -29,6 +29,7 @@ Cloudflare CDN 分发到用户
 - **站内导航目标是 SPA-like：URL 会变化，但默认不整页刷新**
 - **强交互页按需保留 SSR / CSR**
 - **不要把整站做成纯 SPA**
+- **首屏 boot loading overlay 属于主 UI 进入时间线的一部分，而不是主体可交互后才补上的遮罩**
 
 ---
 
@@ -325,6 +326,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - About 页：`src/routes/about/+page.svelte`
 - 404 / 路由错误页：`src/routes/+error.svelte`
 - 兜底错误页：`src/error.html`
+- manage 调试沙盒：`src/routes/__debug/manage/+page.svelte`
 
 ## 可选页面
 
@@ -336,6 +338,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 
 - 首页在 `src/routes/+layout.svelte` 中走特殊分支，不复用全局 Header / Dock / Footer
 - 首页使用 `screen-home` 的独立结构，而不是普通 `shell + section` 页面
+- 首屏会先进入 boot loading overlay，再推进到 staged / entering / ready 的主 UI 时间线
 - 当 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时，首页退化成精简版布局
 - 非首页公开内容路由统一走 shared subpage app shell，用于分类页、归档页、详情页、标签页和 About
 - 站内导航默认由 SvelteKit client router 接管：**PATH 变化，但不整页刷新**
@@ -367,6 +370,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `/manage` 是唯一允许依赖 runtime function / Pages Functions 的路由域
 - `manage` 之外的公开页面和公开 API，不把 Function 当成数据层
 - `manage` 之外的 server load 只允许做本地内容装配；第三方数据优先改成浏览器直连或构建期产物
+- `/__debug/manage` 虽然复用 manage 组件，但它是公开调试沙盒，禁止接 `/api/manage/*` 或任何外部数据源
 
 对于 SvelteKit on Pages，这条边界最好在设计阶段就讲明白。
 

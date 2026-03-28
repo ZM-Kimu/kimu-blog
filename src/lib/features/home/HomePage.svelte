@@ -8,6 +8,7 @@
 	import { createPageState } from '$lib/navigation/page-state'
 	import { resolveRouteState } from '$lib/navigation/route-state'
 	import { homeDockItems, homeQuickActions } from './config'
+	import SpineHomeBackground from './background/SpineHomeBackground.svelte'
 	import { bindMediaQuery } from './home-page.media'
 	import type { HomePageData } from './home-page.types'
 	import { createHomePageViewModel } from './home-page.view-model'
@@ -31,6 +32,7 @@
 	let homeTopbar: HomeTopbarHandle | null = $state(null)
 	let isCompactLayout = $state(false)
 	let prefersReducedMotion = $state(false)
+	let siteBootPhase = $state<'loading' | 'staged' | 'entering' | 'ready'>('loading')
 	let topbarMode = $state<TopbarMode>('main')
 	let topbarMotionLocked = $state(false)
 
@@ -48,6 +50,26 @@
 		navigationManager.settingsOpen && topbarMode === 'main' && !topbarCollapsed
 	)
 	const cursorMode = $derived(navigationManager.cursorMode)
+	const backgroundAnimationPreference = $derived(navigationManager.backgroundAnimationPreference)
+	const backgroundAnimationStatus = $derived(navigationManager.backgroundAnimationStatus)
+	const backgroundAnimationDisabled = $derived(isCompactLayout || prefersReducedMotion)
+	const backgroundAnimationDescription = $derived.by(() => {
+		const segments = [t('topbar.settings.backgroundAnimationDescription')]
+
+		if (backgroundAnimationDisabled) {
+			segments.push(t('topbar.settings.backgroundAnimationDisabled'))
+		} else if (backgroundAnimationStatus === 'failed') {
+			segments.push(t('topbar.settings.backgroundAnimationFailed'))
+		}
+
+		return segments.join(' ')
+	})
+	const effectiveBackgroundAnimationEnabled = $derived(
+		siteBootPhase === 'ready' &&
+			backgroundAnimationPreference === 'on' &&
+			!backgroundAnimationDisabled &&
+			backgroundAnimationStatus !== 'failed'
+	)
 
 	function t(key: string) {
 		return messages ? translate(messages, key) : key
@@ -56,6 +78,22 @@
 	function handleTopbarStateChange(event: CustomEvent<{ mode: TopbarMode; locked: boolean }>) {
 		topbarMode = event.detail.mode
 		topbarMotionLocked = event.detail.locked
+	}
+
+	function syncSiteBootPhase() {
+		if (typeof document === 'undefined') {
+			return
+		}
+
+		const nextPhase = document.documentElement.dataset.siteBootPhase
+		if (
+			nextPhase === 'loading' ||
+			nextPhase === 'staged' ||
+			nextPhase === 'entering' ||
+			nextPhase === 'ready'
+		) {
+			siteBootPhase = nextPhase
+		}
 	}
 
 	async function ensureExpandedTopbar() {
@@ -130,16 +168,26 @@
 	}
 
 	onMount(() => {
+		syncSiteBootPhase()
+
 		const unbindCompact = bindMediaQuery(compactQuery, (matches) => {
 			isCompactLayout = matches
 		})
 		const unbindReducedMotion = bindMediaQuery(reducedMotionQuery, (matches) => {
 			prefersReducedMotion = matches
 		})
+		const bootObserver = new MutationObserver(() => {
+			syncSiteBootPhase()
+		})
+		bootObserver.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ['data-site-boot-phase']
+		})
 
 		return () => {
 			unbindCompact()
 			unbindReducedMotion()
+			bootObserver.disconnect()
 		}
 	})
 </script>
@@ -162,6 +210,11 @@
 		<div class="home-room" aria-hidden="true"></div>
 		<div class="home-light home-light--left" aria-hidden="true"></div>
 		<div class="home-light home-light--right" aria-hidden="true"></div>
+		{#if effectiveBackgroundAnimationEnabled}
+			<SpineHomeBackground
+				onStatusChange={(status) => navigationManager.setBackgroundAnimationStatus(status)}
+			/>
+		{/if}
 
 		<div class:home-topbar-stage--collapsed={topbarCollapsed} class="home-topbar-stage">
 			<HomeTopbar
@@ -197,11 +250,20 @@
 				cursorDescription={t('topbar.settings.cursorDescription')}
 				customLabel={t('topbar.settings.custom')}
 				systemLabel={t('topbar.settings.system')}
+				backgroundAnimationLabel={t('topbar.settings.backgroundAnimation')}
+				{backgroundAnimationDescription}
+				backgroundAnimationOnLabel={t('topbar.settings.backgroundAnimationOn')}
+				backgroundAnimationOffLabel={t('topbar.settings.backgroundAnimationOff')}
+				{backgroundAnimationPreference}
+				{backgroundAnimationDisabled}
 				manageLabel={t('topbar.settings.manage')}
-				manageKicker={t('topbar.settings.manageKicker')}
+				manageDescription={t('topbar.settings.manageDescription')}
+				manageActionLabel={t('topbar.settings.manageAction')}
 				{cursorMode}
 				onClose={() => navigationManager.closeTopbarSettings()}
-				onToggleCursor={() => navigationManager.toggleCursorMode()}
+				onSetCursorMode={(mode) => navigationManager.setCursorMode(mode)}
+				onSetBackgroundAnimationPreference={(mode) =>
+					navigationManager.setBackgroundAnimationPreference(mode)}
 			/>
 		{/if}
 

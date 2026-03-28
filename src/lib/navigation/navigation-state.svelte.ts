@@ -8,11 +8,16 @@ import { resolveRouteState } from './route-state'
 
 import type {
 	BackBehavior,
+	BackgroundAnimationPreference,
+	BackgroundAnimationStatus,
 	BeginPageSwitchOptions,
 	PageState,
 	RouteState,
 	TransitionPhase
 } from './types'
+
+const CURSOR_MODE_STORAGE_KEY = 'cursor-mode'
+const BACKGROUND_ANIMATION_STORAGE_KEY = 'home-background-animation'
 
 function createUnknownRouteState(): RouteState {
 	return resolveRouteState({ pathname: '/__unknown__', status: 200 })
@@ -36,6 +41,8 @@ export class NavigationStateManager {
 	topbarCollapsed = $state(false)
 	settingsOpen = $state(false)
 	cursorMode = $state<'custom' | 'system'>('custom')
+	backgroundAnimationPreference = $state<BackgroundAnimationPreference>('on')
+	backgroundAnimationStatus = $state<BackgroundAnimationStatus>('idle')
 
 	#enterTimer: ReturnType<typeof setTimeout> | null = null
 	#clientRuntimeHydrated = false
@@ -91,9 +98,19 @@ export class NavigationStateManager {
 
 		this.#clientRuntimeHydrated = true
 
-		const savedCursorMode = window.localStorage.getItem('cursor-mode')
+		const savedCursorMode = window.localStorage.getItem(CURSOR_MODE_STORAGE_KEY)
 		if (savedCursorMode === 'custom' || savedCursorMode === 'system') {
 			this.cursorMode = savedCursorMode
+		}
+
+		const savedBackgroundAnimationPreference = window.localStorage.getItem(
+			BACKGROUND_ANIMATION_STORAGE_KEY
+		)
+		if (
+			savedBackgroundAnimationPreference === 'on' ||
+			savedBackgroundAnimationPreference === 'off'
+		) {
+			this.backgroundAnimationPreference = savedBackgroundAnimationPreference
 		}
 	}
 
@@ -119,8 +136,21 @@ export class NavigationStateManager {
 		this.cursorMode = mode
 
 		if (browser) {
-			window.localStorage.setItem('cursor-mode', mode)
+			window.localStorage.setItem(CURSOR_MODE_STORAGE_KEY, mode)
 		}
+	}
+
+	setBackgroundAnimationPreference(mode: BackgroundAnimationPreference) {
+		this.backgroundAnimationPreference = mode
+		this.backgroundAnimationStatus = 'idle'
+
+		if (browser) {
+			window.localStorage.setItem(BACKGROUND_ANIMATION_STORAGE_KEY, mode)
+		}
+	}
+
+	setBackgroundAnimationStatus(status: BackgroundAnimationStatus) {
+		this.backgroundAnimationStatus = status
 	}
 
 	toggleCursorMode() {

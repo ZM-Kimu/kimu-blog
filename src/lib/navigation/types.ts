@@ -64,6 +64,10 @@ export type TopbarMetricsData = {
 	recentPostActivityCount30d: number
 }
 
+export type BackgroundAnimationPreference = 'on' | 'off'
+
+export type BackgroundAnimationStatus = 'idle' | 'loading' | 'ready' | 'failed'
+
 export type BackBehavior = {
 	kind: 'history'
 	fallbackHref: InternalHref

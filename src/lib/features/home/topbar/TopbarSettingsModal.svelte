@@ -4,6 +4,8 @@
 	import { onMount, tick } from 'svelte'
 	import { fade } from 'svelte/transition'
 
+	import type { BackgroundAnimationPreference } from '$lib/navigation/types'
+
 	let {
 		title,
 		closeLabel,
@@ -11,11 +13,19 @@
 		cursorDescription,
 		customLabel,
 		systemLabel,
+		backgroundAnimationLabel,
+		backgroundAnimationDescription,
+		backgroundAnimationOnLabel,
+		backgroundAnimationOffLabel,
+		backgroundAnimationPreference,
+		backgroundAnimationDisabled,
 		manageLabel,
-		manageKicker,
+		manageDescription,
+		manageActionLabel,
 		cursorMode,
 		onClose,
-		onToggleCursor
+		onSetCursorMode,
+		onSetBackgroundAnimationPreference
 	}: {
 		title: string
 		closeLabel: string
@@ -23,14 +33,23 @@
 		cursorDescription: string
 		customLabel: string
 		systemLabel: string
+		backgroundAnimationLabel: string
+		backgroundAnimationDescription: string
+		backgroundAnimationOnLabel: string
+		backgroundAnimationOffLabel: string
+		backgroundAnimationPreference: BackgroundAnimationPreference
+		backgroundAnimationDisabled: boolean
 		manageLabel: string
-		manageKicker: string
+		manageDescription: string
+		manageActionLabel: string
 		cursorMode: 'custom' | 'system'
 		onClose: () => void
-		onToggleCursor: () => void
+		onSetCursorMode: (mode: 'custom' | 'system') => void
+		onSetBackgroundAnimationPreference: (mode: BackgroundAnimationPreference) => void
 	} = $props()
 
-	let cursorToggleButton: HTMLButtonElement | null = $state(null)
+	let customCursorButton: HTMLButtonElement | null = $state(null)
+	let systemCursorButton: HTMLButtonElement | null = $state(null)
 
 	function dialogRise(
 		_: Element,
@@ -54,7 +73,7 @@
 
 	onMount(() => {
 		void tick().then(() => {
-			cursorToggleButton?.focus()
+			;(cursorMode === 'custom' ? customCursorButton : systemCursorButton)?.focus()
 		})
 	})
 </script>
@@ -79,8 +98,7 @@
 	>
 		<header class="home-topbar-settings__header">
 			<div class="home-topbar-settings__heading">
-				<span class="eyebrow">HUD CONFIG</span>
-				<strong>{title}</strong>
+				<strong class="home-topbar-settings__title">{title}</strong>
 			</div>
 			<button
 				class="home-topbar-settings__close"
@@ -93,25 +111,95 @@
 		</header>
 
 		<div class="home-topbar-settings__body">
-			<div class="home-topbar-settings__group">
-				<div class="home-topbar-settings__copy">
-					<span>{cursorLabel}</span>
-					<small>{cursorDescription}</small>
-				</div>
-				<button
-					class="home-topbar-settings__toggle"
-					type="button"
-					bind:this={cursorToggleButton}
-					onclick={onToggleCursor}
-				>
-					<strong>{cursorMode === 'custom' ? customLabel : systemLabel}</strong>
-				</button>
-			</div>
+			<div class="home-topbar-settings__options">
+				<section class="home-topbar-settings__option">
+					<div class="home-topbar-settings__copy">
+						<span>{cursorLabel}</span>
+						<small>{cursorDescription}</small>
+					</div>
 
-			<a class="home-topbar-settings__manage" href={resolve('/manage')} onclick={onClose}>
-				<span class="home-topbar-settings__manage-kicker">{manageKicker}</span>
-				<strong>{manageLabel}</strong>
-			</a>
+					<div
+						class="home-topbar-settings__controls home-topbar-settings__controls--switch"
+						role="group"
+						aria-label={cursorLabel}
+						data-cursor-mode={cursorMode}
+					>
+						<button
+							class:active={cursorMode === 'custom'}
+							class="home-topbar-settings__choice"
+							type="button"
+							bind:this={customCursorButton}
+							aria-pressed={cursorMode === 'custom'}
+							onclick={() => onSetCursorMode('custom')}
+						>
+							<strong>{customLabel}</strong>
+						</button>
+						<button
+							class:active={cursorMode === 'system'}
+							class="home-topbar-settings__choice"
+							type="button"
+							bind:this={systemCursorButton}
+							aria-pressed={cursorMode === 'system'}
+							onclick={() => onSetCursorMode('system')}
+						>
+							<strong>{systemLabel}</strong>
+						</button>
+					</div>
+				</section>
+
+				<section class="home-topbar-settings__option">
+					<div class="home-topbar-settings__copy">
+						<span>{backgroundAnimationLabel}</span>
+						<small>{backgroundAnimationDescription}</small>
+					</div>
+
+					<div
+						class:home-topbar-settings__controls--disabled={backgroundAnimationDisabled}
+						class="home-topbar-settings__controls home-topbar-settings__controls--switch"
+						role="group"
+						aria-label={backgroundAnimationLabel}
+						data-cursor-mode={backgroundAnimationPreference === 'on' ? 'custom' : 'system'}
+					>
+						<button
+							class:active={backgroundAnimationPreference === 'on'}
+							class="home-topbar-settings__choice"
+							type="button"
+							disabled={backgroundAnimationDisabled}
+							aria-pressed={backgroundAnimationPreference === 'on'}
+							onclick={() => onSetBackgroundAnimationPreference('on')}
+						>
+							<strong>{backgroundAnimationOnLabel}</strong>
+						</button>
+						<button
+							class:active={backgroundAnimationPreference === 'off'}
+							class="home-topbar-settings__choice"
+							type="button"
+							disabled={backgroundAnimationDisabled}
+							aria-pressed={backgroundAnimationPreference === 'off'}
+							onclick={() => onSetBackgroundAnimationPreference('off')}
+						>
+							<strong>{backgroundAnimationOffLabel}</strong>
+						</button>
+					</div>
+				</section>
+
+				<section class="home-topbar-settings__option">
+					<div class="home-topbar-settings__copy">
+						<span>{manageLabel}</span>
+						<small>{manageDescription}</small>
+					</div>
+
+					<div class="home-topbar-settings__controls">
+						<a
+							class="home-topbar-settings__link-button"
+							href={resolve('/manage')}
+							onclick={onClose}
+						>
+							<strong>{manageActionLabel}</strong>
+						</a>
+					</div>
+				</section>
+			</div>
 		</div>
 	</div>
 </div>

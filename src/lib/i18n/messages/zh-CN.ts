@@ -78,8 +78,15 @@ export const zhCNMessages = {
 			cursorDescription: '在站点自定义指针与浏览器默认光标之间切换。',
 			custom: 'Custom',
 			system: 'System',
-			manageKicker: '控制入口',
-			manage: '进入管理'
+			backgroundAnimation: 'Background Animation',
+			backgroundAnimationDescription: '为首页启用 Spine 背景动画增强层。',
+			backgroundAnimationOn: 'On',
+			backgroundAnimationOff: 'Off',
+			backgroundAnimationDisabled: '当前在 compact 布局或减动效模式下自动停用。',
+			backgroundAnimationFailed: '资源加载失败，已回退到默认背景。',
+			manage: 'Manage 工作台',
+			manageDescription: '打开内容维护面板，进入文章列表、编辑器与仓库写入流程。',
+			manageAction: '进入'
 		}
 	},
 	error: {

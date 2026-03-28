@@ -472,26 +472,21 @@ export async function runRichTransition({
 		}
 
 		if (incomingStripProxy && targetRefs.stripShell) {
-			const stripHandoffAt = Math.max(stripRevealDuration - 0.06, 0.18)
-			const stripHandoffDuration = 0.1
+			const stripHandoffAt = stripRevealDuration
 			const chipSkinHandoffAt = Math.min(stripHandoffAt + 0.04, richDuration - 0.18)
 
-			timeline.to(
+			timeline.set(
 				targetRefs.stripShell,
 				{
-					autoAlpha: 1,
-					duration: stripHandoffDuration,
-					ease: 'power1.out'
+					autoAlpha: 1
 				},
 				stripHandoffAt
 			)
 
-			timeline.to(
+			timeline.set(
 				incomingStripProxy.wrapper,
 				{
-					autoAlpha: 0,
-					duration: stripHandoffDuration,
-					ease: 'power1.out'
+					autoAlpha: 0
 				},
 				stripHandoffAt
 			)

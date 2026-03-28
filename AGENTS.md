@@ -60,6 +60,7 @@
 - `manage` 之外的公开路由与公开 API，**不得**依赖 Cloudflare Function 作为数据来源
 - `manage` 之外允许使用 `+layout.server.ts` / `+page.server.ts` 做 **build-safe 的本地内容装配**，例如 i18n、frontmatter 聚合、文章索引计数
 - `manage` 之外**不得**在 server load 或公开 `+server.ts` 中发起 GitHub、第三方服务、数据库或其他远端 API 请求
+- `__debug/manage` 虽然复用 manage 组件，但它属于公开调试页，不得接入 `/api/manage/*`、第三方请求或任何 runtime function 数据源
 
 ## 6.2 Frontmatter
 
@@ -100,6 +101,12 @@
 - 首页走独立 `screen-home`；公开二级内容页继续走 shared subpage app shell
 - 站内导航目标是 **path 会变化，但不触发整页刷新**
 
+### 7.3 调试路由职责
+
+- `__debug` 只用于本地 / preview 的视觉与状态调试，不承诺外部契约稳定
+- `__debug/manage` 是 manage 的单页样式沙盒，只允许使用本地 mock 数据
+- `__debug/error-*` 用于错误页与错误态时间线调试，不承担真实内容职责
+
 ## 8. 动画与交互规则
 
 动画不是装饰性的事后添加，而是站点语言的一部分；代理必须把动效设计视为核心实现内容之一。
@@ -118,6 +125,7 @@
 - 优先使用 Svelte 原生 transition / animation 与 CSS-first 方案
 - 仅在理由充分时引入重型第三方动画依赖
 - 避免引入会明显增加构建、hydrate 或维护复杂度、但收益不足的动画库
+- 首屏如果使用 boot/loading overlay，它必须先于主 UI 显示，并作为“loading -> staged -> entering -> ready”时间线的一部分，而不是在页面已完全可交互后才补出现
 
 ## 10. 资源、SEO 与可访问性规则
 

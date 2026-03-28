@@ -78,8 +78,17 @@ export const enUSMessages = {
 			cursorDescription: 'Switch between the in-world pointer and the browser default cursor.',
 			custom: 'Custom',
 			system: 'System',
-			manageKicker: 'Control Route',
-			manage: 'Open manage'
+			backgroundAnimation: 'Background Animation',
+			backgroundAnimationDescription:
+				'Enable the Spine-powered animated background layer for home.',
+			backgroundAnimationOn: 'On',
+			backgroundAnimationOff: 'Off',
+			backgroundAnimationDisabled: 'Automatically disabled on compact layout or reduced motion.',
+			backgroundAnimationFailed: 'Asset loading failed, so the default background is being used.',
+			manage: 'Manage Workbench',
+			manageDescription:
+				'Open the content maintenance panel for posts, editor states, and repository writes.',
+			manageAction: 'Open'
 		}
 	},
 	error: {
