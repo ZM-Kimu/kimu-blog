@@ -11,7 +11,7 @@ export function load({ params }) {
 	const post = getPostBySlug(params.slug)
 
 	if (!post) {
-		throw error(404, '文章不存在')
+		throw error(404, 'post_not_found')
 	}
 
 	return {

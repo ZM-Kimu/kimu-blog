@@ -13,11 +13,12 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint . && npm run lint:css",
+		"lint": "prettier --check . && eslint . && npm run lint:css && npm run validate:i18n",
 		"lint:css": "stylelint \"src/**/*.{css,svelte}\"",
 		"lint:css:fix": "stylelint \"src/**/*.{css,svelte}\" --fix",
 		"format": "prettier --write .",
 		"gen": "wrangler types",
+		"validate:i18n": "node ./scripts/validate-i18n.mjs",
 		"validate:mdsvex": "node ./scripts/validate-mdsvex.mjs",
 		"ci": "npm run gen && npm run check && npm run lint && npm run validate:mdsvex && npm run build"
 	},

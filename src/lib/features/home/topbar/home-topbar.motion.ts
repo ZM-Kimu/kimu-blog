@@ -195,16 +195,16 @@ export async function runRichTransition({
 	afterModeChange,
 	setCurrentTimeline,
 	profileShellPath,
-	profileLevel,
 	authorName,
+	infoLabel,
 	subpageTitle
 }: BaseTransitionArgs & {
 	host: HTMLElement | null
 	fromMode: TopbarMode
 	nextMode: TopbarMode
 	profileShellPath: string
-	profileLevel: string
 	authorName: string
+	infoLabel: string
 	subpageTitle: string
 }) {
 	const sourceRefs = getRefs()
@@ -295,8 +295,8 @@ export async function runRichTransition({
 		fromMode,
 		box: sourceAnchorBox,
 		profileShellPath,
-		profileLevel,
-		authorName
+		authorName,
+		infoLabel
 	})
 	if (!morph) {
 		stripGhost?.wrapper.remove()

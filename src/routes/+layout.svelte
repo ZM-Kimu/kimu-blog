@@ -72,6 +72,8 @@
 	const isBareRoute = $derived(isPublicScreenRoute || isManageRoute)
 	const showGlobalChrome = $derived(pageState.showGlobalChrome)
 	const isRouteOutgoing = $derived(navigationManager.phase === 'exit')
+	const isDesktopHomeRoute = $derived(routeState.kind === 'home' && !isCompactLayout)
+	const useDesktopHomeExit = $derived(isRouteOutgoing && isDesktopHomeRoute)
 	const isRouteEntering = $derived(
 		navigationManager.phase === 'entry' && navigationManager.pendingTarget === page.url.pathname
 	)
@@ -431,8 +433,9 @@
 		{#if isPublicScreenRoute}
 			<div
 				class:screen-route-layer-entry={isRouteEntering}
-				class:screen-route-layer-exit={isRouteOutgoing}
+				class:screen-route-layer-exit={isRouteOutgoing && !useDesktopHomeExit}
 				class:screen-route-layer-home-enter-desktop={desktopHomeEnterActive}
+				class:screen-route-layer-home-exit-desktop={useDesktopHomeExit}
 				class:screen-route-layer-subpage-enter-desktop={desktopSubpageEnterActive}
 				class="screen-route-layer"
 				style={routeTransitionStyle}

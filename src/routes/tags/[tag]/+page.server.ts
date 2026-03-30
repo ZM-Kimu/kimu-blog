@@ -11,7 +11,7 @@ export function load({ params }) {
 	const result = getPostsByTag(params.tag)
 
 	if (!result) {
-		throw error(404, '标签不存在')
+		throw error(404, 'tag_not_found')
 	}
 
 	return result

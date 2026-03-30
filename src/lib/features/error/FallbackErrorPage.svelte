@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state'
+	import { translate } from '$lib/i18n'
+
 	let {
 		status,
 		message
@@ -7,33 +10,41 @@
 		message: string
 	} = $props()
 
+	const messages = $derived(page.data.i18n?.messages)
 	const isNotFound = $derived(status === 404)
 	const isServerFault = $derived(status >= 500)
 	const usesCompactHeadline = $derived(isNotFound || isServerFault)
-	const eyebrow = $derived(isNotFound ? 'Route Lost' : 'Unhandled Fault')
+	const eyebrow = $derived(
+		isNotFound
+			? translate(messages, 'error.eyebrowNotFound')
+			: translate(messages, 'error.eyebrowFault')
+	)
 	const headline = $derived(
 		isNotFound
-			? '未找到页面~ (´・ω・`)'
+			? translate(messages, 'error.headlineNotFound')
 			: isServerFault
-				? '系统故障 (´；ω；`)'
-				: '系统信号中断，页面未能完成装载。'
+				? translate(messages, 'error.headlineFault')
+				: translate(messages, 'error.headlineInterrupted')
 	)
 	const detailMessage = $derived(
-		message?.trim() || (isNotFound ? '请求的页面不存在。' : '发生了未知错误。')
+		message?.trim() ||
+			(isNotFound
+				? translate(messages, 'error.detailNotFound')
+				: translate(messages, 'error.detailUnknown'))
 	)
 	const visualSrc = $derived(
 		isServerFault ? '/images/arona_embarrassed.png' : '/images/Popup_Image_Arona.png'
 	)
 	const visualAlt = $derived(
 		isServerFault
-			? 'Arona 表情插画，用于 500 错误页展示。'
-			: 'Arona 的弹窗插画，用于错误页的引导展示。'
+			? translate(messages, 'error.visualAltFault')
+			: translate(messages, 'error.visualAltGeneric')
 	)
 </script>
 
 <section class="error-screen">
 	<div class="error-screen-body">
-		<div class="error-screen-visual" aria-label="Fallback illustration">
+		<div class="error-screen-visual" aria-label={translate(messages, 'error.fallbackIllustration')}>
 			<img src={visualSrc} alt={visualAlt} loading="eager" decoding="async" />
 		</div>
 

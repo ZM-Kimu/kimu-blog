@@ -81,6 +81,7 @@
 <div class="home-topbar-settings" role="presentation">
 	<button
 		class="home-topbar-settings-scrim"
+		data-press-disabled="true"
 		type="button"
 		aria-label={closeLabel}
 		onclick={onClose}

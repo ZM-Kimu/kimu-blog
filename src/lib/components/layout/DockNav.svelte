@@ -5,7 +5,7 @@
 	import { translate, type LocaleMessages } from '$lib/i18n'
 
 	let { messages }: { messages?: LocaleMessages } = $props()
-	const t = (key: string) => (messages ? translate(messages, key) : key)
+	const t = (key: string) => translate(messages, key)
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === href : page.url.pathname.startsWith(href)

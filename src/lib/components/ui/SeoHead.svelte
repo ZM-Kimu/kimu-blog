@@ -12,7 +12,7 @@
 
 	let {
 		title = siteConfig.name,
-		description = siteConfig.description,
+		description,
 		pathname = '/',
 		image = siteConfig.ogImage,
 		type = 'website',
@@ -28,16 +28,22 @@
 
 <svelte:head>
 	<title>{resolvedTitle}</title>
-	<meta name="description" content={description} />
+	{#if description}
+		<meta name="description" content={description} />
+	{/if}
 	<link rel="canonical" href={canonical} />
 	<meta property="og:title" content={resolvedTitle} />
-	<meta property="og:description" content={description} />
+	{#if description}
+		<meta property="og:description" content={description} />
+	{/if}
 	<meta property="og:type" content={type} />
 	<meta property="og:url" content={canonical} />
 	<meta property="og:image" content={imageUrl} />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={resolvedTitle} />
-	<meta name="twitter:description" content={description} />
+	{#if description}
+		<meta name="twitter:description" content={description} />
+	{/if}
 	<meta name="twitter:image" content={imageUrl} />
 	{#if noindex}
 		<meta name="robots" content="noindex,nofollow" />

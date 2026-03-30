@@ -34,6 +34,7 @@ Cloudflare CDN 分发到用户
 - **站点内可视物件默认不可选中、不可拖动；仅输入控件与显式白名单恢复能力**
 - **仓库样式必须通过严格 CSS lint；独立 `.css` 与 `.svelte` 内 `<style>` 使用同一套规则**
 - **样式命名统一为纯 `kebab-case`，禁止 vendor prefix，统一收敛到现代 CSS 语法**
+- **产品层用户可见文本必须走 i18n messages；`zh-CN` / `en-US` 必须完全对等**
 
 ---
 
@@ -481,10 +482,20 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `npm run lint` 已纳入 CSS lint，不再只检查 `prettier` 与 `eslint`
 - `npm run lint:css` 用于严格检查
 - `npm run lint:css:fix` 用于自动修正可修复项
+- `npm run validate:i18n` 用于校验双语 key parity 与产品层裸文案
 - 选择器类名统一为纯 `kebab-case`
 - 不再保留 BEM 的 `__` / `--` 变体
 - 不再保留 `-webkit-*` 等 vendor prefix 样式写法
 - 颜色函数、媒体查询、`@import` 等写法统一按现代 CSS 规范收敛
+
+## 当前 i18n 基线
+
+- 当前 locale 固定为 `zh-CN` 与 `en-US`
+- locale 解析顺序为 `cookie` 优先，其次 `Accept-Language`
+- 全站用户可见的**产品层**文案必须来自 `src/lib/i18n/messages/*`
+- 覆盖范围包括：公开站点、错误页、manage UI、SEO `<title>` / description、`aria-label`、placeholder、按钮、空态、调试页产品文案
+- Markdown 正文、frontmatter `title/description/tags`、文章摘要与标签名仍视为内容数据，这一层暂不要求双语
+- 缺失翻译在开发与 CI 下直接失败；生产环境仅允许回退默认语言 `zh-CN`，不允许向用户暴露 message key
 
 ## 第二版再升级
 

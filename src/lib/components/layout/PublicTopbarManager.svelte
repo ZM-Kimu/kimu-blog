@@ -82,9 +82,7 @@
 			!topbarCollapsed &&
 			!stageHidden
 	)
-	const expandAriaLabel = $derived(
-		navigationManager.locale === 'en-US' ? 'Expand top bar' : '展开 topbar'
-	)
+	const expandAriaLabel = $derived(t('topbar.actions.expand'))
 	const mainTopbarState = $derived.by(() =>
 		resolveTopbarState('main', navigationManager.pageState, navigationManager.pendingPageState)
 	)
@@ -107,7 +105,7 @@
 	})
 
 	function t(key: string) {
-		return messages ? translate(messages, key) : key
+		return translate(messages, key)
 	}
 
 	function resolveTopbarState(
@@ -259,7 +257,7 @@
 			subpageActions={subpageTopbarState.actions}
 			subpageTitle={subpageTopbarState.title}
 			authorName={siteConfig.author}
-			profileLevel="90"
+			infoLabel={t('home.profile.info')}
 			profileHref="/about"
 			{compact}
 			{reducedMotion}

@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
 	import type { HomeTopbarAction, HomeTopbarMetric } from './home-topbar.types'
 
 	let {
@@ -27,11 +29,14 @@
 		titleWrap?: HTMLDivElement | null
 		stripShell?: HTMLDivElement | null
 	} = $props()
+
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string) => translate(messages, key)
 </script>
 
 <header
 	class="home-topbar home-topbar-subpage"
-	aria-label="Home top bar subpage style"
+	aria-label={t('topbar.aria.subpage')}
 	bind:this={topbarRoot}
 >
 	<div class="home-topbar-strip-shell" aria-hidden="true" bind:this={stripShell}></div>
@@ -40,7 +45,7 @@
 		<button
 			class="home-topbar-back"
 			type="button"
-			aria-label="Go back"
+			aria-label={t('topbar.aria.back')}
 			disabled={motionLocked}
 			bind:this={backButton}
 			onclick={onBack}
@@ -55,7 +60,7 @@
 	<div class="home-topbar-aside home-topbar-aside-subpage">
 		<div
 			class="home-topbar-resources"
-			aria-label="Home resources"
+			aria-label={t('topbar.aria.resources')}
 			data-flip-id="topbar-resources"
 			data-flip-role="resources"
 		>
@@ -83,7 +88,7 @@
 
 		<div
 			class="home-topbar-tools"
-			aria-label="Home top bar actions"
+			aria-label={t('topbar.aria.actions')}
 			data-flip-id="topbar-tools"
 			data-flip-role="tools"
 		>

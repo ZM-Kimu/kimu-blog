@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
 
 	type Tone = 'cyan' | 'blue' | 'amber' | 'slate'
 
@@ -22,6 +24,8 @@
 		tone = 'cyan',
 		count = 0
 	}: Props = $props()
+
+	const messages = $derived(page.data.i18n?.messages)
 </script>
 
 {#if href === '/favorites'}
@@ -35,7 +39,7 @@
 			<p>{description}</p>
 		</div>
 		<div class="mission-card-footer">
-			<span>Records</span>
+			<span>{translate(messages, 'common.recordsLabel')}</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
@@ -50,7 +54,7 @@
 			<p>{description}</p>
 		</div>
 		<div class="mission-card-footer">
-			<span>Records</span>
+			<span>{translate(messages, 'common.recordsLabel')}</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
@@ -65,7 +69,7 @@
 			<p>{description}</p>
 		</div>
 		<div class="mission-card-footer">
-			<span>Records</span>
+			<span>{translate(messages, 'common.recordsLabel')}</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
@@ -80,7 +84,7 @@
 			<p>{description}</p>
 		</div>
 		<div class="mission-card-footer">
-			<span>Records</span>
+			<span>{translate(messages, 'common.recordsLabel')}</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</div>

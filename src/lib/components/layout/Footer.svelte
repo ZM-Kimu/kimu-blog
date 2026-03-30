@@ -3,7 +3,7 @@
 	import { translate, type LocaleMessages } from '$lib/i18n'
 
 	let { messages }: { messages?: LocaleMessages } = $props()
-	const t = (key: string) => (messages ? translate(messages, key) : key)
+	const t = (key: string) => translate(messages, key)
 </script>
 
 <footer class="site-footer">

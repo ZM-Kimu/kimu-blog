@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
 	import type { HomeTopbarAction, HomeTopbarMetric } from './home-topbar.types'
 
 	let {
 		metrics,
 		actions,
 		authorName,
-		profileLevel,
 		profileHref,
 		motionLocked,
 		onAction,
@@ -16,33 +17,36 @@
 		metrics: readonly HomeTopbarMetric[]
 		actions: readonly HomeTopbarAction[]
 		authorName: string
-		profileLevel: string
 		profileHref: '/' | '/about'
 		motionLocked: boolean
 		onAction: (action: HomeTopbarAction) => void
 		topbarRoot?: HTMLElement | null
 		profileChip?: HTMLAnchorElement | null
 	} = $props()
+
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string) => translate(messages, key)
 </script>
 
 <header
 	class="home-topbar home-topbar-main"
-	aria-label="Home top bar main style"
+	aria-label={t('topbar.aria.main')}
 	bind:this={topbarRoot}
 >
 	<a class="home-profile-chip" href={resolve(profileHref)} bind:this={profileChip}>
-		<span class="home-profile-chip-level">Lv.</span>
-		<strong>{profileLevel}</strong>
+		<span class="home-profile-chip-avatar" aria-hidden="true">
+			<img src="/profile.png" alt="" draggable="false" />
+		</span>
 		<div class="home-profile-chip-copy">
-			<small>Operator</small>
 			<span>{authorName}</span>
+			<small>{t('home.profile.info')}</small>
 		</div>
 	</a>
 
 	<div class="home-topbar-aside">
 		<div
 			class="home-topbar-resources"
-			aria-label="Home resources"
+			aria-label={t('topbar.aria.resources')}
 			data-flip-id="topbar-resources"
 			data-flip-role="resources"
 		>
@@ -65,7 +69,7 @@
 
 		<div
 			class="home-topbar-tools"
-			aria-label="Home top bar actions"
+			aria-label={t('topbar.aria.actions')}
 			data-flip-id="topbar-tools"
 			data-flip-role="tools"
 		>

@@ -27,8 +27,8 @@
 - frontmatter 必须做 schema 校验
 - 内容加载使用 `import.meta.glob(...)`
 - 博客详情路由必须提供明确的 `entries()` 或等效 prerender 方案
-- 内容页默认 `prerender = true`
 - 仓库样式必须通过严格 `stylelint`；覆盖 `src/**/*.{css,svelte}`
+- 产品层用户可见文案必须走 `src/lib/i18n` messages；`zh-CN` / `en-US` 必须保持 key 对等
 - 首页使用独立 `screen-home` 布局；公开二级内容页统一收敛到 shared subpage app shell
 - 首页在 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时切到精简版方案
 - “SPA-like 体验”不等于“纯 SPA 架构”；**不要**为了省事把根布局改成 `ssr = false`
@@ -147,6 +147,14 @@
 
 可访问性是硬要求；动画优先，不代表可访问性可以放到最后。
 
+### 11.3 i18n
+
+- 当前只支持 `zh-CN` 与 `en-US`
+- locale 继续通过 `cookie + Accept-Language` 解析，并由根布局同步 `<html lang>`
+- 全站用户可见的**产品层**文本必须 i18n 化：导航、按钮、空态、错误页、manage UI、SEO/a11y 文案都必须来自 messages
+- Markdown 正文、frontmatter `title/description/tags` 等内容数据暂不强制双语
+- 缺失翻译在开发 / CI 中必须直接失败；生产环境只允许回退默认语言 `zh-CN`，不允许向用户显示 message key
+
 ## 13. 开发命令与完成标准
 
 ### 13.1 开发命令
@@ -158,6 +166,7 @@
 - `npm run lint`
 - `npm run lint:css`
 - `npm run lint:css:fix`
+- `npm run validate:i18n`
 - `npm run check`
 - `npm run build`
 

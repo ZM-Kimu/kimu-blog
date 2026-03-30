@@ -1,21 +1,23 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
+
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string) => translate(messages, key)
 </script>
 
 <section class="profile-screen">
 	<section class="panel dossier-hero">
 		<div class="dossier-hero-top">
-			<p class="eyebrow">Profile Dossier</p>
-			<a class="button-secondary dossier-hero-back" href={resolve('/')}>返回主界面</a>
+			<p class="eyebrow">{t('about.heroEyebrow')}</p>
+			<a class="button-secondary dossier-hero-back" href={resolve('/')}>{t('about.backHome')}</a>
 		</div>
 
 		<div class="dossier-hero-header">
 			<div>
-				<h1>关于这个站点</h1>
-				<p class="post-description">
-					Kimu Blog 被设计成一个游戏主界面式的个人站：内容是核心，界面组织方式则参考 mission board
-					与 dossier UI。
-				</p>
+				<h1>{t('about.title')}</h1>
+				<p class="post-description">{t('about.description')}</p>
 			</div>
 		</div>
 	</section>
@@ -24,31 +26,31 @@
 		<section class="panel dossier-side-panel">
 			<div class="panel-heading">
 				<div>
-					<p class="eyebrow">Loaded Systems</p>
-					<h2>当前能力</h2>
+					<p class="eyebrow">{t('about.systemsEyebrow')}</p>
+					<h2>{t('about.systemsTitle')}</h2>
 				</div>
 			</div>
 			<ul class="system-list">
-				<li>Cloudflare Pages 构建与分发</li>
-				<li>mdsvex 内容接入</li>
-				<li>frontmatter schema 校验</li>
-				<li>`entries()` + prerender 详情页生成</li>
-				<li>游戏 UI 风格页面骨架</li>
+				<li>{t('about.items.cloudflarePages')}</li>
+				<li>{t('about.items.mdsvex')}</li>
+				<li>{t('about.items.schemaValidation')}</li>
+				<li>{t('about.items.entries')}</li>
+				<li>{t('about.items.gameUi')}</li>
 			</ul>
 		</section>
 
 		<section class="panel dossier-side-panel">
 			<div class="panel-heading">
 				<div>
-					<p class="eyebrow">Next Missions</p>
-					<h2>下一步</h2>
+					<p class="eyebrow">{t('about.nextEyebrow')}</p>
+					<h2>{t('about.nextTitle')}</h2>
 				</div>
 			</div>
 			<ul class="system-list">
-				<li>替换 placeholder 资产</li>
-				<li>补动态数据和更细的个人资料字段</li>
-				<li>完善 archive / favorites / updates 的真实内容</li>
-				<li>补搜索、评论、统计</li>
+				<li>{t('about.items.replacePlaceholders')}</li>
+				<li>{t('about.items.profileData')}</li>
+				<li>{t('about.items.realContent')}</li>
+				<li>{t('about.items.searchCommentsAnalytics')}</li>
 			</ul>
 		</section>
 	</div>

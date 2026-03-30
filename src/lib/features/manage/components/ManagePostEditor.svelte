@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
 	import { onDestroy, tick } from 'svelte'
@@ -14,9 +15,11 @@
 		createManagePostFormState,
 		toManageWritePayload
 	} from '$lib/features/manage/form'
+	import { resolveManageErrorMessage } from '$lib/features/manage/copy'
 	import { renderManagePreviewHtml, resolvePreviewAssetPath } from '$lib/features/manage/preview'
 	import type { ManagePostDocument, ManagePostFormState } from '$lib/features/manage/types'
 	import ManagePreviewPane from '$lib/features/manage/components/ManagePreviewPane.svelte'
+	import { translate } from '$lib/i18n'
 
 	type EditorMode = 'create' | 'edit'
 
@@ -95,7 +98,18 @@
 	const uploadMap = $derived.by(
 		() => new Map(pendingUploads.map((upload) => [upload.placeholder, upload.previewUrl]))
 	)
-	const previewHtml = $derived.by(() => renderManagePreviewHtml(form.source, uploadMap))
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
+	const previewHtml = $derived.by(() =>
+		renderManagePreviewHtml(form.source, uploadMap, {
+			description: t('manage.preview.placeholders.description'),
+			scriptBlockLabel: t('manage.preview.placeholders.scriptBlock'),
+			styleBlockLabel: t('manage.preview.placeholders.styleBlock'),
+			componentBlockLabel: (name: string) =>
+				t('manage.preview.placeholders.componentBlock', { name })
+		})
+	)
 	const previewCover = $derived.by(() => resolvePreviewAssetPath(form.cover, uploadMap))
 	const previewTags = $derived.by(() =>
 		form.tagsInput
@@ -109,7 +123,9 @@
 
 		return Array.from(new Set([...base, ...uploaded]))
 	})
-	const submitLabel = $derived(mode === 'create' ? '创建文章' : '保存更改')
+	const submitLabel = $derived(
+		mode === 'create' ? t('manage.editor.createSubmit') : t('manage.editor.saveChanges')
+	)
 	const effectiveStatusMessage = $derived(debugMode ? debugStatusMessage : statusMessage)
 	const effectiveErrorMessage = $derived(debugMode ? debugErrorMessage : errorMessage)
 	const effectiveSubmitting = $derived(debugMode ? debugSubmitting : isSubmitting)
@@ -195,15 +211,11 @@
 	}
 
 	function toFriendlyError(error: unknown) {
-		if (!(error instanceof ManageApiError)) {
-			return error instanceof Error ? error.message : '保存失败，请稍后重试。'
+		if (error instanceof ManageApiError) {
+			return resolveManageErrorMessage(messages, error.code, error.rawMessage)
 		}
 
-		if (error.code === 'sha_conflict') {
-			return '仓库中的文章已经变化，请刷新当前页面后重新编辑。'
-		}
-
-		return error.message
+		return t('manage.editor.errors.genericSave')
 	}
 
 	async function handleSubmit(event: SubmitEvent) {
@@ -235,7 +247,9 @@
 				return
 			}
 
-			statusMessage = `已提交 ${response.commitSha.slice(0, 7)}，最新内容已同步到仓库。`
+			statusMessage = t('manage.editor.statusCommitted', {
+				sha: response.commitSha.slice(0, 7)
+			})
 		} catch (error) {
 			errorMessage = toFriendlyError(error)
 		} finally {
@@ -252,7 +266,7 @@
 			return
 		}
 
-		if (!window.confirm(`确认删除文章 ${currentSlug}？这会直接提交到仓库。`)) {
+		if (!window.confirm(t('manage.editor.errors.deleteConfirm', { slug: currentSlug }))) {
 			return
 		}
 
@@ -280,8 +294,12 @@
 	<form class="manage-editor-panel panel" onsubmit={handleSubmit}>
 		<div class="manage-editor-heading">
 			<div>
-				<p class="eyebrow">Editor</p>
-				<h2>{mode === 'create' ? '新建文章' : `编辑 ${currentSlug}`}</h2>
+				<p class="eyebrow">{t('manage.editor.eyebrow')}</p>
+				<h2>
+					{mode === 'create'
+						? t('manage.editor.createTitle')
+						: t('manage.editor.editTitle', { slug: currentSlug })}
+				</h2>
 			</div>
 
 			<div class="manage-editor-toolbar">
@@ -294,7 +312,7 @@
 					<p class="manage-editor-status manage-editor-status-error">{effectiveErrorMessage}</p>
 				{/if}
 				<button class="button-primary" disabled={editorDisabled} type="submit">
-					{effectiveSubmitting ? '提交中…' : submitLabel}
+					{effectiveSubmitting ? t('manage.editor.submitting') : submitLabel}
 				</button>
 				{#if mode === 'edit'}
 					<button
@@ -303,7 +321,7 @@
 						onclick={handleDelete}
 						type="button"
 					>
-						删除
+						{t('manage.editor.delete')}
 					</button>
 				{/if}
 			</div>
@@ -311,73 +329,73 @@
 
 		<div class="manage-editor-fields">
 			<label>
-				<span>标题</span>
+				<span>{t('manage.editor.fields.title')}</span>
 				<input bind:value={form.title} disabled={editorDisabled} required type="text" />
 			</label>
 
 			<label>
-				<span>Slug</span>
+				<span>{t('common.slug')}</span>
 				<input bind:value={form.slug} disabled={editorDisabled} required type="text" />
 			</label>
 
 			<label class="manage-editor-field-wide">
-				<span>摘要</span>
+				<span>{t('manage.editor.fields.description')}</span>
 				<textarea bind:value={form.description} disabled={editorDisabled} required rows="3"
 				></textarea>
 			</label>
 
 			<label>
-				<span>发布日期</span>
+				<span>{t('manage.editor.fields.date')}</span>
 				<input bind:value={form.date} disabled={editorDisabled} required type="date" />
 			</label>
 
 			<label>
-				<span>更新日期</span>
+				<span>{t('manage.editor.fields.updated')}</span>
 				<input bind:value={form.updated} disabled={editorDisabled} required type="date" />
 			</label>
 
 			<label>
-				<span>分类</span>
+				<span>{t('manage.editor.fields.category')}</span>
 				<input
 					bind:value={form.category}
 					disabled={editorDisabled}
-					placeholder="Engineering / Notes"
+					placeholder={t('manage.editor.placeholders.category')}
 					type="text"
 				/>
 			</label>
 
 			<label>
-				<span>作者</span>
+				<span>{t('manage.editor.fields.author')}</span>
 				<input bind:value={form.author} disabled={editorDisabled} type="text" />
 			</label>
 
 			<label>
-				<span>Series</span>
+				<span>{t('manage.editor.fields.series')}</span>
 				<input bind:value={form.series} disabled={editorDisabled} type="text" />
 			</label>
 
 			<label>
-				<span>Reading Time</span>
+				<span>{t('manage.editor.fields.readingTime')}</span>
 				<input
 					bind:value={form.readingTime}
 					disabled={editorDisabled}
-					placeholder="6 min"
+					placeholder={t('manage.editor.placeholders.readingTime')}
 					type="text"
 				/>
 			</label>
 
 			<label>
-				<span>Canonical</span>
+				<span>{t('manage.editor.fields.canonical')}</span>
 				<input
 					bind:value={form.canonical}
 					disabled={editorDisabled}
-					placeholder="https://..."
+					placeholder={t('manage.editor.placeholders.canonical')}
 					type="url"
 				/>
 			</label>
 
 			<label>
-				<span>格式</span>
+				<span>{t('manage.editor.fields.format')}</span>
 				<select bind:value={form.format} disabled={editorDisabled}>
 					<option value="svx">svx</option>
 					<option value="md">md</option>
@@ -385,21 +403,21 @@
 			</label>
 
 			<label class="manage-editor-field-wide">
-				<span>Tags</span>
+				<span>{t('manage.editor.fields.tags')}</span>
 				<input
 					bind:value={form.tagsInput}
 					disabled={editorDisabled}
-					placeholder="svelte, cloudflare, devlog"
+					placeholder={t('manage.editor.placeholders.tags')}
 					type="text"
 				/>
 			</label>
 
 			<label class="manage-editor-field-wide">
-				<span>Cover</span>
+				<span>{t('manage.editor.fields.cover')}</span>
 				<input
 					bind:value={form.cover}
 					disabled={editorDisabled}
-					placeholder="/images/... or upload://file.png"
+					placeholder={t('manage.editor.placeholders.cover')}
 					type="text"
 				/>
 			</label>
@@ -407,24 +425,29 @@
 
 		<div class="manage-editor-toggles">
 			<label
-				><input bind:checked={form.draft} disabled={editorDisabled} type="checkbox" /> Draft</label
+				><input bind:checked={form.draft} disabled={editorDisabled} type="checkbox" />
+				{t('manage.editor.toggles.draft')}</label
 			>
 			<label
-				><input bind:checked={form.featured} disabled={editorDisabled} type="checkbox" /> Featured</label
+				><input bind:checked={form.featured} disabled={editorDisabled} type="checkbox" />
+				{t('manage.editor.toggles.featured')}</label
 			>
-			<label><input bind:checked={form.toc} disabled={editorDisabled} type="checkbox" /> TOC</label>
+			<label
+				><input bind:checked={form.toc} disabled={editorDisabled} type="checkbox" />
+				{t('manage.editor.toggles.toc')}</label
+			>
 		</div>
 
 		<section class="manage-editor-uploads">
 			<div class="panel-heading">
 				<div>
-					<p class="eyebrow">Uploads</p>
-					<h2>图片与占位符</h2>
+					<p class="eyebrow">{t('manage.editor.uploads.eyebrow')}</p>
+					<h2>{t('manage.editor.uploads.title')}</h2>
 				</div>
 			</div>
 
 			<label class="manage-editor-upload-picker">
-				<span>选择图片</span>
+				<span>{t('manage.editor.uploads.pickFiles')}</span>
 				<input
 					accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
 					disabled={editorDisabled}
@@ -449,35 +472,33 @@
 									onclick={() => useUploadAsCover(upload.placeholder)}
 									type="button"
 								>
-									设为 cover
+									{t('manage.editor.uploads.setCover')}
 								</button>
 								<button
 									disabled={editorDisabled}
 									onclick={() => insertUploadIntoSource(upload.placeholder)}
 									type="button"
 								>
-									插入正文
+									{t('manage.editor.uploads.insertBody')}
 								</button>
 								<button
 									disabled={editorDisabled}
 									onclick={() => removeUpload(upload.placeholder)}
 									type="button"
 								>
-									移除
+									{t('manage.editor.uploads.remove')}
 								</button>
 							</div>
 						</div>
 					{/each}
 				</div>
 			{:else}
-				<p class="manage-editor-upload-empty">
-					上传图片后会生成 `upload://filename` 占位符，并在右侧预览中即时替换。
-				</p>
+				<p class="manage-editor-upload-empty">{t('manage.editor.uploads.empty')}</p>
 			{/if}
 		</section>
 
 		<label class="manage-editor-source">
-			<span>Source</span>
+			<span>{t('manage.editor.source')}</span>
 			<textarea
 				bind:this={sourceTextarea}
 				bind:value={form.source}

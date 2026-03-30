@@ -107,15 +107,15 @@ export function createMorphOverlay({
 	fromMode,
 	box,
 	profileShellPath,
-	profileLevel,
-	authorName
+	authorName,
+	infoLabel
 }: {
 	refs: HomeTopbarRefs
 	fromMode: TopbarMode
 	box: ElementBox
 	profileShellPath: string
-	profileLevel: string
 	authorName: string
+	infoLabel: string
 }): MorphOverlay | null {
 	if (!refs.motionLayer) {
 		return null
@@ -166,26 +166,28 @@ export function createMorphOverlay({
 	const text = document.createElement('div')
 	text.className = 'home-topbar-morph-text'
 
-	const level = document.createElement('span')
-	level.className = 'home-topbar-morph-level'
-	level.textContent = 'Lv.'
+	const avatar = document.createElement('span')
+	avatar.className = 'home-topbar-morph-avatar'
 
-	const value = document.createElement('strong')
-	value.textContent = profileLevel
+	const avatarImage = document.createElement('img')
+	avatarImage.src = '/profile.png'
+	avatarImage.alt = ''
+	avatarImage.draggable = false
+	avatarImage.decoding = 'async'
+	avatar.appendChild(avatarImage)
 
 	const copy = document.createElement('div')
 	copy.className = 'home-topbar-morph-copy'
 
-	const copyLabel = document.createElement('small')
-	copyLabel.textContent = 'Operator'
-
 	const copyValue = document.createElement('span')
 	copyValue.textContent = authorName
 
-	copy.appendChild(copyLabel)
+	const copyLabel = document.createElement('small')
+	copyLabel.textContent = infoLabel
+
 	copy.appendChild(copyValue)
-	text.appendChild(level)
-	text.appendChild(value)
+	copy.appendChild(copyLabel)
+	text.appendChild(avatar)
 	text.appendChild(copy)
 
 	const glyph = document.createElement('span')

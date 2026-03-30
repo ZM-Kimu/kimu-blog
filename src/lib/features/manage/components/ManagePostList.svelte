@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
 	import type { ManagePostListItem } from '$lib/features/manage/types'
 	import type { InternalHref } from '$lib/navigation/types'
 	import { formatDate } from '$lib/utils/date'
@@ -15,6 +17,10 @@
 	}>()
 
 	let query = $state('')
+	const messages = $derived(page.data.i18n?.messages)
+	const locale = $derived(page.data.i18n?.locale)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
 
 	const filteredItems = $derived.by(() => {
 		const normalized = query.trim().toLowerCase()
@@ -43,29 +49,33 @@
 <section class="manage-list panel">
 	<div class="manage-list-toolbar">
 		<div>
-			<p class="eyebrow">Repository Records</p>
-			<h2>文章列表</h2>
+			<p class="eyebrow">{t('manage.list.eyebrow')}</p>
+			<h2>{t('manage.list.title')}</h2>
 		</div>
 
 		<div class="manage-list-actions">
 			<label class="manage-list-search">
-				<span>搜索</span>
-				<input bind:value={query} placeholder="title / slug / category" type="search" />
+				<span>{t('manage.list.search')}</span>
+				<input bind:value={query} placeholder={t('manage.list.searchPlaceholder')} type="search" />
 			</label>
 
 			{#if createHref.startsWith('#')}
 				<button class="button-primary" type="button" onclick={() => followDebugHref(createHref)}>
-					新建文章
+					{t('manage.list.newPost')}
 				</button>
 			{:else}
-				<a class="button-primary" href={resolve(createHref)}>新建文章</a>
+				<a class="button-primary" href={resolve(createHref)}>{t('manage.list.newPost')}</a>
 			{/if}
 		</div>
 	</div>
 
 	<div class="manage-list-meta">
-		<strong>{String(filteredItems.length).padStart(2, '0')} visible</strong>
-		<span>{String(items.length).padStart(2, '0')} total records</span>
+		<strong
+			>{t('common.visibleRecords', {
+				count: String(filteredItems.length).padStart(2, '0')
+			})}</strong
+		>
+		<span>{t('common.totalRecords', { count: String(items.length).padStart(2, '0') })}</span>
 	</div>
 
 	<div class="manage-list-rows">
@@ -79,10 +89,11 @@
 								<h3>{item.title}</h3>
 								<div class="manage-post-row-chips">
 									{#if item.draft}
-										<span class="manage-chip manage-chip-draft">draft</span>
+										<span class="manage-chip manage-chip-draft">{t('manage.list.draft')}</span>
 									{/if}
 									{#if item.featured}
-										<span class="manage-chip manage-chip-featured">featured</span>
+										<span class="manage-chip manage-chip-featured">{t('manage.list.featured')}</span
+										>
 									{/if}
 									<span class="manage-chip">{item.format}</span>
 								</div>
@@ -93,8 +104,8 @@
 
 						<div class="manage-post-row-side">
 							<strong>{item.slug}</strong>
-							<span>{item.category ?? '未分类'}</span>
-							<small>更新于 {formatDate(item.updated)}</small>
+							<span>{item.category ?? t('common.uncategorized')}</span>
+							<small>{t('common.updatedAt', { date: formatDate(item.updated, locale) })}</small>
 						</div>
 					</button>
 				{:else}
@@ -104,10 +115,11 @@
 								<h3>{item.title}</h3>
 								<div class="manage-post-row-chips">
 									{#if item.draft}
-										<span class="manage-chip manage-chip-draft">draft</span>
+										<span class="manage-chip manage-chip-draft">{t('manage.list.draft')}</span>
 									{/if}
 									{#if item.featured}
-										<span class="manage-chip manage-chip-featured">featured</span>
+										<span class="manage-chip manage-chip-featured">{t('manage.list.featured')}</span
+										>
 									{/if}
 									<span class="manage-chip">{item.format}</span>
 								</div>
@@ -118,16 +130,16 @@
 
 						<div class="manage-post-row-side">
 							<strong>{item.slug}</strong>
-							<span>{item.category ?? '未分类'}</span>
-							<small>更新于 {formatDate(item.updated)}</small>
+							<span>{item.category ?? t('common.uncategorized')}</span>
+							<small>{t('common.updatedAt', { date: formatDate(item.updated, locale) })}</small>
 						</div>
 					</a>
 				{/if}
 			{/each}
 		{:else}
 			<div class="manage-list-empty">
-				<strong>No matches</strong>
-				<span>当前筛选条件下没有文章。</span>
+				<strong>{t('manage.list.noMatchesTitle')}</strong>
+				<span>{t('manage.list.noMatchesDescription')}</span>
 			</div>
 		{/if}
 	</div>
@@ -199,6 +211,9 @@
 
 	.manage-post-row,
 	.manage-list-empty {
+		--site-press-scale: 1;
+		--site-press-translate-y: 0px;
+
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		gap: 1rem;
@@ -206,8 +221,14 @@
 		border: 1px solid var(--line);
 		border-radius: 22px;
 		background: rgb(255 255 255 / 64%);
+		scale: var(--site-press-scale);
+		translate: 0 var(--site-press-translate-y);
+		transform-origin: center;
+		touch-action: manipulation;
 		transition:
 			transform var(--ease),
+			translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+			scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
 			border-color var(--ease),
 			background-color var(--ease);
 	}
@@ -223,6 +244,13 @@
 		transform: translateY(-2px);
 		border-color: rgb(79 120 255 / 24%);
 		background: rgb(255 255 255 / 84%);
+	}
+
+	.manage-post-row:active {
+		--site-press-scale: var(--press-active-scale);
+		--site-press-translate-y: var(--press-active-translate-y);
+
+		transition-duration: var(--press-in-duration);
 	}
 
 	.manage-post-row-headline {

@@ -15,7 +15,7 @@ export function getArchiveByCategory(): ArchiveCategoryGroup[] {
 
 			return {
 				category: {
-					name: mission.title,
+					name: mission.id,
 					slug: mission.slug,
 					count: posts.length
 				},

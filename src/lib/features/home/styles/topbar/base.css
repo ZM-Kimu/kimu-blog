@@ -61,6 +61,8 @@
 	color: #47639c;
 	transition:
 		transform var(--ease),
+		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
 		box-shadow var(--ease),
 		opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -242,7 +244,8 @@
 .home-profile-chip {
 	transition:
 		transform 180ms cubic-bezier(0.28, 0.8, 0.32, 1),
-		opacity 180ms cubic-bezier(0.28, 0.8, 0.32, 1);
+		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .home-topbar-main .home-topbar-aside {
@@ -286,6 +289,8 @@
 	text-decoration: none;
 	transition:
 		transform var(--ease),
+		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
 		background-color var(--ease),
 		opacity var(--ease);
 }
@@ -470,6 +475,8 @@
 	color: #1f3f7f;
 	transition:
 		transform var(--ease),
+		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
 		background-color var(--ease),
 		box-shadow var(--ease);
 }
@@ -537,6 +544,9 @@
 	background: transparent;
 	box-shadow: none;
 	transition:
+		transform var(--ease),
+		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
 		color 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
 		opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -598,7 +608,7 @@
 	box-shadow: none;
 }
 
-@media (width <= 700px) {
+@media (width <=700px) {
 	.home-topbar-settings-option {
 		grid-template-columns: 1fr;
 		align-items: stretch;

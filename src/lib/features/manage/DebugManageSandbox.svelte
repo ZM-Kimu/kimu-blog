@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import ManagePostEditor from '$lib/features/manage/components/ManagePostEditor.svelte'
 	import ManagePostList from '$lib/features/manage/components/ManagePostList.svelte'
 	import ManageShell from '$lib/features/manage/components/ManageShell.svelte'
+	import { translate } from '$lib/i18n'
 
 	import type {
 		ManagePostDocument,
@@ -13,13 +15,16 @@
 	type CopyVariant = 'default' | 'long' | 'empty'
 	type VisualState = 'idle' | 'success' | 'error' | 'loading' | 'disabled'
 	const visualStates: readonly VisualState[] = ['idle', 'success', 'error', 'loading', 'disabled']
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
 
-	const mockSession: ManageSessionResponse = {
+	const mockSession = $derived.by<ManageSessionResponse>(() => ({
 		actor: {
 			audience: ['debug'],
 			email: 'debug@kimu.local',
 			issuer: 'debug',
-			name: 'Debug Operator',
+			name: t('manage.debug.actorName'),
 			sub: 'debug-operator'
 		},
 		csrfToken: 'debug-csrf-token',
@@ -28,30 +33,21 @@
 			name: 'kimu-blog',
 			owner: 'ZM-Kimu'
 		}
-	}
-
-	const baseSource = `## 当前调试目标
-
-- 检查 manage shell 的头部密度
-- 检查 editor / preview 之间的列宽关系
-- 检查长文案、空态、错误态与加载态的视觉表现
-
-![debug-cover](/images/og-default.svg)
-`
+	}))
 
 	function createMockDocument(variant: CopyVariant): ManagePostDocument {
 		const title =
 			variant === 'long'
-				? '这是一个用于调试 manage 编辑器布局与多行标题表现的超长标题样本'
+				? t('manage.debug.documents.longTitle')
 				: variant === 'empty'
 					? ''
-					: 'Manage 调试样稿'
+					: t('manage.debug.documents.defaultTitle')
 		const description =
 			variant === 'long'
-				? '这是一段更长的摘要文本，用来观察编辑器字段、预览头部以及 manage 沙盒在长文案条件下的断行、密度和节奏。'
+				? t('manage.debug.documents.longDescription')
 				: variant === 'empty'
 					? ''
-					: '用于本地调试样式和交互状态的 mock 文稿。'
+					: t('manage.debug.documents.defaultDescription')
 
 		return {
 			assetPaths: ['/images/og-default.svg', '/images/Popup_Image_Arona.png'],
@@ -65,9 +61,9 @@
 				draft: false,
 				cover: '/images/og-default.svg',
 				slug: variant === 'long' ? 'manage-debug-long' : 'manage-debug',
-				category: 'Workbench',
+				category: t('manage.debug.categories.workbench'),
 				author: 'Kimu',
-				series: 'Debug',
+				series: t('manage.debug.eyebrow'),
 				toc: true,
 				readingTime: '6 min',
 				canonical: '',
@@ -81,19 +77,19 @@
 						? 'debug-sha-empty'
 						: 'debug-sha',
 			slug: variant === 'long' ? 'manage-debug-long' : 'manage-debug',
-			source: variant === 'empty' ? '' : baseSource
+			source: variant === 'empty' ? '' : t('manage.debug.baseSource')
 		}
 	}
 
 	function createMockList(variant: CopyVariant): ManagePostListItem[] {
 		return [
 			{
-				category: 'Workbench',
+				category: t('manage.debug.categories.workbench'),
 				date: '2026-03-28',
 				description:
 					variant === 'long'
-						? '用于观察列表行在长摘要与长标题条件下的拥挤程度。'
-						: '用于调试样式和交互状态的 mock 列表项。',
+						? t('manage.debug.documents.longDescription')
+						: t('manage.debug.documents.defaultDescription'),
 				draft: false,
 				featured: true,
 				format: 'svx',
@@ -101,35 +97,38 @@
 				slug: variant === 'long' ? 'manage-debug-long' : 'manage-debug',
 				title:
 					variant === 'long'
-						? '这是一个用于调试 manage 列表在长标题场景下表现的记录'
-						: 'Manage 调试样稿',
+						? t('manage.debug.documents.longTitle')
+						: t('manage.debug.documents.defaultTitle'),
 				updated: '2026-03-28'
 			},
 			{
-				category: 'Drafts',
+				category: t('manage.debug.categories.drafts'),
 				date: '2026-03-24',
-				description: '草稿态、普通长度、非 featured。',
+				description: t('manage.debug.documents.draftDescription'),
 				draft: true,
 				featured: false,
 				format: 'md',
 				sha: 'list-sha-2',
 				slug: 'draft-sandbox',
-				title: '草稿样本',
+				title: t('manage.debug.documents.draftTitle'),
 				updated: '2026-03-27'
 			},
 			{
-				category: 'Archive',
+				category: t('manage.debug.categories.archive'),
 				date: '2026-02-10',
 				description:
 					variant === 'empty'
-						? '用于观察空内容文档在列表中的常规表现。'
-						: '用于观察不同分类 chip 的密度。',
+						? t('manage.debug.documents.emptyDescription')
+						: t('manage.debug.documents.archiveDescription'),
 				draft: false,
 				featured: false,
 				format: 'svx',
 				sha: 'list-sha-3',
 				slug: 'archive-sandbox',
-				title: variant === 'empty' ? '空内容样本' : '归档样本',
+				title:
+					variant === 'empty'
+						? t('manage.debug.documents.emptyTitle')
+						: t('manage.debug.documents.archiveTitle'),
 				updated: '2026-03-01'
 			}
 		]
@@ -145,72 +144,70 @@
 	const debugSubmitting = $derived(visualState === 'loading')
 	const debugDisabled = $derived(visualState === 'disabled')
 	const debugStatusMessage = $derived(
-		visualState === 'success' ? '已进入本地成功态，不会写入仓库。' : ''
+		visualState === 'success' ? t('manage.debug.successState') : ''
 	)
-	const debugErrorMessage = $derived(
-		visualState === 'error' ? '本地错误态：用于检查 editor 提示样式。' : ''
-	)
+	const debugErrorMessage = $derived(visualState === 'error' ? t('manage.debug.errorState') : '')
 </script>
 
 <ManageShell session={mockSession} postsHref="#debug-list" backHref="/">
 	<section class="panel manage-debug-controls">
 		<div class="panel-heading">
 			<div>
-				<p class="eyebrow">Debug Sandbox</p>
-				<h2>Manage 样式调试</h2>
+				<p class="eyebrow">{t('manage.debug.eyebrow')}</p>
+				<h2>{t('manage.debug.title')}</h2>
 			</div>
 		</div>
 
 		<div class="manage-debug-controls-grid">
 			<section class="manage-debug-controls-group">
-				<strong>Editor Mode</strong>
+				<strong>{t('manage.debug.editorMode')}</strong>
 				<div class="manage-debug-controls-chips">
 					<button
 						class:active={editorMode === 'edit'}
 						type="button"
 						onclick={() => (editorMode = 'edit')}
 					>
-						Edit
+						{t('manage.debug.edit')}
 					</button>
 					<button
 						class:active={editorMode === 'create'}
 						type="button"
 						onclick={() => (editorMode = 'create')}
 					>
-						Create
+						{t('manage.debug.create')}
 					</button>
 				</div>
 			</section>
 
 			<section class="manage-debug-controls-group">
-				<strong>Copy Variant</strong>
+				<strong>{t('manage.debug.copyVariant')}</strong>
 				<div class="manage-debug-controls-chips">
 					<button
 						class:active={copyVariant === 'default'}
 						type="button"
 						onclick={() => (copyVariant = 'default')}
 					>
-						Default
+						{t('manage.debug.default')}
 					</button>
 					<button
 						class:active={copyVariant === 'long'}
 						type="button"
 						onclick={() => (copyVariant = 'long')}
 					>
-						Long
+						{t('manage.debug.long')}
 					</button>
 					<button
 						class:active={copyVariant === 'empty'}
 						type="button"
 						onclick={() => (copyVariant = 'empty')}
 					>
-						Empty
+						{t('manage.debug.empty')}
 					</button>
 				</div>
 			</section>
 
 			<section class="manage-debug-controls-group">
-				<strong>Visual State</strong>
+				<strong>{t('manage.debug.visualState')}</strong>
 				<div class="manage-debug-controls-chips">
 					{#each visualStates as state (state)}
 						<button
@@ -218,17 +215,17 @@
 							type="button"
 							onclick={() => (visualState = state)}
 						>
-							{state}
+							{t(`manage.debug.states.${state}`)}
 						</button>
 					{/each}
 				</div>
 			</section>
 
 			<section class="manage-debug-controls-group">
-				<strong>Preview</strong>
+				<strong>{t('manage.debug.preview')}</strong>
 				<label class="manage-debug-controls-toggle">
 					<input bind:checked={previewVisible} type="checkbox" />
-					<span>{previewVisible ? 'Visible' : 'Hidden'}</span>
+					<span>{previewVisible ? t('manage.debug.visible') : t('manage.debug.hidden')}</span>
 				</label>
 			</section>
 		</div>
@@ -296,6 +293,9 @@
 
 	.manage-debug-controls-chips button,
 	.manage-debug-controls-toggle {
+		--site-press-scale: 1;
+		--site-press-translate-y: 0px;
+
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -304,10 +304,24 @@
 		border: 1px solid var(--line);
 		border-radius: 999px;
 		background: rgb(255 255 255 / 78%);
+		scale: var(--site-press-scale);
+		translate: 0 var(--site-press-translate-y);
+		transform-origin: center;
+		touch-action: manipulation;
 		transition:
 			transform var(--ease),
+			translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+			scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
 			border-color var(--ease),
 			background-color var(--ease);
+	}
+
+	.manage-debug-controls-chips button:active,
+	.manage-debug-controls-toggle:active {
+		--site-press-scale: var(--press-active-scale);
+		--site-press-translate-y: var(--press-active-translate-y);
+
+		transition-duration: var(--press-in-duration);
 	}
 
 	.manage-debug-controls-chips button.active {

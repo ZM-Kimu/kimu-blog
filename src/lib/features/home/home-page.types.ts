@@ -21,10 +21,8 @@ export type HomePageData = {
 
 export type HomePageMissionPreviewItem = {
 	slug: string
-	title: string
-	kicker: string
+	id: 'engineering' | 'designLog' | 'fieldNotes' | 'favorites'
 	href: '/blog/archive' | '/favorites'
-	state: string
 	tone: 'cyan' | 'blue' | 'amber' | 'slate'
 	count: number
 }

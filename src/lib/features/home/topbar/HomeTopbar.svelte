@@ -31,7 +31,7 @@
 		subpageActions,
 		subpageTitle,
 		authorName,
-		profileLevel = '90',
+		infoLabel,
 		profileHref = '/about',
 		compact = false,
 		reducedMotion = false,
@@ -45,7 +45,7 @@
 		subpageActions: readonly HomeTopbarAction[]
 		subpageTitle: string
 		authorName: string
-		profileLevel?: string
+		infoLabel: string
 		profileHref?: '/' | '/about'
 		compact?: boolean
 		reducedMotion?: boolean
@@ -182,8 +182,8 @@
 					afterModeChange: async () => tick(),
 					setCurrentTimeline,
 					profileShellPath,
-					profileLevel,
 					authorName,
+					infoLabel,
 					subpageTitle
 				})
 			}
@@ -255,7 +255,6 @@
 		metrics={mainMetrics}
 		actions={mainActions}
 		{authorName}
-		{profileLevel}
 		{profileHref}
 		{motionLocked}
 		onAction={handleAction}

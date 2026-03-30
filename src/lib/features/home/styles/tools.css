@@ -8,7 +8,7 @@
 	grid-auto-rows: var(--home-tool-tile-size);
 	place-content: start start;
 	justify-self: start;
-	padding-top: var(--home-side-rail-offset);
+	padding-top: calc(var(--home-side-rail-offset) + var(--home-left-tools-offset-extra));
 	gap: var(--home-left-tools-gap);
 }
 
@@ -28,6 +28,8 @@
 	text-align: center;
 	transition:
 		transform var(--ease),
+		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
+		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
 		box-shadow var(--ease),
 		border-color var(--ease);
 }

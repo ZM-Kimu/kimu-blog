@@ -11,18 +11,25 @@
 </script>
 
 <script lang="ts">
+	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
+	import { siteConfig } from '$lib/config/site'
 	import TagChip from './components/TagChip.svelte'
 	import { formatDate } from '$lib/utils/date'
 	import { error } from '@sveltejs/kit'
 
 	let { data } = $props()
+	const messages = $derived(page.data.i18n?.messages)
+	const locale = $derived(page.data.i18n?.locale)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
 
 	const Content = $derived.by(() => {
 		const contentModule = modules[data.post.path]
 
 		if (!contentModule) {
-			throw error(404, '文章模块不存在')
+			throw error(404, 'post_module_missing')
 		}
 
 		return contentModule.default
@@ -32,8 +39,10 @@
 <article class="dossier-shell">
 	<header class="panel dossier-hero">
 		<div class="dossier-hero-top">
-			<p class="eyebrow">Dossier / Article Record</p>
-			<a class="button-secondary dossier-hero-back" href={resolve('/blog/archive')}>返回归档</a>
+			<p class="eyebrow">{t('blog.post.heroEyebrow')}</p>
+			<a class="button-secondary dossier-hero-back" href={resolve('/blog/archive')}>
+				{t('blog.post.backArchive')}
+			</a>
 		</div>
 
 		<div class="dossier-hero-header">
@@ -44,24 +53,28 @@
 
 			<div class="dossier-hero-stats">
 				<div class="dossier-stat">
-					<span>Status</span>
-					<strong>{data.post.featured ? 'Featured' : 'Published'}</strong>
+					<span>{t('common.status')}</span>
+					<strong
+						>{data.post.featured
+							? t('blog.post.statusFeatured')
+							: t('blog.post.statusPublished')}</strong
+					>
 				</div>
 				<div class="dossier-stat">
-					<span>Category</span>
-					<strong>{data.post.category ?? '未分类'}</strong>
+					<span>{t('common.category')}</span>
+					<strong>{data.post.category ?? t('common.uncategorized')}</strong>
 				</div>
 				<div class="dossier-stat">
-					<span>Slug</span>
+					<span>{t('common.slug')}</span>
 					<strong>{data.post.slug}</strong>
 				</div>
 			</div>
 		</div>
 
 		<div class="post-meta">
-			<span>发布于 {formatDate(data.post.date)}</span>
-			<span>更新于 {formatDate(data.post.updated)}</span>
-			<span>作者 {data.post.author ?? 'Kimu'}</span>
+			<span>{t('common.publishedAt', { date: formatDate(data.post.date, locale) })}</span>
+			<span>{t('common.updatedAt', { date: formatDate(data.post.updated, locale) })}</span>
+			<span>{t('common.author')} {data.post.author ?? siteConfig.author}</span>
 		</div>
 	</header>
 
@@ -76,23 +89,27 @@
 			<section class="panel dossier-side-panel">
 				<div class="panel-heading">
 					<div>
-						<p class="eyebrow">Metadata</p>
-						<h2>文章情报</h2>
+						<p class="eyebrow">{t('blog.post.metadataEyebrow')}</p>
+						<h2>{t('blog.post.metadataTitle')}</h2>
 					</div>
 				</div>
 
 				<div class="meta-stack">
 					<div>
-						<span>分类</span>
-						<strong>{data.post.category ?? '未分类'}</strong>
+						<span>{t('common.category')}</span>
+						<strong>{data.post.category ?? t('common.uncategorized')}</strong>
 					</div>
 					<div>
-						<span>标签数</span>
+						<span
+							>{t('common.tagCount', {
+								count: String(data.post.tags.length).padStart(2, '0')
+							})}</span
+						>
 						<strong>{String(data.post.tags.length).padStart(2, '0')}</strong>
 					</div>
 					<div>
-						<span>渲染模式</span>
-						<strong>Prerender</strong>
+						<span>{t('common.renderMode')}</span>
+						<strong>{t('common.prerender')}</strong>
 					</div>
 				</div>
 			</section>
@@ -100,8 +117,8 @@
 			<section class="panel dossier-side-panel">
 				<div class="panel-heading">
 					<div>
-						<p class="eyebrow">Tag Matrix</p>
-						<h2>标签入口</h2>
+						<p class="eyebrow">{t('blog.post.tagsEyebrow')}</p>
+						<h2>{t('blog.post.tagsTitle')}</h2>
 					</div>
 				</div>
 
@@ -115,8 +132,8 @@
 			<section class="panel dossier-side-panel">
 				<div class="panel-heading">
 					<div>
-						<p class="eyebrow">Related Output</p>
-						<h2>相关记录</h2>
+						<p class="eyebrow">{t('blog.post.relatedEyebrow')}</p>
+						<h2>{t('blog.post.relatedTitle')}</h2>
 					</div>
 				</div>
 
@@ -125,13 +142,13 @@
 						{#each data.relatedPosts as post (post.slug)}
 							<a class="related-link" href={resolve(post.permalink)}>
 								<strong>{post.title}</strong>
-								<span>{post.category ?? '未分类'}</span>
+								<span>{post.category ?? t('common.uncategorized')}</span>
 							</a>
 						{/each}
 					{:else}
 						<div class="related-link related-link-empty">
-							<strong>Waiting for more records</strong>
-							<span>后续有更多文章后，这里会显示相关推荐。</span>
+							<strong>{t('blog.post.relatedEmptyTitle')}</strong>
+							<span>{t('blog.post.relatedEmptyDescription')}</span>
 						</div>
 					{/if}
 				</div>

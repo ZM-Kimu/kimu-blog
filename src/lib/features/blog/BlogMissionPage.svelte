@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
 	import type { BlogPost, CategorySummary } from '$lib/types/content'
 	import { missionCatalog } from './config'
 	import MissionCard from './components/MissionCard.svelte'
@@ -14,6 +16,10 @@
 			totalPosts: number
 		}
 	} = $props()
+
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
 
 	const missions = $derived.by(() =>
 		missionCatalog.map((mission) => ({
@@ -32,16 +38,14 @@
 <section class="mission-screen">
 	<section class="panel mission-intro">
 		<div>
-			<p class="eyebrow">Mission Page</p>
-			<h1>内容分类界面</h1>
-			<p>
-				这里承担主分类选择，而不是传统博客文章流。一级卡片代表主要内容分区，完整时间顺序浏览下沉到归档页。
-			</p>
+			<p class="eyebrow">{t('blog.mission.introEyebrow')}</p>
+			<h1>{t('blog.mission.introTitle')}</h1>
+			<p>{t('blog.mission.introDescription')}</p>
 		</div>
 
 		<div class="hero-actions">
-			<a class="button-primary" href={resolve('/blog/archive')}>进入完整归档</a>
-			<a class="button-secondary" href={resolve('/')}>返回主界面</a>
+			<a class="button-primary" href={resolve('/blog/archive')}>{t('blog.mission.archiveCta')}</a>
+			<a class="button-secondary" href={resolve('/')}>{t('blog.mission.homeCta')}</a>
 		</div>
 	</section>
 
@@ -49,20 +53,22 @@
 		<section class="panel mission-board">
 			<div class="panel-heading">
 				<div>
-					<p class="eyebrow">Primary Categories</p>
-					<h2>Mission Board</h2>
+					<p class="eyebrow">{t('blog.mission.boardEyebrow')}</p>
+					<h2>{t('blog.mission.boardTitle')}</h2>
 				</div>
-				<strong class="metric-pill">{String(data.totalPosts).padStart(2, '0')} records</strong>
+				<strong class="metric-pill">
+					{t('common.records', { count: String(data.totalPosts).padStart(2, '0') })}
+				</strong>
 			</div>
 
 			<div class="mission-grid">
 				{#each missions as mission (mission.slug)}
 					<MissionCard
-						title={mission.title}
-						kicker={mission.kicker}
-						description={mission.description}
+						title={t(`home.missions.${mission.id}.title`)}
+						kicker={t(`home.missions.${mission.id}.kicker`)}
+						description={t(`home.missions.${mission.id}.description`)}
 						href={mission.href}
-						state={mission.state}
+						state={t(`home.missions.${mission.id}.state`)}
 						tone={mission.tone}
 						count={mission.count}
 					/>
@@ -73,8 +79,8 @@
 		<aside class="panel mission-side">
 			<div class="panel-heading">
 				<div>
-					<p class="eyebrow">Recent Output</p>
-					<h2>Latest Records</h2>
+					<p class="eyebrow">{t('blog.mission.recentEyebrow')}</p>
+					<h2>{t('blog.mission.recentTitle')}</h2>
 				</div>
 			</div>
 

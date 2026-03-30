@@ -9,7 +9,7 @@
 .home-profile-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.9rem;
+	gap: 0.82rem;
 	min-width: var(--home-profile-min-width);
 	max-width: 100%;
 	min-height: var(--home-topbar-height);
@@ -23,36 +23,36 @@
 	mask: url('/icons/home-profile-chip-mask.svg') left center / 100% 100% no-repeat;
 }
 
-.home-profile-chip-level {
-	font-family: var(--font-mono);
-	font-size: 0.82rem;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
+.home-profile-chip-avatar {
+	width: clamp(2.85rem, 3vw, 3.2rem);
+	height: clamp(2.85rem, 3vw, 3.2rem);
+	flex: 0 0 auto;
 }
 
-.home-profile-chip strong {
-	font-family: var(--font-display);
-	font-size: clamp(1.8rem, 2.35vw, 2.7rem);
-	line-height: 0.9;
-	letter-spacing: -0.06em;
+.home-profile-chip-avatar img {
+	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 .home-profile-chip-copy {
 	display: grid;
-	gap: 0.15rem;
-}
-
-.home-profile-chip-copy small {
-	font-family: var(--font-mono);
-	font-size: 0.74rem;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	opacity: 0.72;
+	gap: 0.12rem;
+	align-content: center;
+	line-height: 1;
 }
 
 .home-profile-chip-copy span {
 	font-weight: 700;
-	font-size: 0.95rem;
+	font-size: 0.98rem;
+}
+
+.home-profile-chip-copy small {
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	opacity: 0.72;
 }
 
 .home-topbar-main .home-topbar-tools {
