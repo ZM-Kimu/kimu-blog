@@ -38,8 +38,10 @@
 		</div>
 
 		<article class="error-screen__copy">
-			<p class="eyebrow">{eyebrow}</p>
-			<h1 class:error-screen__title--compact={usesCompactHeadline}>{headline}</h1>
+			<p class="eyebrow error-screen__eyebrow">{eyebrow}</p>
+			<h1 class="error-screen__headline" class:error-screen__title--compact={usesCompactHeadline}>
+				{headline}
+			</h1>
 			<p class="error-screen__message">{detailMessage}</p>
 		</article>
 	</div>
@@ -50,11 +52,14 @@
 		--home-shell-padding: clamp(0.78rem, 1.25vw, 1.05rem);
 		--home-topbar-height: 5.2rem;
 		--error-stage-gap: clamp(1.2rem, 2vw, 1.8rem);
+		--error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
 		position: relative;
 		display: grid;
 		width: 100%;
 		min-height: 100dvh;
+		overflow: clip;
+		isolation: isolate;
 	}
 
 	.error-screen__body {
@@ -69,6 +74,7 @@
 			var(--error-stage-gap);
 		position: relative;
 		z-index: 1;
+		overflow: clip;
 	}
 
 	.error-screen__copy {
@@ -81,7 +87,7 @@
 		padding: 0 1rem;
 	}
 
-	.error-screen__copy h1 {
+	.error-screen__headline {
 		margin: 0;
 		font-family: var(--font-display);
 		font-size: clamp(2.25rem, 5.2vw, 4.2rem);
@@ -105,6 +111,48 @@
 		font-family: var(--font-sans);
 		max-width: 42ch;
 		overflow-wrap: anywhere;
+	}
+
+	.error-screen__visual,
+	.error-screen__eyebrow,
+	.error-screen__headline,
+	.error-screen__message {
+		opacity: 1;
+		transform: translateY(0);
+		will-change: opacity, transform;
+	}
+
+	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__visual,
+	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__eyebrow,
+	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__headline,
+	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__message {
+		opacity: 0;
+		transform: translateY(22px);
+		pointer-events: none;
+	}
+
+	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__visual,
+	:global(.screen-route-layer--entry) .error-screen__visual {
+		animation: error-screen-enter 620ms var(--error-enter-ease) both;
+		animation-delay: 80ms;
+	}
+
+	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__eyebrow,
+	:global(.screen-route-layer--entry) .error-screen__eyebrow {
+		animation: error-screen-enter 520ms var(--error-enter-ease) both;
+		animation-delay: 150ms;
+	}
+
+	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__headline,
+	:global(.screen-route-layer--entry) .error-screen__headline {
+		animation: error-screen-enter 620ms var(--error-enter-ease) both;
+		animation-delay: 210ms;
+	}
+
+	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__message,
+	:global(.screen-route-layer--entry) .error-screen__message {
+		animation: error-screen-enter 520ms var(--error-enter-ease) both;
+		animation-delay: 280ms;
 	}
 
 	.error-screen__visual {
@@ -159,6 +207,32 @@
 	@media (max-width: 760px) {
 		.error-screen__body {
 			padding: calc(var(--home-topbar-height) + 1.8rem) var(--home-shell-padding) 1.2rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__visual,
+		:global(.screen-route-layer--entry) .error-screen__visual,
+		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__eyebrow,
+		:global(.screen-route-layer--entry) .error-screen__eyebrow,
+		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__headline,
+		:global(.screen-route-layer--entry) .error-screen__headline,
+		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__message,
+		:global(.screen-route-layer--entry) .error-screen__message {
+			animation-duration: 1ms;
+			animation-delay: 0ms;
+		}
+	}
+
+	@keyframes error-screen-enter {
+		from {
+			opacity: 0;
+			transform: translateY(22px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
 		}
 	}
 </style>

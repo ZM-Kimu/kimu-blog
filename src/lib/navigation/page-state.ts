@@ -194,7 +194,7 @@ function resolvePageTitle(
 		case 'debugManage':
 			return 'Manage Debug'
 		case 'error':
-			return route.status === 404 ? 'Fallback Route' : 'System Recovery'
+			return '错误'
 		default:
 			return siteConfig.name
 	}
@@ -217,6 +217,7 @@ export function createPageState({
 			route: routeState,
 			title,
 			transitionKey: `${routeState.kind}:${routeState.pathname}`,
+			motionFamily: 'main',
 			shellMode: 'screen',
 			showGlobalChrome: false,
 			backgroundPolicy: 'replace',
@@ -237,6 +238,7 @@ export function createPageState({
 			route: routeState,
 			title,
 			transitionKey: `${routeState.kind}:${routeState.pathname}`,
+			motionFamily: 'subpage',
 			shellMode: 'screen',
 			showGlobalChrome: false,
 			backgroundPolicy: 'replace',
@@ -261,6 +263,7 @@ export function createPageState({
 			route: routeState,
 			title,
 			transitionKey: `${routeState.kind}:${routeState.pathname}`,
+			motionFamily: 'subpage',
 			shellMode: 'screen',
 			showGlobalChrome: false,
 			backgroundPolicy: 'replace',
@@ -311,6 +314,7 @@ export function createPageState({
 		route: routeState,
 		title,
 		transitionKey: `${routeState.kind}:${routeState.pathname}`,
+		motionFamily: 'subpage',
 		shellMode: isScreenRoute || usesSubpageScreen ? 'screen' : 'shell',
 		showGlobalChrome: !(isScreenRoute || usesSubpageScreen),
 		backgroundPolicy: 'replace',

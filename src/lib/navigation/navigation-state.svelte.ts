@@ -76,8 +76,8 @@ export class NavigationStateManager {
 			this.pendingPageState = pageState
 			this.pendingBackgroundScene = this.#resolveBackgroundScene(pageState)
 
-			if (this.phase === 'exiting') {
-				this.#startEntering()
+			if (this.phase === 'exit') {
+				this.#startEntry()
 				this.#activateDeferredBackgroundBridge()
 			}
 
@@ -117,12 +117,12 @@ export class NavigationStateManager {
 				? 0
 				: 180
 		this.settingsOpen = false
-		this.phase = 'exiting'
+		this.phase = 'exit'
 
 		return true
 	}
 
-	startBackgroundBridge(options?: { deferUntilEntering?: boolean }) {
+	startBackgroundBridge(options?: { deferUntilEntry?: boolean }) {
 		this.#clearBackgroundBridgeTimer()
 		this.#backgroundBridgeDeferred = false
 		this.#backgroundBridgeReady = false
@@ -136,7 +136,7 @@ export class NavigationStateManager {
 			return
 		}
 
-		if (options?.deferUntilEntering && this.phase === 'exiting') {
+		if (options?.deferUntilEntry && this.phase === 'exit') {
 			this.#backgroundBridgeDeferred = true
 			return
 		}
@@ -264,15 +264,15 @@ export class NavigationStateManager {
 		this.#clearBackgroundBridgeTimer()
 	}
 
-	#startEntering() {
+	#startEntry() {
 		this.#clearEnterTimer()
-		this.phase = 'entering'
+		this.phase = 'entry'
 		this.#enterTimer = setTimeout(() => {
-			this.finishEntering()
+			this.finishEntry()
 		}, this.enterDurationMs)
 	}
 
-	private finishEntering() {
+	private finishEntry() {
 		this.#clearEnterTimer()
 		this.phase = 'idle'
 		this.pendingTarget = null
@@ -312,7 +312,7 @@ export class NavigationStateManager {
 
 			if (
 				this.pendingTarget === this.routeState.pathname ||
-				this.phase === 'entering' ||
+				this.phase === 'entry' ||
 				this.phase === 'idle'
 			) {
 				this.finishBackgroundBridge()

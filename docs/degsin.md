@@ -29,7 +29,9 @@ Cloudflare CDN 分发到用户
 - **站内导航目标是 SPA-like：URL 会变化，但默认不整页刷新**
 - **强交互页按需保留 SSR / CSR**
 - **不要把整站做成纯 SPA**
-- **首屏 boot loading overlay 属于主 UI 进入时间线的一部分，而不是主体可交互后才补上的遮罩**
+- **首屏 boot loading overlay 只用于首次进入站点时协调主 UI 的进入，不属于常规页面切换**
+- **首屏时间线按 `boot -> entry -> idle` 理解；后续页面统一按 `exit -> entry -> idle` 切换**
+- **站点内可视物件默认不可选中、不可拖动；仅输入控件与显式白名单恢复能力**
 
 ---
 
@@ -338,10 +340,39 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 
 - 首页在 `src/routes/+layout.svelte` 中走特殊分支，不复用全局 Header / Dock / Footer
 - 首页使用 `screen-home` 的独立结构，而不是普通 `shell + section` 页面
-- 首屏会先进入 boot loading overlay，再推进到 staged / entering / ready 的主 UI 时间线
+- 首屏会先进入 boot loading overlay，再进入主 UI 的 `entry`，随后收敛到 `idle`
+- boot 的资源等待通过独立的 `data-site-boot-assets` 协调，不再把资源门控混进 boot 主状态
+- `/manage` 及其子路由不参与公开站点 boot 协调，当前实现直接跳过公共 boot 时间线
 - 当 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时，首页退化成精简版布局
-- 非首页公开内容路由统一走 shared subpage app shell，用于分类页、归档页、详情页、标签页和 About
+- 非首页公开内容路由统一走 shared subpage app shell，用于分类页、归档页、详情页、标签页、About 与错误页
 - 站内导航默认由 SvelteKit client router 接管：**PATH 变化，但不整页刷新**
+- 常规页面切换不复用 boot 时间线，而是统一按 `exit -> entry -> idle` 协调内容、背景与壳体动画
+
+## 当前交互与切换语法
+
+- `topbar` 是共享 shell，不属于单页动画本体；页面切换不得再通过整页 blur、整页 veil 或强制 topbar 退场来偷做过渡
+- 页面内容、背景场景与共享 shell 已经拆开管理：
+  - 页面内容负责 `exit / entry`
+  - 背景舞台负责 scene crossfade
+  - topbar 只负责壳体形态与状态同步
+- 宽屏 desktop 当前允许 source-aware 的 route-enter：
+  - `subpage -> home` 使用首页内容的独立进入节奏
+  - `home -> public subpage` 使用子页内容的独立进入节奏
+  - compact / mobile 继续走更轻的简化路径
+- 公开站点当前的背景 scene 固定为：
+  - `home-spine`
+  - `subpage-room`
+  - `neutral-default`
+- 错误页明确并回 `subpage` 体系，继续使用 `subpage-room` 背景和 `subpage` topbar 语义，不再拥有独立背景理念
+- 站内所有可视物件默认不可选中、不可拖动；复制或拖拽能力必须通过白名单显式恢复
+
+## 当前首页背景语义
+
+- 首页背景不是单一图片层，而是 `home base scene + spine overlay` 的组合
+- `home base scene` 必须在没有 spine 的情况下也能立即被识别为首页
+- `spine overlay` 只负责增强与驻留态生命感，不再承担首页识别的唯一职责
+- desktop 下的 `spine overlay` 采用持久 host 与播放状态切换，避免切页期间反复创建 / 销毁 Pixi viewer
+- 继承当前背景的页面允许继续保留 live home spine；拥有自身背景的页面则让 spine 有过渡地退掉
 
 ## 渲染策略
 

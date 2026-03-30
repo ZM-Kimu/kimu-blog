@@ -13,6 +13,8 @@
 - 每个重要页面都应具备**视觉节奏、动效层级、叙事式转场**
 - 当前产品导航目标是 **route-based app shell + SPA-like navigation**
 - 站内操作允许改变 URL，但默认体验应由 SvelteKit 客户端路由接管，而不是整页刷新
+- 站点内的可视物件默认**不可拖动、不可选中**；只有输入控件与显式白名单元素恢复对应能力
+- `topbar` 属于共享 shell，不属于单个 page 的视觉皮肤范围；默认不要把页面动效、背景动效和 topbar 外观耦合在一起
 
 ## 2. 不可协商的工程基线
 
@@ -99,6 +101,7 @@
 - `/blog/archive`：全部文章的完整浏览入口
 - `/blog/[slug]`：可直达、可分享的文章详情页
 - 首页走独立 `screen-home`；公开二级内容页继续走 shared subpage app shell
+- 404 / 错误页归类为公开二级内容页，继续服从 shared subpage app shell 的背景、壳体与动效语义
 - 站内导航目标是 **path 会变化，但不触发整页刷新**
 
 ### 7.3 调试路由职责
@@ -125,7 +128,8 @@
 - 优先使用 Svelte 原生 transition / animation 与 CSS-first 方案
 - 仅在理由充分时引入重型第三方动画依赖
 - 避免引入会明显增加构建、hydrate 或维护复杂度、但收益不足的动画库
-- 首屏如果使用 boot/loading overlay，它必须先于主 UI 显示，并作为“loading -> staged -> entering -> ready”时间线的一部分，而不是在页面已完全可交互后才补出现
+- 首屏如果使用 boot/loading overlay，它只用于**首次进入站点**时协调主 UI 进入；语义按 `boot -> entry -> idle` 理解，后续常规页面切换统一走 `exit -> entry -> idle`，不要复用 boot 时间线
+- 当前实现的 boot 资源等待通过独立的 `data-site-boot-assets` 表达；不要再把资源门控混进 boot 主状态
 
 ## 10. 资源、SEO 与可访问性规则
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-site-boot-phase="loading" data-site-boot-assets="loading">
+<html lang="zh-CN" data-site-boot-phase="boot" data-site-boot-assets="loading">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -45,7 +45,7 @@
 					'/images/loading/arona_loading_outline.png'
 				]
 
-				root.dataset.siteBootPhase = isManageRoute ? 'ready' : 'loading'
+				root.dataset.siteBootPhase = isManageRoute ? 'idle' : 'boot'
 				root.dataset.siteBootAssets = isManageRoute ? 'ready' : 'loading'
 
 				if (isManageRoute) {
@@ -91,7 +91,7 @@
 					}
 
 					const step = (timestamp) => {
-						if (root.dataset.siteBootPhase === 'ready') {
+						if (root.dataset.siteBootPhase === 'idle') {
 							clearLoadingIconTimeline()
 							return
 						}
@@ -127,7 +127,7 @@
 				}
 
 				const stopWhenReady = () => {
-					if (root.dataset.siteBootPhase === 'ready') {
+					if (root.dataset.siteBootPhase === 'idle') {
 						clearLoadingIconTimeline()
 					}
 				}
@@ -145,7 +145,7 @@
 					'DOMContentLoaded',
 					async () => {
 						await assetsReady
-						if (root.dataset.siteBootPhase === 'ready') {
+						if (root.dataset.siteBootPhase === 'idle') {
 							return
 						}
 
@@ -188,12 +188,10 @@
 			})()
 		</script>
 		<style>
-			html[data-site-boot-phase='loading'],
-			html[data-site-boot-phase='staged'],
-			html[data-site-boot-phase='entering'],
-			html[data-site-boot-phase='loading'] body,
-			html[data-site-boot-phase='staged'] body,
-			html[data-site-boot-phase='entering'] body {
+			html[data-site-boot-phase='boot'],
+			html[data-site-boot-phase='entry'],
+			html[data-site-boot-phase='boot'] body,
+			html[data-site-boot-phase='entry'] body {
 				overflow: hidden;
 			}
 
@@ -203,7 +201,8 @@
 				z-index: 120;
 				display: grid;
 				place-items: center;
-				overflow: hidden;
+				overflow: clip;
+				contain: paint;
 				background:
 					radial-gradient(circle at top left, rgba(114, 220, 255, 0.18), transparent 28%),
 					radial-gradient(circle at 86% 16%, rgba(79, 120, 255, 0.12), transparent 24%),
@@ -215,13 +214,17 @@
 					filter 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
 			}
 
-			html[data-site-boot-phase='staged'] #site-boot-overlay,
-			html[data-site-boot-phase='entering'] #site-boot-overlay,
-			html[data-site-boot-phase='ready'] #site-boot-overlay {
+			html[data-site-boot-phase='entry'] #site-boot-overlay,
+			html[data-site-boot-phase='idle'] #site-boot-overlay {
 				opacity: 0;
 				transform: scale(1.015);
 				filter: blur(10px);
+				clip-path: inset(0);
 				pointer-events: none;
+			}
+
+			html[data-site-boot-phase='idle'] #site-boot-overlay {
+				visibility: hidden;
 			}
 
 			#site-boot-overlay::before {

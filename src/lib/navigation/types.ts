@@ -93,6 +93,7 @@ export type PageState = {
 	route: RouteState
 	title: string
 	transitionKey: string
+	motionFamily: 'main' | 'subpage'
 	shellMode: 'screen' | 'shell'
 	showGlobalChrome: boolean
 	backgroundPolicy: BackgroundPolicy
@@ -101,7 +102,7 @@ export type PageState = {
 	topbar: TopbarState
 }
 
-export type TransitionPhase = 'idle' | 'exiting' | 'entering'
+export type TransitionPhase = 'idle' | 'exit' | 'entry'
 
 export type BeginPageSwitchOptions = {
 	origin: string

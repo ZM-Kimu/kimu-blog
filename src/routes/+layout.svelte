@@ -20,7 +20,7 @@
 	import type { TopbarShellVariant } from '$lib/navigation/types'
 	import { bindMediaQuery } from '$lib/features/home/home-page.media'
 
-	type SiteBootPhase = 'loading' | 'staged' | 'entering' | 'ready'
+	type SiteBootPhase = 'boot' | 'entry' | 'idle'
 	type PublicTopbarManagerHandle = {
 		bridgeTo: (targetShellVariant: TopbarShellVariant) => Promise<void>
 	}
@@ -40,8 +40,8 @@
 	let queuedDesktopEnterVariant = $state<'none' | 'subpage'>('none')
 	let siteBootPhase = $state<SiteBootPhase>(
 		page.url.pathname === '/manage' || page.url.pathname.startsWith('/manage/')
-			? 'ready'
-			: 'loading'
+			? 'idle'
+			: 'boot'
 	)
 	let siteBootEnterDurationMs = $state(620)
 
@@ -73,9 +73,9 @@
 	const isPublicScreenRoute = $derived(pageState.shellMode === 'screen' && !isManageRoute)
 	const isBareRoute = $derived(isPublicScreenRoute || isManageRoute)
 	const showGlobalChrome = $derived(pageState.showGlobalChrome)
-	const isRouteOutgoing = $derived(navigationManager.phase === 'exiting')
+	const isRouteOutgoing = $derived(navigationManager.phase === 'exit')
 	const isRouteEntering = $derived(
-		navigationManager.phase === 'entering' && navigationManager.pendingTarget === page.url.pathname
+		navigationManager.phase === 'entry' && navigationManager.pendingTarget === page.url.pathname
 	)
 	const showBackgroundStage = $derived(
 		isBareRoute ||
@@ -173,9 +173,10 @@
 
 		if (
 			!isCompactLayout &&
-			routeState.kind === 'home' &&
+			pageState.motionFamily === 'main' &&
 			targetPageState.shellMode === 'screen' &&
-			targetRouteState.kind !== 'home'
+			targetRouteState.kind !== 'manage' &&
+			targetPageState.motionFamily === 'subpage'
 		) {
 			queuedDesktopEnterVariant = 'subpage'
 		}
@@ -190,7 +191,7 @@
 				return
 			}
 
-			navigationManager.startBackgroundBridge({ deferUntilEntering: !isCompactLayout })
+			navigationManager.startBackgroundBridge({ deferUntilEntry: !isCompactLayout })
 			await tick()
 			if (navigationManager.pendingTarget !== targetPath) {
 				return
@@ -249,7 +250,7 @@
 			return
 		}
 
-		if (routeState.kind !== 'home' || isCompactLayout) {
+		if (pageState.motionFamily !== 'main' || isCompactLayout) {
 			clearDesktopHomeEnterTimer()
 			desktopHomeEnterActive = false
 		} else if (isRouteEntering) {
@@ -267,10 +268,10 @@
 			return
 		}
 
-		if (!isPublicScreenRoute || routeState.kind === 'home' || isCompactLayout) {
+		if (!isPublicScreenRoute || pageState.motionFamily !== 'subpage' || isCompactLayout) {
 			clearDesktopSubpageEnterTimer()
 			desktopSubpageEnterActive = false
-			if (routeState.kind === 'home' || isCompactLayout) {
+			if (pageState.motionFamily === 'main' || isCompactLayout) {
 				queuedDesktopEnterVariant = 'none'
 			}
 			return
@@ -300,7 +301,7 @@
 		})
 
 		if (routeState.kind === 'manage') {
-			siteBootPhase = 'ready'
+			siteBootPhase = 'idle'
 			siteBootEnterDurationMs = 0
 
 			return () => {
@@ -309,48 +310,60 @@
 			}
 		}
 
-		const loadingDurationMs = prefersReducedMotion ? 120 : 1100
-		const stagedDurationMs = prefersReducedMotion ? 60 : 220
-		const enteringDurationMs = prefersReducedMotion ? 160 : 620
-		siteBootEnterDurationMs = enteringDurationMs
+		const bootDurationMs = prefersReducedMotion ? 120 : 1100
+		const entryDurationMs = prefersReducedMotion ? 160 : 620
+		siteBootEnterDurationMs = entryDurationMs
 		let isDisposed = false
-		const timers: ReturnType<typeof setTimeout>[] = []
+		let entryTimer: ReturnType<typeof setTimeout> | null = null
+		let bootAssetsObserver: MutationObserver | null = null
 
-		const schedule = (callback: () => void, delay: number) => {
-			const timer = setTimeout(() => {
-				const timerIndex = timers.indexOf(timer)
-				if (timerIndex >= 0) {
-					timers.splice(timerIndex, 1)
+		const waitForBootAssetsReady = () =>
+			new Promise<void>((resolve) => {
+				const root = document.documentElement
+				if (root.dataset.siteBootAssets === 'ready') {
+					resolve()
+					return
 				}
 
+				bootAssetsObserver = new MutationObserver(() => {
+					if (root.dataset.siteBootAssets !== 'ready') {
+						return
+					}
+
+					bootAssetsObserver?.disconnect()
+					bootAssetsObserver = null
+					resolve()
+				})
+
+				bootAssetsObserver.observe(root, {
+					attributes: true,
+					attributeFilter: ['data-site-boot-assets']
+				})
+			})
+
+		void Promise.all([wait(bootDurationMs), waitForBootAssetsReady()]).then(() => {
+			if (isDisposed) {
+				return
+			}
+
+			siteBootPhase = 'entry'
+			entryTimer = setTimeout(() => {
+				entryTimer = null
 				if (!isDisposed) {
-					callback()
+					siteBootPhase = 'idle'
 				}
-			}, delay)
-
-			timers.push(timer)
-		}
-
-		schedule(() => {
-			siteBootPhase = 'staged'
-			schedule(() => {
-				siteBootPhase = 'entering'
-				schedule(() => {
-					siteBootPhase = 'ready'
-				}, enteringDurationMs)
-			}, stagedDurationMs)
-		}, loadingDurationMs)
+			}, entryDurationMs)
+		})
 
 		return () => {
 			isDisposed = true
 			unbindCompact()
 			unbindReducedMotion()
+			bootAssetsObserver?.disconnect()
 
-			for (const timer of timers) {
-				clearTimeout(timer)
+			if (entryTimer) {
+				clearTimeout(entryTimer)
 			}
-
-			timers.length = 0
 		}
 	})
 </script>
@@ -363,7 +376,7 @@
 <div
 	class="site-frame"
 	data-site-boot-phase={siteBootPhase}
-	style={`--site-boot-enter-duration: ${siteBootPhase === 'ready' ? 0 : siteBootEnterDurationMs}ms;`}
+	style={`--site-boot-enter-duration: ${siteBootPhase === 'idle' ? 0 : siteBootEnterDurationMs}ms;`}
 	bind:this={siteFrame}
 >
 	{#if showBackgroundStage}
@@ -374,7 +387,7 @@
 			compact={isCompactLayout}
 			reducedMotion={prefersReducedMotion}
 			bridgeDurationMs={navigationManager.bridgeDurationMs}
-			allowWarmup={siteBootPhase === 'ready'}
+			allowWarmup={siteBootPhase === 'idle'}
 		/>
 	{/if}
 
@@ -397,8 +410,8 @@
 	>
 		{#if isPublicScreenRoute}
 			<div
-				class:screen-route-layer--entering={isRouteEntering}
-				class:screen-route-layer--exiting={isRouteOutgoing}
+				class:screen-route-layer--entry={isRouteEntering}
+				class:screen-route-layer--exit={isRouteOutgoing}
 				class:screen-route-layer--home-enter-desktop={desktopHomeEnterActive}
 				class:screen-route-layer--subpage-enter-desktop={desktopSubpageEnterActive}
 				class="screen-route-layer"
@@ -408,8 +421,8 @@
 			</div>
 		{:else if isManageRoute}
 			<div
-				class:site-bare-content--entering={isRouteEntering}
-				class:site-bare-content--exiting={isRouteOutgoing}
+				class:site-bare-content--entry={isRouteEntering}
+				class:site-bare-content--exit={isRouteOutgoing}
 				class="site-bare-content"
 				style={routeTransitionStyle}
 			>
@@ -417,8 +430,8 @@
 			</div>
 		{:else}
 			<div
-				class:site-main__inner--entering={isRouteEntering}
-				class:site-main__inner--exiting={isRouteOutgoing}
+				class:site-main__inner--entry={isRouteEntering}
+				class:site-main__inner--exit={isRouteOutgoing}
 				class="shell site-main__inner"
 				style={routeTransitionStyle}
 			>
