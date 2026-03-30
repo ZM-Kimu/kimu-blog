@@ -57,10 +57,10 @@
 	padding: 1.1rem 1rem;
 	box-shadow: 0 22px 40px rgb(57 143 228 / 22%);
 	transition:
-		transform var(--ease),
-		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		box-shadow var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		box-shadow var(--motion-shared-ease-standard);
 	appearance: none;
 }
 

@@ -13,6 +13,7 @@
 	import '$lib/features/home/styles/topbar/motion.css'
 	import '$lib/features/home/styles/topbar/responsive.css'
 	import { translate, type LocaleMessages } from '$lib/i18n'
+	import { createTopbarMotionCssVars, getMotionTokens } from '$lib/motion/tokens'
 	import { getNavigationContext } from '$lib/navigation/context'
 
 	import type {
@@ -103,6 +104,9 @@
 
 		return subpageTopbarState
 	})
+	const topbarMotionStyle = $derived(
+		createTopbarMotionCssVars(getMotionTokens({ compact, reducedMotion }))
+	)
 
 	function t(key: string) {
 		return translate(messages, key)
@@ -247,6 +251,7 @@
 		class:home-topbar-stage-collapsed={topbarCollapsed}
 		class:public-topbar-stage-hidden={stageHidden}
 		class="home-topbar-stage public-topbar-stage"
+		style={topbarMotionStyle}
 	>
 		<HomeTopbar
 			{host}
@@ -270,6 +275,7 @@
 		{#if topbarCollapsed && !stageHidden}
 			<TopbarReopenButton
 				ariaLabel={expandAriaLabel}
+				{reducedMotion}
 				onActivate={() => navigationManager.toggleTopbarCollapsed(false)}
 			/>
 		{/if}
@@ -294,6 +300,7 @@
 		manageDescription={t('topbar.settings.manageDescription')}
 		manageActionLabel={t('topbar.settings.manageAction')}
 		{cursorMode}
+		{reducedMotion}
 		onClose={() => navigationManager.closeTopbarSettings()}
 		onSetCursorMode={(mode) => navigationManager.setCursorMode(mode)}
 		onSetBackgroundAnimationPreference={(mode) =>

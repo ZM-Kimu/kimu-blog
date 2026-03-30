@@ -1,23 +1,34 @@
 <script lang="ts">
 	import { cubicOut } from 'svelte/easing'
 	import type { TransitionConfig } from 'svelte/transition'
+	import { getMotionTokens } from '$lib/motion/tokens'
 
 	function reopenMotion(
 		node: Element,
-		{ duration = 220 }: { duration?: number } = {}
+		{
+			duration = topbarMotion.reopenTransitionDurationMs,
+			offsetY = topbarMotion.reopenOffsetYPx,
+			blur = topbarMotion.reopenBlurPx,
+			scaleFrom = topbarMotion.reopenScaleFrom
+		}: {
+			duration?: number
+			offsetY?: number
+			blur?: number
+			scaleFrom?: number
+		} = {}
 	): TransitionConfig {
 		return {
 			duration,
 			easing: cubicOut,
 			css: (t) => {
-				const lift = (1 - t) * -12
-				const scale = 0.9 + t * 0.1
-				const blur = (1 - t) * 10
+				const lift = (1 - t) * offsetY
+				const scale = scaleFrom + t * (1 - scaleFrom)
+				const activeBlur = (1 - t) * blur
 
 				return `
 					opacity: ${t};
 					transform: translate3d(0, ${lift}px, 0) scale(${scale});
-					filter: blur(${blur}px);
+					filter: blur(${activeBlur}px);
 				`
 			}
 		}
@@ -25,11 +36,15 @@
 
 	let {
 		ariaLabel,
+		reducedMotion = false,
 		onActivate
 	}: {
 		ariaLabel: string
+		reducedMotion?: boolean
 		onActivate: () => void
 	} = $props()
+
+	const topbarMotion = $derived(getMotionTokens({ compact: false, reducedMotion }).topbar)
 </script>
 
 <button

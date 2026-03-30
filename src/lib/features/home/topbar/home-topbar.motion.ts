@@ -1,22 +1,12 @@
 import { assets } from '$app/paths'
+import { getMotionTokens, msToSeconds } from '$lib/motion/tokens'
 import {
 	backGradient,
 	backGradientVector,
 	backShellPath,
-	compactDuration,
 	fallbackProfilePath,
-	glyphSwitchAt,
 	profileGradient,
-	profileGradientVector,
-	profileRevealAt,
-	reducedDuration,
-	richDuration,
-	stripDropOffset,
-	stripRetreatOffset,
-	stripRevealDuration,
-	textExitDuration,
-	toolIconSwitchAt,
-	titleRevealAt
+	profileGradientVector
 } from './home-topbar.constants'
 import {
 	clearMotionLayer,
@@ -45,16 +35,52 @@ type BaseTransitionArgs = {
 	setCurrentTimeline: (timeline: TimelineRef) => void
 }
 
+const topbarMotion = getMotionTokens({ compact: false, reducedMotion: false }).topbar
+const compactDuration = msToSeconds(topbarMotion.compactDurationMs)
+const reducedDuration = msToSeconds(topbarMotion.reducedDurationMs)
+const richDuration = msToSeconds(topbarMotion.richDurationMs)
+const stripRevealDuration = msToSeconds(topbarMotion.stripRevealDurationMs)
+const stripDropOffset = topbarMotion.stripDropOffsetPx
+const stripRetreatOffset = topbarMotion.stripRetreatOffsetPx
+const titleRevealAt = msToSeconds(topbarMotion.titleRevealAtMs)
+const profileRevealAt = msToSeconds(topbarMotion.profileRevealAtMs)
+const glyphSwitchAt = msToSeconds(topbarMotion.glyphSwitchAtMs)
+const toolIconSwitchAt = msToSeconds(topbarMotion.toolIconSwitchAtMs)
+const textExitDuration = msToSeconds(topbarMotion.textExitDurationMs)
+const chipSkinFadeDuration = msToSeconds(topbarMotion.chipSkinFadeDurationMs)
+const chipSkinHandoffOffset = msToSeconds(topbarMotion.chipSkinHandoffOffsetMs)
+const chipSkinHandoffTailBuffer = msToSeconds(topbarMotion.chipSkinHandoffTailBufferMs)
+const resourceDividerRevealDuration = msToSeconds(topbarMotion.resourceDividerRevealDurationMs)
+const resourceDividerRevealOffset = msToSeconds(topbarMotion.resourceDividerRevealOffsetMs)
+const toolIconFadeOutDuration = msToSeconds(topbarMotion.toolIconFadeOutDurationMs)
+const toolIconFadeInDuration = msToSeconds(topbarMotion.toolIconFadeInDurationMs)
+const toolIconFadeInOffset = msToSeconds(topbarMotion.toolIconFadeInOffsetMs)
+const flipStagger = msToSeconds(topbarMotion.flipStaggerMs)
+const backTitleRevealDuration = msToSeconds(topbarMotion.backTitleRevealDurationMs)
+const titleGhostExitDuration = msToSeconds(topbarMotion.titleGhostExitDurationMs)
+const glyphFadeDuration = msToSeconds(topbarMotion.glyphFadeDurationMs)
+const morphTextRevealAt = msToSeconds(topbarMotion.morphTextRevealAtMs)
+const morphTextRevealDuration = msToSeconds(topbarMotion.morphTextRevealDurationMs)
+const profileChipRevealDuration = msToSeconds(topbarMotion.profileChipRevealDurationMs)
+const profileContentRevealDuration = msToSeconds(topbarMotion.profileContentRevealDurationMs)
+const profileContentRevealOffset = msToSeconds(topbarMotion.profileContentRevealOffsetMs)
+const profileContentStagger = msToSeconds(topbarMotion.profileContentStaggerMs)
+const morphHideLead = msToSeconds(topbarMotion.morphHideLeadMs)
+const simpleTransitionOffsetY = topbarMotion.simpleTransitionOffsetYPx
+const titleGhostOffsetX = topbarMotion.titleGhostOffsetXPx
+const morphGlyphHiddenScale = topbarMotion.morphGlyphHiddenScale
+const gsapEasePower1Out = topbarMotion.gsapEasePower1Out
+const gsapEasePower2Out = topbarMotion.gsapEasePower2Out
+const gsapEasePower2In = topbarMotion.gsapEasePower2In
+const gsapEasePower3InOut = topbarMotion.gsapEasePower3InOut
+const gsapEaseExpoInOut = topbarMotion.gsapEaseExpoInOut
+
 function getProfileContentTargets(profileChip: HTMLAnchorElement | null) {
 	if (!profileChip) {
 		return []
 	}
 
-	return Array.from(
-		profileChip.querySelectorAll<HTMLElement>(
-			'.home-profile-chip-level, strong, .home-profile-chip-copy'
-		)
-	)
+	return Array.from(profileChip.querySelectorAll<HTMLElement>('.home-profile-chip-copy'))
 }
 
 function captureSurfaceSkin(element: HTMLElement | null): SurfaceSkin | null {
@@ -163,12 +189,12 @@ export async function runSimpleTransition({
 
 	libs.gsap.set(refs.topbarRoot, {
 		opacity: 0,
-		y: nextMode === 'subpage' ? -4 : 4
+		y: nextMode === 'subpage' ? simpleTransitionOffsetY * -1 : simpleTransitionOffsetY
 	})
 
 	await new Promise<void>((resolvePromise) => {
 		const timeline = libs.gsap.timeline({
-			defaults: { ease: 'power2.out' },
+			defaults: { ease: gsapEasePower2Out },
 			onComplete: resolvePromise,
 			onInterrupt: resolvePromise
 		})
@@ -402,9 +428,9 @@ export async function runRichTransition({
 			autoAlpha: 0
 		})
 		libs.gsap.set(targetRefs.backGlyph, { autoAlpha: 0 })
-		libs.gsap.set(targetRefs.titleWrap, { autoAlpha: 0, x: -10 })
+		libs.gsap.set(targetRefs.titleWrap, { autoAlpha: 0, x: titleGhostOffsetX * -1 })
 		libs.gsap.set(morph.text, { autoAlpha: 1 })
-		libs.gsap.set(morph.glyph, { autoAlpha: 0, scale: 0.76 })
+		libs.gsap.set(morph.glyph, { autoAlpha: 0, scale: morphGlyphHiddenScale })
 	} else {
 		libs.gsap.set(targetRefs.profileChip, {
 			autoAlpha: 0,
@@ -437,7 +463,7 @@ export async function runRichTransition({
 				{
 					y: 0,
 					duration: stripRevealDuration,
-					ease: 'power2.out'
+					ease: gsapEasePower2Out
 				},
 				0
 			)
@@ -447,7 +473,7 @@ export async function runRichTransition({
 				{
 					clipPath: 'inset(0 0 0% 0)',
 					duration: stripRevealDuration,
-					ease: 'power2.out'
+					ease: gsapEasePower2Out
 				},
 				0
 			)
@@ -459,7 +485,7 @@ export async function runRichTransition({
 				{
 					y: stripRetreatOffset,
 					duration: stripRevealDuration,
-					ease: 'power2.in'
+					ease: gsapEasePower2In
 				},
 				0
 			)
@@ -469,7 +495,7 @@ export async function runRichTransition({
 				{
 					clipPath: 'inset(0 0 100% 0)',
 					duration: stripRevealDuration,
-					ease: 'power2.in'
+					ease: gsapEasePower2In
 				},
 				0
 			)
@@ -477,7 +503,10 @@ export async function runRichTransition({
 
 		if (incomingStripProxy && targetRefs.stripShell) {
 			const stripHandoffAt = stripRevealDuration
-			const chipSkinHandoffAt = Math.min(stripHandoffAt + 0.04, richDuration - 0.18)
+			const chipSkinHandoffAt = Math.min(
+				stripHandoffAt + chipSkinHandoffOffset,
+				richDuration - chipSkinHandoffTailBuffer
+			)
 
 			timeline.set(
 				targetRefs.stripShell,
@@ -502,8 +531,8 @@ export async function runRichTransition({
 						backgroundColor: 'rgba(255, 255, 255, 0)',
 						borderColor: 'rgba(255, 255, 255, 0)',
 						boxShadow: '0 0 0 rgba(57, 116, 177, 0)',
-						duration: 0.12,
-						ease: 'power1.out'
+						duration: chipSkinFadeDuration,
+						ease: gsapEasePower1Out
 					},
 					chipSkinHandoffAt
 				)
@@ -516,8 +545,8 @@ export async function runRichTransition({
 						backgroundColor: 'rgba(255, 255, 255, 0)',
 						borderColor: 'rgba(255, 255, 255, 0)',
 						boxShadow: '0 0 0 rgba(57, 116, 177, 0)',
-						duration: 0.12,
-						ease: 'power1.out'
+						duration: chipSkinFadeDuration,
+						ease: gsapEasePower1Out
 					},
 					chipSkinHandoffAt
 				)
@@ -528,10 +557,10 @@ export async function runRichTransition({
 					targetResourceDividers,
 					{
 						autoAlpha: 1,
-						duration: 0.08,
-						ease: 'power1.out'
+						duration: resourceDividerRevealDuration,
+						ease: gsapEasePower1Out
 					},
-					chipSkinHandoffAt + 0.03
+					chipSkinHandoffAt + resourceDividerRevealOffset
 				)
 			}
 		}
@@ -541,8 +570,8 @@ export async function runRichTransition({
 				toolIconTransition.sourceIcon,
 				{
 					autoAlpha: 0,
-					duration: 0.1,
-					ease: 'power1.out'
+					duration: toolIconFadeOutDuration,
+					ease: gsapEasePower1Out
 				},
 				toolIconSwitchAt
 			)
@@ -551,10 +580,10 @@ export async function runRichTransition({
 				toolIconTransition.targetIcon,
 				{
 					autoAlpha: 1,
-					duration: 0.12,
-					ease: 'power1.out'
+					duration: toolIconFadeInDuration,
+					ease: gsapEasePower1Out
 				},
-				toolIconSwitchAt + 0.02
+				toolIconSwitchAt + toolIconFadeInOffset
 			)
 		}
 
@@ -564,10 +593,10 @@ export async function runRichTransition({
 				absolute: true,
 				nested: true,
 				duration: richDuration,
-				ease: 'power3.inOut',
+				ease: gsapEasePower3InOut,
 				prune: true,
 				stagger: (_index, target) =>
-					target instanceof HTMLElement && target.dataset.flipRole === 'tools' ? 0.028 : 0
+					target instanceof HTMLElement && target.dataset.flipRole === 'tools' ? flipStagger : 0
 			}),
 			0
 		)
@@ -581,7 +610,7 @@ export async function runRichTransition({
 				height: targetAnchorBox.height,
 				autoRound: false,
 				duration: richDuration,
-				ease: 'expo.inOut'
+				ease: gsapEaseExpoInOut
 			},
 			0
 		)
@@ -591,7 +620,7 @@ export async function runRichTransition({
 			{
 				value: 1,
 				duration: richDuration,
-				ease: 'expo.inOut',
+				ease: gsapEaseExpoInOut,
 				onUpdate: () => {
 					morph.path.setAttribute('d', pathInterpolator(pathProgress.value))
 				}
@@ -607,7 +636,7 @@ export async function runRichTransition({
 					'stop-opacity': targetGradient.startOpacity
 				},
 				duration: richDuration,
-				ease: 'expo.inOut'
+				ease: gsapEaseExpoInOut
 			},
 			0
 		)
@@ -620,7 +649,7 @@ export async function runRichTransition({
 					'stop-opacity': targetGradient.endOpacity
 				},
 				duration: richDuration,
-				ease: 'expo.inOut'
+				ease: gsapEaseExpoInOut
 			},
 			0
 		)
@@ -635,20 +664,20 @@ export async function runRichTransition({
 					y2: targetGradientVector.y2
 				},
 				duration: richDuration,
-				ease: 'expo.inOut'
+				ease: gsapEaseExpoInOut
 			},
 			0
 		)
 
 		if (fromMode === 'main') {
-			const handoffAt = richDuration - 0.01
+			const handoffAt = richDuration - morphHideLead
 
 			timeline.to(
 				morph.text,
 				{
 					autoAlpha: 0,
 					duration: textExitDuration,
-					ease: 'power1.out'
+					ease: gsapEasePower1Out
 				},
 				0
 			)
@@ -658,8 +687,8 @@ export async function runRichTransition({
 				{
 					autoAlpha: 1,
 					scale: 1,
-					duration: 0.12,
-					ease: 'power2.out'
+					duration: glyphFadeDuration,
+					ease: gsapEasePower2Out
 				},
 				glyphSwitchAt
 			)
@@ -713,8 +742,8 @@ export async function runRichTransition({
 				{
 					autoAlpha: 1,
 					x: 0,
-					duration: 0.18,
-					ease: 'power2.out'
+					duration: backTitleRevealDuration,
+					ease: gsapEasePower2Out
 				},
 				titleRevealAt
 			)
@@ -723,10 +752,10 @@ export async function runRichTransition({
 				timeline.to(
 					titleGhost.wrapper,
 					{
-						x: -10,
+						x: titleGhostOffsetX * -1,
 						autoAlpha: 0,
-						duration: 0.16,
-						ease: 'power2.in'
+						duration: titleGhostExitDuration,
+						ease: gsapEasePower2In
 					},
 					0
 				)
@@ -736,8 +765,8 @@ export async function runRichTransition({
 				morph.glyph,
 				{
 					autoAlpha: 0,
-					duration: 0.12,
-					ease: 'power2.in'
+					duration: glyphFadeDuration,
+					ease: gsapEasePower2In
 				},
 				0
 			)
@@ -746,18 +775,18 @@ export async function runRichTransition({
 				morph.text,
 				{
 					autoAlpha: 1,
-					duration: 0.18,
-					ease: 'power2.out'
+					duration: morphTextRevealDuration,
+					ease: gsapEasePower2Out
 				},
-				0.28
+				morphTextRevealAt
 			)
 
 			timeline.to(
 				targetRefs.profileChip,
 				{
 					autoAlpha: 1,
-					duration: 0.18,
-					ease: 'power1.out'
+					duration: profileChipRevealDuration,
+					ease: gsapEasePower1Out
 				},
 				profileRevealAt
 			)
@@ -774,11 +803,11 @@ export async function runRichTransition({
 				targetProfileContent,
 				{
 					autoAlpha: 1,
-					duration: 0.16,
-					ease: 'power1.out',
-					stagger: 0.03
+					duration: profileContentRevealDuration,
+					ease: gsapEasePower1Out,
+					stagger: profileContentStagger
 				},
-				profileRevealAt + 0.06
+				profileRevealAt + profileContentRevealOffset
 			)
 
 			timeline.set(

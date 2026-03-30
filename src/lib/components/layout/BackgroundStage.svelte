@@ -11,7 +11,7 @@
 		bridgeActive = false,
 		compact = false,
 		reducedMotion = false,
-		bridgeDurationMs = 180,
+		bridgeDurationMs = 0,
 		allowWarmup = false
 	}: {
 		scene: BackgroundScene
@@ -155,7 +155,7 @@
 <div
 	class="background-stage"
 	data-bridge-active={bridgeActive ? 'true' : 'false'}
-	style={`--background-bridge-duration: ${Math.max(bridgeDurationMs, 0)}ms;`}
+	style={`--motion-bg-bridge-duration: ${Math.max(bridgeDurationMs, 0)}ms;`}
 	aria-hidden="true"
 >
 	<div
@@ -217,7 +217,7 @@
 	}
 
 	.background-stage[data-bridge-active='true'] .background-stage-scene {
-		transition: opacity var(--background-bridge-duration, 180ms) cubic-bezier(0.2, 0.8, 0.2, 1);
+		transition: opacity var(--motion-bg-bridge-duration) var(--motion-shared-easing-standard);
 	}
 
 	.background-stage-scene-current {
@@ -240,7 +240,7 @@
 		z-index: 1;
 		opacity: 0;
 		pointer-events: none;
-		transition: opacity 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+		transition: opacity var(--motion-bg-spine-fade-duration) var(--motion-shared-easing-standard);
 	}
 
 	.background-stage-spine-overlay-visible {
@@ -249,7 +249,7 @@
 
 	.background-stage[data-bridge-active='true'] .background-stage-spine-overlay-leaving {
 		opacity: 0;
-		transition-duration: var(--background-bridge-duration, 180ms);
+		transition-duration: var(--motion-bg-bridge-duration);
 	}
 
 	.background-stage-wash {

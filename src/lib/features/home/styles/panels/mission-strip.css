@@ -49,7 +49,7 @@
 	flex-shrink: 0;
 	min-width: max-content;
 	gap: var(--home-mission-gap);
-	animation: home-mission-marquee 24s linear infinite;
+	animation: home-mission-marquee var(--motion-home-mission-marquee-duration) linear infinite;
 }
 
 .mission-strip-group[aria-hidden='true'] {

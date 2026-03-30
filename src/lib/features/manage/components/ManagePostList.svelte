@@ -226,11 +226,11 @@
 		transform-origin: center;
 		touch-action: manipulation;
 		transition:
-			transform var(--ease),
-			translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-			scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-			border-color var(--ease),
-			background-color var(--ease);
+			transform var(--motion-shared-ease-standard),
+			translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+			scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+			border-color var(--motion-shared-ease-standard),
+			background-color var(--motion-shared-ease-standard);
 	}
 
 	.manage-post-row {
@@ -247,10 +247,10 @@
 	}
 
 	.manage-post-row:active {
-		--site-press-scale: var(--press-active-scale);
-		--site-press-translate-y: var(--press-active-translate-y);
+		--site-press-scale: var(--motion-press-active-scale);
+		--site-press-translate-y: var(--motion-press-active-translate-y);
 
-		transition-duration: var(--press-in-duration);
+		transition-duration: var(--motion-press-in-duration);
 	}
 
 	.manage-post-row-headline {

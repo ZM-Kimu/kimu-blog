@@ -9,7 +9,7 @@
 .home-profile-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.82rem;
+	gap: var(--motion-topbar-visual-profile-chip-gap);
 	min-width: var(--home-profile-min-width);
 	max-width: 100%;
 	min-height: var(--home-topbar-height);
@@ -27,6 +27,7 @@
 	width: clamp(2.85rem, 3vw, 3.2rem);
 	height: clamp(2.85rem, 3vw, 3.2rem);
 	flex: 0 0 auto;
+	translate: var(--motion-topbar-visual-profile-avatar-shift-x) 0;
 }
 
 .home-profile-chip-avatar img {
@@ -37,7 +38,7 @@
 
 .home-profile-chip-copy {
 	display: grid;
-	gap: 0.12rem;
+	gap: var(--motion-topbar-visual-profile-copy-gap);
 	align-content: center;
 	line-height: 1;
 }

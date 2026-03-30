@@ -19,6 +19,7 @@
 	import { resolveRouteState } from '$lib/navigation/route-state'
 	import type { TopbarShellVariant } from '$lib/navigation/types'
 	import { bindMediaQuery } from '$lib/features/home/home-page.media'
+	import { createGlobalMotionCssVars, getMotionTokens } from '$lib/motion/tokens'
 
 	type SiteBootPhase = 'boot' | 'entry' | 'idle'
 	type PublicTopbarManagerHandle = {
@@ -27,8 +28,6 @@
 
 	const compactQuery = '(max-width: 900px), (max-aspect-ratio: 145/100)'
 	const reducedMotionQuery = '(prefers-reduced-motion: reduce)'
-	const desktopHomeEnterDurationMs = 830
-	const desktopSubpageEnterDurationMs = 740
 
 	let { children, data } = $props()
 	let siteFrame: HTMLDivElement | null = $state(null)
@@ -41,7 +40,6 @@
 	let siteBootPhase = $state<SiteBootPhase>(
 		page.url.pathname === '/manage' || page.url.pathname.startsWith('/manage/') ? 'idle' : 'boot'
 	)
-	let siteBootEnterDurationMs = $state(620)
 
 	const navigationManager = createNavigationStateManager(
 		untrack(() => resolveRouteState({ pathname: page.url.pathname, status: page.status })),
@@ -83,9 +81,17 @@
 			navigationManager.backgroundScene !== 'neutral-default' ||
 			navigationManager.pendingBackgroundScene !== null
 	)
-	const routeTransitionStyle = $derived(
-		`--site-page-exit-duration: ${navigationManager.exitDurationMs}ms; --site-page-enter-duration: ${navigationManager.enterDurationMs}ms;`
+	const motionTokens = $derived(
+		getMotionTokens({
+			compact: isCompactLayout,
+			reducedMotion: prefersReducedMotion
+		})
 	)
+	const siteFrameMotionStyle = $derived.by(() => {
+		const tokens = motionTokens
+		const activeBootEntryDurationMs = siteBootPhase === 'idle' ? 0 : tokens.boot.entryDurationMs
+		return `${createGlobalMotionCssVars(tokens)} --motion-boot-active-entry-duration: ${activeBootEntryDurationMs}ms;`
+	})
 	let desktopHomeEnterTimer: ReturnType<typeof setTimeout> | null = null
 	let desktopSubpageEnterTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -177,6 +183,7 @@
 		})
 		const started = navigationManager.beginPageSwitch(targetPath, targetPageState, {
 			origin: `navigate:${navigation.type}`,
+			compact: isCompactLayout,
 			reducedMotion: prefersReducedMotion
 		})
 
@@ -269,13 +276,10 @@
 		} else if (isRouteEntering) {
 			clearDesktopHomeEnterTimer()
 			desktopHomeEnterActive = true
-			desktopHomeEnterTimer = setTimeout(
-				() => {
-					desktopHomeEnterTimer = null
-					desktopHomeEnterActive = false
-				},
-				prefersReducedMotion ? 1 : desktopHomeEnterDurationMs
-			)
+			desktopHomeEnterTimer = setTimeout(() => {
+				desktopHomeEnterTimer = null
+				desktopHomeEnterActive = false
+			}, motionTokens.route.desktopHomeEnterDurationMs)
 		}
 	})
 
@@ -300,13 +304,10 @@
 		queuedDesktopEnterVariant = 'none'
 		clearDesktopSubpageEnterTimer()
 		desktopSubpageEnterActive = true
-		desktopSubpageEnterTimer = setTimeout(
-			() => {
-				desktopSubpageEnterTimer = null
-				desktopSubpageEnterActive = false
-			},
-			prefersReducedMotion ? 1 : desktopSubpageEnterDurationMs
-		)
+		desktopSubpageEnterTimer = setTimeout(() => {
+			desktopSubpageEnterTimer = null
+			desktopSubpageEnterActive = false
+		}, motionTokens.route.desktopSubpageEnterDurationMs)
 	})
 
 	onMount(() => {
@@ -322,7 +323,6 @@
 
 		if (routeState.kind === 'manage') {
 			siteBootPhase = 'idle'
-			siteBootEnterDurationMs = 0
 
 			return () => {
 				document.removeEventListener('dragstart', handleDocumentDragStart)
@@ -331,9 +331,12 @@
 			}
 		}
 
-		const bootDurationMs = prefersReducedMotion ? 120 : 1100
-		const entryDurationMs = prefersReducedMotion ? 160 : 620
-		siteBootEnterDurationMs = entryDurationMs
+		const bootMotionTokens = getMotionTokens({
+			compact: window.matchMedia(compactQuery).matches,
+			reducedMotion: window.matchMedia(reducedMotionQuery).matches
+		})
+		const bootDurationMs = bootMotionTokens.boot.holdDurationMs
+		const entryDurationMs = bootMotionTokens.boot.entryDurationMs
 		let isDisposed = false
 		let entryTimer: ReturnType<typeof setTimeout> | null = null
 		let bootAssetsObserver: MutationObserver | null = null
@@ -398,7 +401,7 @@
 <div
 	class="site-frame"
 	data-site-boot-phase={siteBootPhase}
-	style={`--site-boot-enter-duration: ${siteBootPhase === 'idle' ? 0 : siteBootEnterDurationMs}ms;`}
+	style={siteFrameMotionStyle}
 	bind:this={siteFrame}
 >
 	{#if showBackgroundStage}
@@ -438,7 +441,6 @@
 				class:screen-route-layer-home-exit-desktop={useDesktopHomeExit}
 				class:screen-route-layer-subpage-enter-desktop={desktopSubpageEnterActive}
 				class="screen-route-layer"
-				style={routeTransitionStyle}
 			>
 				{@render children()}
 			</div>
@@ -447,7 +449,6 @@
 				class:site-bare-content-entry={isRouteEntering}
 				class:site-bare-content-exit={isRouteOutgoing}
 				class="site-bare-content"
-				style={routeTransitionStyle}
 			>
 				{@render children()}
 			</div>
@@ -456,7 +457,6 @@
 				class:site-main-inner-entry={isRouteEntering}
 				class:site-main-inner-exit={isRouteOutgoing}
 				class="shell site-main-inner"
-				style={routeTransitionStyle}
 			>
 				{@render children()}
 			</div>

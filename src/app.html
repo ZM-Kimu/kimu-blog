@@ -44,6 +44,18 @@
 					haloSources.heart,
 					'/images/loading/arona_loading_outline.png'
 				]
+				const readDurationVarMs = (name) => {
+					const rawValue = getComputedStyle(root).getPropertyValue(name).trim()
+					const parsedValue = Number.parseFloat(rawValue)
+
+					return Number.isFinite(parsedValue) ? parsedValue : 0
+				}
+				const readNumberVar = (name) => {
+					const rawValue = getComputedStyle(root).getPropertyValue(name).trim()
+					const parsedValue = Number.parseFloat(rawValue)
+
+					return Number.isFinite(parsedValue) ? parsedValue : 0
+				}
 
 				root.dataset.siteBootPhase = isManageRoute ? 'idle' : 'boot'
 				root.dataset.siteBootAssets = isManageRoute ? 'ready' : 'loading'
@@ -91,6 +103,16 @@
 					}
 
 					const step = (timestamp) => {
+						const haloPhaseOffsetMs = readDurationVarMs(
+							'--motion-boot-overlay-icon-halo-phase-offset'
+						)
+						const haloCycleDurationMs = readDurationVarMs(
+							'--motion-boot-overlay-icon-cycle-duration'
+						)
+						const flipDegreesPerSecond = readNumberVar(
+							'--motion-boot-overlay-icon-flip-degrees-per-second'
+						)
+
 						if (root.dataset.siteBootPhase === 'idle') {
 							clearLoadingIconTimeline()
 							return
@@ -101,8 +123,11 @@
 						}
 
 						const elapsedMs = timestamp - flipStartedAt
-						const rotationDeg = (elapsedMs / 1000) * 180
-						const nextHalo = Math.floor((elapsedMs + 500) / 1000) % 2 === 0 ? 'normal' : 'heart'
+						const rotationDeg = (elapsedMs / 1000) * flipDegreesPerSecond
+						const nextHalo =
+							Math.floor((elapsedMs + haloPhaseOffsetMs) / haloCycleDurationMs) % 2 === 0
+								? 'normal'
+								: 'heart'
 
 						if (currentHalo !== nextHalo) {
 							currentHalo = nextHalo
@@ -209,16 +234,16 @@
 					linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 24%),
 					linear-gradient(180deg, #f4fbff 0%, #dff0ff 48%, #d6e7f8 100%);
 				transition:
-					opacity 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
-					transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
-					filter 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+					opacity var(--motion-boot-overlay-exit-duration) var(--motion-shared-easing-standard),
+					transform var(--motion-boot-overlay-exit-duration) var(--motion-shared-easing-standard),
+					filter var(--motion-boot-overlay-exit-duration) var(--motion-shared-easing-standard);
 			}
 
 			html[data-site-boot-phase='entry'] #site-boot-overlay,
 			html[data-site-boot-phase='idle'] #site-boot-overlay {
 				opacity: 0;
-				transform: scale(1.015);
-				filter: blur(10px);
+				transform: scale(var(--motion-boot-overlay-exit-scale));
+				filter: blur(var(--motion-boot-overlay-exit-blur));
 				clip-path: inset(0);
 				pointer-events: none;
 			}
@@ -310,13 +335,15 @@
 				place-items: center;
 				transform-style: preserve-3d;
 				transition:
-					opacity 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
-					filter 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+					opacity var(--motion-boot-overlay-stack-reveal-duration)
+						var(--motion-shared-easing-standard),
+					filter var(--motion-boot-overlay-stack-reveal-duration)
+						var(--motion-shared-easing-standard);
 			}
 
 			html[data-site-boot-assets='loading'] .site-boot-overlay__stack {
 				opacity: 0;
-				filter: blur(10px);
+				filter: blur(var(--motion-boot-overlay-stack-hidden-blur));
 			}
 
 			.site-boot-overlay__halo-stage,
@@ -353,7 +380,7 @@
 				height: auto;
 				filter: drop-shadow(0 0 24px rgba(93, 170, 255, 0.34));
 				opacity: 0;
-				transition: opacity 40ms linear;
+				transition: opacity var(--motion-boot-overlay-halo-swap-duration) linear;
 			}
 
 			.site-boot-overlay__stack[data-site-boot-halo='normal'] .site-boot-overlay__halo--normal,
@@ -397,58 +424,61 @@
 					4px 2px 0 rgba(53, 102, 165, 0.92),
 					0 6px 14px rgba(96, 156, 220, 0.18);
 				transition:
-					opacity 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
-					filter 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+					opacity var(--motion-boot-overlay-label-reveal-duration)
+						var(--motion-shared-easing-standard),
+					filter var(--motion-boot-overlay-label-reveal-duration)
+						var(--motion-shared-easing-standard);
 			}
 
 			html[data-site-boot-assets='loading'] .site-boot-overlay__label {
 				opacity: 0;
-				filter: blur(8px);
+				filter: blur(var(--motion-boot-overlay-label-hidden-blur));
 			}
 
 			.site-boot-overlay__label-char {
 				display: inline-block;
-				animation: site-boot-loading-wave 900ms ease-in-out infinite;
+				animation: site-boot-loading-wave var(--motion-boot-overlay-wave-duration) ease-in-out
+					infinite;
 			}
 
 			.site-boot-overlay__label-char:nth-child(1) {
-				animation-delay: 0ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 0);
 			}
 
 			.site-boot-overlay__label-char:nth-child(2) {
-				animation-delay: 60ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 1);
 			}
 
 			.site-boot-overlay__label-char:nth-child(3) {
-				animation-delay: 120ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 2);
 			}
 
 			.site-boot-overlay__label-char:nth-child(4) {
-				animation-delay: 180ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 3);
 			}
 
 			.site-boot-overlay__label-char:nth-child(5) {
-				animation-delay: 240ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 4);
 			}
 
 			.site-boot-overlay__label-char:nth-child(6) {
-				animation-delay: 300ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 5);
 			}
 
 			.site-boot-overlay__label-char:nth-child(7) {
-				animation-delay: 360ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 6);
 			}
 
 			.site-boot-overlay__label-char:nth-child(8) {
-				animation-delay: 420ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 7);
 			}
 
 			.site-boot-overlay__label-char:nth-child(9) {
-				animation-delay: 480ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 8);
 			}
 
 			.site-boot-overlay__label-char:nth-child(10) {
-				animation-delay: 540ms;
+				animation-delay: calc(var(--motion-boot-overlay-wave-step-delay) * 9);
 			}
 
 			.site-boot-overlay__sr-only {
@@ -471,11 +501,11 @@
 				}
 
 				32% {
-					transform: translateY(-0.62rem);
+					transform: translateY(calc(var(--motion-boot-overlay-wave-lift) * -1));
 				}
 
 				44% {
-					transform: translateY(0.08rem);
+					transform: translateY(var(--motion-boot-overlay-wave-settle));
 				}
 
 				56% {
@@ -484,10 +514,6 @@
 			}
 
 			@media (prefers-reduced-motion: reduce) {
-				#site-boot-overlay {
-					transition-duration: 120ms;
-				}
-
 				.site-boot-overlay__label-char {
 					animation: none;
 				}

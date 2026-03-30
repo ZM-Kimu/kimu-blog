@@ -63,7 +63,6 @@
 		--home-shell-padding: clamp(0.78rem, 1.25vw, 1.05rem);
 		--home-topbar-height: 5.2rem;
 		--error-stage-gap: clamp(1.2rem, 2vw, 1.8rem);
-		--error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
 		position: relative;
 		display: grid;

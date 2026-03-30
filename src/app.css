@@ -1,3 +1,5 @@
+@import url('./lib/motion/tokens.css');
+
 @font-face {
 	font-family: 'FZLanTYJ Zhong';
 	src: url('/fonts/FZLanTYJ_Zhong.otf') format('opentype');
@@ -33,11 +35,6 @@
 	--font-display: 'FZLanTYJ Zhong', 'Microsoft YaHei', sans-serif;
 	--font-sans: 'FZLanTYJ Zhong', 'Microsoft YaHei', sans-serif;
 	--font-mono: 'FZLanTYJ Zhong', 'Microsoft YaHei', sans-serif;
-	--ease: 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
-	--press-in-duration: 250ms;
-	--press-out-duration: 220ms;
-	--press-active-scale: 0.96;
-	--press-active-translate-y: 1px;
 	--cursor-default: url('/cursor.png') 3 3, auto;
 }
 
@@ -165,8 +162,8 @@ select {
 	transform-origin: center;
 	touch-action: manipulation;
 	transition:
-		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1);
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard);
 }
 
 :where(
@@ -183,10 +180,10 @@ select {
 		[aria-disabled='true'],
 		[data-motion-locked='true']
 	):active {
-	--site-press-scale: var(--press-active-scale);
-	--site-press-translate-y: var(--press-active-translate-y);
+	--site-press-scale: var(--motion-press-active-scale);
+	--site-press-translate-y: var(--motion-press-active-translate-y);
 
-	transition-duration: var(--press-in-duration);
+	transition-duration: var(--motion-press-in-duration);
 }
 
 .shell {
@@ -248,8 +245,8 @@ select {
 
 .site-frame[data-site-boot-phase='boot'] .site-main-inner {
 	opacity: 0;
-	transform: translateY(18px);
-	filter: blur(10px);
+	transform: translateY(var(--motion-boot-shell-offset-y));
+	filter: blur(var(--motion-boot-entry-blur));
 	pointer-events: none;
 }
 
@@ -258,9 +255,12 @@ select {
 	transform: translateY(0);
 	filter: blur(0);
 	transition:
-		opacity var(--site-boot-enter-duration, 620ms) cubic-bezier(0.2, 0.8, 0.2, 1),
-		transform var(--site-boot-enter-duration, 620ms) cubic-bezier(0.2, 0.8, 0.2, 1),
-		filter var(--site-boot-enter-duration, 620ms) cubic-bezier(0.2, 0.8, 0.2, 1);
+		opacity var(--motion-boot-active-entry-duration, var(--motion-boot-entry-duration))
+			var(--motion-shared-easing-standard),
+		transform var(--motion-boot-active-entry-duration, var(--motion-boot-entry-duration))
+			var(--motion-shared-easing-standard),
+		filter var(--motion-boot-active-entry-duration, var(--motion-boot-entry-duration))
+			var(--motion-shared-easing-standard);
 }
 
 .site-frame[data-site-boot-phase='boot'] .public-topbar-stage,
@@ -271,11 +271,11 @@ select {
 .site-frame[data-site-boot-phase='boot'] .subpage-screen-content {
 	opacity: 0;
 	pointer-events: none;
-	filter: blur(10px);
+	filter: blur(var(--motion-boot-entry-blur));
 }
 
 .site-frame[data-site-boot-phase='boot'] .public-topbar-stage {
-	transform: translateY(-18px);
+	transform: translateY(var(--motion-boot-topbar-offset-y));
 }
 
 .site-frame[data-site-boot-phase='boot'] .home-left-tools,
@@ -283,7 +283,7 @@ select {
 .site-frame[data-site-boot-phase='boot'] .home-mission-strip,
 .site-frame[data-site-boot-phase='boot'] .home-footer,
 .site-frame[data-site-boot-phase='boot'] .subpage-screen-content {
-	transform: translateY(22px);
+	transform: translateY(var(--motion-boot-entry-offset-y));
 }
 
 .site-frame[data-site-boot-phase='entry'] .public-topbar-stage,
@@ -297,27 +297,30 @@ select {
 	filter: blur(0);
 	pointer-events: auto;
 	transition:
-		opacity var(--site-boot-enter-duration, 620ms) cubic-bezier(0.2, 0.8, 0.2, 1),
-		transform var(--site-boot-enter-duration, 620ms) cubic-bezier(0.2, 0.8, 0.2, 1),
-		filter var(--site-boot-enter-duration, 620ms) cubic-bezier(0.2, 0.8, 0.2, 1);
+		opacity var(--motion-boot-active-entry-duration, var(--motion-boot-entry-duration))
+			var(--motion-shared-easing-standard),
+		transform var(--motion-boot-active-entry-duration, var(--motion-boot-entry-duration))
+			var(--motion-shared-easing-standard),
+		filter var(--motion-boot-active-entry-duration, var(--motion-boot-entry-duration))
+			var(--motion-shared-easing-standard);
 }
 
 .site-frame[data-site-boot-phase='entry'] .public-topbar-stage {
-	transition-delay: 40ms;
+	transition-delay: var(--motion-boot-topbar-delay);
 }
 
 .site-frame[data-site-boot-phase='entry'] .home-left-tools,
 .site-frame[data-site-boot-phase='entry'] .home-right-pane,
 .site-frame[data-site-boot-phase='entry'] .subpage-screen-content {
-	transition-delay: 120ms;
+	transition-delay: var(--motion-boot-primary-delay);
 }
 
 .site-frame[data-site-boot-phase='entry'] .home-mission-strip {
-	transition-delay: 170ms;
+	transition-delay: var(--motion-boot-mission-delay);
 }
 
 .site-frame[data-site-boot-phase='entry'] .home-footer {
-	transition-delay: 210ms;
+	transition-delay: var(--motion-boot-footer-delay);
 }
 
 .screen-route-layer-exit,
@@ -325,14 +328,14 @@ select {
 .site-main-inner-exit {
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity var(--site-page-exit-duration, 120ms) cubic-bezier(0.2, 0.8, 0.2, 1);
+	transition: opacity var(--motion-route-page-exit-duration) var(--motion-shared-easing-standard);
 }
 
 .screen-route-layer-entry,
 .site-bare-content-entry,
 .site-main-inner-entry {
-	animation: site-page-fade-in var(--site-page-enter-duration, 160ms) cubic-bezier(0.2, 0.8, 0.2, 1)
-		both;
+	animation: site-page-fade-in var(--motion-route-page-entry-duration)
+		var(--motion-shared-easing-standard) both;
 }
 
 @media (width >=901px) and (aspect-ratio >=29/20) {
@@ -348,23 +351,27 @@ select {
 	}
 
 	.site-main-home .screen-route-layer-home-enter-desktop .home-left-tools {
-		animation: site-home-route-enter-left 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-		animation-delay: 120ms;
+		animation: site-home-route-enter-left var(--motion-route-home-enter-duration)
+			var(--motion-shared-easing-standard) both;
+		animation-delay: var(--motion-route-home-enter-delay-primary);
 	}
 
 	.site-main-home .screen-route-layer-home-enter-desktop .home-right-pane {
-		animation: site-home-route-enter-right 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-		animation-delay: 120ms;
+		animation: site-home-route-enter-right var(--motion-route-home-enter-duration)
+			var(--motion-shared-easing-standard) both;
+		animation-delay: var(--motion-route-home-enter-delay-primary);
 	}
 
 	.site-main-home .screen-route-layer-home-enter-desktop .home-mission-strip {
-		animation: site-home-route-enter-down 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-		animation-delay: 170ms;
+		animation: site-home-route-enter-down var(--motion-route-home-enter-duration)
+			var(--motion-shared-easing-standard) both;
+		animation-delay: var(--motion-route-home-enter-delay-mission);
 	}
 
 	.site-main-home .screen-route-layer-home-enter-desktop .home-footer {
-		animation: site-home-route-enter-down 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-		animation-delay: 210ms;
+		animation: site-home-route-enter-down var(--motion-route-home-enter-duration)
+			var(--motion-shared-easing-standard) both;
+		animation-delay: var(--motion-route-home-enter-delay-footer);
 	}
 
 	.site-main-home .screen-route-layer-home-exit-desktop {
@@ -372,41 +379,26 @@ select {
 	}
 
 	.site-main-home .screen-route-layer-home-exit-desktop .home-left-tools {
-		animation: site-home-route-exit-left 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+		animation: site-home-route-exit-left var(--motion-route-home-exit-duration)
+			var(--motion-shared-easing-standard) both;
 	}
 
 	.site-main-home .screen-route-layer-home-exit-desktop .home-right-pane {
-		animation: site-home-route-exit-right 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+		animation: site-home-route-exit-right var(--motion-route-home-exit-duration)
+			var(--motion-shared-easing-standard) both;
 	}
 
 	.site-main-home .screen-route-layer-home-exit-desktop .home-mission-strip,
 	.site-main-home .screen-route-layer-home-exit-desktop .home-footer {
-		animation: site-home-route-exit-down 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+		animation: site-home-route-exit-down var(--motion-route-home-exit-duration)
+			var(--motion-shared-easing-standard) both;
 	}
 
 	.screen-route-layer-subpage-enter-desktop .subpage-screen-content {
-		animation: site-home-route-enter 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-		animation-delay: 120ms;
+		animation: site-home-route-enter var(--motion-route-subpage-enter-duration)
+			var(--motion-shared-easing-standard) both;
+		animation-delay: var(--motion-route-subpage-enter-delay);
 		will-change: opacity, transform, filter;
-	}
-}
-
-@media (width >=901px) and (aspect-ratio >=29/20) and (prefers-reduced-motion: reduce) {
-	.site-main-home .screen-route-layer-home-enter-desktop .home-left-tools,
-	.site-main-home .screen-route-layer-home-enter-desktop .home-right-pane,
-	.site-main-home .screen-route-layer-home-enter-desktop .home-mission-strip,
-	.site-main-home .screen-route-layer-home-enter-desktop .home-footer,
-	.site-main-home .screen-route-layer-home-exit-desktop .home-left-tools,
-	.site-main-home .screen-route-layer-home-exit-desktop .home-right-pane,
-	.site-main-home .screen-route-layer-home-exit-desktop .home-mission-strip,
-	.site-main-home .screen-route-layer-home-exit-desktop .home-footer {
-		animation-duration: 1ms;
-		animation-delay: 0ms;
-	}
-
-	.screen-route-layer-subpage-enter-desktop .subpage-screen-content {
-		animation-duration: 1ms;
-		animation-delay: 0ms;
 	}
 }
 
@@ -415,32 +407,22 @@ select {
 	.site-main-home .screen-route-layer-entry .home-right-pane,
 	.site-main-home .screen-route-layer-entry .home-mission-strip,
 	.site-main-home .screen-route-layer-entry .home-footer {
-		animation: site-home-route-enter 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+		animation: site-home-route-enter var(--motion-route-compact-enter-duration)
+			var(--motion-shared-easing-standard) both;
 		will-change: opacity, transform, filter;
 	}
 
 	.site-main-home .screen-route-layer-entry .home-left-tools,
 	.site-main-home .screen-route-layer-entry .home-right-pane {
-		animation-delay: 120ms;
+		animation-delay: var(--motion-route-compact-enter-delay-primary);
 	}
 
 	.site-main-home .screen-route-layer-entry .home-mission-strip {
-		animation-delay: 170ms;
+		animation-delay: var(--motion-route-compact-enter-delay-mission);
 	}
 
 	.site-main-home .screen-route-layer-entry .home-footer {
-		animation-delay: 210ms;
-	}
-}
-
-@media (width <=900px) and (prefers-reduced-motion: reduce),
-	(aspect-ratio <=145/100) and (prefers-reduced-motion: reduce) {
-	.site-main-home .screen-route-layer-entry .home-left-tools,
-	.site-main-home .screen-route-layer-entry .home-right-pane,
-	.site-main-home .screen-route-layer-entry .home-mission-strip,
-	.site-main-home .screen-route-layer-entry .home-footer {
-		animation-duration: 1ms;
-		animation-delay: 0ms;
+		animation-delay: var(--motion-route-compact-enter-delay-footer);
 	}
 }
 
@@ -541,12 +523,12 @@ select {
 .section-link {
 	border-radius: var(--radius-sm);
 	transition:
-		transform var(--ease),
-		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		border-color var(--ease),
-		background-color var(--ease),
-		box-shadow var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		border-color var(--motion-shared-ease-standard),
+		background-color var(--motion-shared-ease-standard),
+		box-shadow var(--motion-shared-ease-standard);
 }
 
 .hud-nav a {
@@ -709,8 +691,8 @@ select {
 	opacity: 0;
 	transform: translateX(-40%);
 	transition:
-		opacity var(--ease),
-		transform var(--ease);
+		opacity var(--motion-shared-ease-standard),
+		transform var(--motion-shared-ease-standard);
 }
 
 .panel:hover::after,
@@ -996,10 +978,10 @@ select {
 	display: grid;
 	gap: 0.35rem;
 	transition:
-		transform var(--ease),
-		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		border-color var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		border-color var(--motion-shared-ease-standard);
 }
 
 .command-grid {
@@ -1095,10 +1077,10 @@ select {
 	background: linear-gradient(180deg, rgb(255 255 255 / 82%), rgb(233 242 255 / 82%));
 	box-shadow: var(--shadow-md);
 	transition:
-		transform var(--ease),
-		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		border-color var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		border-color var(--motion-shared-ease-standard);
 }
 
 .mission-card-hud,
@@ -1174,10 +1156,10 @@ select {
 	background: linear-gradient(180deg, rgb(255 255 255 / 78%), rgb(229 240 255 / 78%));
 	box-shadow: var(--shadow-md);
 	transition:
-		transform var(--ease),
-		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		border-color var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		border-color var(--motion-shared-ease-standard);
 }
 
 .post-card-body {
@@ -1227,10 +1209,10 @@ select {
 	gap: 1rem;
 	padding: 1rem 1.1rem;
 	transition:
-		transform var(--ease),
-		translate var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		scale var(--press-out-duration) cubic-bezier(0.2, 0.8, 0.2, 1),
-		border-color var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		border-color var(--motion-shared-ease-standard);
 }
 
 .featured-link:hover,
@@ -1566,8 +1548,8 @@ select {
 @keyframes site-home-route-enter {
 	from {
 		opacity: 0;
-		transform: translateY(22px);
-		filter: blur(10px);
+		transform: translateY(var(--motion-route-home-enter-offset-y));
+		filter: blur(var(--motion-route-home-enter-blur));
 	}
 
 	to {
@@ -1580,8 +1562,8 @@ select {
 @keyframes site-home-route-enter-left {
 	from {
 		opacity: 0;
-		transform: translateX(-24px);
-		filter: blur(10px);
+		transform: translateX(calc(var(--motion-route-home-enter-offset-x) * -1));
+		filter: blur(var(--motion-route-home-enter-blur));
 	}
 
 	to {
@@ -1594,8 +1576,8 @@ select {
 @keyframes site-home-route-enter-right {
 	from {
 		opacity: 0;
-		transform: translateX(24px);
-		filter: blur(10px);
+		transform: translateX(var(--motion-route-home-enter-offset-x));
+		filter: blur(var(--motion-route-home-enter-blur));
 	}
 
 	to {
@@ -1608,8 +1590,8 @@ select {
 @keyframes site-home-route-enter-down {
 	from {
 		opacity: 0;
-		transform: translateY(22px);
-		filter: blur(10px);
+		transform: translateY(var(--motion-route-home-enter-offset-y));
+		filter: blur(var(--motion-route-home-enter-blur));
 	}
 
 	to {
@@ -1627,7 +1609,7 @@ select {
 
 	to {
 		opacity: 0;
-		transform: translateX(-18px);
+		transform: translateX(calc(var(--motion-route-home-exit-offset-x) * -1));
 	}
 }
 
@@ -1639,7 +1621,7 @@ select {
 
 	to {
 		opacity: 0;
-		transform: translateX(18px);
+		transform: translateX(var(--motion-route-home-exit-offset-x));
 	}
 }
 
@@ -1651,7 +1633,7 @@ select {
 
 	to {
 		opacity: 0;
-		transform: translateY(18px);
+		transform: translateY(var(--motion-route-home-exit-offset-y));
 	}
 }
 
@@ -1659,7 +1641,7 @@ select {
 	position: absolute;
 	inset: 0;
 	opacity: 0;
-	transition: opacity 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+	transition: opacity var(--motion-bg-spine-fade-duration) var(--motion-shared-easing-standard);
 }
 
 .background-stage .home-spine-layer-ready {
@@ -1680,43 +1662,51 @@ select {
 }
 
 .screen-route-layer-entry .error-screen-visual {
-	animation: error-screen-enter 620ms var(--error-enter-ease) both;
-	animation-delay: 80ms;
+	animation: error-screen-enter var(--motion-error-visual-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-visual-delay);
 }
 
 .site-frame[data-site-boot-phase='entry'] .error-screen-visual {
-	animation: error-screen-enter 620ms var(--error-enter-ease) both;
-	animation-delay: 80ms;
+	animation: error-screen-enter var(--motion-error-visual-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-visual-delay);
 }
 
 .screen-route-layer-entry .error-screen-eyebrow {
-	animation: error-screen-enter 520ms var(--error-enter-ease) both;
-	animation-delay: 150ms;
+	animation: error-screen-enter var(--motion-error-eyebrow-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-eyebrow-delay);
 }
 
 .site-frame[data-site-boot-phase='entry'] .error-screen-eyebrow {
-	animation: error-screen-enter 520ms var(--error-enter-ease) both;
-	animation-delay: 150ms;
+	animation: error-screen-enter var(--motion-error-eyebrow-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-eyebrow-delay);
 }
 
 .screen-route-layer-entry .error-screen-headline {
-	animation: error-screen-enter 620ms var(--error-enter-ease) both;
-	animation-delay: 210ms;
+	animation: error-screen-enter var(--motion-error-headline-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-headline-delay);
 }
 
 .site-frame[data-site-boot-phase='entry'] .error-screen-headline {
-	animation: error-screen-enter 620ms var(--error-enter-ease) both;
-	animation-delay: 210ms;
+	animation: error-screen-enter var(--motion-error-headline-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-headline-delay);
 }
 
 .screen-route-layer-entry .error-screen-message {
-	animation: error-screen-enter 520ms var(--error-enter-ease) both;
-	animation-delay: 280ms;
+	animation: error-screen-enter var(--motion-error-message-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-message-delay);
 }
 
 .site-frame[data-site-boot-phase='entry'] .error-screen-message {
-	animation: error-screen-enter 520ms var(--error-enter-ease) both;
-	animation-delay: 280ms;
+	animation: error-screen-enter var(--motion-error-message-duration) var(--motion-error-enter-ease)
+		both;
+	animation-delay: var(--motion-error-message-delay);
 }
 
 .site-frame[data-site-boot-phase='boot'] .error-screen-visual,
@@ -1724,7 +1714,7 @@ select {
 .site-frame[data-site-boot-phase='boot'] .error-screen-headline,
 .site-frame[data-site-boot-phase='boot'] .error-screen-message {
 	opacity: 0;
-	transform: translateY(22px);
+	transform: translateY(var(--motion-error-enter-offset-y));
 	pointer-events: none;
 }
 
@@ -1760,26 +1750,14 @@ select {
 		input[type='submit'],
 		input[type='reset']
 	) {
-		transition-duration: 1ms;
-	}
-
-	.screen-route-layer-entry .error-screen-visual,
-	.site-frame[data-site-boot-phase='entry'] .error-screen-visual,
-	.screen-route-layer-entry .error-screen-eyebrow,
-	.site-frame[data-site-boot-phase='entry'] .error-screen-eyebrow,
-	.screen-route-layer-entry .error-screen-headline,
-	.site-frame[data-site-boot-phase='entry'] .error-screen-headline,
-	.screen-route-layer-entry .error-screen-message,
-	.site-frame[data-site-boot-phase='entry'] .error-screen-message {
-		animation-duration: 1ms;
-		animation-delay: 0ms;
+		transition-duration: var(--motion-shared-reduced-instant-duration);
 	}
 }
 
 @keyframes error-screen-enter {
 	from {
 		opacity: 0;
-		transform: translateY(22px);
+		transform: translateY(var(--motion-error-enter-offset-y));
 	}
 
 	to {

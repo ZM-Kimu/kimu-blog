@@ -81,7 +81,7 @@
 	inset: 0;
 	display: inline-flex;
 	align-items: center;
-	gap: 0.82rem;
+	gap: var(--motion-topbar-visual-profile-chip-gap);
 	padding: var(--home-profile-padding);
 	padding-left: calc(var(--home-shell-padding) + 1rem);
 	color: white;
@@ -91,6 +91,7 @@
 	width: clamp(2.85rem, 3vw, 3.2rem);
 	height: clamp(2.85rem, 3vw, 3.2rem);
 	flex: 0 0 auto;
+	translate: var(--motion-topbar-visual-profile-avatar-shift-x) 0;
 }
 
 .home-topbar-morph-avatar img {
@@ -101,7 +102,7 @@
 
 .home-topbar-morph-copy {
 	display: grid;
-	gap: 0.12rem;
+	gap: var(--motion-topbar-visual-profile-copy-gap);
 	align-content: center;
 	line-height: 1;
 }

@@ -106,5 +106,6 @@ export type TransitionPhase = 'idle' | 'exit' | 'entry'
 
 export type BeginPageSwitchOptions = {
 	origin: string
+	compact?: boolean
 	reducedMotion?: boolean
 }

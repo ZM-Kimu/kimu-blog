@@ -131,6 +131,7 @@
 - 避免引入会明显增加构建、hydrate 或维护复杂度、但收益不足的动画库
 - 首屏如果使用 boot/loading overlay，它只用于**首次进入站点**时协调主 UI 进入；语义按 `boot -> entry -> idle` 理解，后续常规页面切换统一走 `exit -> entry -> idle`，不要复用 boot 时间线
 - 当前实现的 boot 资源等待通过独立的 `data-site-boot-assets` 表达；不要再把资源门控混进 boot 主状态
+- 新增动画参数必须先进 `src/lib/motion/tokens.ts`；禁止在组件、布局、CSS 或 GSAP 时间线里直接新增裸时长、裸 delay、裸 easing、裸 offset/blur/scale
 
 ## 10. 资源、SEO 与可访问性规则
 
@@ -164,6 +165,8 @@
 当前质量命令基线至少包括：
 
 - `npm run lint`
+- `npm run gen:motion-css`
+- `npm run validate:motion-css`
 - `npm run lint:css`
 - `npm run lint:css:fix`
 - `npm run validate:i18n`
