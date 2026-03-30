@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount, tick } from 'svelte'
+	import { createEventDispatcher, onMount, tick, untrack } from 'svelte'
 	import HomeTopbarMain from './HomeTopbarMain.svelte'
 	import HomeTopbarSubpage from './HomeTopbarSubpage.svelte'
 	import { fallbackProfilePath } from './home-topbar.constants'
@@ -24,6 +24,7 @@
 
 	let {
 		host = null,
+		initialMode = 'main',
 		mainMetrics,
 		mainActions,
 		subpageMetrics,
@@ -37,6 +38,7 @@
 		onSubpageBack
 	}: {
 		host?: HTMLElement | null
+		initialMode?: TopbarMode
 		mainMetrics: readonly HomeTopbarMetric[]
 		mainActions: readonly HomeTopbarAction[]
 		subpageMetrics: readonly HomeTopbarMetric[]
@@ -55,7 +57,7 @@
 		statechange: HomeTopbarStateDetail
 	}>()
 
-	let mode = $state<TopbarMode>('main')
+	let mode = $state<TopbarMode>(untrack(() => initialMode))
 	let motionLocked = $state(false)
 	let motionLibs: MotionLibs | null = null
 	let currentTimeline: ReturnType<typeof import('gsap').gsap.timeline> | null = null
@@ -203,6 +205,15 @@
 	export async function transitionTo(nextMode: TopbarMode, origin: TriggerOrigin) {
 		void origin
 		await requestTransition(nextMode)
+	}
+
+	export function setModeImmediate(nextMode: TopbarMode) {
+		currentTimeline?.kill()
+		currentTimeline = null
+		motionLocked = false
+		getRefs().motionLayer?.replaceChildren()
+		resetTransitionStyles(motionLibs, getRefs())
+		mode = nextMode
 	}
 
 	export function toggle(origin: TriggerOrigin) {

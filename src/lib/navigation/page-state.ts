@@ -189,6 +189,8 @@ function resolvePageTitle(
 			return t(messages, 'nav.updates', 'Updates')
 		case 'favorites':
 			return t(messages, 'nav.favorites', 'Favorites')
+		case 'manage':
+			return 'Manage'
 		case 'debugManage':
 			return 'Manage Debug'
 		case 'error':
@@ -217,6 +219,9 @@ export function createPageState({
 			transitionKey: `${routeState.kind}:${routeState.pathname}`,
 			shellMode: 'screen',
 			showGlobalChrome: false,
+			backgroundPolicy: 'replace',
+			backgroundScene: 'home-spine',
+			topbarShellVariant: 'main',
 			topbar: {
 				variant: 'main',
 				title,
@@ -234,6 +239,9 @@ export function createPageState({
 			transitionKey: `${routeState.kind}:${routeState.pathname}`,
 			shellMode: 'screen',
 			showGlobalChrome: false,
+			backgroundPolicy: 'replace',
+			backgroundScene: 'subpage-room',
+			topbarShellVariant: 'subpage',
 			topbar: {
 				variant: 'subpage',
 				title,
@@ -244,6 +252,30 @@ export function createPageState({
 					fallbackHref: '/'
 				},
 				motionPolicy: 'rich'
+			}
+		}
+	}
+
+	if (routeState.kind === 'manage') {
+		return {
+			route: routeState,
+			title,
+			transitionKey: `${routeState.kind}:${routeState.pathname}`,
+			shellMode: 'screen',
+			showGlobalChrome: false,
+			backgroundPolicy: 'replace',
+			backgroundScene: 'neutral-default',
+			topbarShellVariant: 'none',
+			topbar: {
+				variant: 'subpage',
+				title,
+				metrics: createSharedMetrics(data, messages),
+				actions: createDefaultSubpageActions(messages),
+				back: {
+					kind: 'history',
+					fallbackHref: '/'
+				},
+				motionPolicy: 'reduced'
 			}
 		}
 	}
@@ -281,6 +313,9 @@ export function createPageState({
 		transitionKey: `${routeState.kind}:${routeState.pathname}`,
 		shellMode: isScreenRoute || usesSubpageScreen ? 'screen' : 'shell',
 		showGlobalChrome: !(isScreenRoute || usesSubpageScreen),
+		backgroundPolicy: 'replace',
+		backgroundScene: usesSubpageScreen ? 'subpage-room' : 'neutral-default',
+		topbarShellVariant: usesSubpageScreen ? 'subpage' : 'none',
 		topbar: {
 			variant: 'subpage',
 			title,

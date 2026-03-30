@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment'
-	import { onMount } from 'svelte'
+	import { onDestroy, onMount, untrack } from 'svelte'
 
 	import {
 		getNextHomeSpineVariantChange,
@@ -11,15 +11,71 @@
 	import type { BackgroundAnimationStatus } from '$lib/navigation/types'
 
 	let {
-		onStatusChange
+		onStatusChange,
+		visible = false,
+		playing = false
 	}: {
 		onStatusChange: (status: BackgroundAnimationStatus) => void
+		visible?: boolean
+		playing?: boolean
 	} = $props()
+
+	type SpineViewerHandle = {
+		resizeTo: (width: number, height: number) => void
+		destroy: () => void
+		pausePlayback: () => void
+		resumePlayback: () => void
+	}
 
 	let canvas: HTMLCanvasElement | null = $state(null)
 	let ready = $state(false)
 	let mounted = false
 	let variant = $state<HomeSpineVariant>('daytime')
+	let viewerHandle = $state<SpineViewerHandle | null>(null)
+	let resizeObserver: ResizeObserver | null = null
+	let resizeObserverTarget: Element | null = null
+
+	function disconnectResizeObserver() {
+		resizeObserver?.disconnect()
+		resizeObserver = null
+		resizeObserverTarget = null
+	}
+
+	function applyResizeFor(viewer: SpineViewerHandle | null) {
+		if (!viewer || !canvas) {
+			return
+		}
+
+		const target = canvas.parentElement ?? canvas
+		const rect = target.getBoundingClientRect()
+		const width = rect.width || target.clientWidth || window.innerWidth
+		const height = rect.height || target.clientHeight || window.innerHeight
+		viewer.resizeTo(Math.max(width, 1), Math.max(height, 1))
+	}
+
+	function applyResize() {
+		applyResizeFor(viewerHandle)
+	}
+
+	function connectResizeObserverFor(viewer: SpineViewerHandle | null) {
+		if (!browser || !canvas || !viewer) {
+			disconnectResizeObserver()
+			return
+		}
+
+		const target = canvas.parentElement ?? canvas
+		if (resizeObserver && resizeObserverTarget === target) {
+			return
+		}
+
+		disconnectResizeObserver()
+
+		resizeObserverTarget = target
+		resizeObserver = new ResizeObserver(() => {
+			applyResizeFor(viewer)
+		})
+		resizeObserver.observe(target)
+	}
 
 	onMount(() => {
 		mounted = true
@@ -42,15 +98,17 @@
 		}
 	})
 
+	onDestroy(() => {
+		disconnectResizeObserver()
+	})
+
 	$effect(() => {
 		if (!browser || !mounted || !canvas) {
 			return
 		}
 
 		let disposed = false
-		let viewer: { resizeTo: (width: number, height: number) => void; destroy: () => void } | null =
-			null
-		let observer: ResizeObserver | null = null
+		let localViewer: SpineViewerHandle | null = null
 
 		onStatusChange('loading')
 
@@ -61,18 +119,6 @@
 				})
 			})
 
-		const applyResize = () => {
-			if (!viewer || !canvas) {
-				return
-			}
-
-			const target = canvas.parentElement ?? canvas
-			const rect = target.getBoundingClientRect()
-			const width = rect.width || target.clientWidth || window.innerWidth
-			const height = rect.height || target.clientHeight || window.innerHeight
-			viewer.resizeTo(Math.max(width, 1), Math.max(height, 1))
-		}
-
 		void (async () => {
 			try {
 				const [{ mountBundleOnCanvas }] = await Promise.all([import('./spine-viewer')])
@@ -82,30 +128,38 @@
 				}
 
 				const config = homeSpineConfigs[variant]
-				viewer = await mountBundleOnCanvas(canvas, [config.entry], config.options)
+				localViewer = await mountBundleOnCanvas(canvas, [config.entry], config.options)
 
 				if (disposed) {
-					viewer.destroy()
+					localViewer.destroy()
 					return
 				}
 
-				applyResize()
-				observer = new ResizeObserver(() => {
-					applyResize()
-				})
-				observer.observe(canvas.parentElement ?? canvas)
+				viewerHandle = localViewer
+				applyResizeFor(localViewer)
+
+				if (untrack(() => playing)) {
+					localViewer.resumePlayback()
+					connectResizeObserverFor(localViewer)
+				} else {
+					localViewer.pausePlayback()
+				}
 
 				await waitForNextFrame()
 				if (disposed) {
 					return
 				}
-				applyResize()
+				if (untrack(() => playing)) {
+					applyResizeFor(localViewer)
+				}
 
 				await waitForNextFrame()
 				if (disposed) {
 					return
 				}
-				applyResize()
+				if (untrack(() => playing)) {
+					applyResizeFor(localViewer)
+				}
 
 				ready = true
 				onStatusChange('ready')
@@ -121,12 +175,39 @@
 		return () => {
 			disposed = true
 			ready = false
-			observer?.disconnect()
-			viewer?.destroy()
+			disconnectResizeObserver()
+			localViewer?.destroy()
+			if (viewerHandle === localViewer) {
+				viewerHandle = null
+			}
 		}
+	})
+
+	$effect(() => {
+		const viewer = viewerHandle
+		if (!viewer) {
+			return
+		}
+
+		if (playing) {
+			viewer.resumePlayback()
+			connectResizeObserverFor(viewer)
+			requestAnimationFrame(() => {
+				applyResize()
+			})
+			return
+		}
+
+		disconnectResizeObserver()
+		viewer.pausePlayback()
 	})
 </script>
 
-<div class:home-spine-layer--ready={ready} class="home-spine-layer" aria-hidden="true">
+<div
+	class:home-spine-layer--ready={ready}
+	class="home-spine-layer"
+	data-visible={visible ? 'true' : 'false'}
+	aria-hidden="true"
+>
 	<canvas bind:this={canvas} class="home-spine-layer__canvas"></canvas>
 </div>

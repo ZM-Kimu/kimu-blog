@@ -1,4 +1,4 @@
-import { Application, Assets, Container, Ticker } from 'pixi.js'
+import { Application, Assets, Container } from 'pixi.js'
 import { Spine } from '@esotericsoftware/spine-pixi-v7'
 import '@esotericsoftware/spine-pixi-v7/dist/assets/atlasLoader.js'
 import '@esotericsoftware/spine-pixi-v7/dist/assets/skeletonLoader.js'
@@ -38,11 +38,17 @@ export type SpineMountOptions = {
 
 const MIN_DIMENSION = 1
 const FALLBACK_BG_ALPHA = 0
-const registeredAssets = new Set<string>()
+const MAX_RENDER_RESOLUTION = 1.25
+const preparedAssets = new Map<string, Promise<void>>()
 
 function getResolution ()
 {
-	return typeof window !== 'undefined' && window.devicePixelRatio ? window.devicePixelRatio : 1
+	if (typeof window === 'undefined' || !window.devicePixelRatio)
+	{
+		return 1
+	}
+
+	return Math.max(1, Math.min(window.devicePixelRatio, MAX_RENDER_RESOLUTION))
 }
 
 function ensureCanvasSize (
@@ -64,6 +70,81 @@ function ensureCanvasSize (
 function aliasFor (src: string, type: string)
 {
 	return `spine:${type}:${encodeURIComponent(src)}`
+}
+
+function rememberPreparedAsset (alias: string, prepare: () => Promise<void>)
+{
+	const existing = preparedAssets.get(alias)
+	if (existing)
+	{
+		return existing
+	}
+
+	const task = prepare().catch((error) =>
+	{
+		preparedAssets.delete(alias)
+		throw error
+	})
+
+	preparedAssets.set(alias, task)
+	return task
+}
+
+async function fetchBinaryAsset (src: string)
+{
+	const response = await fetch(src)
+	if (!response.ok)
+	{
+		throw new Error(`Failed to fetch skeleton: ${response.status}`)
+	}
+
+	return new Uint8Array(await response.arrayBuffer())
+}
+
+async function fetchTextAsset (src: string, type: string)
+{
+	const response = await fetch(src)
+	if (!response.ok)
+	{
+		throw new Error(`Failed to fetch ${type}: ${response.status}`)
+	}
+
+	return response.text()
+}
+
+function prepareSkeletonAsset (alias: string, src: string)
+{
+	return rememberPreparedAsset(alias, async () =>
+	{
+		const skeletonBytes = await fetchBinaryAsset(src)
+
+		Assets.add({
+			alias,
+			src,
+			data: skeletonBytes
+		})
+
+		await Assets.load(alias)
+	})
+}
+
+function prepareAtlasAsset (alias: string, atlas: SpineAtlasConfig)
+{
+	return rememberPreparedAsset(alias, async () =>
+	{
+		const atlasText = await fetchTextAsset(atlas.src, 'atlas')
+
+		Assets.add({
+			alias,
+			src: atlas.src,
+			data: {
+				data: atlasText,
+				images: atlas.data?.images ?? {}
+			}
+		})
+
+		await Assets.load(alias)
+	})
 }
 
 type RuntimeSpine = InstanceType<typeof Spine>
@@ -134,7 +215,7 @@ export class SpineViewer
 			return
 		}
 
-		const ticker = this.app?.ticker || Ticker.shared
+		const ticker = this.app?.ticker
 		if (!ticker)
 		{
 			return
@@ -143,6 +224,42 @@ export class SpineViewer
 		if (typeof ticker.maxFPS === 'number')
 		{
 			ticker.maxFPS = fps
+		}
+	}
+
+	pausePlayback ()
+	{
+		const app = this.app as Application & {
+			stop?: () => void
+		}
+		const ticker = this.app?.ticker
+
+		if (typeof app.stop === 'function')
+		{
+			app.stop()
+		}
+
+		if (ticker?.started)
+		{
+			ticker.stop()
+		}
+	}
+
+	resumePlayback ()
+	{
+		const app = this.app as Application & {
+			start?: () => void
+		}
+		const ticker = this.app?.ticker
+
+		if (typeof app.start === 'function')
+		{
+			app.start()
+		}
+
+		if (ticker && !ticker.started)
+		{
+			ticker.start()
 		}
 	}
 
@@ -286,8 +403,8 @@ export class SpineViewer
 		this.clear()
 		this.app?.destroy(true, {
 			children: true,
-			texture: true,
-			baseTexture: true
+			texture: false,
+			baseTexture: false
 		})
 	}
 
@@ -302,53 +419,11 @@ export class SpineViewer
 		const skelAlias = aliasFor(entry.skel, 'skel')
 		const atlasAlias = aliasFor(entry.atlas.src, 'atlas')
 
-		const skeletonBytes = await fetch(entry.skel).then(async (response) =>
-		{
-			if (!response.ok)
-			{
-				throw new Error(`Failed to fetch skeleton: ${response.status}`)
-			}
-			return new Uint8Array(await response.arrayBuffer())
-		})
+		await Promise.all([
+			prepareSkeletonAsset(skelAlias, entry.skel),
+			prepareAtlasAsset(atlasAlias, entry.atlas)
+		])
 
-		const atlasText = await fetch(entry.atlas.src).then(async (response) =>
-		{
-			if (!response.ok)
-			{
-				throw new Error(`Failed to fetch atlas: ${response.status}`)
-			}
-			return response.text()
-		})
-
-		if (!registeredAssets.has(skelAlias))
-		{
-			Assets.add({ alias: skelAlias, src: entry.skel, data: skeletonBytes })
-			registeredAssets.add(skelAlias)
-		} else
-		{
-			Assets.cache.set(skelAlias, skeletonBytes)
-		}
-
-		if (!registeredAssets.has(atlasAlias))
-		{
-			Assets.add({
-				alias: atlasAlias,
-				src: entry.atlas.src,
-				data: {
-					data: atlasText,
-					images: entry.atlas.data?.images ?? {}
-				}
-			})
-			registeredAssets.add(atlasAlias)
-		} else
-		{
-			Assets.cache.set(atlasAlias, {
-				data: atlasText,
-				images: entry.atlas.data?.images ?? {}
-			})
-		}
-
-		await Assets.load([skelAlias, atlasAlias])
 		const spine = Spine.from({
 			skeleton: skelAlias,
 			atlas: atlasAlias,

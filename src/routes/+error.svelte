@@ -1,8 +1,5 @@
 <!-- eslint-disable svelte/valid-prop-names-in-kit-pages -->
 <script lang="ts">
-	import '$lib/features/home/styles/topbar/base.css'
-	import '$lib/features/home/styles/topbar/subpage.css'
-	import '$lib/features/home/styles/responsive.css'
 	import { page } from '$app/state'
 	import FallbackErrorPage from '$lib/features/error/FallbackErrorPage.svelte'
 	import SeoHead from '$lib/components/ui/SeoHead.svelte'

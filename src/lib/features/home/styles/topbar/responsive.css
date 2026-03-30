@@ -1,0 +1,65 @@
+/* Home topbar responsive overrides. */
+@media (max-width: 1260px) {
+	.home-topbar__resources {
+		width: 100%;
+	}
+
+	.home-topbar__tools {
+		justify-self: start;
+	}
+
+	.home-topbar__aside {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-aspect-ratio: 145/100), (max-width: 900px) {
+	.home-topbar,
+	.home-topbar__resources,
+	.home-topbar__tools,
+	.home-topbar__aside {
+		display: grid;
+	}
+
+	.home-topbar {
+		position: relative;
+		top: auto;
+		left: auto;
+		right: auto;
+		grid-template-columns: 1fr;
+	}
+
+	.home-topbar--subpage,
+	.home-topbar--main {
+		align-items: start;
+	}
+
+	.home-topbar--subpage .home-topbar__aside,
+	.home-topbar--main .home-topbar__aside,
+	.home-topbar--main .home-topbar__tools {
+		justify-self: start;
+	}
+
+	.home-topbar__resources {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		width: 100%;
+		max-width: none;
+		margin-left: 0;
+	}
+
+	.home-topbar__tools {
+		grid-template-columns: 1fr auto 1fr auto 1fr;
+		gap: 0.65rem;
+	}
+
+	.home-profile-chip {
+		min-width: 0;
+		border-radius: 24px;
+	}
+}
+
+@media (max-width: 640px) {
+	.home-topbar__resources {
+		grid-template-columns: 1fr;
+	}
+}

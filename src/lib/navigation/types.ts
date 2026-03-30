@@ -20,6 +20,7 @@ export type RouteKind =
 	| 'about'
 	| 'updates'
 	| 'favorites'
+	| 'manage'
 	| 'debugManage'
 	| 'error'
 	| 'unknown'
@@ -82,16 +83,25 @@ export type TopbarState = {
 	motionPolicy?: 'rich' | 'reduced'
 }
 
+export type BackgroundPolicy = 'inherit' | 'replace'
+
+export type BackgroundScene = 'neutral-default' | 'home-spine' | 'subpage-room'
+
+export type TopbarShellVariant = 'main' | 'subpage' | 'none'
+
 export type PageState = {
 	route: RouteState
 	title: string
 	transitionKey: string
 	shellMode: 'screen' | 'shell'
 	showGlobalChrome: boolean
+	backgroundPolicy: BackgroundPolicy
+	backgroundScene?: BackgroundScene
+	topbarShellVariant: TopbarShellVariant
 	topbar: TopbarState
 }
 
-export type TransitionPhase = 'idle' | 'exiting' | 'navigating' | 'entering'
+export type TransitionPhase = 'idle' | 'exiting' | 'entering'
 
 export type BeginPageSwitchOptions = {
 	origin: string
