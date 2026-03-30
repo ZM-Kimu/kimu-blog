@@ -271,11 +271,11 @@
 	bind:this={motionLayer}
 ></div>
 
-<div class="home-topbar__asset-bank" aria-hidden="true">
+<div class="home-topbar-asset-bank" aria-hidden="true">
 	{#each preloadIcons as icon (icon.key)}
 		{#if icon.mode === 'mask'}
 			<span
-				class="home-topbar__icon home-topbar__icon--mask home-topbar__asset-bank-icon"
+				class="home-topbar-icon home-topbar-icon-mask home-topbar-asset-bank-icon"
 				style={`--topbar-icon-src: url('${icon.src}'); --topbar-icon-tint: ${icon.tint ?? 'currentColor'};`}
 			></span>
 		{:else}

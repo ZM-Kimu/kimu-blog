@@ -41,14 +41,14 @@
 </script>
 
 <section class="manage-list panel">
-	<div class="manage-list__toolbar">
+	<div class="manage-list-toolbar">
 		<div>
 			<p class="eyebrow">Repository Records</p>
 			<h2>文章列表</h2>
 		</div>
 
-		<div class="manage-list__actions">
-			<label class="manage-list__search">
+		<div class="manage-list-actions">
+			<label class="manage-list-search">
 				<span>搜索</span>
 				<input bind:value={query} placeholder="title / slug / category" type="search" />
 			</label>
@@ -63,26 +63,26 @@
 		</div>
 	</div>
 
-	<div class="manage-list__meta">
+	<div class="manage-list-meta">
 		<strong>{String(filteredItems.length).padStart(2, '0')} visible</strong>
 		<span>{String(items.length).padStart(2, '0')} total records</span>
 	</div>
 
-	<div class="manage-list__rows">
+	<div class="manage-list-rows">
 		{#if filteredItems.length}
 			{#each filteredItems as item (item.slug)}
 				{@const itemHref = resolveItemHref(item.slug)}
 				{#if itemHref.startsWith('#')}
 					<button class="manage-post-row" type="button" onclick={() => followDebugHref(itemHref)}>
-						<div class="manage-post-row__main">
-							<div class="manage-post-row__headline">
+						<div class="manage-post-row-main">
+							<div class="manage-post-row-headline">
 								<h3>{item.title}</h3>
-								<div class="manage-post-row__chips">
+								<div class="manage-post-row-chips">
 									{#if item.draft}
-										<span class="manage-chip manage-chip--draft">draft</span>
+										<span class="manage-chip manage-chip-draft">draft</span>
 									{/if}
 									{#if item.featured}
-										<span class="manage-chip manage-chip--featured">featured</span>
+										<span class="manage-chip manage-chip-featured">featured</span>
 									{/if}
 									<span class="manage-chip">{item.format}</span>
 								</div>
@@ -91,7 +91,7 @@
 							<p>{item.description}</p>
 						</div>
 
-						<div class="manage-post-row__side">
+						<div class="manage-post-row-side">
 							<strong>{item.slug}</strong>
 							<span>{item.category ?? '未分类'}</span>
 							<small>更新于 {formatDate(item.updated)}</small>
@@ -99,15 +99,15 @@
 					</button>
 				{:else}
 					<a class="manage-post-row" href={resolve(itemHref)}>
-						<div class="manage-post-row__main">
-							<div class="manage-post-row__headline">
+						<div class="manage-post-row-main">
+							<div class="manage-post-row-headline">
 								<h3>{item.title}</h3>
-								<div class="manage-post-row__chips">
+								<div class="manage-post-row-chips">
 									{#if item.draft}
-										<span class="manage-chip manage-chip--draft">draft</span>
+										<span class="manage-chip manage-chip-draft">draft</span>
 									{/if}
 									{#if item.featured}
-										<span class="manage-chip manage-chip--featured">featured</span>
+										<span class="manage-chip manage-chip-featured">featured</span>
 									{/if}
 									<span class="manage-chip">{item.format}</span>
 								</div>
@@ -116,7 +116,7 @@
 							<p>{item.description}</p>
 						</div>
 
-						<div class="manage-post-row__side">
+						<div class="manage-post-row-side">
 							<strong>{item.slug}</strong>
 							<span>{item.category ?? '未分类'}</span>
 							<small>更新于 {formatDate(item.updated)}</small>
@@ -125,7 +125,7 @@
 				{/if}
 			{/each}
 		{:else}
-			<div class="manage-list__empty">
+			<div class="manage-list-empty">
 				<strong>No matches</strong>
 				<span>当前筛选条件下没有文章。</span>
 			</div>
@@ -140,40 +140,40 @@
 		padding: 1.2rem;
 	}
 
-	.manage-list__toolbar,
-	.manage-list__actions,
-	.manage-list__meta,
-	.manage-post-row__headline {
+	.manage-list-toolbar,
+	.manage-list-actions,
+	.manage-list-meta,
+	.manage-post-row-headline {
 		display: flex;
 		gap: 0.8rem;
 		align-items: center;
 		justify-content: space-between;
 	}
 
-	.manage-list__toolbar {
+	.manage-list-toolbar {
 		flex-wrap: wrap;
 	}
 
-	.manage-list__toolbar h2 {
+	.manage-list-toolbar h2 {
 		margin: 0.15rem 0 0;
 		font-family: var(--font-display);
 		font-size: 2rem;
 		letter-spacing: -0.04em;
 	}
 
-	.manage-list__actions {
+	.manage-list-actions {
 		flex-wrap: wrap;
 	}
 
-	.manage-list__search {
+	.manage-list-search {
 		display: grid;
 		gap: 0.35rem;
 		min-width: min(24rem, 100%);
 	}
 
-	.manage-list__search span,
-	.manage-list__meta span,
-	.manage-post-row__side small {
+	.manage-list-search span,
+	.manage-list-meta span,
+	.manage-post-row-side small {
 		font-family: var(--font-mono);
 		font-size: 0.74rem;
 		letter-spacing: 0.08em;
@@ -181,31 +181,31 @@
 		color: var(--ink-faint);
 	}
 
-	.manage-list__search input {
+	.manage-list-search input {
 		padding: 0.8rem 0.95rem;
 		border: 1px solid var(--line);
 		border-radius: 18px;
-		background: rgba(255, 255, 255, 0.74);
+		background: rgb(255 255 255 / 74%);
 	}
 
-	.manage-list__meta strong {
+	.manage-list-meta strong {
 		font-family: var(--font-display);
 	}
 
-	.manage-list__rows {
+	.manage-list-rows {
 		display: grid;
 		gap: 0.8rem;
 	}
 
 	.manage-post-row,
-	.manage-list__empty {
+	.manage-list-empty {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		gap: 1rem;
 		padding: 1rem 1.05rem;
 		border: 1px solid var(--line);
 		border-radius: 22px;
-		background: rgba(255, 255, 255, 0.64);
+		background: rgb(255 255 255 / 64%);
 		transition:
 			transform var(--ease),
 			border-color var(--ease),
@@ -221,16 +221,16 @@
 
 	.manage-post-row:hover {
 		transform: translateY(-2px);
-		border-color: rgba(79, 120, 255, 0.24);
-		background: rgba(255, 255, 255, 0.84);
+		border-color: rgb(79 120 255 / 24%);
+		background: rgb(255 255 255 / 84%);
 	}
 
-	.manage-post-row__headline {
+	.manage-post-row-headline {
 		flex-wrap: wrap;
 		justify-content: flex-start;
 	}
 
-	.manage-post-row__headline h3 {
+	.manage-post-row-headline h3 {
 		margin: 0;
 		font-family: var(--font-display);
 		font-size: 1.2rem;
@@ -241,7 +241,7 @@
 		color: var(--ink-soft);
 	}
 
-	.manage-post-row__chips {
+	.manage-post-row-chips {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.35rem;
@@ -251,24 +251,24 @@
 		padding: 0.22rem 0.55rem;
 		border-radius: 999px;
 		border: 1px solid var(--line);
-		background: rgba(255, 255, 255, 0.82);
+		background: rgb(255 255 255 / 82%);
 		font-family: var(--font-mono);
 		font-size: 0.72rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 	}
 
-	.manage-chip--draft {
-		border-color: rgba(247, 185, 79, 0.36);
-		background: rgba(247, 185, 79, 0.12);
+	.manage-chip-draft {
+		border-color: rgb(247 185 79 / 36%);
+		background: rgb(247 185 79 / 12%);
 	}
 
-	.manage-chip--featured {
-		border-color: rgba(11, 184, 135, 0.36);
-		background: rgba(11, 184, 135, 0.12);
+	.manage-chip-featured {
+		border-color: rgb(11 184 135 / 36%);
+		background: rgb(11 184 135 / 12%);
 	}
 
-	.manage-post-row__side {
+	.manage-post-row-side {
 		display: grid;
 		align-content: start;
 		justify-items: end;
@@ -276,24 +276,24 @@
 		text-align: right;
 	}
 
-	.manage-post-row__side strong {
+	.manage-post-row-side strong {
 		font-family: var(--font-mono);
 		font-size: 0.86rem;
 	}
 
-	.manage-list__empty {
+	.manage-list-empty {
 		grid-template-columns: 1fr;
 		justify-items: center;
 		text-align: center;
 	}
 
-	@media (max-width: 860px) {
+	@media (width <= 860px) {
 		.manage-post-row,
-		.manage-list__empty {
+		.manage-list-empty {
 			grid-template-columns: 1fr;
 		}
 
-		.manage-post-row__side {
+		.manage-post-row-side {
 			justify-items: start;
 			text-align: left;
 		}

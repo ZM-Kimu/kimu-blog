@@ -32,17 +32,17 @@
 </script>
 
 <section class="error-screen">
-	<div class="error-screen__body">
-		<div class="error-screen__visual" aria-label="Fallback illustration">
+	<div class="error-screen-body">
+		<div class="error-screen-visual" aria-label="Fallback illustration">
 			<img src={visualSrc} alt={visualAlt} loading="eager" decoding="async" />
 		</div>
 
-		<article class="error-screen__copy">
-			<p class="eyebrow error-screen__eyebrow">{eyebrow}</p>
-			<h1 class="error-screen__headline" class:error-screen__title--compact={usesCompactHeadline}>
+		<article class="error-screen-copy">
+			<p class="eyebrow error-screen-eyebrow">{eyebrow}</p>
+			<h1 class="error-screen-headline" class:error-screen-title-compact={usesCompactHeadline}>
 				{headline}
 			</h1>
-			<p class="error-screen__message">{detailMessage}</p>
+			<p class="error-screen-message">{detailMessage}</p>
 		</article>
 	</div>
 </section>
@@ -62,7 +62,7 @@
 		isolation: isolate;
 	}
 
-	.error-screen__body {
+	.error-screen-body {
 		display: grid;
 		align-content: center;
 		justify-items: center;
@@ -77,7 +77,7 @@
 		overflow: clip;
 	}
 
-	.error-screen__copy {
+	.error-screen-copy {
 		display: grid;
 		gap: 0.75rem;
 		align-content: start;
@@ -87,7 +87,7 @@
 		padding: 0 1rem;
 	}
 
-	.error-screen__headline {
+	.error-screen-headline {
 		margin: 0;
 		font-family: var(--font-display);
 		font-size: clamp(2.25rem, 5.2vw, 4.2rem);
@@ -96,14 +96,14 @@
 		max-width: 12ch;
 	}
 
-	.error-screen__title--compact {
+	.error-screen-title-compact {
 		font-size: clamp(0.9rem, 2.08vw, 1.68rem);
 		letter-spacing: -0.04em;
 		max-width: none;
 		white-space: nowrap;
 	}
 
-	.error-screen__message {
+	.error-screen-message {
 		margin: 0;
 		font-size: 0.88rem;
 		line-height: 1.6;
@@ -113,60 +113,26 @@
 		overflow-wrap: anywhere;
 	}
 
-	.error-screen__visual,
-	.error-screen__eyebrow,
-	.error-screen__headline,
-	.error-screen__message {
+	.error-screen-visual,
+	.error-screen-eyebrow,
+	.error-screen-headline,
+	.error-screen-message {
 		opacity: 1;
 		transform: translateY(0);
 		will-change: opacity, transform;
 	}
 
-	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__visual,
-	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__eyebrow,
-	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__headline,
-	:global(.site-frame[data-site-boot-phase='boot']) .error-screen__message {
-		opacity: 0;
-		transform: translateY(22px);
-		pointer-events: none;
-	}
-
-	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__visual,
-	:global(.screen-route-layer--entry) .error-screen__visual {
-		animation: error-screen-enter 620ms var(--error-enter-ease) both;
-		animation-delay: 80ms;
-	}
-
-	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__eyebrow,
-	:global(.screen-route-layer--entry) .error-screen__eyebrow {
-		animation: error-screen-enter 520ms var(--error-enter-ease) both;
-		animation-delay: 150ms;
-	}
-
-	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__headline,
-	:global(.screen-route-layer--entry) .error-screen__headline {
-		animation: error-screen-enter 620ms var(--error-enter-ease) both;
-		animation-delay: 210ms;
-	}
-
-	:global(.site-frame[data-site-boot-phase='entry']) .error-screen__message,
-	:global(.screen-route-layer--entry) .error-screen__message {
-		animation: error-screen-enter 520ms var(--error-enter-ease) both;
-		animation-delay: 280ms;
-	}
-
-	.error-screen__visual {
+	.error-screen-visual {
 		position: relative;
 		display: grid;
 		place-items: center;
-		justify-items: center;
 		width: 100%;
 		min-height: 25rem;
 		padding: 0.5rem 1rem 0;
 		isolation: isolate;
 	}
 
-	.error-screen__visual::before {
+	.error-screen-visual::before {
 		content: '';
 		position: absolute;
 		right: -2rem;
@@ -174,10 +140,10 @@
 		width: 16rem;
 		height: 16rem;
 		border-radius: 999px;
-		background: radial-gradient(circle, rgba(255, 255, 255, 0.7), transparent 72%);
+		background: radial-gradient(circle, rgb(255 255 255 / 70%), transparent 72%);
 	}
 
-	.error-screen__visual::after {
+	.error-screen-visual::after {
 		content: '';
 		position: absolute;
 		left: 50%;
@@ -185,54 +151,28 @@
 		width: min(28rem, calc(100% - 4rem));
 		height: 5rem;
 		border-radius: 999px;
-		background: radial-gradient(ellipse at center, rgba(79, 120, 255, 0.26), transparent 72%);
+		background: radial-gradient(ellipse at center, rgb(79 120 255 / 26%), transparent 72%);
 		transform: translateX(-50%);
 	}
 
-	.error-screen__visual img {
+	.error-screen-visual img {
 		position: relative;
 		z-index: 1;
 		width: min(75%, 21rem);
 		max-height: 24rem;
 		object-fit: contain;
-		filter: drop-shadow(0 28px 42px rgba(49, 103, 168, 0.22));
+		filter: drop-shadow(0 28px 42px rgb(49 103 168 / 22%));
 	}
 
-	@media (max-width: 1040px) {
-		.error-screen__visual {
+	@media (width <= 1040px) {
+		.error-screen-visual {
 			min-height: 24rem;
 		}
 	}
 
-	@media (max-width: 760px) {
-		.error-screen__body {
+	@media (width <= 760px) {
+		.error-screen-body {
 			padding: calc(var(--home-topbar-height) + 1.8rem) var(--home-shell-padding) 1.2rem;
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__visual,
-		:global(.screen-route-layer--entry) .error-screen__visual,
-		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__eyebrow,
-		:global(.screen-route-layer--entry) .error-screen__eyebrow,
-		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__headline,
-		:global(.screen-route-layer--entry) .error-screen__headline,
-		:global(.site-frame[data-site-boot-phase='entry']) .error-screen__message,
-		:global(.screen-route-layer--entry) .error-screen__message {
-			animation-duration: 1ms;
-			animation-delay: 0ms;
-		}
-	}
-
-	@keyframes error-screen-enter {
-		from {
-			opacity: 0;
-			transform: translateY(22px);
-		}
-
-		to {
-			opacity: 1;
-			transform: translateY(0);
 		}
 	}
 </style>

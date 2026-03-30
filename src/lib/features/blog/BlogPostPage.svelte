@@ -31,18 +31,18 @@
 
 <article class="dossier-shell">
 	<header class="panel dossier-hero">
-		<div class="dossier-hero__top">
+		<div class="dossier-hero-top">
 			<p class="eyebrow">Dossier / Article Record</p>
-			<a class="button-secondary dossier-hero__back" href={resolve('/blog/archive')}>返回归档</a>
+			<a class="button-secondary dossier-hero-back" href={resolve('/blog/archive')}>返回归档</a>
 		</div>
 
-		<div class="dossier-hero__header">
+		<div class="dossier-hero-header">
 			<div>
 				<h1>{data.post.title}</h1>
 				<p class="post-description">{data.post.description}</p>
 			</div>
 
-			<div class="dossier-hero__stats">
+			<div class="dossier-hero-stats">
 				<div class="dossier-stat">
 					<span>Status</span>
 					<strong>{data.post.featured ? 'Featured' : 'Published'}</strong>
@@ -73,7 +73,7 @@
 		</div>
 
 		<aside class="dossier-side">
-			<section class="panel dossier-side__panel">
+			<section class="panel dossier-side-panel">
 				<div class="panel-heading">
 					<div>
 						<p class="eyebrow">Metadata</p>
@@ -97,7 +97,7 @@
 				</div>
 			</section>
 
-			<section class="panel dossier-side__panel">
+			<section class="panel dossier-side-panel">
 				<div class="panel-heading">
 					<div>
 						<p class="eyebrow">Tag Matrix</p>
@@ -112,7 +112,7 @@
 				</div>
 			</section>
 
-			<section class="panel dossier-side__panel">
+			<section class="panel dossier-side-panel">
 				<div class="panel-heading">
 					<div>
 						<p class="eyebrow">Related Output</p>
@@ -129,7 +129,7 @@
 							</a>
 						{/each}
 					{:else}
-						<div class="related-link related-link--empty">
+						<div class="related-link related-link-empty">
 							<strong>Waiting for more records</strong>
 							<span>后续有更多文章后，这里会显示相关推荐。</span>
 						</div>

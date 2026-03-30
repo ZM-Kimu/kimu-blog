@@ -80,7 +80,7 @@
 
 <div class="home-topbar-settings" role="presentation">
 	<button
-		class="home-topbar-settings__scrim"
+		class="home-topbar-settings-scrim"
 		type="button"
 		aria-label={closeLabel}
 		onclick={onClose}
@@ -89,19 +89,19 @@
 	></button>
 
 	<div
-		class="home-topbar-settings__panel"
+		class="home-topbar-settings-panel"
 		role="dialog"
 		aria-modal="true"
 		aria-label={title}
 		in:dialogRise
 		out:dialogRise={{ duration: 180, y: 10, blur: 8 }}
 	>
-		<header class="home-topbar-settings__header">
-			<div class="home-topbar-settings__heading">
-				<strong class="home-topbar-settings__title">{title}</strong>
+		<header class="home-topbar-settings-header">
+			<div class="home-topbar-settings-heading">
+				<strong class="home-topbar-settings-title">{title}</strong>
 			</div>
 			<button
-				class="home-topbar-settings__close"
+				class="home-topbar-settings-close"
 				type="button"
 				aria-label={closeLabel}
 				onclick={onClose}
@@ -110,23 +110,23 @@
 			</button>
 		</header>
 
-		<div class="home-topbar-settings__body">
-			<div class="home-topbar-settings__options">
-				<section class="home-topbar-settings__option">
-					<div class="home-topbar-settings__copy">
+		<div class="home-topbar-settings-body">
+			<div class="home-topbar-settings-options">
+				<section class="home-topbar-settings-option">
+					<div class="home-topbar-settings-copy">
 						<span>{cursorLabel}</span>
 						<small>{cursorDescription}</small>
 					</div>
 
 					<div
-						class="home-topbar-settings__controls home-topbar-settings__controls--switch"
+						class="home-topbar-settings-controls home-topbar-settings-controls-switch"
 						role="group"
 						aria-label={cursorLabel}
 						data-cursor-mode={cursorMode}
 					>
 						<button
 							class:active={cursorMode === 'custom'}
-							class="home-topbar-settings__choice"
+							class="home-topbar-settings-choice"
 							type="button"
 							bind:this={customCursorButton}
 							aria-pressed={cursorMode === 'custom'}
@@ -136,7 +136,7 @@
 						</button>
 						<button
 							class:active={cursorMode === 'system'}
-							class="home-topbar-settings__choice"
+							class="home-topbar-settings-choice"
 							type="button"
 							bind:this={systemCursorButton}
 							aria-pressed={cursorMode === 'system'}
@@ -147,22 +147,22 @@
 					</div>
 				</section>
 
-				<section class="home-topbar-settings__option">
-					<div class="home-topbar-settings__copy">
+				<section class="home-topbar-settings-option">
+					<div class="home-topbar-settings-copy">
 						<span>{backgroundAnimationLabel}</span>
 						<small>{backgroundAnimationDescription}</small>
 					</div>
 
 					<div
-						class:home-topbar-settings__controls--disabled={backgroundAnimationDisabled}
-						class="home-topbar-settings__controls home-topbar-settings__controls--switch"
+						class:home-topbar-settings-controls-disabled={backgroundAnimationDisabled}
+						class="home-topbar-settings-controls home-topbar-settings-controls-switch"
 						role="group"
 						aria-label={backgroundAnimationLabel}
 						data-cursor-mode={backgroundAnimationPreference === 'on' ? 'custom' : 'system'}
 					>
 						<button
 							class:active={backgroundAnimationPreference === 'on'}
-							class="home-topbar-settings__choice"
+							class="home-topbar-settings-choice"
 							type="button"
 							disabled={backgroundAnimationDisabled}
 							aria-pressed={backgroundAnimationPreference === 'on'}
@@ -172,7 +172,7 @@
 						</button>
 						<button
 							class:active={backgroundAnimationPreference === 'off'}
-							class="home-topbar-settings__choice"
+							class="home-topbar-settings-choice"
 							type="button"
 							disabled={backgroundAnimationDisabled}
 							aria-pressed={backgroundAnimationPreference === 'off'}
@@ -183,18 +183,14 @@
 					</div>
 				</section>
 
-				<section class="home-topbar-settings__option">
-					<div class="home-topbar-settings__copy">
+				<section class="home-topbar-settings-option">
+					<div class="home-topbar-settings-copy">
 						<span>{manageLabel}</span>
 						<small>{manageDescription}</small>
 					</div>
 
-					<div class="home-topbar-settings__controls">
-						<a
-							class="home-topbar-settings__link-button"
-							href={resolve('/manage')}
-							onclick={onClose}
-						>
+					<div class="home-topbar-settings-controls">
+						<a class="home-topbar-settings-link-button" href={resolve('/manage')} onclick={onClose}>
 							<strong>{manageActionLabel}</strong>
 						</a>
 					</div>

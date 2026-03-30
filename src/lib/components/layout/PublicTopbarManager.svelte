@@ -246,8 +246,8 @@
 
 {#if renderedShellVariant !== 'none'}
 	<div
-		class:home-topbar-stage--collapsed={topbarCollapsed}
-		class:public-topbar-stage--hidden={stageHidden}
+		class:home-topbar-stage-collapsed={topbarCollapsed}
+		class:public-topbar-stage-hidden={stageHidden}
 		class="home-topbar-stage public-topbar-stage"
 	>
 		<HomeTopbar
@@ -306,9 +306,10 @@
 <style>
 	.public-topbar-stage {
 		position: absolute;
-		inset: 0 0 auto 0;
+		inset: 0 0 auto;
 		z-index: 2;
 		pointer-events: none;
+
 		--home-shell-padding: clamp(0.78rem, 1.25vw, 1.05rem);
 		--home-topbar-height: 5.2rem;
 		--home-topbar-gap: 0.85rem;
@@ -317,13 +318,8 @@
 		--home-profile-padding: 0.85rem 1rem;
 	}
 
-	.public-topbar-stage--hidden {
+	.public-topbar-stage-hidden {
 		opacity: 0;
-		pointer-events: none;
-	}
-
-	.public-topbar-stage--hidden :global(.home-topbar),
-	.public-topbar-stage--hidden :global(.home-topbar-stage__reopen) {
 		pointer-events: none;
 	}
 </style>

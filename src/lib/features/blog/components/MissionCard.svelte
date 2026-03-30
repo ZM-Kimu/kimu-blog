@@ -26,60 +26,60 @@
 
 {#if href === '/favorites'}
 	<a class={`mission-card tone-${tone}`} href={resolve('/favorites')}>
-		<div class="mission-card__hud">
-			<span class="mission-card__kicker">{kicker}</span>
-			<span class="mission-card__state">{state}</span>
+		<div class="mission-card-hud">
+			<span class="mission-card-kicker">{kicker}</span>
+			<span class="mission-card-state">{state}</span>
 		</div>
-		<div class="mission-card__body">
+		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
 		</div>
-		<div class="mission-card__footer">
+		<div class="mission-card-footer">
 			<span>Records</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
 {:else if href === '/blog/archive'}
 	<a class={`mission-card tone-${tone}`} href={resolve('/blog/archive')}>
-		<div class="mission-card__hud">
-			<span class="mission-card__kicker">{kicker}</span>
-			<span class="mission-card__state">{state}</span>
+		<div class="mission-card-hud">
+			<span class="mission-card-kicker">{kicker}</span>
+			<span class="mission-card-state">{state}</span>
 		</div>
-		<div class="mission-card__body">
+		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
 		</div>
-		<div class="mission-card__footer">
+		<div class="mission-card-footer">
 			<span>Records</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
 {:else if href}
 	<a class={`mission-card tone-${tone}`} href={resolve('/blog')}>
-		<div class="mission-card__hud">
-			<span class="mission-card__kicker">{kicker}</span>
-			<span class="mission-card__state">{state}</span>
+		<div class="mission-card-hud">
+			<span class="mission-card-kicker">{kicker}</span>
+			<span class="mission-card-state">{state}</span>
 		</div>
-		<div class="mission-card__body">
+		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
 		</div>
-		<div class="mission-card__footer">
+		<div class="mission-card-footer">
 			<span>Records</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
 {:else}
 	<div class={`mission-card tone-${tone}`}>
-		<div class="mission-card__hud">
-			<span class="mission-card__kicker">{kicker}</span>
-			<span class="mission-card__state">{state}</span>
+		<div class="mission-card-hud">
+			<span class="mission-card-kicker">{kicker}</span>
+			<span class="mission-card-state">{state}</span>
 		</div>
-		<div class="mission-card__body">
+		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
 		</div>
-		<div class="mission-card__footer">
+		<div class="mission-card-footer">
 			<span>Records</span>
 			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>

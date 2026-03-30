@@ -52,7 +52,7 @@ function getProfileContentTargets(profileChip: HTMLAnchorElement | null) {
 
 	return Array.from(
 		profileChip.querySelectorAll<HTMLElement>(
-			'.home-profile-chip__level, strong, .home-profile-chip__copy'
+			'.home-profile-chip-level, strong, .home-profile-chip-copy'
 		)
 	)
 }
@@ -231,22 +231,22 @@ export async function runRichTransition({
 	const sourceChipSkin =
 		fromMode === 'main'
 			? captureSurfaceSkin(
-					sourceRoot.querySelector<HTMLElement>('.home-topbar__resources .resource-chip')
+					sourceRoot.querySelector<HTMLElement>('.home-topbar-resources .resource-chip')
 				)
 			: null
 	const sourceToolsSkin =
 		fromMode === 'main'
-			? captureSurfaceSkin(sourceRoot.querySelector<HTMLElement>('.home-topbar__tools'))
+			? captureSurfaceSkin(sourceRoot.querySelector<HTMLElement>('.home-topbar-tools'))
 			: null
 	const sourceTitleBox =
 		fromMode === 'subpage' && sourceRefs.titleWrap
 			? measureToHost(host, sourceRefs, sourceRefs.titleWrap)
 			: null
 	const sourceToolButtons = Array.from(
-		sourceRoot.querySelectorAll<HTMLElement>('.home-topbar__tool-button')
+		sourceRoot.querySelectorAll<HTMLElement>('.home-topbar-tool-button')
 	)
 	const sourceLastToolIcon =
-		sourceToolButtons.at(-1)?.querySelector<HTMLElement>('.home-topbar__icon') ?? null
+		sourceToolButtons.at(-1)?.querySelector<HTMLElement>('.home-topbar-icon') ?? null
 	const flipState = libs.Flip.getState(sourceSharedTargets)
 
 	clearMotionLayer(sourceRefs)
@@ -257,7 +257,7 @@ export async function runRichTransition({
 			? createStripGhost(
 					sourceHost,
 					sourceHeaderBox,
-					'home-topbar home-topbar--subpage home-topbar-strip-proxy home-topbar-strip-proxy--background'
+					'home-topbar home-topbar-subpage home-topbar-strip-proxy home-topbar-strip-proxy-background'
 				)
 			: null
 	const titleGhost = sourceTitleBox
@@ -320,7 +320,7 @@ export async function runRichTransition({
 			? createStripGhost(
 					targetHost,
 					targetHeaderBox,
-					'home-topbar home-topbar--subpage home-topbar-strip-proxy home-topbar-strip-proxy--background'
+					'home-topbar home-topbar-subpage home-topbar-strip-proxy home-topbar-strip-proxy-background'
 				)
 			: null
 	const incomingStripHeight = incomingStripProxy
@@ -329,23 +329,23 @@ export async function runRichTransition({
 	const targetProfileContent =
 		nextMode === 'main' ? getProfileContentTargets(targetRefs.profileChip) : []
 	const targetToolButtons = Array.from(
-		targetRoot.querySelectorAll<HTMLElement>('.home-topbar__tool-button')
+		targetRoot.querySelectorAll<HTMLElement>('.home-topbar-tool-button')
 	)
 	const targetLastToolButton = targetToolButtons.at(-1) ?? null
 	const targetLastToolIcon =
-		targetLastToolButton?.querySelector<HTMLElement>('.home-topbar__icon') ?? null
+		targetLastToolButton?.querySelector<HTMLElement>('.home-topbar-icon') ?? null
 	const targetResourceChips =
 		nextMode === 'subpage'
 			? Array.from(
-					targetRoot.querySelectorAll<HTMLElement>('.home-topbar__resources .resource-chip')
+					targetRoot.querySelectorAll<HTMLElement>('.home-topbar-resources .resource-chip')
 				)
 			: []
 	const targetResourceDividers =
 		nextMode === 'subpage'
-			? Array.from(targetRoot.querySelectorAll<HTMLElement>('.home-topbar__resource-divider'))
+			? Array.from(targetRoot.querySelectorAll<HTMLElement>('.home-topbar-resource-divider'))
 			: []
 	const targetToolsSurface =
-		nextMode === 'subpage' ? targetRoot.querySelector<HTMLElement>('.home-topbar__tools') : null
+		nextMode === 'subpage' ? targetRoot.querySelector<HTMLElement>('.home-topbar-tools') : null
 	const pathInterpolator = libs.interpolate(
 		fromMode === 'main' ? profileShellPath : backShellPath,
 		nextMode === 'subpage' ? backShellPath : profileShellPath,
@@ -359,7 +359,11 @@ export async function runRichTransition({
 		targetLastToolButton &&
 		targetLastToolIcon &&
 		sourceLastToolIcon.getAttribute('style') !== targetLastToolIcon.getAttribute('style')
-			? createToolIconTransitionOverlay(targetLastToolButton, sourceLastToolIcon, targetLastToolIcon)
+			? createToolIconTransitionOverlay(
+					targetLastToolButton,
+					sourceLastToolIcon,
+					targetLastToolIcon
+				)
 			: null
 
 	if (toolIconTransition && targetLastToolIcon) {

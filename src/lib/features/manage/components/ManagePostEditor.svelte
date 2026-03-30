@@ -273,32 +273,32 @@
 </script>
 
 <section
-	class:manage-editor--disabled={debugDisabled}
-	class:manage-editor--preview-hidden={!debugPreviewVisible}
+	class:manage-editor-disabled={debugDisabled}
+	class:manage-editor-preview-hidden={!debugPreviewVisible}
 	class="manage-editor"
 >
-	<form class="manage-editor__panel panel" onsubmit={handleSubmit}>
-		<div class="manage-editor__heading">
+	<form class="manage-editor-panel panel" onsubmit={handleSubmit}>
+		<div class="manage-editor-heading">
 			<div>
 				<p class="eyebrow">Editor</p>
 				<h2>{mode === 'create' ? '新建文章' : `编辑 ${currentSlug}`}</h2>
 			</div>
 
-			<div class="manage-editor__toolbar">
+			<div class="manage-editor-toolbar">
 				{#if effectiveStatusMessage}
-					<p class="manage-editor__status manage-editor__status--success">
+					<p class="manage-editor-status manage-editor-status-success">
 						{effectiveStatusMessage}
 					</p>
 				{/if}
 				{#if effectiveErrorMessage}
-					<p class="manage-editor__status manage-editor__status--error">{effectiveErrorMessage}</p>
+					<p class="manage-editor-status manage-editor-status-error">{effectiveErrorMessage}</p>
 				{/if}
 				<button class="button-primary" disabled={editorDisabled} type="submit">
 					{effectiveSubmitting ? '提交中…' : submitLabel}
 				</button>
 				{#if mode === 'edit'}
 					<button
-						class="button-secondary manage-editor__danger"
+						class="button-secondary manage-editor-danger"
 						disabled={editorDisabled}
 						onclick={handleDelete}
 						type="button"
@@ -309,7 +309,7 @@
 			</div>
 		</div>
 
-		<div class="manage-editor__fields">
+		<div class="manage-editor-fields">
 			<label>
 				<span>标题</span>
 				<input bind:value={form.title} disabled={editorDisabled} required type="text" />
@@ -320,7 +320,7 @@
 				<input bind:value={form.slug} disabled={editorDisabled} required type="text" />
 			</label>
 
-			<label class="manage-editor__field-wide">
+			<label class="manage-editor-field-wide">
 				<span>摘要</span>
 				<textarea bind:value={form.description} disabled={editorDisabled} required rows="3"
 				></textarea>
@@ -384,7 +384,7 @@
 				</select>
 			</label>
 
-			<label class="manage-editor__field-wide">
+			<label class="manage-editor-field-wide">
 				<span>Tags</span>
 				<input
 					bind:value={form.tagsInput}
@@ -394,7 +394,7 @@
 				/>
 			</label>
 
-			<label class="manage-editor__field-wide">
+			<label class="manage-editor-field-wide">
 				<span>Cover</span>
 				<input
 					bind:value={form.cover}
@@ -405,7 +405,7 @@
 			</label>
 		</div>
 
-		<div class="manage-editor__toggles">
+		<div class="manage-editor-toggles">
 			<label
 				><input bind:checked={form.draft} disabled={editorDisabled} type="checkbox" /> Draft</label
 			>
@@ -415,7 +415,7 @@
 			<label><input bind:checked={form.toc} disabled={editorDisabled} type="checkbox" /> TOC</label>
 		</div>
 
-		<section class="manage-editor__uploads">
+		<section class="manage-editor-uploads">
 			<div class="panel-heading">
 				<div>
 					<p class="eyebrow">Uploads</p>
@@ -423,7 +423,7 @@
 				</div>
 			</div>
 
-			<label class="manage-editor__upload-picker">
+			<label class="manage-editor-upload-picker">
 				<span>选择图片</span>
 				<input
 					accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
@@ -435,15 +435,15 @@
 			</label>
 
 			{#if pendingUploads.length}
-				<div class="manage-editor__upload-list">
+				<div class="manage-editor-upload-list">
 					{#each pendingUploads as upload (upload.placeholder)}
-						<div class="manage-editor__upload-card">
+						<div class="manage-editor-upload-card">
 							<img alt="" src={upload.previewUrl} />
 							<div>
 								<strong>{upload.file.name}</strong>
 								<code>{upload.placeholder}</code>
 							</div>
-							<div class="manage-editor__upload-actions">
+							<div class="manage-editor-upload-actions">
 								<button
 									disabled={editorDisabled}
 									onclick={() => useUploadAsCover(upload.placeholder)}
@@ -470,13 +470,13 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="manage-editor__upload-empty">
+				<p class="manage-editor-upload-empty">
 					上传图片后会生成 `upload://filename` 占位符，并在右侧预览中即时替换。
 				</p>
 			{/if}
 		</section>
 
-		<label class="manage-editor__source">
+		<label class="manage-editor-source">
 			<span>Source</span>
 			<textarea
 				bind:this={sourceTextarea}
@@ -512,24 +512,24 @@
 		align-items: start;
 	}
 
-	.manage-editor--preview-hidden {
+	.manage-editor-preview-hidden {
 		grid-template-columns: 1fr;
 	}
 
-	.manage-editor--disabled {
+	.manage-editor-disabled {
 		opacity: 0.72;
 		filter: saturate(0.74);
 	}
 
-	.manage-editor__panel {
+	.manage-editor-panel {
 		display: grid;
 		gap: 1rem;
 		padding: 1.2rem;
 	}
 
-	.manage-editor__heading,
-	.manage-editor__toolbar,
-	.manage-editor__toggles {
+	.manage-editor-heading,
+	.manage-editor-toolbar,
+	.manage-editor-toggles {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.75rem;
@@ -537,50 +537,50 @@
 		align-items: center;
 	}
 
-	.manage-editor__heading h2 {
+	.manage-editor-heading h2 {
 		margin: 0.12rem 0 0;
 		font-family: var(--font-display);
 		font-size: 2rem;
 		letter-spacing: -0.05em;
 	}
 
-	.manage-editor__toolbar {
+	.manage-editor-toolbar {
 		justify-content: flex-end;
 	}
 
-	.manage-editor__status {
+	.manage-editor-status {
 		margin: 0;
 		padding: 0.65rem 0.85rem;
 		border-radius: 16px;
 		font-size: 0.92rem;
 	}
 
-	.manage-editor__status--success {
-		background: rgba(11, 184, 135, 0.12);
+	.manage-editor-status-success {
+		background: rgb(11 184 135 / 12%);
 		color: #05674b;
 	}
 
-	.manage-editor__status--error {
-		background: rgba(231, 91, 79, 0.12);
+	.manage-editor-status-error {
+		background: rgb(231 91 79 / 12%);
 		color: #9b3129;
 	}
 
-	.manage-editor__fields {
+	.manage-editor-fields {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.85rem;
 	}
 
-	.manage-editor__fields label,
-	.manage-editor__source,
-	.manage-editor__upload-picker {
+	.manage-editor-fields label,
+	.manage-editor-source,
+	.manage-editor-upload-picker {
 		display: grid;
 		gap: 0.35rem;
 	}
 
-	.manage-editor__fields span,
-	.manage-editor__source span,
-	.manage-editor__upload-picker span {
+	.manage-editor-fields span,
+	.manage-editor-source span,
+	.manage-editor-upload-picker span {
 		font-family: var(--font-mono);
 		font-size: 0.74rem;
 		letter-spacing: 0.08em;
@@ -588,57 +588,57 @@
 		color: var(--ink-faint);
 	}
 
-	.manage-editor__fields input,
-	.manage-editor__fields textarea,
-	.manage-editor__fields select,
-	.manage-editor__source textarea {
+	.manage-editor-fields input,
+	.manage-editor-fields textarea,
+	.manage-editor-fields select,
+	.manage-editor-source textarea {
 		padding: 0.82rem 0.92rem;
 		border: 1px solid var(--line);
 		border-radius: 18px;
-		background: rgba(255, 255, 255, 0.78);
+		background: rgb(255 255 255 / 78%);
 		color: var(--ink);
 	}
 
-	.manage-editor__field-wide {
+	.manage-editor-field-wide {
 		grid-column: 1 / -1;
 	}
 
-	.manage-editor__toggles {
+	.manage-editor-toggles {
 		justify-content: flex-start;
 	}
 
-	.manage-editor__toggles label {
+	.manage-editor-toggles label {
 		display: inline-flex;
 		gap: 0.45rem;
 		align-items: center;
 		padding: 0.58rem 0.76rem;
 		border: 1px solid var(--line);
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.7);
+		background: rgb(255 255 255 / 70%);
 	}
 
-	.manage-editor__uploads {
+	.manage-editor-uploads {
 		display: grid;
 		gap: 0.8rem;
 		padding: 1rem;
 		border: 1px solid var(--line);
 		border-radius: 24px;
-		background: rgba(255, 255, 255, 0.54);
+		background: rgb(255 255 255 / 54%);
 	}
 
-	.manage-editor__upload-picker input {
+	.manage-editor-upload-picker input {
 		padding: 0.8rem;
-		border: 1px dashed rgba(79, 120, 255, 0.28);
+		border: 1px dashed rgb(79 120 255 / 28%);
 		border-radius: 18px;
-		background: rgba(255, 255, 255, 0.82);
+		background: rgb(255 255 255 / 82%);
 	}
 
-	.manage-editor__upload-list {
+	.manage-editor-upload-list {
 		display: grid;
 		gap: 0.65rem;
 	}
 
-	.manage-editor__upload-card {
+	.manage-editor-upload-card {
 		display: grid;
 		grid-template-columns: 5.5rem minmax(0, 1fr) auto;
 		gap: 0.8rem;
@@ -646,75 +646,75 @@
 		padding: 0.8rem;
 		border: 1px solid var(--line);
 		border-radius: 20px;
-		background: rgba(255, 255, 255, 0.82);
+		background: rgb(255 255 255 / 82%);
 	}
 
-	.manage-editor__upload-card img {
+	.manage-editor-upload-card img {
 		width: 100%;
 		height: 4.4rem;
 		border-radius: 16px;
 		object-fit: cover;
 	}
 
-	.manage-editor__upload-card strong {
+	.manage-editor-upload-card strong {
 		display: block;
 		margin-bottom: 0.2rem;
 		font-family: var(--font-display);
 	}
 
-	.manage-editor__upload-card code {
+	.manage-editor-upload-card code {
 		font-family: var(--font-mono);
 		font-size: 0.78rem;
 		color: var(--ink-soft);
 	}
 
-	.manage-editor__upload-actions {
+	.manage-editor-upload-actions {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
 		justify-content: flex-end;
 	}
 
-	.manage-editor__upload-actions button {
+	.manage-editor-upload-actions button {
 		padding: 0.52rem 0.72rem;
 		border: 1px solid var(--line);
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.82);
+		background: rgb(255 255 255 / 82%);
 	}
 
-	.manage-editor__upload-empty {
+	.manage-editor-upload-empty {
 		margin: 0;
 		color: var(--ink-soft);
 	}
 
-	.manage-editor__source textarea {
+	.manage-editor-source textarea {
 		min-height: 36rem;
 		font-family: var(--font-mono);
 		line-height: 1.7;
 		resize: vertical;
 	}
 
-	.manage-editor__danger {
-		border-color: rgba(231, 91, 79, 0.24);
+	.manage-editor-danger {
+		border-color: rgb(231 91 79 / 24%);
 		color: #9b3129;
 	}
 
-	@media (max-width: 1180px) {
+	@media (width <= 1180px) {
 		.manage-editor {
 			grid-template-columns: 1fr;
 		}
 	}
 
-	@media (max-width: 720px) {
-		.manage-editor__fields {
+	@media (width <= 720px) {
+		.manage-editor-fields {
 			grid-template-columns: 1fr;
 		}
 
-		.manage-editor__upload-card {
+		.manage-editor-upload-card {
 			grid-template-columns: 1fr;
 		}
 
-		.manage-editor__upload-actions {
+		.manage-editor-upload-actions {
 			justify-content: flex-start;
 		}
 	}

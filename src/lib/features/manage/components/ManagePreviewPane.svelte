@@ -15,7 +15,7 @@
 </script>
 
 <section class="manage-preview panel">
-	<div class="manage-preview__intro">
+	<div class="manage-preview-intro">
 		<div>
 			<p class="eyebrow">Live Preview</p>
 			<h2>正文预览</h2>
@@ -23,21 +23,21 @@
 		<p>Markdown / GFM / 图片按正文样式即时渲染；mdsvex 组件与 import 会显示占位块。</p>
 	</div>
 
-	<div class="manage-preview__viewport">
-		<header class="manage-preview__hero">
+	<div class="manage-preview-viewport">
+		<header class="manage-preview-hero">
 			{#if cover}
-				<div class="manage-preview__cover">
+				<div class="manage-preview-cover">
 					<img alt="" src={cover} />
 				</div>
 			{/if}
 
-			<div class="manage-preview__copy">
+			<div class="manage-preview-copy">
 				<p class="eyebrow">Article Record</p>
 				<h1>{title || 'Untitled draft'}</h1>
 				<p>{description || '这里会显示摘要和导语。'}</p>
 			</div>
 
-			<div class="manage-preview__meta">
+			<div class="manage-preview-meta">
 				<div>
 					<span>Slug</span>
 					<strong>{slug || 'pending-slug'}</strong>
@@ -57,23 +57,23 @@
 			</div>
 		</header>
 
-		<div class="manage-preview__tags">
+		<div class="manage-preview-tags">
 			{#if tags.length}
 				{#each tags as tag (tag)}
 					<span>{tag}</span>
 				{/each}
 			{:else}
-				<span class="manage-preview__tag-placeholder">No tags yet</span>
+				<span class="manage-preview-tag-placeholder">No tags yet</span>
 			{/if}
 		</div>
 
-		<div class="content-prose article-prose manage-preview__content">
+		<div class="content-prose article-prose manage-preview-content">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html html}
 		</div>
 
 		{#if assetPaths.length}
-			<section class="manage-preview__assets">
+			<section class="manage-preview-assets">
 				<div class="panel-heading">
 					<div>
 						<p class="eyebrow">Asset Index</p>
@@ -81,7 +81,7 @@
 					</div>
 				</div>
 
-				<div class="manage-preview__asset-list">
+				<div class="manage-preview-asset-list">
 					{#each assetPaths as assetPath (assetPath)}
 						<code>{assetPath}</code>
 					{/each}
@@ -98,46 +98,46 @@
 		padding: 1.1rem;
 	}
 
-	.manage-preview__intro h2 {
+	.manage-preview-intro h2 {
 		margin: 0.1rem 0 0;
 		font-family: var(--font-display);
 		font-size: 1.7rem;
 		letter-spacing: -0.04em;
 	}
 
-	.manage-preview__intro p:last-child {
+	.manage-preview-intro p:last-child {
 		margin: 0.4rem 0 0;
 		color: var(--ink-soft);
 	}
 
-	.manage-preview__viewport {
+	.manage-preview-viewport {
 		display: grid;
 		gap: 1rem;
 		border: 1px solid var(--line);
 		border-radius: 24px;
-		background: rgba(255, 255, 255, 0.72);
+		background: rgb(255 255 255 / 72%);
 		padding: 1rem;
 	}
 
-	.manage-preview__hero {
+	.manage-preview-hero {
 		display: grid;
 		gap: 0.9rem;
 	}
 
-	.manage-preview__cover {
+	.manage-preview-cover {
 		overflow: hidden;
 		border-radius: 22px;
 		border: 1px solid var(--line);
-		background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(79, 120, 255, 0.08));
+		background: linear-gradient(135deg, rgb(56 189 248 / 12%), rgb(79 120 255 / 8%));
 	}
 
-	.manage-preview__cover img {
+	.manage-preview-cover img {
 		width: 100%;
 		aspect-ratio: 16 / 8;
 		object-fit: cover;
 	}
 
-	.manage-preview__copy h1 {
+	.manage-preview-copy h1 {
 		margin: 0.25rem 0 0.45rem;
 		font-family: var(--font-display);
 		font-size: clamp(2rem, 4vw, 3rem);
@@ -145,87 +145,65 @@
 		line-height: 0.98;
 	}
 
-	.manage-preview__copy p:last-child {
+	.manage-preview-copy p:last-child {
 		margin: 0;
 		color: var(--ink-soft);
 		line-height: 1.75;
 	}
 
-	.manage-preview__meta {
+	.manage-preview-meta {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.6rem;
 	}
 
-	.manage-preview__meta div {
+	.manage-preview-meta div {
 		display: grid;
 		gap: 0.16rem;
 		padding: 0.8rem 0.9rem;
 		border: 1px solid var(--line);
 		border-radius: 18px;
-		background: rgba(255, 255, 255, 0.66);
+		background: rgb(255 255 255 / 66%);
 	}
 
-	.manage-preview__meta span,
-	.manage-preview__assets code {
+	.manage-preview-meta span,
+	.manage-preview-assets code {
 		font-family: var(--font-mono);
 		font-size: 0.74rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 	}
 
-	.manage-preview__meta strong {
+	.manage-preview-meta strong {
 		font-family: var(--font-display);
 		font-size: 0.94rem;
 	}
 
-	.manage-preview__tags,
-	.manage-preview__asset-list {
+	.manage-preview-tags,
+	.manage-preview-asset-list {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.45rem;
 	}
 
-	.manage-preview__tags span,
-	.manage-preview__asset-list code {
+	.manage-preview-tags span,
+	.manage-preview-asset-list code {
 		padding: 0.34rem 0.58rem;
 		border: 1px solid var(--line);
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.8);
+		background: rgb(255 255 255 / 80%);
 	}
 
-	.manage-preview__tag-placeholder {
+	.manage-preview-tag-placeholder {
 		color: var(--ink-faint);
 	}
 
-	.manage-preview__content {
+	.manage-preview-content {
 		padding: 0;
 	}
 
-	:global(.manage-preview__content .manage-preview__placeholder) {
-		display: grid;
-		gap: 0.3rem;
-		margin: 1rem 0;
-		padding: 0.9rem 1rem;
-		border: 1px dashed rgba(79, 120, 255, 0.32);
-		border-radius: 20px;
-		background: rgba(79, 120, 255, 0.08);
-	}
-
-	:global(.manage-preview__content .manage-preview__placeholder strong) {
-		font-family: var(--font-mono);
-		font-size: 0.78rem;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-	}
-
-	:global(.manage-preview__content .manage-preview__placeholder p) {
-		margin: 0;
-		color: var(--ink-soft);
-	}
-
-	@media (max-width: 900px) {
-		.manage-preview__meta {
+	@media (width <= 900px) {
+		.manage-preview-meta {
 			grid-template-columns: 1fr;
 		}
 	}

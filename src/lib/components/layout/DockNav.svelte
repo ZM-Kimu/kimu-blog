@@ -12,11 +12,11 @@
 </script>
 
 <nav class="dock-nav shell" aria-label={t('shell.aria.quickNav')}>
-	<div class="dock-nav__surface">
+	<div class="dock-nav-surface">
 		{#each appShellNav as item (item.href)}
-			<a class:active={isActive(item.href)} class="dock-nav__item" href={resolve(item.href)}>
-				<span class="dock-nav__code">{item.code}</span>
-				<span class="dock-nav__label">{t(item.labelKey)}</span>
+			<a class:active={isActive(item.href)} class="dock-nav-item" href={resolve(item.href)}>
+				<span class="dock-nav-code">{item.code}</span>
+				<span class="dock-nav-label">{t(item.labelKey)}</span>
 			</a>
 		{/each}
 	</div>

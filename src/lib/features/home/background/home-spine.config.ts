@@ -95,25 +95,21 @@ export const homeSpineConfigs: Record<
 const DAYTIME_START_HOUR = 6
 const NIGHTTIME_START_HOUR = 18
 
-export function resolveHomeSpineVariant (date = new Date()): HomeSpineVariant
-{
+export function resolveHomeSpineVariant(date = new Date()): HomeSpineVariant {
 	const hour = date.getHours()
 	return hour >= DAYTIME_START_HOUR && hour < NIGHTTIME_START_HOUR ? 'daytime' : 'nighttime'
 }
 
-export function getNextHomeSpineVariantChange (date = new Date())
-{
+export function getNextHomeSpineVariantChange(date = new Date()) {
 	const next = new Date(date)
 	const hour = date.getHours()
 
-	if (hour < DAYTIME_START_HOUR)
-	{
+	if (hour < DAYTIME_START_HOUR) {
 		next.setHours(DAYTIME_START_HOUR, 0, 0, 0)
 		return next
 	}
 
-	if (hour < NIGHTTIME_START_HOUR)
-	{
+	if (hour < NIGHTTIME_START_HOUR) {
 		next.setHours(NIGHTTIME_START_HOUR, 0, 0, 0)
 		return next
 	}

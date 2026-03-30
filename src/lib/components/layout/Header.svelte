@@ -34,10 +34,10 @@
 </script>
 
 <header class:compact class="hud-header">
-	<div class="shell hud-header__surface">
+	<div class="shell hud-header-surface">
 		<a class="hud-brand" href={resolve('/')}>
-			<span class="hud-brand__mark">KB</span>
-			<span class="hud-brand__copy">
+			<span class="hud-brand-mark">KB</span>
+			<span class="hud-brand-copy">
 				<small>{t('shell.brand.tagline')}</small>
 				<strong>{siteConfig.name}</strong>
 			</span>
@@ -58,12 +58,12 @@
 		</nav>
 
 		<div class="hud-status">
-			<div class="hud-status__current">
+			<div class="hud-status-current">
 				<span>{t('shell.status.current')}</span>
 				<strong>{currentSection}</strong>
 			</div>
 			{#if !compact}
-				<div class="hud-status__chips">
+				<div class="hud-status-chips">
 					{#each hudStatusChips as chip (chip.labelKey)}
 						<div class="hud-inline-chip">
 							<span>{t(chip.labelKey)}</span>

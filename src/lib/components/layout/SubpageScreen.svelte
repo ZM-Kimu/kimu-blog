@@ -5,8 +5,8 @@
 </script>
 
 <section class="subpage-screen">
-	<div class="subpage-screen__viewport">
-		<div class="subpage-screen__content">
+	<div class="subpage-screen-viewport">
+		<div class="subpage-screen-content">
 			{@render children()}
 		</div>
 	</div>
@@ -22,22 +22,22 @@
 		min-height: 100dvh;
 	}
 
-	.subpage-screen__viewport {
+	.subpage-screen-viewport {
 		position: relative;
 		z-index: 1;
 		padding: calc(var(--home-topbar-height) + var(--subpage-stage-gap)) var(--home-shell-padding)
 			var(--subpage-stage-gap);
 	}
 
-	.subpage-screen__content {
+	.subpage-screen-content {
 		width: min(1460px, calc(100vw - (var(--home-shell-padding) * 2)));
 		margin: 0 auto;
 		display: grid;
 		gap: 1rem;
 	}
 
-	@media (max-width: 760px) {
-		.subpage-screen__viewport {
+	@media (width <= 760px) {
+		.subpage-screen-viewport {
 			padding: calc(var(--home-topbar-height) + 1.6rem) var(--home-shell-padding) 1rem;
 		}
 	}

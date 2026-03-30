@@ -1,5 +1,5 @@
 /* Home topbar main mode. */
-.home-topbar--main {
+.home-topbar-main {
 	display: grid;
 	grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
 	align-items: start;
@@ -20,11 +20,10 @@
 	padding-left: calc(var(--home-shell-padding) + 1rem);
 	background: #2d61b3;
 	color: white;
-	-webkit-mask: url('/icons/home-profile-chip-mask.svg') left center / 100% 100% no-repeat;
 	mask: url('/icons/home-profile-chip-mask.svg') left center / 100% 100% no-repeat;
 }
 
-.home-profile-chip__level {
+.home-profile-chip-level {
 	font-family: var(--font-mono);
 	font-size: 0.82rem;
 	letter-spacing: 0.12em;
@@ -38,12 +37,12 @@
 	letter-spacing: -0.06em;
 }
 
-.home-profile-chip__copy {
+.home-profile-chip-copy {
 	display: grid;
 	gap: 0.15rem;
 }
 
-.home-profile-chip__copy small {
+.home-profile-chip-copy small {
 	font-family: var(--font-mono);
 	font-size: 0.74rem;
 	letter-spacing: 0.08em;
@@ -51,19 +50,19 @@
 	opacity: 0.72;
 }
 
-.home-profile-chip__copy span {
+.home-profile-chip-copy span {
 	font-weight: 700;
 	font-size: 0.95rem;
 }
 
-.home-topbar--main .home-topbar__tools {
-	background: rgba(255, 255, 255, 0.92);
-	border: 1px solid rgba(92, 148, 204, 0.18);
-	box-shadow: 0 14px 30px rgba(57, 116, 177, 0.12);
+.home-topbar-main .home-topbar-tools {
+	background: rgb(255 255 255 / 92%);
+	border: 1px solid rgb(92 148 204 / 18%);
+	box-shadow: 0 14px 30px rgb(57 116 177 / 12%);
 }
 
-.home-topbar--main .resource-chip {
-	background: rgba(255, 255, 255, 0.92);
-	border: 1px solid rgba(92, 148, 204, 0.18);
-	box-shadow: 0 14px 30px rgba(57, 116, 177, 0.12);
+.home-topbar-main .resource-chip {
+	background: rgb(255 255 255 / 92%);
+	border: 1px solid rgb(92 148 204 / 18%);
+	box-shadow: 0 14px 30px rgb(57 116 177 / 12%);
 }

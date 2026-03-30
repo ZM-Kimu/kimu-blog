@@ -22,20 +22,17 @@
 
 .home-topbar-strip-proxy {
 	position: absolute;
-	left: 0;
-	top: 0;
-	right: auto;
-	bottom: auto;
+	inset: 0 auto auto 0;
 	z-index: 3;
 	pointer-events: none;
 	will-change: transform, opacity;
 }
 
-.home-topbar-strip-proxy .home-topbar__strip-shell {
+.home-topbar-strip-proxy .home-topbar-strip-shell {
 	will-change: clip-path, opacity;
 }
 
-.home-topbar-strip-proxy--background {
+.home-topbar-strip-proxy-background {
 	z-index: 1;
 }
 
@@ -79,7 +76,7 @@
 	overflow: visible;
 }
 
-.home-topbar-morph__text {
+.home-topbar-morph-text {
 	position: absolute;
 	inset: 0;
 	display: inline-flex;
@@ -90,7 +87,7 @@
 	color: white;
 }
 
-.home-topbar-morph__level {
+.home-topbar-morph-level {
 	font-family: var(--font-mono);
 	font-size: 0.82rem;
 	letter-spacing: 0.12em;
@@ -104,12 +101,12 @@
 	letter-spacing: -0.06em;
 }
 
-.home-topbar-morph__copy {
+.home-topbar-morph-copy {
 	display: grid;
 	gap: 0.15rem;
 }
 
-.home-topbar-morph__copy small {
+.home-topbar-morph-copy small {
 	font-family: var(--font-mono);
 	font-size: 0.74rem;
 	letter-spacing: 0.08em;
@@ -117,19 +114,18 @@
 	opacity: 0.72;
 }
 
-.home-topbar-morph__copy span {
+.home-topbar-morph-copy span {
 	font-size: 0.95rem;
 	font-weight: 700;
 }
 
-.home-topbar-morph__glyph {
+.home-topbar-morph-glyph {
 	position: absolute;
 	inset: 0;
 	width: 2.7rem;
 	height: 2.7rem;
 	margin: auto;
 	background-color: #fff;
-	-webkit-mask: url('/icons/home-topbar-back.svg') center / contain no-repeat;
 	mask: url('/icons/home-topbar-back.svg') center / contain no-repeat;
 }
 
@@ -141,7 +137,7 @@
 	pointer-events: none;
 }
 
-.home-topbar-motion-tool-icon__icon {
+.home-topbar-motion-tool-icon-icon {
 	position: absolute;
 	inset: 0;
 	margin: auto;

@@ -33,8 +33,8 @@
 		<aside class="home-left-tools">
 			{#each homeQuickActions as action (action.href)}
 				<a class={`tool-chip tool-chip--${action.accent}`} href={resolve(action.href)}>
-					<span class="tool-chip__icon" aria-hidden="true"></span>
-					<span class="tool-chip__label">{t(action.labelKey)}</span>
+					<span class="tool-chip-icon" aria-hidden="true"></span>
+					<span class="tool-chip-label">{t(action.labelKey)}</span>
 				</a>
 			{/each}
 		</aside>
@@ -42,31 +42,31 @@
 		<aside class="home-right-pane">
 			{#if data.featuredPost}
 				<a class="home-event-banner" href={resolve(data.featuredPost.permalink)}>
-					<span class="home-event-banner__tag">Featured</span>
+					<span class="home-event-banner-tag">Featured</span>
 					<strong>{data.featuredPost.title}</strong>
 					<small>{data.featuredPost.category ?? '未分类'}</small>
 				</a>
 			{/if}
 
 			<button
-				class="action--work"
+				class="action-work"
 				type="button"
 				disabled={navigationManager.phase !== 'idle'}
 				onclick={handleWorkAction}
 			>
-				<span class="action__badge">Main</span>
-				<span class="action__label">{t('home.action.enterContent')}</span>
-				<span class="action__label action__label--primary">{t('nav.blog')}</span>
+				<span class="action-badge">Main</span>
+				<span class="action-label">{t('home.action.enterContent')}</span>
+				<span class="action-label action-label-primary">{t('nav.blog')}</span>
 			</button>
 		</aside>
 
 		<section class="home-mission-strip" aria-label="Mission banner">
-			<div class="mission-strip__marquee">
+			<div class="mission-strip-marquee">
 				{#each [false, true] as isClone (isClone)}
-					<div class="mission-strip__group" aria-hidden={isClone}>
+					<div class="mission-strip-group" aria-hidden={isClone}>
 						{#each viewModel.missionPreview as mission (`${isClone ? 'clone' : 'base'}-${mission.slug}`)}
 							<a
-								class={`mission-strip__item mission-strip__item--${mission.tone}`}
+								class={`mission-strip-item mission-strip-item-${mission.tone}`}
 								href={resolve(mission.href)}
 								tabindex={isClone ? -1 : undefined}
 							>
@@ -82,12 +82,12 @@
 		</section>
 
 		<footer class="home-footer">
-			<nav class="home-footer__dock" aria-label="主入口">
+			<nav class="home-footer-dock" aria-label="主入口">
 				{#each homeDockItems as item (item.href)}
 					<a class={`dock-item dock-item--${item.accent}`} href={resolve(item.href)}>
-						<span class="dock-item__icon"></span>
-						<span class="dock-item__code">{item.code}</span>
-						<span class="dock-item__label">{t(item.labelKey)}</span>
+						<span class="dock-item-icon"></span>
+						<span class="dock-item-code">{item.code}</span>
+						<span class="dock-item-label">{t(item.labelKey)}</span>
 					</a>
 				{/each}
 			</nav>
@@ -98,7 +98,7 @@
 		<p class="eyebrow">Viewport Guard</p>
 		<h2>当前窗口高度不足</h2>
 		<p>Home shell 需要至少 500px 的可见高度。请增大浏览器窗口，或先切换到内容页。</p>
-		<div class="home-height-guard__actions">
+		<div class="home-height-guard-actions">
 			<a class="button-primary" href={resolve('/blog')}>进入内容页</a>
 			<a class="section-link" href={resolve('/about')}>查看简介</a>
 		</div>

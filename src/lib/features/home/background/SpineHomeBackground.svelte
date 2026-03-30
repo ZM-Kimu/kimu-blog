@@ -204,10 +204,10 @@
 </script>
 
 <div
-	class:home-spine-layer--ready={ready}
+	class:home-spine-layer-ready={ready}
 	class="home-spine-layer"
 	data-visible={visible ? 'true' : 'false'}
 	aria-hidden="true"
 >
-	<canvas bind:this={canvas} class="home-spine-layer__canvas"></canvas>
+	<canvas bind:this={canvas} class="home-spine-layer-canvas"></canvas>
 </div>

@@ -21,7 +21,7 @@
 	</section>
 
 	<section class="archive-layout">
-		<div class="archive-layout__main">
+		<div class="archive-layout-main">
 			{#each data.categoryGroups as group (group.category.slug)}
 				<section class="panel archive-group" id={`category-${group.category.slug}`}>
 					<div class="panel-heading">
@@ -38,11 +38,11 @@
 							{#each group.posts as post (post.slug)}
 								<a class="archive-row" href={resolve(post.permalink)}>
 									<div>
-										<p class="archive-row__date">{formatDate(post.date)}</p>
+										<p class="archive-row-date">{formatDate(post.date)}</p>
 										<h3>{post.title}</h3>
 										<p>{post.description}</p>
 									</div>
-									<div class="archive-row__meta">
+									<div class="archive-row-meta">
 										<span>{post.category ?? '未分类'}</span>
 										<div class="tag-row">
 											{#each post.tags.slice(0, 2) as tag, index (post.tagSlugs[index])}
@@ -53,9 +53,9 @@
 								</a>
 							{/each}
 						{:else}
-							<div class="archive-row archive-row--empty">
+							<div class="archive-row archive-row-empty">
 								<div>
-									<p class="archive-row__date">No Records</p>
+									<p class="archive-row-date">No Records</p>
 									<h3>等待内容接入</h3>
 									<p>这个分类已经预留，但当前还没有正式文章。</p>
 								</div>
@@ -66,7 +66,7 @@
 			{/each}
 		</div>
 
-		<aside class="panel archive-layout__side">
+		<aside class="panel archive-layout-side">
 			<div class="panel-heading">
 				<div>
 					<p class="eyebrow">Year Index</p>
@@ -77,7 +77,7 @@
 			<div class="year-stack">
 				{#each data.yearGroups as group (group.year)}
 					<section class="year-card">
-						<div class="year-card__head">
+						<div class="year-card-head">
 							<strong>{group.year}</strong>
 							<span>{String(group.posts.length).padStart(2, '0')}</span>
 						</div>

@@ -4,12 +4,12 @@
 
 <section class="profile-screen">
 	<section class="panel dossier-hero">
-		<div class="dossier-hero__top">
+		<div class="dossier-hero-top">
 			<p class="eyebrow">Profile Dossier</p>
-			<a class="button-secondary dossier-hero__back" href={resolve('/')}>返回主界面</a>
+			<a class="button-secondary dossier-hero-back" href={resolve('/')}>返回主界面</a>
 		</div>
 
-		<div class="dossier-hero__header">
+		<div class="dossier-hero-header">
 			<div>
 				<h1>关于这个站点</h1>
 				<p class="post-description">
@@ -21,7 +21,7 @@
 	</section>
 
 	<div class="profile-grid">
-		<section class="panel dossier-side__panel">
+		<section class="panel dossier-side-panel">
 			<div class="panel-heading">
 				<div>
 					<p class="eyebrow">Loaded Systems</p>
@@ -37,7 +37,7 @@
 			</ul>
 		</section>
 
-		<section class="panel dossier-side__panel">
+		<section class="panel dossier-side-panel">
 			<div class="panel-heading">
 				<div>
 					<p class="eyebrow">Next Missions</p>

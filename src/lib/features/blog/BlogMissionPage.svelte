@@ -78,7 +78,7 @@
 				</div>
 			</div>
 
-			<div class="mission-side__list">
+			<div class="mission-side-list">
 				{#each data.latestPosts as post (post.slug)}
 					<PostCard {post} />
 				{/each}

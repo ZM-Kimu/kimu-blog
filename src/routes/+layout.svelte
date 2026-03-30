@@ -39,9 +39,7 @@
 	let desktopSubpageEnterActive = $state(false)
 	let queuedDesktopEnterVariant = $state<'none' | 'subpage'>('none')
 	let siteBootPhase = $state<SiteBootPhase>(
-		page.url.pathname === '/manage' || page.url.pathname.startsWith('/manage/')
-			? 'idle'
-			: 'boot'
+		page.url.pathname === '/manage' || page.url.pathname.startsWith('/manage/') ? 'idle' : 'boot'
 	)
 	let siteBootEnterDurationMs = $state(620)
 
@@ -133,6 +131,19 @@
 		return new Promise<void>((resolvePromise) => {
 			setTimeout(resolvePromise, durationMs)
 		})
+	}
+
+	function handleDocumentDragStart(event: DragEvent) {
+		const target = event.target
+		if (!(target instanceof Element)) {
+			return
+		}
+
+		if (target.closest('[data-allow-drag]')) {
+			return
+		}
+
+		event.preventDefault()
 	}
 
 	onDestroy(() => {
@@ -256,10 +267,13 @@
 		} else if (isRouteEntering) {
 			clearDesktopHomeEnterTimer()
 			desktopHomeEnterActive = true
-			desktopHomeEnterTimer = setTimeout(() => {
-				desktopHomeEnterTimer = null
-				desktopHomeEnterActive = false
-			}, prefersReducedMotion ? 1 : desktopHomeEnterDurationMs)
+			desktopHomeEnterTimer = setTimeout(
+				() => {
+					desktopHomeEnterTimer = null
+					desktopHomeEnterActive = false
+				},
+				prefersReducedMotion ? 1 : desktopHomeEnterDurationMs
+			)
 		}
 	})
 
@@ -284,14 +298,18 @@
 		queuedDesktopEnterVariant = 'none'
 		clearDesktopSubpageEnterTimer()
 		desktopSubpageEnterActive = true
-		desktopSubpageEnterTimer = setTimeout(() => {
-			desktopSubpageEnterTimer = null
-			desktopSubpageEnterActive = false
-		}, prefersReducedMotion ? 1 : desktopSubpageEnterDurationMs)
+		desktopSubpageEnterTimer = setTimeout(
+			() => {
+				desktopSubpageEnterTimer = null
+				desktopSubpageEnterActive = false
+			},
+			prefersReducedMotion ? 1 : desktopSubpageEnterDurationMs
+		)
 	})
 
 	onMount(() => {
 		navigationManager.hydrateClientRuntime()
+		document.addEventListener('dragstart', handleDocumentDragStart)
 
 		const unbindCompact = bindMediaQuery(compactQuery, (matches) => {
 			isCompactLayout = matches
@@ -305,6 +323,7 @@
 			siteBootEnterDurationMs = 0
 
 			return () => {
+				document.removeEventListener('dragstart', handleDocumentDragStart)
 				unbindCompact()
 				unbindReducedMotion()
 			}
@@ -357,6 +376,7 @@
 
 		return () => {
 			isDisposed = true
+			document.removeEventListener('dragstart', handleDocumentDragStart)
 			unbindCompact()
 			unbindReducedMotion()
 			bootAssetsObserver?.disconnect()
@@ -404,16 +424,16 @@
 	{/if}
 
 	<main
-		class:site-main--bare={isBareRoute}
-		class:site-main--home={routeState.kind === 'home'}
+		class:site-main-bare={isBareRoute}
+		class:site-main-home={routeState.kind === 'home'}
 		class="site-main"
 	>
 		{#if isPublicScreenRoute}
 			<div
-				class:screen-route-layer--entry={isRouteEntering}
-				class:screen-route-layer--exit={isRouteOutgoing}
-				class:screen-route-layer--home-enter-desktop={desktopHomeEnterActive}
-				class:screen-route-layer--subpage-enter-desktop={desktopSubpageEnterActive}
+				class:screen-route-layer-entry={isRouteEntering}
+				class:screen-route-layer-exit={isRouteOutgoing}
+				class:screen-route-layer-home-enter-desktop={desktopHomeEnterActive}
+				class:screen-route-layer-subpage-enter-desktop={desktopSubpageEnterActive}
 				class="screen-route-layer"
 				style={routeTransitionStyle}
 			>
@@ -421,8 +441,8 @@
 			</div>
 		{:else if isManageRoute}
 			<div
-				class:site-bare-content--entry={isRouteEntering}
-				class:site-bare-content--exit={isRouteOutgoing}
+				class:site-bare-content-entry={isRouteEntering}
+				class:site-bare-content-exit={isRouteOutgoing}
 				class="site-bare-content"
 				style={routeTransitionStyle}
 			>
@@ -430,9 +450,9 @@
 			</div>
 		{:else}
 			<div
-				class:site-main__inner--entry={isRouteEntering}
-				class:site-main__inner--exit={isRouteOutgoing}
-				class="shell site-main__inner"
+				class:site-main-inner-entry={isRouteEntering}
+				class:site-main-inner-exit={isRouteOutgoing}
+				class="shell site-main-inner"
 				style={routeTransitionStyle}
 			>
 				{@render children()}

@@ -28,6 +28,7 @@
 - 内容加载使用 `import.meta.glob(...)`
 - 博客详情路由必须提供明确的 `entries()` 或等效 prerender 方案
 - 内容页默认 `prerender = true`
+- 仓库样式必须通过严格 `stylelint`；覆盖 `src/**/*.{css,svelte}`
 - 首页使用独立 `screen-home` 布局；公开二级内容页统一收敛到 shared subpage app shell
 - 首页在 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时切到精简版方案
 - “SPA-like 体验”不等于“纯 SPA 架构”；**不要**为了省事把根布局改成 `ssr = false`
@@ -151,6 +152,14 @@
 ### 13.1 开发命令
 
 默认使用项目已包含的命令。
+
+当前质量命令基线至少包括：
+
+- `npm run lint`
+- `npm run lint:css`
+- `npm run lint:css:fix`
+- `npm run check`
+- `npm run build`
 
 如果要新增 lint、check、test、format、typecheck 等脚本，必须有明确意图并同步文档说明。
 

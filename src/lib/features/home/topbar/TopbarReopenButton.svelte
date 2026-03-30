@@ -33,7 +33,7 @@
 </script>
 
 <button
-	class="home-topbar-stage__reopen"
+	class="home-topbar-stage-reopen"
 	type="button"
 	aria-label={ariaLabel}
 	onclick={onActivate}
@@ -41,8 +41,10 @@
 	out:reopenMotion
 >
 	<span
-		class="home-topbar__icon home-topbar__icon--mask"
+		class="home-topbar-icon home-topbar-icon-mask"
 		aria-hidden="true"
-		style="--topbar-icon-src: url('/icons/topbar/expand.png'); --topbar-icon-tint: #47639c;"
+		style="
+
+--topbar-icon-src: url('/icons/topbar/expand.png'); --topbar-icon-tint: #47639c;"
 	></span>
 </button>

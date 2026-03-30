@@ -7,7 +7,7 @@
 </script>
 
 <footer class="site-footer">
-	<div class="shell site-footer__inner">
+	<div class="shell site-footer-inner">
 		<div>
 			<strong>{siteConfig.name}</strong>
 			<small>{t('shell.footer.lead')}</small>

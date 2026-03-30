@@ -161,10 +161,10 @@
 			</div>
 		</div>
 
-		<div class="manage-debug-controls__grid">
-			<section class="manage-debug-controls__group">
+		<div class="manage-debug-controls-grid">
+			<section class="manage-debug-controls-group">
 				<strong>Editor Mode</strong>
-				<div class="manage-debug-controls__chips">
+				<div class="manage-debug-controls-chips">
 					<button
 						class:active={editorMode === 'edit'}
 						type="button"
@@ -182,9 +182,9 @@
 				</div>
 			</section>
 
-			<section class="manage-debug-controls__group">
+			<section class="manage-debug-controls-group">
 				<strong>Copy Variant</strong>
-				<div class="manage-debug-controls__chips">
+				<div class="manage-debug-controls-chips">
 					<button
 						class:active={copyVariant === 'default'}
 						type="button"
@@ -209,9 +209,9 @@
 				</div>
 			</section>
 
-			<section class="manage-debug-controls__group">
+			<section class="manage-debug-controls-group">
 				<strong>Visual State</strong>
-				<div class="manage-debug-controls__chips">
+				<div class="manage-debug-controls-chips">
 					{#each visualStates as state (state)}
 						<button
 							class:active={visualState === state}
@@ -224,9 +224,9 @@
 				</div>
 			</section>
 
-			<section class="manage-debug-controls__group">
+			<section class="manage-debug-controls-group">
 				<strong>Preview</strong>
-				<label class="manage-debug-controls__toggle">
+				<label class="manage-debug-controls-toggle">
 					<input bind:checked={previewVisible} type="checkbox" />
 					<span>{previewVisible ? 'Visible' : 'Hidden'}</span>
 				</label>
@@ -268,34 +268,34 @@
 		margin-bottom: 1rem;
 	}
 
-	.manage-debug-controls__grid {
+	.manage-debug-controls-grid {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 0.9rem;
 	}
 
-	.manage-debug-controls__group {
+	.manage-debug-controls-group {
 		display: grid;
 		gap: 0.6rem;
 		padding: 0.9rem 1rem;
 		border: 1px solid var(--line);
 		border-radius: 22px;
-		background: rgba(255, 255, 255, 0.64);
+		background: rgb(255 255 255 / 64%);
 	}
 
-	.manage-debug-controls__group strong {
+	.manage-debug-controls-group strong {
 		font-family: var(--font-display);
 		font-size: 1rem;
 	}
 
-	.manage-debug-controls__chips {
+	.manage-debug-controls-chips {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.45rem;
 	}
 
-	.manage-debug-controls__chips button,
-	.manage-debug-controls__toggle {
+	.manage-debug-controls-chips button,
+	.manage-debug-controls-toggle {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -303,25 +303,25 @@
 		padding: 0.58rem 0.78rem;
 		border: 1px solid var(--line);
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.78);
+		background: rgb(255 255 255 / 78%);
 		transition:
 			transform var(--ease),
 			border-color var(--ease),
 			background-color var(--ease);
 	}
 
-	.manage-debug-controls__chips button.active {
-		border-color: rgba(79, 120, 255, 0.28);
-		background: rgba(233, 242, 255, 0.96);
+	.manage-debug-controls-chips button.active {
+		border-color: rgb(79 120 255 / 28%);
+		background: rgb(233 242 255 / 96%);
 	}
 
-	.manage-debug-controls__chips button:hover,
-	.manage-debug-controls__toggle:hover {
+	.manage-debug-controls-chips button:hover,
+	.manage-debug-controls-toggle:hover {
 		transform: translateY(-1px);
-		border-color: rgba(79, 120, 255, 0.24);
+		border-color: rgb(79 120 255 / 24%);
 	}
 
-	.manage-debug-controls__toggle input {
+	.manage-debug-controls-toggle input {
 		accent-color: #4f78ff;
 	}
 
@@ -330,14 +330,14 @@
 		gap: 1rem;
 	}
 
-	@media (max-width: 1180px) {
-		.manage-debug-controls__grid {
+	@media (width <= 1180px) {
+		.manage-debug-controls-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 
-	@media (max-width: 760px) {
-		.manage-debug-controls__grid {
+	@media (width <= 760px) {
+		.manage-debug-controls-grid {
 			grid-template-columns: 1fr;
 		}
 	}

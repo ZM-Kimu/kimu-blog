@@ -113,9 +113,7 @@ export class NavigationStateManager {
 		this.exitDurationMs = options.reducedMotion ? 60 : 120
 		this.enterDurationMs = options.reducedMotion ? 80 : 160
 		this.bridgeDurationMs =
-			options.reducedMotion || this.pendingBackgroundScene === this.backgroundScene
-				? 0
-				: 180
+			options.reducedMotion || this.pendingBackgroundScene === this.backgroundScene ? 0 : 180
 		this.settingsOpen = false
 		this.phase = 'exit'
 

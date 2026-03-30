@@ -62,7 +62,7 @@ export function clearMotionLayer(refs: HomeTopbarRefs) {
 export function createStripGhost(
 	container: HTMLElement | null,
 	box: ElementBox,
-	className = 'home-topbar home-topbar--subpage home-topbar-strip-proxy'
+	className = 'home-topbar home-topbar-subpage home-topbar-strip-proxy'
 ): StripProxy | null {
 	if (!container) {
 		return null
@@ -74,7 +74,7 @@ export function createStripGhost(
 	setBox(wrapper, box)
 
 	const shell = document.createElement('div')
-	shell.className = 'home-topbar__strip-shell'
+	shell.className = 'home-topbar-strip-shell'
 	wrapper.appendChild(shell)
 	container.appendChild(wrapper)
 
@@ -164,17 +164,17 @@ export function createMorphOverlay({
 	svg.appendChild(path)
 
 	const text = document.createElement('div')
-	text.className = 'home-topbar-morph__text'
+	text.className = 'home-topbar-morph-text'
 
 	const level = document.createElement('span')
-	level.className = 'home-topbar-morph__level'
+	level.className = 'home-topbar-morph-level'
 	level.textContent = 'Lv.'
 
 	const value = document.createElement('strong')
 	value.textContent = profileLevel
 
 	const copy = document.createElement('div')
-	copy.className = 'home-topbar-morph__copy'
+	copy.className = 'home-topbar-morph-copy'
 
 	const copyLabel = document.createElement('small')
 	copyLabel.textContent = 'Operator'
@@ -189,7 +189,7 @@ export function createMorphOverlay({
 	text.appendChild(copy)
 
 	const glyph = document.createElement('span')
-	glyph.className = 'home-topbar-morph__glyph'
+	glyph.className = 'home-topbar-morph-glyph'
 	glyph.setAttribute('aria-hidden', 'true')
 
 	wrapper.appendChild(svg)
@@ -210,10 +210,10 @@ export function createToolIconTransitionOverlay(
 	wrapper.setAttribute('aria-hidden', 'true')
 
 	const sourceClone = sourceIcon.cloneNode(true) as HTMLSpanElement
-	sourceClone.classList.add('home-topbar-motion-tool-icon__icon')
+	sourceClone.classList.add('home-topbar-motion-tool-icon-icon')
 
 	const targetClone = targetIcon.cloneNode(true) as HTMLSpanElement
-	targetClone.classList.add('home-topbar-motion-tool-icon__icon')
+	targetClone.classList.add('home-topbar-motion-tool-icon-icon')
 
 	wrapper.appendChild(sourceClone)
 	wrapper.appendChild(targetClone)

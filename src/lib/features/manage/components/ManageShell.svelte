@@ -35,8 +35,8 @@
 </svelte:head>
 
 <div class="manage-shell">
-	<header class="manage-shell__header">
-		<div class="manage-shell__identity">
+	<header class="manage-shell-header">
+		<div class="manage-shell-identity">
 			<p class="eyebrow">Private Content Workbench</p>
 			<h1>Manage / {session.repository.name}</h1>
 			<p>
@@ -46,8 +46,8 @@
 			</p>
 		</div>
 
-		<div class="manage-shell__actions">
-			<nav class="manage-shell__nav" aria-label="管理导航">
+		<div class="manage-shell-actions">
+			<nav class="manage-shell-nav" aria-label="管理导航">
 				{#if postsHref.startsWith('#')}
 					<button
 						class:active={isPostsRoute}
@@ -67,19 +67,19 @@
 
 			{#if backHref.startsWith('#')}
 				<button
-					class="button-secondary manage-shell__back"
+					class="button-secondary manage-shell-back"
 					type="button"
 					onclick={() => followDebugHref(backHref)}
 				>
 					返回公开站
 				</button>
 			{:else}
-				<a class="button-secondary manage-shell__back" href={resolve(backHref)}>返回公开站</a>
+				<a class="button-secondary manage-shell-back" href={resolve(backHref)}>返回公开站</a>
 			{/if}
 		</div>
 	</header>
 
-	<div class="manage-shell__body">
+	<div class="manage-shell-body">
 		{@render children()}
 	</div>
 </div>
@@ -89,72 +89,72 @@
 		min-height: 100vh;
 		padding: 1.1rem;
 		background:
-			radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 24rem),
-			linear-gradient(180deg, rgba(238, 248, 255, 0.86), rgba(225, 238, 252, 0.9));
+			radial-gradient(circle at top left, rgb(56 189 248 / 18%), transparent 24rem),
+			linear-gradient(180deg, rgb(238 248 255 / 86%), rgb(225 238 252 / 90%));
 	}
 
-	.manage-shell__header,
-	.manage-shell__body {
+	.manage-shell-header,
+	.manage-shell-body {
 		width: min(1500px, calc(100vw - 2rem));
 		margin: 0 auto;
 	}
 
-	.manage-shell__header {
+	.manage-shell-header {
 		display: grid;
 		grid-template-columns: minmax(0, 1.25fr) auto;
 		gap: 1rem;
 		padding: 1.15rem 1.2rem;
 		border: 1px solid var(--line);
 		border-radius: 30px;
-		background: rgba(255, 255, 255, 0.74);
+		background: rgb(255 255 255 / 74%);
 		box-shadow: var(--shadow-md);
 		backdrop-filter: blur(18px);
 	}
 
-	.manage-shell__identity {
+	.manage-shell-identity {
 		display: grid;
 		gap: 0.35rem;
 	}
 
-	.manage-shell__identity h1 {
+	.manage-shell-identity h1 {
 		margin: 0;
 		font-family: var(--font-display);
 		font-size: clamp(2rem, 4vw, 3.2rem);
 		letter-spacing: -0.05em;
 	}
 
-	.manage-shell__identity p {
+	.manage-shell-identity p {
 		margin: 0;
 		color: var(--ink-soft);
 	}
 
-	.manage-shell__identity code {
+	.manage-shell-identity code {
 		font-family: var(--font-mono);
 		font-size: 0.9em;
 	}
 
-	.manage-shell__actions {
+	.manage-shell-actions {
 		display: grid;
 		align-content: start;
 		justify-items: end;
 		gap: 0.8rem;
 	}
 
-	.manage-shell__nav {
+	.manage-shell-nav {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.55rem;
 	}
 
-	.manage-shell__nav a,
-	.manage-shell__nav button {
+	.manage-shell-nav a,
+	.manage-shell-nav button {
 		display: grid;
 		gap: 0.2rem;
 		min-width: 9rem;
 		padding: 0.8rem 1rem;
 		border: 1px solid var(--line);
 		border-radius: 20px;
-		background: rgba(255, 255, 255, 0.72);
+		background: rgb(255 255 255 / 72%);
 		font: inherit;
 		text-align: left;
 		cursor: pointer;
@@ -164,8 +164,8 @@
 			background-color var(--ease);
 	}
 
-	.manage-shell__nav a span,
-	.manage-shell__nav button span {
+	.manage-shell-nav a span,
+	.manage-shell-nav button span {
 		font-family: var(--font-mono);
 		font-size: 0.72rem;
 		letter-spacing: 0.08em;
@@ -173,43 +173,43 @@
 		color: var(--ink-faint);
 	}
 
-	.manage-shell__nav a strong,
-	.manage-shell__nav button strong {
+	.manage-shell-nav a strong,
+	.manage-shell-nav button strong {
 		font-family: var(--font-display);
 		font-size: 1rem;
 	}
 
-	.manage-shell__nav a:hover,
-	.manage-shell__nav button:hover,
-	.manage-shell__nav a.active,
-	.manage-shell__nav button.active {
+	.manage-shell-nav a:hover,
+	.manage-shell-nav button:hover,
+	.manage-shell-nav a.active,
+	.manage-shell-nav button.active {
 		transform: translateY(-2px);
-		border-color: rgba(79, 120, 255, 0.24);
-		background: rgba(255, 255, 255, 0.92);
+		border-color: rgb(79 120 255 / 24%);
+		background: rgb(255 255 255 / 92%);
 	}
 
-	.manage-shell__back {
+	.manage-shell-back {
 		width: auto;
 	}
 
-	.manage-shell__body {
+	.manage-shell-body {
 		padding: 1rem 0 1.3rem;
 	}
 
-	@media (max-width: 900px) {
+	@media (width <= 900px) {
 		.manage-shell {
 			padding: 0.7rem;
 		}
 
-		.manage-shell__header {
+		.manage-shell-header {
 			grid-template-columns: 1fr;
 		}
 
-		.manage-shell__actions {
+		.manage-shell-actions {
 			justify-items: stretch;
 		}
 
-		.manage-shell__nav {
+		.manage-shell-nav {
 			display: grid;
 			grid-template-columns: 1fr;
 		}

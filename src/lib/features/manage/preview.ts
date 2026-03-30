@@ -17,7 +17,7 @@ const URI_ATTR_PATTERN = /\s(href|src|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)')/
 
 function buildPlaceholder(kind: 'component' | 'import' | 'script' | 'style', label: string) {
 	return `
-<div class="manage-preview__placeholder" data-preview-kind="${kind}">
+<div class="manage-preview-placeholder" data-preview-kind="${kind}">
 	<strong>${label}</strong>
 	<p>预览面板不会执行这段 mdsvex / Svelte 逻辑。</p>
 </div>

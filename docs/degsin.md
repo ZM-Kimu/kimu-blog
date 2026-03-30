@@ -32,6 +32,8 @@ Cloudflare CDN 分发到用户
 - **首屏 boot loading overlay 只用于首次进入站点时协调主 UI 的进入，不属于常规页面切换**
 - **首屏时间线按 `boot -> entry -> idle` 理解；后续页面统一按 `exit -> entry -> idle` 切换**
 - **站点内可视物件默认不可选中、不可拖动；仅输入控件与显式白名单恢复能力**
+- **仓库样式必须通过严格 CSS lint；独立 `.css` 与 `.svelte` 内 `<style>` 使用同一套规则**
+- **样式命名统一为纯 `kebab-case`，禁止 vendor prefix，统一收敛到现代 CSS 语法**
 
 ---
 
@@ -472,6 +474,17 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `static/` 适合放**必须保留文件名**的资源
 - 普通图片、图标、插画，优先 `import`
 - 这样更利于缓存和构建产物管理
+
+## 当前样式规范基线
+
+- 样式检查由 `stylelint` 负责，覆盖 `src/**/*.{css,svelte}`
+- `npm run lint` 已纳入 CSS lint，不再只检查 `prettier` 与 `eslint`
+- `npm run lint:css` 用于严格检查
+- `npm run lint:css:fix` 用于自动修正可修复项
+- 选择器类名统一为纯 `kebab-case`
+- 不再保留 BEM 的 `__` / `--` 变体
+- 不再保留 `-webkit-*` 等 vendor prefix 样式写法
+- 颜色函数、媒体查询、`@import` 等写法统一按现代 CSS 规范收敛
 
 ## 第二版再升级
 
