@@ -1,15 +1,19 @@
 # Kimu Blog
 
-Kimu Blog 是一套面向 Cloudflare Pages 的 SvelteKit 内容站脚手架。
+Kimu Blog 是一套面向 Cloudflare Pages 的 SvelteKit 内容站脚手架，当前产品方向是 **game UI / command center 风格的个人内容站**，并采用 **route-based app shell + SPA-like navigation**。
 
-当前脚手架已经落下这些基础能力：
+当前仓库已经具备这些基础能力：
 
 - SvelteKit + `@sveltejs/adapter-cloudflare`
 - Markdown / mdsvex 内容系统
 - frontmatter schema 校验
 - `entries()` + prerender 的文章详情页策略
-- 首页、博客列表、文章详情、标签页、About 页骨架
-- RSS / Sitemap 基础输出
+- PATH 会变化但默认不整页刷新的站内导航体验
+- 首页主界面（`/`）
+- 分类界面（`/blog`）
+- 完整归档页（`/blog/archive`）
+- 文章详情、标签页、About、动态 / 收藏占位页
+- Sitemap 基础输出
 
 ## 开发
 
@@ -58,12 +62,13 @@ npm run build
 ## 关键目录
 
 ```text
-src/lib/content/blog/      # 文章内容
-src/lib/content/schema.ts  # frontmatter schema
-src/lib/server/content/    # server-only 内容加载
-src/routes/blog/           # 博客页面路由
-docs/                      # 架构与开发计划书与设计稿
-docs/degsin.md             # 设计方案基线文档
+src/lib/content/blog/         # 文章内容
+src/lib/content/schema.ts     # frontmatter schema
+src/lib/server/content/       # server-only 内容加载
+src/lib/constants/command-center.ts
+src/routes/                   # 首页、分类、归档、详情等页面
+docs/                         # 架构与开发计划书与设计稿
+docs/degsin.md                # 设计方案基线文档
 ```
 
 ## 参考文档

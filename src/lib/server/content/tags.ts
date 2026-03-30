@@ -1,1 +1,1 @@
-export { getAllTags, getPostsByTag, getTagEntries } from './posts';
+export { getAllTags, getPostsByTag, getTagEntries } from './posts'

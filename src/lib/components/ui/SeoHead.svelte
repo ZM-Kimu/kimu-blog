@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { siteConfig } from '$lib/constants/site';
+	import { siteConfig } from '$lib/config/site'
 
 	interface Props {
-		title?: string;
-		description?: string;
-		pathname?: string;
-		image?: string;
-		type?: 'website' | 'article';
-		noindex?: boolean;
+		title?: string
+		description?: string
+		pathname?: string
+		image?: string
+		type?: 'website' | 'article'
+		noindex?: boolean
 	}
 
 	let {
@@ -17,13 +17,13 @@
 		image = siteConfig.ogImage,
 		type = 'website',
 		noindex = false
-	}: Props = $props();
+	}: Props = $props()
 
 	const resolvedTitle = $derived(
 		title === siteConfig.name ? title : `${title} | ${siteConfig.name}`
-	);
-	const canonical = $derived(new URL(pathname, siteConfig.url).toString());
-	const imageUrl = $derived(new URL(image, siteConfig.url).toString());
+	)
+	const canonical = $derived(new URL(pathname, siteConfig.url).toString())
+	const imageUrl = $derived(new URL(image, siteConfig.url).toString())
 </script>
 
 <svelte:head>

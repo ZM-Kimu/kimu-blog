@@ -1,0 +1,68 @@
+/* Home topbar main mode. */
+.home-topbar-main {
+	display: grid;
+	grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+	align-items: start;
+	gap: var(--home-topbar-gap);
+}
+
+.home-profile-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.9rem;
+	min-width: var(--home-profile-min-width);
+	max-width: 100%;
+	min-height: var(--home-topbar-height);
+	justify-self: start;
+	position: relative;
+	margin-left: calc(var(--home-shell-padding) * -1);
+	padding: var(--home-profile-padding);
+	padding-left: calc(var(--home-shell-padding) + 1rem);
+	background: #2d61b3;
+	color: white;
+	mask: url('/icons/home-profile-chip-mask.svg') left center / 100% 100% no-repeat;
+}
+
+.home-profile-chip-level {
+	font-family: var(--font-mono);
+	font-size: 0.82rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.home-profile-chip strong {
+	font-family: var(--font-display);
+	font-size: clamp(1.8rem, 2.35vw, 2.7rem);
+	line-height: 0.9;
+	letter-spacing: -0.06em;
+}
+
+.home-profile-chip-copy {
+	display: grid;
+	gap: 0.15rem;
+}
+
+.home-profile-chip-copy small {
+	font-family: var(--font-mono);
+	font-size: 0.74rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	opacity: 0.72;
+}
+
+.home-profile-chip-copy span {
+	font-weight: 700;
+	font-size: 0.95rem;
+}
+
+.home-topbar-main .home-topbar-tools {
+	background: rgb(255 255 255 / 92%);
+	border: 1px solid rgb(92 148 204 / 18%);
+	box-shadow: 0 14px 30px rgb(57 116 177 / 12%);
+}
+
+.home-topbar-main .resource-chip {
+	background: rgb(255 255 255 / 92%);
+	border: 1px solid rgb(92 148 204 / 18%);
+	box-shadow: 0 14px 30px rgb(57 116 177 / 12%);
+}

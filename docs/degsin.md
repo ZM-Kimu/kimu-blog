@@ -25,8 +25,15 @@ Cloudflare CDN 分发到用户
 这版要明确一条总原则：
 
 - **内容页默认 prerender**
+- **整站采用 route-based app shell**
+- **站内导航目标是 SPA-like：URL 会变化，但默认不整页刷新**
 - **强交互页按需保留 SSR / CSR**
 - **不要把整站做成纯 SPA**
+- **首屏 boot loading overlay 只用于首次进入站点时协调主 UI 的进入，不属于常规页面切换**
+- **首屏时间线按 `boot -> entry -> idle` 理解；后续页面统一按 `exit -> entry -> idle` 切换**
+- **站点内可视物件默认不可选中、不可拖动；仅输入控件与显式白名单恢复能力**
+- **仓库样式必须通过严格 CSS lint；独立 `.css` 与 `.svelte` 内 `<style>` 使用同一套规则**
+- **样式命名统一为纯 `kebab-case`，禁止 vendor prefix，统一收敛到现代 CSS 语法**
 
 ---
 
@@ -48,6 +55,7 @@ Cloudflare CDN 分发到用户
 当前阶段直接拍板：
 
 - **平台基线选 Cloudflare Pages**
+- **主站体验按 route-based app shell 实现**
 - **不因为强交互就切整站 SPA**
 - **保留未来迁移到 Workers 的空间，但第一版不以 Workers-first 为前提**
 
@@ -73,12 +81,20 @@ Cloudflare CDN 分发到用户
 
 适合 prerender 的页面：
 
-- 首页
-- 文章列表页
+- 首页主界面（`/`）
+- 分类界面（`/blog`）
+- 完整归档页（`/blog/archive`）
 - 文章详情页
 - 标签页
 - About
-- RSS / Sitemap / robots
+- Sitemap / robots
+
+这里要补一个当前已经实现的事实：
+
+- 首页虽然是**强交互主界面**，但仍然走内容站语境下的静态优先路线
+- 首页不是传统博客文章流，而是独立的 `screen-home` 入口场景
+- 非首页公开内容路由统一进入 shared subpage app shell
+- 主导航与一级入口切换以 **client-side navigation** 为目标体验
 
 ## 2. 强交互只放在需要的地方
 
@@ -89,6 +105,12 @@ Cloudflare CDN 分发到用户
 - 特殊专题页
 
 不要为了交互方便把根布局直接改成 `ssr = false`，那样会把整站推成空壳 SPA。
+
+这里要把“SPA”说准确：
+
+- 你们要的是 **SPA-like 体验**
+- 不是把整个仓库改造成 **纯 SPA 架构**
+- 允许路径变化，但默认站内切换应由 SvelteKit router 接管，不出现浏览器整页重刷感
 
 ## 3. 内容读取走“构建期导入 + server-only 辅助模块”
 
@@ -116,7 +138,7 @@ Cloudflare CDN 分发到用户
 建议把这些逻辑都放进 `$lib/server`：
 
 - 内容读取
-- RSS / sitemap 生成辅助
+- sitemap 生成辅助
 - 私有环境变量读取
 - 未来的 webhook / token / 后台集成
 
@@ -156,7 +178,6 @@ blog-site/
 │  │  │  └─ pages/
 │  │  ├─ server/
 │  │  │  ├─ content/
-│  │  │  ├─ rss/
 │  │  │  └─ sitemap/
 │  │  ├─ utils/
 │  │  ├─ constants/
@@ -290,30 +311,70 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 
 # 六、页面结构
 
-第一版页面结构继续沿用，但这次把**页面组件**和**数据加载文件**一起规划清楚。
+第一版页面结构已经从“博客列表首页”演进成“**主界面 + 分类界面 + 完整归档 + 档案详情**”的组合，这里按当前实现整理。
 
 ## 必要页面
 
-- 首页：`src/routes/+page.svelte`
-- 首页数据：`src/routes/+page.server.ts`（可选）
-- 文章列表页：`src/routes/blog/+page.svelte`
-- 文章列表数据：`src/routes/blog/+page.server.ts`
+- 首页主界面：`src/routes/+page.svelte`
+- 首页数据：`src/routes/+page.server.ts`
+- 分类界面：`src/routes/blog/+page.svelte`
+- 分类界面数据：`src/routes/blog/+page.server.ts`
+- 完整归档页：`src/routes/blog/archive/+page.svelte`
+- 完整归档数据：`src/routes/blog/archive/+page.server.ts`
 - 文章详情页：`src/routes/blog/[slug]/+page.svelte`
 - 文章详情数据：`src/routes/blog/[slug]/+page.server.ts`
 - 标签页：`src/routes/tags/[tag]/+page.svelte`
 - 标签页数据：`src/routes/tags/[tag]/+page.server.ts`
+- 动态占位页：`src/routes/updates/+page.svelte`
+- 收藏占位页：`src/routes/favorites/+page.svelte`
 - About 页：`src/routes/about/+page.svelte`
 - 404 / 路由错误页：`src/routes/+error.svelte`
 - 兜底错误页：`src/error.html`
+- manage 调试沙盒：`src/routes/__debug/manage/+page.svelte`
 
 ## 可选页面
 
-- 分类页：`src/routes/category/[name]/+page.svelte`
-- 归档页：`src/routes/archive/+page.svelte`
 - 搜索页：`src/routes/search/+page.svelte`
 - 友情链接页：`src/routes/links/+page.svelte`
-- RSS：`src/routes/rss.xml/+server.ts`
 - Sitemap：`src/routes/sitemap.xml/+server.ts`
+
+## 当前布局约束
+
+- 首页在 `src/routes/+layout.svelte` 中走特殊分支，不复用全局 Header / Dock / Footer
+- 首页使用 `screen-home` 的独立结构，而不是普通 `shell + section` 页面
+- 首屏会先进入 boot loading overlay，再进入主 UI 的 `entry`，随后收敛到 `idle`
+- boot 的资源等待通过独立的 `data-site-boot-assets` 协调，不再把资源门控混进 boot 主状态
+- `/manage` 及其子路由不参与公开站点 boot 协调，当前实现直接跳过公共 boot 时间线
+- 当 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时，首页退化成精简版布局
+- 非首页公开内容路由统一走 shared subpage app shell，用于分类页、归档页、详情页、标签页、About 与错误页
+- 站内导航默认由 SvelteKit client router 接管：**PATH 变化，但不整页刷新**
+- 常规页面切换不复用 boot 时间线，而是统一按 `exit -> entry -> idle` 协调内容、背景与壳体动画
+
+## 当前交互与切换语法
+
+- `topbar` 是共享 shell，不属于单页动画本体；页面切换不得再通过整页 blur、整页 veil 或强制 topbar 退场来偷做过渡
+- 页面内容、背景场景与共享 shell 已经拆开管理：
+  - 页面内容负责 `exit / entry`
+  - 背景舞台负责 scene crossfade
+  - topbar 只负责壳体形态与状态同步
+- 宽屏 desktop 当前允许 source-aware 的 route-enter：
+  - `subpage -> home` 使用首页内容的独立进入节奏
+  - `home -> public subpage` 使用子页内容的独立进入节奏
+  - compact / mobile 继续走更轻的简化路径
+- 公开站点当前的背景 scene 固定为：
+  - `home-spine`
+  - `subpage-room`
+  - `neutral-default`
+- 错误页明确并回 `subpage` 体系，继续使用 `subpage-room` 背景和 `subpage` topbar 语义，不再拥有独立背景理念
+- 站内所有可视物件默认不可选中、不可拖动；复制或拖拽能力必须通过白名单显式恢复
+
+## 当前首页背景语义
+
+- 首页背景不是单一图片层，而是 `home base scene + spine overlay` 的组合
+- `home base scene` 必须在没有 spine 的情况下也能立即被识别为首页
+- `spine overlay` 只负责增强与驻留态生命感，不再承担首页识别的唯一职责
+- desktop 下的 `spine overlay` 采用持久 host 与播放状态切换，避免切页期间反复创建 / 销毁 Pixi viewer
+- 继承当前背景的页面允许继续保留 live home spine；拥有自身背景的页面则让 spine 有过渡地退掉
 
 ## 渲染策略
 
@@ -324,12 +385,14 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - **纯内容且完全不需要 JS 的页面**：可以考虑 `csr = false`
 - **根布局**：不要写 `ssr = false`
 - **文章详情页**：显式维护 `entries()`，不要只依赖 crawler 发现
+- **主站导航体验**：优先实现成 route-based app shell 的 SPA-like 切换
 
 对于你们现在这种“本地内容源 + 强交互前端”的博客项目，最佳实践就是：
 
 - **文章详情页静态生成**
 - **交互组件在客户端水合**
 - **动态 slug 通过 `entries()` 明确告诉构建器**
+- **PATH 变化由 SvelteKit client router 接管，不以整页刷新为正常体验**
 
 ## 服务端接口约束
 
@@ -337,6 +400,10 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 
 - 写成 SvelteKit 的 `+server.ts`
 - 不要额外依赖项目根目录 `/functions`
+- `/manage` 是唯一允许依赖 runtime function / Pages Functions 的路由域
+- `manage` 之外的公开页面和公开 API，不把 Function 当成数据层
+- `manage` 之外的 server load 只允许做本地内容装配；第三方数据优先改成浏览器直连或构建期产物
+- `/__debug/manage` 虽然复用 manage 组件，但它是公开调试沙盒，禁止接 `/api/manage/*` 或任何外部数据源
 
 对于 SvelteKit on Pages，这条边界最好在设计阶段就讲明白。
 
@@ -378,7 +445,6 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `src/lib/server/content/blog.ts`
 - `src/lib/server/content/tags.ts`
 - `src/lib/server/content/archive.ts`
-- `src/lib/server/rss/index.ts`
 - `src/lib/server/sitemap/index.ts`
 
 通用原则：
@@ -408,6 +474,17 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `static/` 适合放**必须保留文件名**的资源
 - 普通图片、图标、插画，优先 `import`
 - 这样更利于缓存和构建产物管理
+
+## 当前样式规范基线
+
+- 样式检查由 `stylelint` 负责，覆盖 `src/**/*.{css,svelte}`
+- `npm run lint` 已纳入 CSS lint，不再只检查 `prettier` 与 `eslint`
+- `npm run lint:css` 用于严格检查
+- `npm run lint:css:fix` 用于自动修正可修复项
+- 选择器类名统一为纯 `kebab-case`
+- 不再保留 BEM 的 `__` / `--` 变体
+- 不再保留 `-webkit-*` 等 vendor prefix 样式写法
+- 颜色函数、媒体查询、`@import` 等写法统一按现代 CSS 规范收敛
 
 ## 第二版再升级
 
@@ -531,7 +608,6 @@ Git 集成部署时，建议写死这几个参数：
 - Open Graph
 - Twitter Card
 - sitemap
-- rss
 - `robots.txt`
 - 语义化 heading 结构
 - 图片 `alt`
@@ -606,21 +682,23 @@ Git 集成部署时，建议写死这几个参数：
 
 # 十四、第一版 MVP 清单
 
-如果想尽快上线，第一版先做这些：
+如果想尽快上线，第一版现在应该以这组页面与能力为准：
 
-- 首页
-- 文章列表页
-- 文章详情页
-- About
-- Markdown / mdsvex 内容系统
+- 首页主界面（game home screen / command center）
+- 分类界面（`/blog`）
+- 完整归档页（`/blog/archive`）
+- 文章详情页（dossier）
 - 标签页
+- About
+- 动态 / 收藏占位页
+- Markdown / mdsvex 内容系统
+- Frontmatter schema 校验
 - SEO 基础
-- RSS
 - Sitemap
 - Cloudflare Pages 部署
 - 自定义域名接入
 - `pages.dev` → 正式域名重定向
-- 基础动效系统
+- 首页双方案响应式：宽屏完整界面，窄比例精简界面
 - 内容页 prerender
 
 **先别做**：
@@ -634,7 +712,7 @@ Git 集成部署时，建议写死这几个参数：
 
 最后这一条还是要强调：
 
-你们做强交互没问题，但最佳路线仍然是**局部强交互 + 内容页 prerender**，不是整站空壳。
+你们做强交互没问题，但最佳路线仍然是**route-based app shell + SPA-like navigation + 内容页 prerender**，不是整站空壳。
 
 ---
 
@@ -648,7 +726,11 @@ Git 集成部署时，建议写死这几个参数：
 - **文章**：GitHub 仓库里的 Markdown / mdsvex
 - **Frontmatter**：必填字段 + schema 校验
 - **内容加载**：构建期批量导入 + `$lib/server` 内容辅助函数
+- **首页形态**：`/` 为 game-like command center
+- **一级内容入口**：`/blog` 为分类界面，不再承担传统文章流职责
+- **完整浏览入口**：`/blog/archive`
 - **详情页生成**：`/blog/[slug]` 明确使用 `entries()` + prerender 策略
+- **导航体验**：站内 path 变化由 SvelteKit router 接管，默认不整页刷新
 - **图片**：先放仓库；固定命名资源放 `static/`，可复用资源优先 `import`
 - **部署**：Cloudflare Pages
 - **Pages 配置**：`Framework preset = SvelteKit`，输出目录 `.svelte-kit/cloudflare`
@@ -660,7 +742,7 @@ Git 集成部署时，建议写死这几个参数：
 
 这个组合的核心优点是：
 
-**SvelteKit 负责强交互前端和路由；GitHub 负责内容源；Cloudflare Pages 负责构建、部署和分发；内容页默认 prerender，交互页保留 SSR / CSR 扩展空间。**
+**SvelteKit 负责强交互前端和 route-based app shell；GitHub 负责内容源；Cloudflare Pages 负责构建、部署和分发；内容页默认 prerender，站内导航保持 SPA-like，交互页保留 SSR / CSR 扩展空间。**
 
 ---
 
@@ -679,19 +761,21 @@ Git 集成部署时，建议写死这几个参数：
 9. 写文章收集逻辑（推荐 `import.meta.glob(...)`）
 10. 做全局布局：`src/routes/+layout.svelte`
 11. 调整 `src/app.html` 的 `lang`
-12. 做首页：`src/routes/+page.svelte`
-13. 做文章列表：`src/routes/blog/+page.svelte` + `+page.server.ts`
-14. 做文章详情：`src/routes/blog/[slug]/+page.svelte` + `+page.server.ts`
-15. 给文章详情页实现 `entries()`
-16. 给内容页接上 prerender 策略
-17. 配 SEO / rss / sitemap / robots
-18. 接 Cloudflare Pages：`Framework preset = SvelteKit`
-19. 设置 Build command：`npm run build`
-20. 设置 Build output directory：`.svelte-kit/cloudflare`
-21. 如依赖链需要，再补对应 compatibility flag
-22. 绑正式域名
-23. 把 production 的 `*.pages.dev` 重定向到正式域名
-24. 上线第一篇文章
+12. 做首页主界面：`src/routes/+page.svelte`
+13. 做分类界面：`src/routes/blog/+page.svelte` + `+page.server.ts`
+14. 做完整归档：`src/routes/blog/archive/+page.svelte` + `+page.server.ts`
+15. 做文章详情：`src/routes/blog/[slug]/+page.svelte` + `+page.server.ts`
+16. 给文章详情页实现 `entries()`
+17. 给内容页接上 prerender 策略
+18. 接上动态 / 收藏占位页
+19. 配 SEO / sitemap / robots
+20. 接 Cloudflare Pages：`Framework preset = SvelteKit`
+21. 设置 Build command：`npm run build`
+22. 设置 Build output directory：`.svelte-kit/cloudflare`
+23. 如依赖链需要，再补对应 compatibility flag
+24. 绑正式域名
+25. 把 production 的 `*.pages.dev` 重定向到正式域名
+26. 上线第一篇文章
 
 这一版和旧文档相比，真正的关键升级点只有五个：
 

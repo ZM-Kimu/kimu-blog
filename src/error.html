@@ -4,13 +4,28 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>%sveltekit.status%</title>
+		<link
+			rel="preload"
+			href="/fonts/FZLanTYJ_Zhong.otf"
+			as="font"
+			type="font/otf"
+			crossorigin="anonymous"
+		/>
 		<style>
+			@font-face {
+				font-family: 'FZLanTYJ Zhong';
+				src: url('/fonts/FZLanTYJ_Zhong.otf') format('opentype');
+				font-weight: 400 900;
+				font-style: normal;
+				font-display: swap;
+			}
+
 			body {
 				margin: 0;
 				min-height: 100vh;
 				display: grid;
 				place-items: center;
-				font-family: 'Segoe UI', sans-serif;
+				font-family: 'FZLanTYJ Zhong', 'Microsoft YaHei', sans-serif;
 				background: #f6f0e8;
 				color: #18201c;
 			}

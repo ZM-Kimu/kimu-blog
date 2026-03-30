@@ -1,0 +1,137 @@
+/* Home tool rail. */
+.home-left-tools {
+	grid-area: left;
+	position: relative;
+	z-index: 1;
+	display: grid;
+	grid-template-columns: repeat(2, var(--home-tool-tile-size));
+	grid-auto-rows: var(--home-tool-tile-size);
+	place-content: start start;
+	justify-self: start;
+	padding-top: var(--home-side-rail-offset);
+	gap: var(--home-left-tools-gap);
+}
+
+.tool-chip {
+	position: relative;
+	display: grid;
+	justify-items: center;
+	align-content: center;
+	gap: 0.55rem;
+	width: var(--home-tool-tile-size);
+	min-height: var(--home-tool-tile-size);
+	padding: 0.55rem;
+	border-radius: var(--home-tool-radius);
+	background: linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(226 241 255 / 82%));
+	border: 1px solid rgb(92 148 204 / 16%);
+	box-shadow: 0 14px 28px rgb(57 116 177 / 10%);
+	text-align: center;
+	transition:
+		transform var(--ease),
+		box-shadow var(--ease),
+		border-color var(--ease);
+}
+
+.tool-chip:hover {
+	transform: translateY(-2px);
+	border-color: rgb(79 120 255 / 24%);
+	box-shadow: 0 18px 34px rgb(57 116 177 / 14%);
+}
+
+.tool-chip-icon {
+	position: relative;
+	width: 2rem;
+	aspect-ratio: 1 / 1;
+	border-radius: 18px;
+	background: rgb(255 255 255 / 82%);
+	border: 1px solid rgb(79 120 255 / 16%);
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / 90%),
+		0 8px 18px rgb(57 116 177 / 12%);
+}
+
+.tool-chip-icon::before,
+.tool-chip-icon::after {
+	content: '';
+	position: absolute;
+}
+
+.tool-chip-live .tool-chip-icon::before {
+	inset: 0.42rem;
+	border: 2px solid rgb(14 165 233 / 30%);
+	border-radius: 999px;
+}
+
+.tool-chip-live .tool-chip-icon::after {
+	left: 50%;
+	top: 50%;
+	width: 0.45rem;
+	height: 0.45rem;
+	border-radius: 999px;
+	background: #0ea5e9;
+	transform: translate(-50%, -50%);
+	box-shadow: 0 0 0 0.18rem rgb(14 165 233 / 18%);
+}
+
+.tool-chip-vault .tool-chip-icon::before {
+	inset: 0.54rem 0.42rem;
+	border: 2px solid rgb(123 140 165 / 58%);
+	border-radius: 0.38rem;
+}
+
+.tool-chip-vault .tool-chip-icon::after {
+	left: 0.72rem;
+	right: 0.72rem;
+	top: 0.82rem;
+	height: 0.18rem;
+	border-radius: 999px;
+	background: rgb(123 140 165 / 72%);
+}
+
+.tool-chip-archive .tool-chip-icon::before {
+	left: 0.58rem;
+	top: 0.42rem;
+	width: 1rem;
+	height: 1.18rem;
+	border: 2px solid rgb(56 189 248 / 70%);
+	border-radius: 0.42rem;
+	background: linear-gradient(180deg, rgb(255 255 255 / 82%), rgb(217 242 255 / 68%));
+}
+
+.tool-chip-archive .tool-chip-icon::after {
+	right: 0.42rem;
+	top: 0.38rem;
+	width: 0.54rem;
+	height: 0.54rem;
+	background: rgb(56 189 248 / 18%);
+	clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.tool-chip-profile .tool-chip-icon::before {
+	left: 50%;
+	top: 0.42rem;
+	width: 0.72rem;
+	height: 0.72rem;
+	border-radius: 999px;
+	background: rgb(79 120 255 / 72%);
+	transform: translateX(-50%);
+}
+
+.tool-chip-profile .tool-chip-icon::after {
+	left: 50%;
+	bottom: 0.36rem;
+	width: 1.18rem;
+	height: 0.72rem;
+	border-radius: 999px 999px 0.45rem 0.45rem;
+	background: rgb(79 120 255 / 22%);
+	border: 2px solid rgb(79 120 255 / 45%);
+	transform: translateX(-50%);
+}
+
+.tool-chip-label {
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #44627f;
+}

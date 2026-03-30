@@ -2,6 +2,32 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "kimu-blog",
 	"compatibility_date": "2026-03-23",
-	"compatibility_flags": ["nodejs_als"],
-	"pages_build_output_dir": ".svelte-kit/cloudflare"
+	"compatibility_flags": ["nodejs_als", "nodejs_compat"],
+	"pages_build_output_dir": ".svelte-kit/cloudflare",
+	"vars": {
+		"CF_ACCESS_TEAM_DOMAIN": "zmkimu.cloudflareaccess.com",
+		"CF_ACCESS_AUD": "a1299505de5c44035d54007f57627334f52e3cdf2a82df6f26045bfafc2db42e",
+		"GITHUB_APP_ID": "3190893",
+		"GITHUB_APP_INSTALLATION_ID": "119136913",
+		"GITHUB_REPO_OWNER": "ZM-Kimu",
+		"GITHUB_REPO_NAME": "kimu-blog",
+		"GITHUB_REPO_BRANCH": "main",
+		"GITHUB_COMMITTER_NAME": "Kimu Bot",
+		"GITHUB_COMMITTER_EMAIL": "bot@zmkimu.com"
+	},
+	"env": {
+		"preview": {
+			"vars": {
+				"CF_ACCESS_TEAM_DOMAIN": "zmkimu.cloudflareaccess.com",
+				"CF_ACCESS_AUD": "81f211dfe3a3f8f1b1316ec1a4e2e47f825f3dd3d7c32403e70e043d29eaef69",
+				"GITHUB_APP_ID": "3190893",
+				"GITHUB_APP_INSTALLATION_ID": "119136913",
+				"GITHUB_REPO_OWNER": "ZM-Kimu",
+				"GITHUB_REPO_NAME": "kimu-blog",
+				"GITHUB_REPO_BRANCH": "main",
+				"GITHUB_COMMITTER_NAME": "Kimu Bot",
+				"GITHUB_COMMITTER_EMAIL": "bot@zmkimu.com"
+			}
+		}
+	}
 }
