@@ -31,7 +31,7 @@
 	--motion-boot-overlay-wave-step-delay: 60ms;
 	--motion-boot-overlay-wave-lift: 0.62rem;
 	--motion-boot-overlay-wave-settle: 0.08rem;
-	--motion-route-page-exit-duration: 120ms;
+	--motion-route-page-exit-duration: 10ms;
 	--motion-route-page-entry-duration: 160ms;
 	--motion-route-bridge-duration: 180ms;
 	--motion-route-home-enter-duration: 620ms;
@@ -48,14 +48,16 @@
 	--motion-route-subpage-enter-delay: 120ms;
 	--motion-route-subpage-enter-offset-y: 22px;
 	--motion-route-subpage-enter-blur: 10px;
-	--motion-route-compact-enter-duration: 620ms;
-	--motion-route-compact-enter-delay-primary: 120ms;
-	--motion-route-compact-enter-delay-mission: 170ms;
-	--motion-route-compact-enter-delay-footer: 210ms;
-	--motion-route-compact-enter-offset-y: 22px;
-	--motion-route-compact-enter-blur: 10px;
+	--motion-route-portrait-enter-duration: 320ms;
+	--motion-route-portrait-enter-delay: 0ms;
+	--motion-route-portrait-enter-offset-y: 18px;
+	--motion-route-portrait-enter-blur: 0px;
 	--motion-bg-bridge-duration: 180ms;
 	--motion-bg-spine-fade-duration: 260ms;
+	--motion-notice-enter-duration: 260ms;
+	--motion-notice-exit-duration: 180ms;
+	--motion-notice-visible-duration: 3200ms;
+	--motion-notice-offset-y: 14px;
 	--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 	--motion-error-enter-offset-y: 22px;
 	--motion-error-visual-duration: 620ms;
@@ -88,7 +90,7 @@
 	--motion-topbar-visual-profile-copy-gap: 0.62rem;
 }
 
-@media (width <= 900px), (aspect-ratio <= 145 / 100) {
+@media (orientation: portrait) {
 	:root {
 		--motion-shared-easing-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-shared-ease-standard: 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -121,7 +123,7 @@
 		--motion-boot-overlay-wave-step-delay: 60ms;
 		--motion-boot-overlay-wave-lift: 0.62rem;
 		--motion-boot-overlay-wave-settle: 0.08rem;
-		--motion-route-page-exit-duration: 120ms;
+		--motion-route-page-exit-duration: 10ms;
 		--motion-route-page-entry-duration: 160ms;
 		--motion-route-bridge-duration: 180ms;
 		--motion-route-home-enter-duration: 620ms;
@@ -138,14 +140,16 @@
 		--motion-route-subpage-enter-delay: 120ms;
 		--motion-route-subpage-enter-offset-y: 22px;
 		--motion-route-subpage-enter-blur: 10px;
-		--motion-route-compact-enter-duration: 620ms;
-		--motion-route-compact-enter-delay-primary: 120ms;
-		--motion-route-compact-enter-delay-mission: 170ms;
-		--motion-route-compact-enter-delay-footer: 210ms;
-		--motion-route-compact-enter-offset-y: 22px;
-		--motion-route-compact-enter-blur: 10px;
-		--motion-bg-bridge-duration: 180ms;
+		--motion-route-portrait-enter-duration: 320ms;
+		--motion-route-portrait-enter-delay: 0ms;
+		--motion-route-portrait-enter-offset-y: 18px;
+		--motion-route-portrait-enter-blur: 0px;
+		--motion-bg-bridge-duration: 0ms;
 		--motion-bg-spine-fade-duration: 260ms;
+		--motion-notice-enter-duration: 260ms;
+		--motion-notice-exit-duration: 180ms;
+		--motion-notice-visible-duration: 3200ms;
+		--motion-notice-offset-y: 14px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-error-enter-offset-y: 22px;
 		--motion-error-visual-duration: 620ms;
@@ -212,7 +216,7 @@
 		--motion-boot-overlay-wave-step-delay: 0ms;
 		--motion-boot-overlay-wave-lift: 0.62rem;
 		--motion-boot-overlay-wave-settle: 0.08rem;
-		--motion-route-page-exit-duration: 60ms;
+		--motion-route-page-exit-duration: 5ms;
 		--motion-route-page-entry-duration: 80ms;
 		--motion-route-bridge-duration: 0ms;
 		--motion-route-home-enter-duration: 1ms;
@@ -229,14 +233,16 @@
 		--motion-route-subpage-enter-delay: 0ms;
 		--motion-route-subpage-enter-offset-y: 22px;
 		--motion-route-subpage-enter-blur: 10px;
-		--motion-route-compact-enter-duration: 1ms;
-		--motion-route-compact-enter-delay-primary: 0ms;
-		--motion-route-compact-enter-delay-mission: 0ms;
-		--motion-route-compact-enter-delay-footer: 0ms;
-		--motion-route-compact-enter-offset-y: 22px;
-		--motion-route-compact-enter-blur: 10px;
+		--motion-route-portrait-enter-duration: 1ms;
+		--motion-route-portrait-enter-delay: 0ms;
+		--motion-route-portrait-enter-offset-y: 18px;
+		--motion-route-portrait-enter-blur: 0px;
 		--motion-bg-bridge-duration: 0ms;
 		--motion-bg-spine-fade-duration: 1ms;
+		--motion-notice-enter-duration: 1ms;
+		--motion-notice-exit-duration: 1ms;
+		--motion-notice-visible-duration: 1400ms;
+		--motion-notice-offset-y: 14px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-error-enter-offset-y: 22px;
 		--motion-error-visual-duration: 1ms;
@@ -270,8 +276,7 @@
 	}
 }
 
-@media (width <= 900px) and (prefers-reduced-motion: reduce),
-	(aspect-ratio <= 145 / 100) and (prefers-reduced-motion: reduce) {
+@media (orientation: portrait) and (prefers-reduced-motion: reduce) {
 	:root {
 		--motion-shared-easing-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-shared-ease-standard: 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -304,7 +309,7 @@
 		--motion-boot-overlay-wave-step-delay: 0ms;
 		--motion-boot-overlay-wave-lift: 0.62rem;
 		--motion-boot-overlay-wave-settle: 0.08rem;
-		--motion-route-page-exit-duration: 60ms;
+		--motion-route-page-exit-duration: 5ms;
 		--motion-route-page-entry-duration: 80ms;
 		--motion-route-bridge-duration: 0ms;
 		--motion-route-home-enter-duration: 1ms;
@@ -321,14 +326,16 @@
 		--motion-route-subpage-enter-delay: 0ms;
 		--motion-route-subpage-enter-offset-y: 22px;
 		--motion-route-subpage-enter-blur: 10px;
-		--motion-route-compact-enter-duration: 1ms;
-		--motion-route-compact-enter-delay-primary: 0ms;
-		--motion-route-compact-enter-delay-mission: 0ms;
-		--motion-route-compact-enter-delay-footer: 0ms;
-		--motion-route-compact-enter-offset-y: 22px;
-		--motion-route-compact-enter-blur: 10px;
+		--motion-route-portrait-enter-duration: 1ms;
+		--motion-route-portrait-enter-delay: 0ms;
+		--motion-route-portrait-enter-offset-y: 18px;
+		--motion-route-portrait-enter-blur: 0px;
 		--motion-bg-bridge-duration: 0ms;
 		--motion-bg-spine-fade-duration: 1ms;
+		--motion-notice-enter-duration: 1ms;
+		--motion-notice-exit-duration: 1ms;
+		--motion-notice-visible-duration: 1400ms;
+		--motion-notice-offset-y: 14px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-error-enter-offset-y: 22px;
 		--motion-error-visual-duration: 1ms;

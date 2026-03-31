@@ -53,6 +53,10 @@ export const enUSMessages = {
 			primaryNav: 'Primary navigation',
 			quickNav: 'Quick access'
 		},
+		portraitHint: {
+			desktop: 'You are viewing the site in portrait. A 16:9 landscape window works better here.',
+			mobile: 'You are in portrait mode. Switch to landscape for a better view.'
+		},
 		status: {
 			current: 'Current',
 			mode: 'Mode',
@@ -160,7 +164,8 @@ export const enUSMessages = {
 				'Enable the Spine-powered animated background enhancement layer for home.',
 			backgroundAnimationOn: 'On',
 			backgroundAnimationOff: 'Off',
-			backgroundAnimationDisabled: 'Automatically disabled on compact layout or reduced motion.',
+			backgroundAnimationDisabled:
+				'Automatically disabled on portrait document-flow layout or reduced motion.',
 			backgroundAnimationFailed: 'Asset loading failed, so the default background is being used.',
 			manage: 'Manage Workbench',
 			manageDescription:

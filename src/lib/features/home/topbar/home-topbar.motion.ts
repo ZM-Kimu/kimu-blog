@@ -35,8 +35,8 @@ type BaseTransitionArgs = {
 	setCurrentTimeline: (timeline: TimelineRef) => void
 }
 
-const topbarMotion = getMotionTokens({ compact: false, reducedMotion: false }).topbar
-const compactDuration = msToSeconds(topbarMotion.compactDurationMs)
+const topbarMotion = getMotionTokens({ portrait: false, reducedMotion: false }).topbar
+const portraitDuration = msToSeconds(topbarMotion.portraitDurationMs)
 const reducedDuration = msToSeconds(topbarMotion.reducedDurationMs)
 const richDuration = msToSeconds(topbarMotion.richDurationMs)
 const stripRevealDuration = msToSeconds(topbarMotion.stripRevealDurationMs)
@@ -131,8 +131,14 @@ export async function loadProfileShellPath() {
 
 export async function loadMotionLibs(): Promise<MotionLibs | null> {
 	try {
-		const [gsapModule, { interpolate }] = await Promise.all([import('gsap/all'), import('flubber')])
-		const { gsap, Flip } = gsapModule
+		const [gsapModule, flipModule, { interpolate }] = await Promise.all([
+			import('gsap'),
+			// @ts-expect-error GSAP ships a Windows-hostile Flip.d.ts casing pair; runtime path is valid.
+			import('gsap/Flip.js'),
+			import('flubber')
+		])
+		const { gsap } = gsapModule
+		const { Flip } = flipModule as { Flip: MotionLibs['Flip'] }
 
 		gsap.registerPlugin(Flip)
 		return { gsap, Flip, interpolate }
@@ -203,7 +209,7 @@ export async function runSimpleTransition({
 		timeline.to(refs.topbarRoot, {
 			opacity: 1,
 			y: 0,
-			duration: reducedMotionActive ? reducedDuration : compactDuration
+			duration: reducedMotionActive ? reducedDuration : portraitDuration
 		})
 	})
 
@@ -595,9 +601,9 @@ export async function runRichTransition({
 				duration: richDuration,
 				ease: gsapEasePower3InOut,
 				prune: true,
-				stagger: (_index, target) =>
+				stagger: (_index: number, target: Element) =>
 					target instanceof HTMLElement && target.dataset.flipRole === 'tools' ? flipStagger : 0
-			}),
+			}) as Parameters<typeof timeline.add>[0],
 			0
 		)
 

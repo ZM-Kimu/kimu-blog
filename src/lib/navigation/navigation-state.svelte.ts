@@ -20,7 +20,7 @@ import type {
 
 const CURSOR_MODE_STORAGE_KEY = 'cursor-mode'
 const BACKGROUND_ANIMATION_STORAGE_KEY = 'home-background-animation'
-const defaultMotionTokens = getMotionTokens({ compact: false, reducedMotion: false })
+const defaultMotionTokens = getMotionTokens({ portrait: false, reducedMotion: false })
 
 function createUnknownRouteState(): RouteState {
 	return resolveRouteState({ pathname: '/__unknown__', status: 200 })
@@ -113,7 +113,7 @@ export class NavigationStateManager {
 		this.pendingPageState = targetPageState
 		this.pendingBackgroundScene = this.#resolveBackgroundScene(targetPageState)
 		const motionTokens = getMotionTokens({
-			compact: options.compact ?? false,
+			portrait: options.portrait ?? false,
 			reducedMotion: options.reducedMotion ?? false
 		})
 		this.exitDurationMs = motionTokens.route.exitDurationMs

@@ -9,7 +9,7 @@
 		scene,
 		pendingScene = null,
 		bridgeActive = false,
-		compact = false,
+		layoutMode = 'landscape',
 		reducedMotion = false,
 		bridgeDurationMs = 0,
 		allowWarmup = false
@@ -17,7 +17,7 @@
 		scene: BackgroundScene
 		pendingScene?: BackgroundScene | null
 		bridgeActive?: boolean
-		compact?: boolean
+		layoutMode?: 'landscape' | 'portrait'
 		reducedMotion?: boolean
 		bridgeDurationMs?: number
 		allowWarmup?: boolean
@@ -25,10 +25,11 @@
 
 	const { navigationManager } = getNavigationContext()
 
+	const isPortraitLayout = $derived(layoutMode === 'portrait')
 	const showPendingScene = $derived(bridgeActive && pendingScene !== null && pendingScene !== scene)
 	const homeSpineAllowed = $derived(
 		navigationManager.backgroundAnimationPreference === 'on' &&
-			!compact &&
+			!isPortraitLayout &&
 			!reducedMotion &&
 			navigationManager.backgroundAnimationStatus !== 'failed'
 	)
@@ -130,7 +131,24 @@
 </script>
 
 {#snippet renderScene(activeScene: BackgroundScene)}
-	{#if activeScene === 'home-spine'}
+	{#if isPortraitLayout}
+		{#if activeScene === 'home-spine'}
+			<div
+				class="background-stage-wash background-stage-wash-portrait-home"
+				aria-hidden="true"
+			></div>
+		{:else if activeScene === 'subpage-room'}
+			<div
+				class="background-stage-wash background-stage-wash-portrait-subpage"
+				aria-hidden="true"
+			></div>
+		{:else}
+			<div
+				class="background-stage-wash background-stage-wash-portrait-neutral"
+				aria-hidden="true"
+			></div>
+		{/if}
+	{:else if activeScene === 'home-spine'}
 		<div class="background-stage-wash background-stage-wash-home" aria-hidden="true"></div>
 		<div class="background-stage-room background-stage-room-home" aria-hidden="true"></div>
 		<div class="background-stage-light background-stage-light-home-left" aria-hidden="true"></div>
@@ -166,7 +184,7 @@
 		{@render renderScene(scene)}
 	</div>
 
-	{#if showPendingScene && pendingScene}
+	{#if showPendingScene && pendingScene && !isPortraitLayout}
 		<div
 			class:background-stage-scene-entering={pendingSceneEntering}
 			class="background-stage-scene background-stage-scene-incoming"
@@ -261,6 +279,27 @@
 			radial-gradient(circle at top left, rgb(56 189 248 / 22%), transparent 28rem),
 			radial-gradient(circle at top right, rgb(79 120 255 / 14%), transparent 24rem),
 			linear-gradient(180deg, #eef8ff 0%, #e8f3ff 45%, #deebfb 100%);
+	}
+
+	.background-stage-wash-portrait-home {
+		background:
+			radial-gradient(circle at 14% 8%, rgb(154 234 255 / 24%), transparent 22%),
+			radial-gradient(circle at 86% 12%, rgb(79 120 255 / 14%), transparent 24%),
+			radial-gradient(circle at 50% 100%, rgb(255 255 255 / 52%), transparent 36%),
+			linear-gradient(180deg, rgb(252 253 255 / 99%), rgb(242 248 255 / 96%) 44%, #def 100%);
+	}
+
+	.background-stage-wash-portrait-subpage {
+		background:
+			radial-gradient(circle at 10% 12%, rgb(139 225 255 / 12%), transparent 22%),
+			radial-gradient(circle at 88% 18%, rgb(79 120 255 / 9%), transparent 20%),
+			linear-gradient(180deg, rgb(250 252 255 / 98%), rgb(244 248 255 / 96%) 46%, #e7effa 100%);
+	}
+
+	.background-stage-wash-portrait-neutral {
+		background:
+			radial-gradient(circle at top right, rgb(255 255 255 / 48%), transparent 26%),
+			linear-gradient(180deg, #f6f9ff 0%, #ecf3fb 100%);
 	}
 
 	.background-stage-wash-home {

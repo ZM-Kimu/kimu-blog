@@ -53,6 +53,10 @@ export const zhCNMessages = {
 			primaryNav: '主导航',
 			quickNav: '快捷入口'
 		},
+		portraitHint: {
+			desktop: '建议浏览器窗口比例 16:9 横向浏览更佳。',
+			mobile: '建议切换横屏浏览更佳。'
+		},
 		status: {
 			current: '当前区段',
 			mode: '模式',
@@ -158,7 +162,7 @@ export const zhCNMessages = {
 			backgroundAnimationDescription: '为首页启用 Spine 背景动画增强层。',
 			backgroundAnimationOn: '开启',
 			backgroundAnimationOff: '关闭',
-			backgroundAnimationDisabled: '当前在 compact 布局或减动效模式下自动停用。',
+			backgroundAnimationDisabled: '当前在 portrait 文档流布局或减动效模式下自动停用。',
 			backgroundAnimationFailed: '资源加载失败，已回退到默认背景。',
 			manage: 'Manage 工作台',
 			manageDescription: '打开内容维护面板，进入文章列表、编辑器与仓库写入流程。',

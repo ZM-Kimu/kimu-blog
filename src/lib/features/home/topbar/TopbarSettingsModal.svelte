@@ -53,7 +53,7 @@
 
 	let customCursorButton: HTMLButtonElement | null = $state(null)
 	let systemCursorButton: HTMLButtonElement | null = $state(null)
-	const topbarMotion = $derived(getMotionTokens({ compact: false, reducedMotion }).topbar)
+	const topbarMotion = $derived(getMotionTokens({ portrait: false, reducedMotion }).topbar)
 
 	function dialogRise(
 		_: Element,

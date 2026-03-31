@@ -11,7 +11,6 @@
 	import '$lib/features/home/styles/topbar/main.css'
 	import '$lib/features/home/styles/topbar/subpage.css'
 	import '$lib/features/home/styles/topbar/motion.css'
-	import '$lib/features/home/styles/topbar/responsive.css'
 	import { translate, type LocaleMessages } from '$lib/i18n'
 	import { createTopbarMotionCssVars, getMotionTokens } from '$lib/motion/tokens'
 	import { getNavigationContext } from '$lib/navigation/context'
@@ -30,12 +29,12 @@
 	let {
 		host = null,
 		messages,
-		compact = false,
+		portrait = false,
 		reducedMotion = false
 	}: {
 		host?: HTMLElement | null
 		messages?: LocaleMessages
-		compact?: boolean
+		portrait?: boolean
 		reducedMotion?: boolean
 	} = $props()
 
@@ -44,7 +43,7 @@
 	const cursorMode = $derived(navigationManager.cursorMode)
 	const backgroundAnimationPreference = $derived(navigationManager.backgroundAnimationPreference)
 	const backgroundAnimationStatus = $derived(navigationManager.backgroundAnimationStatus)
-	const backgroundAnimationDisabled = $derived(compact || reducedMotion)
+	const backgroundAnimationDisabled = $derived(portrait || reducedMotion)
 	const backgroundAnimationDescription = $derived.by(() => {
 		const segments = [t('topbar.settings.backgroundAnimationDescription')]
 
@@ -105,7 +104,7 @@
 		return subpageTopbarState
 	})
 	const topbarMotionStyle = $derived(
-		createTopbarMotionCssVars(getMotionTokens({ compact, reducedMotion }))
+		createTopbarMotionCssVars(getMotionTokens({ portrait, reducedMotion }))
 	)
 
 	function t(key: string) {
@@ -264,7 +263,7 @@
 			authorName={siteConfig.author}
 			infoLabel={t('home.profile.info')}
 			profileHref="/about"
-			{compact}
+			{portrait}
 			{reducedMotion}
 			onSubpageBack={handleBack}
 			bind:this={homeTopbar}

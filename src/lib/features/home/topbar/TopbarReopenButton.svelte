@@ -44,7 +44,7 @@
 		onActivate: () => void
 	} = $props()
 
-	const topbarMotion = $derived(getMotionTokens({ compact: false, reducedMotion }).topbar)
+	const topbarMotion = $derived(getMotionTokens({ portrait: false, reducedMotion }).topbar)
 </script>
 
 <button

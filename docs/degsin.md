@@ -346,7 +346,8 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - 首屏会先进入 boot loading overlay，再进入主 UI 的 `entry`，随后收敛到 `idle`
 - boot 的资源等待通过独立的 `data-site-boot-assets` 协调，不再把资源门控混进 boot 主状态
 - `/manage` 及其子路由不参与公开站点 boot 协调，当前实现直接跳过公共 boot 时间线
-- 当 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时，首页退化成精简版布局
+- 公开站点布局按页面朝向切换：**landscape 使用 large layout / desktop app-shell**，**portrait 使用 mobile 文档流布局**
+- `landscape` 公开布局不再按宽度断点做元素重排，只保留尺寸级收缩与极短高度保护
 - 非首页公开内容路由统一走 shared subpage app shell，用于分类页、归档页、详情页、标签页、About 与错误页
 - 站内导航默认由 SvelteKit client router 接管：**PATH 变化，但不整页刷新**
 - 常规页面切换不复用 boot 时间线，而是统一按 `exit -> entry -> idle` 协调内容、背景与壳体动画
@@ -361,7 +362,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - 宽屏 desktop 当前允许 source-aware 的 route-enter：
   - `subpage -> home` 使用首页内容的独立进入节奏
   - `home -> public subpage` 使用子页内容的独立进入节奏
-  - compact / mobile 继续走更轻的简化路径
+- 纵向 portrait 页面使用独立文档流壳体与更轻的页面进入语法，不再复用 desktop app-shell choreography
 - 公开站点当前的背景 scene 固定为：
   - `home-spine`
   - `subpage-room`

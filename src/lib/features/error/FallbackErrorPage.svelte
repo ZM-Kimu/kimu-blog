@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state'
 	import { translate } from '$lib/i18n'
+	import { getPublicLayoutContext } from '$lib/layout/public-layout'
 
 	let {
 		status,
@@ -11,8 +12,10 @@
 	} = $props()
 
 	const messages = $derived(page.data.i18n?.messages)
+	const { getMode } = getPublicLayoutContext()
 	const isNotFound = $derived(status === 404)
 	const isServerFault = $derived(status >= 500)
+	const isPortraitLayout = $derived(getMode() === 'portrait')
 	const usesCompactHeadline = $derived(isNotFound || isServerFault)
 	const eyebrow = $derived(
 		isNotFound
@@ -42,7 +45,7 @@
 	)
 </script>
 
-<section class="error-screen">
+<section class:error-screen-portrait={isPortraitLayout} class="error-screen">
 	<div class="error-screen-body">
 		<div class="error-screen-visual" aria-label={translate(messages, 'error.fallbackIllustration')}>
 			<img src={visualSrc} alt={visualAlt} loading="eager" decoding="async" />
@@ -72,6 +75,11 @@
 		isolation: isolate;
 	}
 
+	.error-screen-portrait {
+		min-height: auto;
+		padding: 0;
+	}
+
 	.error-screen-body {
 		display: grid;
 		align-content: center;
@@ -87,6 +95,13 @@
 		overflow: clip;
 	}
 
+	.error-screen-portrait .error-screen-body {
+		min-height: auto;
+		padding: 0.15rem 0 0.35rem;
+		gap: 1.2rem;
+		align-content: start;
+	}
+
 	.error-screen-copy {
 		display: grid;
 		gap: 0.75rem;
@@ -95,6 +110,19 @@
 		width: min(100%, 42rem);
 		text-align: center;
 		padding: 0 1rem;
+	}
+
+	.error-screen-portrait .error-screen-copy {
+		width: min(100%, 35rem);
+		padding: 1.2rem 1.15rem;
+		border: 1px solid rgb(92 148 204 / 16%);
+		border-radius: 26px;
+		background:
+			linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(241 247 255 / 84%)),
+			linear-gradient(90deg, rgb(79 120 255 / 8%), transparent 52%);
+		box-shadow:
+			inset 0 1px 0 rgb(255 255 255 / 94%),
+			0 18px 38px rgb(52 104 164 / 10%);
 	}
 
 	.error-screen-headline {
@@ -132,6 +160,11 @@
 		will-change: opacity, transform;
 	}
 
+	.error-screen-portrait .error-screen-message {
+		font-size: 0.96rem;
+		max-width: 34ch;
+	}
+
 	.error-screen-visual {
 		position: relative;
 		display: grid;
@@ -140,6 +173,19 @@
 		min-height: 25rem;
 		padding: 0.5rem 1rem 0;
 		isolation: isolate;
+	}
+
+	.error-screen-portrait .error-screen-visual {
+		width: min(100%, 35rem);
+		min-height: auto;
+		padding: 1rem 0.7rem 0.65rem;
+		border: 1px solid rgb(92 148 204 / 14%);
+		border-radius: 30px;
+		background:
+			radial-gradient(circle at top right, rgb(255 255 255 / 74%), transparent 30%),
+			linear-gradient(180deg, rgb(255 255 255 / 86%), rgb(230 241 253 / 76%));
+		box-shadow: 0 20px 40px rgb(52 104 164 / 10%);
+		overflow: clip;
 	}
 
 	.error-screen-visual::before {
@@ -172,6 +218,11 @@
 		max-height: 24rem;
 		object-fit: contain;
 		filter: drop-shadow(0 28px 42px rgb(49 103 168 / 22%));
+	}
+
+	.error-screen-portrait .error-screen-visual img {
+		width: min(70%, 16.5rem);
+		max-height: 18rem;
 	}
 
 	@media (width <= 1040px) {

@@ -11,8 +11,11 @@
 	import DockNav from '$lib/components/layout/DockNav.svelte'
 	import Footer from '$lib/components/layout/Footer.svelte'
 	import Header from '$lib/components/layout/Header.svelte'
+	import PortraitPublicHeader from '$lib/components/layout/PortraitPublicHeader.svelte'
 	import PublicTopbarManager from '$lib/components/layout/PublicTopbarManager.svelte'
 	import { siteConfig } from '$lib/config/site'
+	import { setPublicLayoutContext } from '$lib/layout/public-layout'
+	import { translate } from '$lib/i18n'
 	import { setNavigationContext } from '$lib/navigation/context'
 	import { createNavigationStateManager } from '$lib/navigation/navigation-state.svelte'
 	import { createPageState } from '$lib/navigation/page-state'
@@ -26,17 +29,22 @@
 		bridgeTo: (targetShellVariant: TopbarShellVariant) => Promise<void>
 	}
 
-	const compactQuery = '(max-width: 900px), (max-aspect-ratio: 145/100)'
+	const portraitQuery = '(orientation: portrait)'
+	const coarsePointerQuery = '(pointer: coarse)'
 	const reducedMotionQuery = '(prefers-reduced-motion: reduce)'
 
 	let { children, data } = $props()
 	let siteFrame: HTMLDivElement | null = $state(null)
 	let publicTopbarManager: PublicTopbarManagerHandle | null = $state(null)
-	let isCompactLayout = $state(false)
+	let publicLayoutMode = $state<'landscape' | 'portrait'>('landscape')
+	let isCoarsePointer = $state(false)
 	let prefersReducedMotion = $state(false)
 	let desktopHomeEnterActive = $state(false)
 	let desktopSubpageEnterActive = $state(false)
 	let queuedDesktopEnterVariant = $state<'none' | 'subpage'>('none')
+	let portraitOrientationToastVisible = $state(false)
+	let portraitOrientationToastClosing = $state(false)
+	let portraitOrientationToastWasEligible = $state(false)
 	let siteBootPhase = $state<SiteBootPhase>(
 		page.url.pathname === '/manage' || page.url.pathname.startsWith('/manage/') ? 'idle' : 'boot'
 	)
@@ -53,6 +61,9 @@
 	)
 
 	setNavigationContext({ navigationManager })
+	setPublicLayoutContext({
+		getMode: () => publicLayoutMode
+	})
 
 	const messages = $derived(data.i18n?.messages)
 	const routeState = $derived(
@@ -67,10 +78,12 @@
 	)
 	const isManageRoute = $derived(routeState.kind === 'manage')
 	const isPublicScreenRoute = $derived(pageState.shellMode === 'screen' && !isManageRoute)
+	const isPortraitPublicLayout = $derived(isPublicScreenRoute && publicLayoutMode === 'portrait')
+	const isLandscapePublicLayout = $derived(!isPortraitPublicLayout)
 	const isBareRoute = $derived(isPublicScreenRoute || isManageRoute)
 	const showGlobalChrome = $derived(pageState.showGlobalChrome)
 	const isRouteOutgoing = $derived(navigationManager.phase === 'exit')
-	const isDesktopHomeRoute = $derived(routeState.kind === 'home' && !isCompactLayout)
+	const isDesktopHomeRoute = $derived(routeState.kind === 'home' && isLandscapePublicLayout)
 	const useDesktopHomeExit = $derived(isRouteOutgoing && isDesktopHomeRoute)
 	const isRouteEntering = $derived(
 		navigationManager.phase === 'entry' && navigationManager.pendingTarget === page.url.pathname
@@ -83,9 +96,15 @@
 	)
 	const motionTokens = $derived(
 		getMotionTokens({
-			compact: isCompactLayout,
+			portrait: isPortraitPublicLayout,
 			reducedMotion: prefersReducedMotion
 		})
+	)
+	const portraitOrientationHint = $derived(
+		translate(
+			messages,
+			isCoarsePointer ? 'shell.portraitHint.mobile' : 'shell.portraitHint.desktop'
+		)
 	)
 	const siteFrameMotionStyle = $derived.by(() => {
 		const tokens = motionTokens
@@ -94,6 +113,8 @@
 	})
 	let desktopHomeEnterTimer: ReturnType<typeof setTimeout> | null = null
 	let desktopSubpageEnterTimer: ReturnType<typeof setTimeout> | null = null
+	let portraitOrientationToastTimer: ReturnType<typeof setTimeout> | null = null
+	let portraitOrientationToastExitTimer: ReturnType<typeof setTimeout> | null = null
 
 	function clearDesktopHomeEnterTimer() {
 		if (desktopHomeEnterTimer === null) {
@@ -111,6 +132,41 @@
 
 		clearTimeout(desktopSubpageEnterTimer)
 		desktopSubpageEnterTimer = null
+	}
+
+	function clearPortraitOrientationToastTimers() {
+		if (portraitOrientationToastTimer !== null) {
+			clearTimeout(portraitOrientationToastTimer)
+			portraitOrientationToastTimer = null
+		}
+
+		if (portraitOrientationToastExitTimer !== null) {
+			clearTimeout(portraitOrientationToastExitTimer)
+			portraitOrientationToastExitTimer = null
+		}
+	}
+
+	function hidePortraitOrientationToastImmediate() {
+		clearPortraitOrientationToastTimers()
+		portraitOrientationToastClosing = false
+		portraitOrientationToastVisible = false
+	}
+
+	function showPortraitOrientationToast() {
+		hidePortraitOrientationToastImmediate()
+		portraitOrientationToastVisible = true
+		portraitOrientationToastClosing = false
+
+		portraitOrientationToastTimer = setTimeout(() => {
+			portraitOrientationToastTimer = null
+			portraitOrientationToastClosing = true
+
+			portraitOrientationToastExitTimer = setTimeout(() => {
+				portraitOrientationToastExitTimer = null
+				portraitOrientationToastClosing = false
+				portraitOrientationToastVisible = false
+			}, motionTokens.notice.exitDurationMs)
+		}, motionTokens.notice.visibleDurationMs)
 	}
 
 	function resolvePreviewRouteState(pathname: string) {
@@ -157,6 +213,7 @@
 	onDestroy(() => {
 		clearDesktopHomeEnterTimer()
 		clearDesktopSubpageEnterTimer()
+		clearPortraitOrientationToastTimers()
 	})
 
 	onNavigate((navigation) => {
@@ -183,7 +240,7 @@
 		})
 		const started = navigationManager.beginPageSwitch(targetPath, targetPageState, {
 			origin: `navigate:${navigation.type}`,
-			compact: isCompactLayout,
+			portrait: isPortraitPublicLayout,
 			reducedMotion: prefersReducedMotion
 		})
 
@@ -192,7 +249,7 @@
 		}
 
 		if (
-			!isCompactLayout &&
+			isLandscapePublicLayout &&
 			pageState.motionFamily === 'main' &&
 			targetPageState.shellMode === 'screen' &&
 			targetRouteState.kind !== 'manage' &&
@@ -211,7 +268,7 @@
 				return
 			}
 
-			navigationManager.startBackgroundBridge({ deferUntilEntry: !isCompactLayout })
+			navigationManager.startBackgroundBridge({ deferUntilEntry: isLandscapePublicLayout })
 			await tick()
 			if (navigationManager.pendingTarget !== targetPath) {
 				return
@@ -221,7 +278,7 @@
 				publicTopbarManager?.bridgeTo(targetPageState.topbarShellVariant).catch(() => undefined) ??
 				Promise.resolve()
 
-			if (!isCompactLayout) {
+			if (isLandscapePublicLayout) {
 				void topbarBridgePromise
 				return
 			}
@@ -270,7 +327,7 @@
 			return
 		}
 
-		if (pageState.motionFamily !== 'main' || isCompactLayout) {
+		if (pageState.motionFamily !== 'main' || !isLandscapePublicLayout) {
 			clearDesktopHomeEnterTimer()
 			desktopHomeEnterActive = false
 		} else if (isRouteEntering) {
@@ -288,10 +345,10 @@
 			return
 		}
 
-		if (!isPublicScreenRoute || pageState.motionFamily !== 'subpage' || isCompactLayout) {
+		if (!isPublicScreenRoute || pageState.motionFamily !== 'subpage' || !isLandscapePublicLayout) {
 			clearDesktopSubpageEnterTimer()
 			desktopSubpageEnterActive = false
-			if (pageState.motionFamily === 'main' || isCompactLayout) {
+			if (pageState.motionFamily === 'main' || !isLandscapePublicLayout) {
 				queuedDesktopEnterVariant = 'none'
 			}
 			return
@@ -310,12 +367,30 @@
 		}, motionTokens.route.desktopSubpageEnterDurationMs)
 	})
 
+	$effect(() => {
+		if (!browser) {
+			return
+		}
+
+		const toastEligible = isPortraitPublicLayout && siteBootPhase === 'idle'
+		if (toastEligible && !portraitOrientationToastWasEligible) {
+			showPortraitOrientationToast()
+		} else if (!toastEligible) {
+			hidePortraitOrientationToastImmediate()
+		}
+
+		portraitOrientationToastWasEligible = toastEligible
+	})
+
 	onMount(() => {
 		navigationManager.hydrateClientRuntime()
 		document.addEventListener('dragstart', handleDocumentDragStart)
 
-		const unbindCompact = bindMediaQuery(compactQuery, (matches) => {
-			isCompactLayout = matches
+		const unbindPortrait = bindMediaQuery(portraitQuery, (matches) => {
+			publicLayoutMode = matches ? 'portrait' : 'landscape'
+		})
+		const unbindCoarsePointer = bindMediaQuery(coarsePointerQuery, (matches) => {
+			isCoarsePointer = matches
 		})
 		const unbindReducedMotion = bindMediaQuery(reducedMotionQuery, (matches) => {
 			prefersReducedMotion = matches
@@ -326,13 +401,14 @@
 
 			return () => {
 				document.removeEventListener('dragstart', handleDocumentDragStart)
-				unbindCompact()
+				unbindPortrait()
+				unbindCoarsePointer()
 				unbindReducedMotion()
 			}
 		}
 
 		const bootMotionTokens = getMotionTokens({
-			compact: window.matchMedia(compactQuery).matches,
+			portrait: window.matchMedia(portraitQuery).matches,
 			reducedMotion: window.matchMedia(reducedMotionQuery).matches
 		})
 		const bootDurationMs = bootMotionTokens.boot.holdDurationMs
@@ -382,7 +458,8 @@
 		return () => {
 			isDisposed = true
 			document.removeEventListener('dragstart', handleDocumentDragStart)
-			unbindCompact()
+			unbindPortrait()
+			unbindCoarsePointer()
 			unbindReducedMotion()
 			bootAssetsObserver?.disconnect()
 
@@ -409,28 +486,44 @@
 			scene={navigationManager.backgroundScene}
 			pendingScene={navigationManager.pendingBackgroundScene}
 			bridgeActive={navigationManager.backgroundBridgeActive}
-			compact={isCompactLayout}
+			layoutMode={publicLayoutMode}
 			reducedMotion={prefersReducedMotion}
 			bridgeDurationMs={navigationManager.bridgeDurationMs}
 			allowWarmup={siteBootPhase === 'idle'}
 		/>
 	{/if}
 
-	<PublicTopbarManager
-		host={siteFrame}
-		{messages}
-		compact={isCompactLayout}
-		reducedMotion={prefersReducedMotion}
-		bind:this={publicTopbarManager}
-	/>
+	{#if isLandscapePublicLayout}
+		<PublicTopbarManager
+			host={siteFrame}
+			{messages}
+			portrait={false}
+			reducedMotion={prefersReducedMotion}
+			bind:this={publicTopbarManager}
+		/>
+	{/if}
 
-	{#if showGlobalChrome}
+	{#if isPortraitPublicLayout}
+		<PortraitPublicHeader {messages} {pageState} />
+	{:else if showGlobalChrome}
 		<Header {messages} />
+	{/if}
+
+	{#if portraitOrientationToastVisible}
+		<div
+			aria-live="polite"
+			class:portrait-orientation-toast-closing={portraitOrientationToastClosing}
+			class="portrait-orientation-toast"
+			role="status"
+		>
+			<p>{portraitOrientationHint}</p>
+		</div>
 	{/if}
 
 	<main
 		class:site-main-bare={isBareRoute}
 		class:site-main-home={routeState.kind === 'home'}
+		class:site-main-public-portrait={isPortraitPublicLayout}
 		class="site-main"
 	>
 		{#if isPublicScreenRoute}
@@ -463,7 +556,7 @@
 		{/if}
 	</main>
 
-	{#if showGlobalChrome}
+	{#if !isPortraitPublicLayout && showGlobalChrome}
 		<DockNav {messages} />
 		<Footer {messages} />
 	{/if}

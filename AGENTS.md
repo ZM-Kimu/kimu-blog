@@ -30,7 +30,8 @@
 - 仓库样式必须通过严格 `stylelint`；覆盖 `src/**/*.{css,svelte}`
 - 产品层用户可见文案必须走 `src/lib/i18n` messages；`zh-CN` / `en-US` 必须保持 key 对等
 - 首页使用独立 `screen-home` 布局；公开二级内容页统一收敛到 shared subpage app shell
-- 首页在 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时切到精简版方案
+- 公开站点布局按页面朝向切换：**landscape 使用 large layout / desktop app-shell**，**portrait 使用 mobile 文档流布局**
+- `landscape` 公开布局不再按宽度断点做元素重排，只保留尺寸级收缩与极短高度保护
 - “SPA-like 体验”不等于“纯 SPA 架构”；**不要**为了省事把根布局改成 `ssr = false`
 
 ## 3. 项目优先级

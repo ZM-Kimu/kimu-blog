@@ -608,15 +608,3 @@
 	background: transparent;
 	box-shadow: none;
 }
-
-@media (width <=700px) {
-	.home-topbar-settings-option {
-		grid-template-columns: 1fr;
-		align-items: stretch;
-	}
-
-	.home-topbar-settings-controls {
-		justify-content: flex-start;
-		flex-wrap: wrap;
-	}
-}

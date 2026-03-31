@@ -55,6 +55,10 @@ export const appMessageSkeleton = {
 			primaryNav: '',
 			quickNav: ''
 		},
+		portraitHint: {
+			desktop: '',
+			mobile: ''
+		},
 		status: {
 			current: '',
 			mode: '',

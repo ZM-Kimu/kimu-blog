@@ -33,7 +33,7 @@
 		authorName,
 		infoLabel,
 		profileHref = '/about',
-		compact = false,
+		portrait = false,
 		reducedMotion = false,
 		onSubpageBack
 	}: {
@@ -47,7 +47,7 @@
 		authorName: string
 		infoLabel: string
 		profileHref?: '/' | '/about'
-		compact?: boolean
+		portrait?: boolean
 		reducedMotion?: boolean
 		onSubpageBack?: (() => void) | undefined
 	} = $props()
@@ -152,7 +152,7 @@
 				motionLibs = libs
 			}
 
-			if (compact || reducedMotion || !libs) {
+			if (portrait || reducedMotion || !libs) {
 				if (!libs) {
 					mode = nextMode
 					await tick()

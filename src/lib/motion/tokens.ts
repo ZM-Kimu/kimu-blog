@@ -1,5 +1,5 @@
 export type MotionEnvironment = {
-	compact: boolean
+	portrait: boolean
 	reducedMotion: boolean
 }
 
@@ -38,7 +38,7 @@ export function msToSeconds(value: number) {
 	return value / 1000
 }
 
-export function getMotionTokens({ compact, reducedMotion }: MotionEnvironment) {
+export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) {
 	const standardEase = cssEasing.standard
 	const shared = {
 		easingStandard: standardEase,
@@ -82,7 +82,7 @@ export function getMotionTokens({ compact, reducedMotion }: MotionEnvironment) {
 	}
 
 	const route = {
-		exitDurationMs: reducedMotion ? 60 : 120,
+		exitDurationMs: reducedMotion ? 5 : 10,
 		entryDurationMs: reducedMotion ? 80 : 160,
 		bridgeDurationMs: reducedMotion ? 0 : 180,
 		desktopHomeEnterDurationMs: reducedMotion ? 1 : 830,
@@ -101,17 +101,22 @@ export function getMotionTokens({ compact, reducedMotion }: MotionEnvironment) {
 		desktopSubpageEnterDelayMs: reducedMotion ? 0 : 120,
 		desktopSubpageEnterOffsetYPx: 22,
 		desktopSubpageEnterBlurPx: 10,
-		compactHomeEnterDurationMs: reducedMotion ? 1 : 620,
-		compactHomeEnterDelayPrimaryMs: reducedMotion ? 0 : 120,
-		compactHomeEnterDelayMissionMs: reducedMotion ? 0 : 170,
-		compactHomeEnterDelayFooterMs: reducedMotion ? 0 : 210,
-		compactHomeEnterOffsetYPx: 22,
-		compactHomeEnterBlurPx: 10
+		portraitPageEnterDurationMs: reducedMotion ? 1 : 320,
+		portraitPageEnterDelayMs: 0,
+		portraitPageEnterOffsetYPx: 18,
+		portraitPageEnterBlurPx: 0
 	}
 
 	const background = {
-		sceneCrossfadeDurationMs: reducedMotion ? 0 : 180,
+		sceneCrossfadeDurationMs: reducedMotion ? 0 : portrait ? 0 : 180,
 		spineOverlayFadeDurationMs: reducedMotion ? 1 : 260
+	}
+
+	const notice = {
+		enterDurationMs: reducedMotion ? 1 : 260,
+		exitDurationMs: reducedMotion ? 1 : 180,
+		visibleDurationMs: reducedMotion ? 1400 : 3200,
+		offsetYPx: 14
 	}
 
 	const error = {
@@ -161,7 +166,7 @@ export function getMotionTokens({ compact, reducedMotion }: MotionEnvironment) {
 		settingsDialogExitScaleFrom: 0.985,
 		richDurationMs: 580,
 		stripRevealDurationMs: 240,
-		compactDurationMs: 180,
+		portraitDurationMs: 180,
 		reducedDurationMs: 120,
 		stripDropOffsetPx: -20,
 		stripRetreatOffsetPx: -16,
@@ -206,13 +211,14 @@ export function getMotionTokens({ compact, reducedMotion }: MotionEnvironment) {
 	}
 
 	return {
-		compact,
+		portrait,
 		reducedMotion,
 		shared,
 		press,
 		boot,
 		route,
 		background,
+		notice,
 		error,
 		homeAmbient,
 		topbar,
@@ -274,14 +280,16 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-route-subpage-enter-delay', ms(tokens.route.desktopSubpageEnterDelayMs)],
 		['motion-route-subpage-enter-offset-y', px(tokens.route.desktopSubpageEnterOffsetYPx)],
 		['motion-route-subpage-enter-blur', px(tokens.route.desktopSubpageEnterBlurPx)],
-		['motion-route-compact-enter-duration', ms(tokens.route.compactHomeEnterDurationMs)],
-		['motion-route-compact-enter-delay-primary', ms(tokens.route.compactHomeEnterDelayPrimaryMs)],
-		['motion-route-compact-enter-delay-mission', ms(tokens.route.compactHomeEnterDelayMissionMs)],
-		['motion-route-compact-enter-delay-footer', ms(tokens.route.compactHomeEnterDelayFooterMs)],
-		['motion-route-compact-enter-offset-y', px(tokens.route.compactHomeEnterOffsetYPx)],
-		['motion-route-compact-enter-blur', px(tokens.route.compactHomeEnterBlurPx)],
+		['motion-route-portrait-enter-duration', ms(tokens.route.portraitPageEnterDurationMs)],
+		['motion-route-portrait-enter-delay', ms(tokens.route.portraitPageEnterDelayMs)],
+		['motion-route-portrait-enter-offset-y', px(tokens.route.portraitPageEnterOffsetYPx)],
+		['motion-route-portrait-enter-blur', px(tokens.route.portraitPageEnterBlurPx)],
 		['motion-bg-bridge-duration', ms(tokens.background.sceneCrossfadeDurationMs)],
 		['motion-bg-spine-fade-duration', ms(tokens.background.spineOverlayFadeDurationMs)],
+		['motion-notice-enter-duration', ms(tokens.notice.enterDurationMs)],
+		['motion-notice-exit-duration', ms(tokens.notice.exitDurationMs)],
+		['motion-notice-visible-duration', ms(tokens.notice.visibleDurationMs)],
+		['motion-notice-offset-y', px(tokens.notice.offsetYPx)],
 		['motion-error-enter-ease', tokens.error.enterEase],
 		['motion-error-enter-offset-y', px(tokens.error.enterOffsetYPx)],
 		['motion-error-visual-duration', ms(tokens.error.visualDurationMs)],
@@ -324,27 +332,27 @@ export function createTopbarMotionCssVars(tokens: MotionTokens) {
 }
 
 export function createRootMotionCssSource() {
-	const desktopTokens = getMotionTokens({ compact: false, reducedMotion: false })
-	const compactTokens = getMotionTokens({ compact: true, reducedMotion: false })
-	const reducedTokens = getMotionTokens({ compact: false, reducedMotion: true })
-	const compactReducedTokens = getMotionTokens({ compact: true, reducedMotion: true })
+	const landscapeTokens = getMotionTokens({ portrait: false, reducedMotion: false })
+	const portraitTokens = getMotionTokens({ portrait: true, reducedMotion: false })
+	const reducedTokens = getMotionTokens({ portrait: false, reducedMotion: true })
+	const portraitReducedTokens = getMotionTokens({ portrait: true, reducedMotion: true })
 	const createScopeCss = (tokens: MotionTokens) =>
 		[createGlobalMotionCssVars(tokens), createTopbarMotionCssVars(tokens)].filter(Boolean).join(' ')
 
 	return [
 		'/* This file is generated from src/lib/motion/tokens.ts. */',
-		`:root { ${createScopeCss(desktopTokens)} }`,
+		`:root { ${createScopeCss(landscapeTokens)} }`,
 		'',
-		'@media (width <= 900px), (aspect-ratio <= 145 / 100) {',
-		`\t:root { ${createScopeCss(compactTokens)} }`,
+		'@media (orientation: portrait) {',
+		`\t:root { ${createScopeCss(portraitTokens)} }`,
 		'}',
 		'',
 		'@media (prefers-reduced-motion: reduce) {',
 		`\t:root { ${createScopeCss(reducedTokens)} }`,
 		'}',
 		'',
-		'@media (width <= 900px) and (prefers-reduced-motion: reduce), (aspect-ratio <= 145 / 100) and (prefers-reduced-motion: reduce) {',
-		`\t:root { ${createScopeCss(compactReducedTokens)} }`,
+		'@media (orientation: portrait) and (prefers-reduced-motion: reduce) {',
+		`\t:root { ${createScopeCss(portraitReducedTokens)} }`,
 		'}',
 		''
 	].join('\n')
