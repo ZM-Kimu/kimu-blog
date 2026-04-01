@@ -312,8 +312,13 @@ export function createPageState({
 		motionFamily: 'subpage',
 		shellMode: isScreenRoute || usesSubpageScreen ? 'screen' : 'shell',
 		showGlobalChrome: !(isScreenRoute || usesSubpageScreen),
-		backgroundPolicy: 'replace',
-		backgroundScene: usesSubpageScreen ? 'subpage-room' : 'neutral-default',
+		backgroundPolicy: routeState.kind === 'blog' ? 'inherit' : 'replace',
+		backgroundScene:
+			routeState.kind === 'blog'
+				? undefined
+				: usesSubpageScreen
+					? 'subpage-room'
+					: 'neutral-default',
 		topbarShellVariant: usesSubpageScreen ? 'subpage' : 'none',
 		topbar: {
 			variant: 'subpage',

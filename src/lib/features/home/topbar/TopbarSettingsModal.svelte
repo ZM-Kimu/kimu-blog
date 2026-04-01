@@ -202,7 +202,11 @@
 					</div>
 
 					<div class="home-topbar-settings-controls">
-						<a class="home-topbar-settings-link-button" href={resolve('/manage')} onclick={onClose}>
+						<a
+							class="home-topbar-settings-link-button"
+							href={resolve('/manage/posts')}
+							onclick={onClose}
+						>
 							<strong>{manageActionLabel}</strong>
 						</a>
 					</div>
