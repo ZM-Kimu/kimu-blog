@@ -7,7 +7,7 @@ export const appShellNav = [
 ] as const
 
 export const hudStatusChips = [
-	{ labelKey: 'shell.status.mode', value: 'LIVE' },
-	{ labelKey: 'shell.status.stack', value: 'SVELTEKIT' },
-	{ labelKey: 'shell.status.deploy', value: 'PAGES' }
+	{ labelKey: 'shell.status.mode', valueKey: 'shell.status.modeValue' },
+	{ labelKey: 'shell.status.stack', valueKey: 'shell.status.stackValue' },
+	{ labelKey: 'shell.status.deploy', valueKey: 'shell.status.deployValue' }
 ] as const

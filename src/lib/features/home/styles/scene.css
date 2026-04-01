@@ -10,6 +10,7 @@
 	--home-topbar-height: 5.2rem;
 	--home-topbar-gap: 0.85rem;
 	--home-side-rail-offset: 6rem;
+	--home-left-tools-offset-extra: 0vh;
 	--home-profile-min-width: 13rem;
 	--home-profile-padding: 0.85rem 1rem;
 	--home-resource-gap: 0.65rem;
@@ -78,4 +79,10 @@
 	align-items: start;
 	overflow: clip;
 	background: transparent;
+}
+
+@media (width >= 901px) and (aspect-ratio >= 29/20) {
+	.home-shell {
+		--home-left-tools-offset-extra: 5vh;
+	}
 }

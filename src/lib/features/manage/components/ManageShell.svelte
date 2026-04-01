@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { resolve } from '$app/paths'
 	import { page } from '$app/state'
+	import { resolve } from '$app/paths'
+	import { translate } from '$lib/i18n'
 	import type { ManageSessionResponse } from '$lib/features/manage/types'
 	import type { InternalHref } from '$lib/navigation/types'
 
@@ -20,6 +21,9 @@
 		page.url.pathname.startsWith('/manage/posts') || postsHref.startsWith('#')
 	)
 	const actorLabel = $derived(session.actor.name ?? session.actor.email ?? session.actor.sub)
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
 
 	function followDebugHref(href: `#${string}`) {
 		if (typeof window === 'undefined') {
@@ -37,30 +41,33 @@
 <div class="manage-shell">
 	<header class="manage-shell-header">
 		<div class="manage-shell-identity">
-			<p class="eyebrow">Private Content Workbench</p>
-			<h1>Manage / {session.repository.name}</h1>
+			<p class="eyebrow">{t('manage.shell.eyebrow')}</p>
+			<h1>{t('manage.shell.title', { repo: session.repository.name })}</h1>
 			<p>
-				当前以 <strong>{actorLabel}</strong> 身份接入，写入目标为
-				<code>{session.repository.owner}/{session.repository.name}</code> on
-				<code>{session.repository.branch}</code>.
+				{t('manage.shell.description', {
+					actor: actorLabel,
+					owner: session.repository.owner,
+					repo: session.repository.name,
+					branch: session.repository.branch
+				})}
 			</p>
 		</div>
 
 		<div class="manage-shell-actions">
-			<nav class="manage-shell-nav" aria-label="管理导航">
+			<nav class="manage-shell-nav" aria-label={t('manage.shell.navAria')}>
 				{#if postsHref.startsWith('#')}
 					<button
 						class:active={isPostsRoute}
 						type="button"
 						onclick={() => followDebugHref(postsHref)}
 					>
-						<span>Content</span>
-						<strong>Posts</strong>
+						<span>{t('manage.shell.navContent')}</span>
+						<strong>{t('manage.shell.navPosts')}</strong>
 					</button>
 				{:else}
 					<a class:active={isPostsRoute} href={resolve(postsHref)}>
-						<span>Content</span>
-						<strong>Posts</strong>
+						<span>{t('manage.shell.navContent')}</span>
+						<strong>{t('manage.shell.navPosts')}</strong>
 					</a>
 				{/if}
 			</nav>
@@ -71,10 +78,12 @@
 					type="button"
 					onclick={() => followDebugHref(backHref)}
 				>
-					返回公开站
+					{t('manage.shell.backPublic')}
 				</button>
 			{:else}
-				<a class="button-secondary manage-shell-back" href={resolve(backHref)}>返回公开站</a>
+				<a class="button-secondary manage-shell-back" href={resolve(backHref)}>
+					{t('manage.shell.backPublic')}
+				</a>
 			{/if}
 		</div>
 	</header>
@@ -128,11 +137,6 @@
 		color: var(--ink-soft);
 	}
 
-	.manage-shell-identity code {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-	}
-
 	.manage-shell-actions {
 		display: grid;
 		align-content: start;
@@ -148,6 +152,9 @@
 
 	.manage-shell-nav a,
 	.manage-shell-nav button {
+		--site-press-scale: 1;
+		--site-press-translate-y: 0px;
+
 		display: grid;
 		gap: 0.2rem;
 		min-width: 9rem;
@@ -158,10 +165,24 @@
 		font: inherit;
 		text-align: left;
 		cursor: pointer;
+		scale: var(--site-press-scale);
+		translate: 0 var(--site-press-translate-y);
+		transform-origin: center;
+		touch-action: manipulation;
 		transition:
-			transform var(--ease),
-			border-color var(--ease),
-			background-color var(--ease);
+			transform var(--motion-shared-ease-standard),
+			translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+			scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+			border-color var(--motion-shared-ease-standard),
+			background-color var(--motion-shared-ease-standard);
+	}
+
+	.manage-shell-nav a:active,
+	.manage-shell-nav button:active {
+		--site-press-scale: var(--motion-press-active-scale);
+		--site-press-translate-y: var(--motion-press-active-translate-y);
+
+		transition-duration: var(--motion-press-in-duration);
 	}
 
 	.manage-shell-nav a span,

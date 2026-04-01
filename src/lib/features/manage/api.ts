@@ -10,13 +10,20 @@ import type {
 export class ManageApiError extends Error {
 	code: string
 	details: unknown
+	rawMessage: string | null
 	status: number
 
-	constructor(status: number, code: string, message: string, details: unknown = null) {
-		super(message)
+	constructor(
+		status: number,
+		code: string,
+		rawMessage: string | null = null,
+		details: unknown = null
+	) {
+		super(code)
 		this.name = 'ManageApiError'
 		this.status = status
 		this.code = code
+		this.rawMessage = rawMessage
 		this.details = details
 	}
 }
@@ -27,7 +34,7 @@ async function parseManageJson<T>(response: Response): Promise<T> {
 	if (!response.ok) {
 		const errorPayload = payload as ManageApiErrorPayload | null
 		const code = errorPayload?.error?.code ?? 'manage_request_failed'
-		const message = errorPayload?.error?.message ?? `请求失败: ${response.status}`
+		const message = errorPayload?.error?.message ?? null
 		throw new ManageApiError(response.status, code, message, errorPayload?.error?.details ?? null)
 	}
 

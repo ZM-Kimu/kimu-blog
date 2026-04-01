@@ -23,7 +23,10 @@ export type ElementBox = {
 
 export type MotionLibs = {
 	gsap: typeof import('gsap').gsap
-	Flip: typeof import('gsap/all').Flip
+	Flip: {
+		getState: (...args: unknown[]) => unknown
+		from: (...args: unknown[]) => unknown
+	}
 	interpolate: typeof import('flubber').interpolate
 }
 

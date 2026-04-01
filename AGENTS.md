@@ -27,10 +27,12 @@
 - frontmatter 必须做 schema 校验
 - 内容加载使用 `import.meta.glob(...)`
 - 博客详情路由必须提供明确的 `entries()` 或等效 prerender 方案
-- 内容页默认 `prerender = true`
 - 仓库样式必须通过严格 `stylelint`；覆盖 `src/**/*.{css,svelte}`
+- 组件模板中的内联样式只允许用于 **CSS 变量桥接**；禁止把静态布局、皮肤或视觉样式直接写进 `style=...`
+- 产品层用户可见文案必须走 `src/lib/i18n` messages；`zh-CN` / `en-US` 必须保持 key 对等
 - 首页使用独立 `screen-home` 布局；公开二级内容页统一收敛到 shared subpage app shell
-- 首页在 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时切到精简版方案
+- 公开站点布局按页面朝向切换：**landscape 使用 large layout / desktop app-shell**，**portrait 使用 mobile 文档流布局**
+- `landscape` 公开布局不再按宽度断点做元素重排，只保留尺寸级收缩与极短高度保护
 - “SPA-like 体验”不等于“纯 SPA 架构”；**不要**为了省事把根布局改成 `ssr = false`
 
 ## 3. 项目优先级
@@ -131,6 +133,7 @@
 - 避免引入会明显增加构建、hydrate 或维护复杂度、但收益不足的动画库
 - 首屏如果使用 boot/loading overlay，它只用于**首次进入站点**时协调主 UI 进入；语义按 `boot -> entry -> idle` 理解，后续常规页面切换统一走 `exit -> entry -> idle`，不要复用 boot 时间线
 - 当前实现的 boot 资源等待通过独立的 `data-site-boot-assets` 表达；不要再把资源门控混进 boot 主状态
+- 新增动画参数必须先进 `src/lib/motion/tokens.ts`；禁止在组件、布局、CSS 或 GSAP 时间线里直接新增裸时长、裸 delay、裸 easing、裸 offset/blur/scale
 
 ## 10. 资源、SEO 与可访问性规则
 
@@ -147,6 +150,14 @@
 
 可访问性是硬要求；动画优先，不代表可访问性可以放到最后。
 
+### 11.3 i18n
+
+- 当前只支持 `zh-CN` 与 `en-US`
+- locale 继续通过 `cookie + Accept-Language` 解析，并由根布局同步 `<html lang>`
+- 全站用户可见的**产品层**文本必须 i18n 化：导航、按钮、空态、错误页、manage UI、SEO/a11y 文案都必须来自 messages
+- Markdown 正文、frontmatter `title/description/tags` 等内容数据暂不强制双语
+- 缺失翻译在开发 / CI 中必须直接失败；生产环境只允许回退默认语言 `zh-CN`，不允许向用户显示 message key
+
 ## 13. 开发命令与完成标准
 
 ### 13.1 开发命令
@@ -156,8 +167,11 @@
 当前质量命令基线至少包括：
 
 - `npm run lint`
+- `npm run gen:motion-css`
+- `npm run validate:motion-css`
 - `npm run lint:css`
 - `npm run lint:css:fix`
+- `npm run validate:i18n`
 - `npm run check`
 - `npm run build`
 

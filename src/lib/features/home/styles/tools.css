@@ -8,7 +8,7 @@
 	grid-auto-rows: var(--home-tool-tile-size);
 	place-content: start start;
 	justify-self: start;
-	padding-top: var(--home-side-rail-offset);
+	padding-top: calc(var(--home-side-rail-offset) + var(--home-left-tools-offset-extra));
 	gap: var(--home-left-tools-gap);
 }
 
@@ -27,9 +27,11 @@
 	box-shadow: 0 14px 28px rgb(57 116 177 / 10%);
 	text-align: center;
 	transition:
-		transform var(--ease),
-		box-shadow var(--ease),
-		border-color var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		box-shadow var(--motion-shared-ease-standard),
+		border-color var(--motion-shared-ease-standard);
 }
 
 .tool-chip:hover {

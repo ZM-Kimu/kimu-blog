@@ -2,6 +2,7 @@ import { browser } from '$app/environment'
 import { goto, invalidateAll } from '$app/navigation'
 import { resolve } from '$app/paths'
 import { DEFAULT_LOCALE, LOCALE_COOKIE, type AppLocale } from '$lib/i18n/config'
+import { getMotionTokens } from '$lib/motion/tokens'
 
 import { createPageState } from './page-state'
 import { resolveRouteState } from './route-state'
@@ -19,6 +20,7 @@ import type {
 
 const CURSOR_MODE_STORAGE_KEY = 'cursor-mode'
 const BACKGROUND_ANIMATION_STORAGE_KEY = 'home-background-animation'
+const defaultMotionTokens = getMotionTokens({ portrait: false, reducedMotion: false })
 
 function createUnknownRouteState(): RouteState {
 	return resolveRouteState({ pathname: '/__unknown__', status: 200 })
@@ -40,9 +42,9 @@ export class NavigationStateManager {
 	pendingBackgroundScene = $state<BackgroundScene | null>(null)
 	backgroundBridgeActive = $state(false)
 	phase = $state<TransitionPhase>('idle')
-	exitDurationMs = $state(120)
-	bridgeDurationMs = $state(180)
-	enterDurationMs = $state(160)
+	exitDurationMs = $state(defaultMotionTokens.route.exitDurationMs)
+	bridgeDurationMs = $state(defaultMotionTokens.route.bridgeDurationMs)
+	enterDurationMs = $state(defaultMotionTokens.route.entryDurationMs)
 	locale = $state<AppLocale>(DEFAULT_LOCALE)
 	topbarCollapsed = $state(false)
 	settingsOpen = $state(false)
@@ -110,10 +112,14 @@ export class NavigationStateManager {
 		this.pendingTarget = targetPath
 		this.pendingPageState = targetPageState
 		this.pendingBackgroundScene = this.#resolveBackgroundScene(targetPageState)
-		this.exitDurationMs = options.reducedMotion ? 60 : 120
-		this.enterDurationMs = options.reducedMotion ? 80 : 160
+		const motionTokens = getMotionTokens({
+			portrait: options.portrait ?? false,
+			reducedMotion: options.reducedMotion ?? false
+		})
+		this.exitDurationMs = motionTokens.route.exitDurationMs
+		this.enterDurationMs = motionTokens.route.entryDurationMs
 		this.bridgeDurationMs =
-			options.reducedMotion || this.pendingBackgroundScene === this.backgroundScene ? 0 : 180
+			this.pendingBackgroundScene === this.backgroundScene ? 0 : motionTokens.route.bridgeDurationMs
 		this.settingsOpen = false
 		this.phase = 'exit'
 

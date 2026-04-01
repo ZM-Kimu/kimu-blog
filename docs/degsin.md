@@ -34,6 +34,7 @@ Cloudflare CDN 分发到用户
 - **站点内可视物件默认不可选中、不可拖动；仅输入控件与显式白名单恢复能力**
 - **仓库样式必须通过严格 CSS lint；独立 `.css` 与 `.svelte` 内 `<style>` 使用同一套规则**
 - **样式命名统一为纯 `kebab-case`，禁止 vendor prefix，统一收敛到现代 CSS 语法**
+- **产品层用户可见文本必须走 i18n messages；`zh-CN` / `en-US` 必须完全对等**
 
 ---
 
@@ -345,7 +346,8 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - 首屏会先进入 boot loading overlay，再进入主 UI 的 `entry`，随后收敛到 `idle`
 - boot 的资源等待通过独立的 `data-site-boot-assets` 协调，不再把资源门控混进 boot 主状态
 - `/manage` 及其子路由不参与公开站点 boot 协调，当前实现直接跳过公共 boot 时间线
-- 当 **`aspect-ratio < 1.45`** 或 **`max-width: 900px`** 时，首页退化成精简版布局
+- 公开站点布局按页面朝向切换：**landscape 使用 large layout / desktop app-shell**，**portrait 使用 mobile 文档流布局**
+- `landscape` 公开布局不再按宽度断点做元素重排，只保留尺寸级收缩与极短高度保护
 - 非首页公开内容路由统一走 shared subpage app shell，用于分类页、归档页、详情页、标签页、About 与错误页
 - 站内导航默认由 SvelteKit client router 接管：**PATH 变化，但不整页刷新**
 - 常规页面切换不复用 boot 时间线，而是统一按 `exit -> entry -> idle` 协调内容、背景与壳体动画
@@ -360,7 +362,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - 宽屏 desktop 当前允许 source-aware 的 route-enter：
   - `subpage -> home` 使用首页内容的独立进入节奏
   - `home -> public subpage` 使用子页内容的独立进入节奏
-  - compact / mobile 继续走更轻的简化路径
+- 纵向 portrait 页面使用独立文档流壳体与更轻的页面进入语法，不再复用 desktop app-shell choreography
 - 公开站点当前的背景 scene 固定为：
   - `home-spine`
   - `subpage-room`
@@ -481,10 +483,24 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `npm run lint` 已纳入 CSS lint，不再只检查 `prettier` 与 `eslint`
 - `npm run lint:css` 用于严格检查
 - `npm run lint:css:fix` 用于自动修正可修复项
+- `npm run gen:motion-css` 用于从 `src/lib/motion/tokens.ts` 生成全站动画 CSS 变量
+- `npm run validate:motion-css` 用于校验生成产物是否与动画 token 单一源保持同步
+- `npm run validate:i18n` 用于校验双语 key parity 与产品层裸文案
 - 选择器类名统一为纯 `kebab-case`
 - 不再保留 BEM 的 `__` / `--` 变体
+- 组件模板中的内联样式只允许作为 CSS 变量桥接；静态布局和视觉样式必须回到 class、data-attr 或独立 CSS
 - 不再保留 `-webkit-*` 等 vendor prefix 样式写法
 - 颜色函数、媒体查询、`@import` 等写法统一按现代 CSS 规范收敛
+- 全站动画参数统一收口到 `src/lib/motion/tokens.ts`；CSS 变量只是派生输出，禁止在组件或样式文件里新增动画裸值
+
+## 当前 i18n 基线
+
+- 当前 locale 固定为 `zh-CN` 与 `en-US`
+- locale 解析顺序为 `cookie` 优先，其次 `Accept-Language`
+- 全站用户可见的**产品层**文案必须来自 `src/lib/i18n/messages/*`
+- 覆盖范围包括：公开站点、错误页、manage UI、SEO `<title>` / description、`aria-label`、placeholder、按钮、空态、调试页产品文案
+- Markdown 正文、frontmatter `title/description/tags`、文章摘要与标签名仍视为内容数据，这一层暂不要求双语
+- 缺失翻译在开发与 CI 下直接失败；生产环境仅允许回退默认语言 `zh-CN`，不允许向用户暴露 message key
 
 ## 第二版再升级
 

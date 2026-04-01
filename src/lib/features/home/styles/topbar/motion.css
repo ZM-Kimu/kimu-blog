@@ -81,42 +81,43 @@
 	inset: 0;
 	display: inline-flex;
 	align-items: center;
-	gap: 0.9rem;
+	gap: var(--motion-topbar-visual-profile-chip-gap);
 	padding: var(--home-profile-padding);
 	padding-left: calc(var(--home-shell-padding) + 1rem);
 	color: white;
 }
 
-.home-topbar-morph-level {
-	font-family: var(--font-mono);
-	font-size: 0.82rem;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
+.home-topbar-morph-avatar {
+	width: clamp(2.85rem, 3vw, 3.2rem);
+	height: clamp(2.85rem, 3vw, 3.2rem);
+	flex: 0 0 auto;
+	translate: var(--motion-topbar-visual-profile-avatar-shift-x) 0;
 }
 
-.home-topbar-morph strong {
-	font-family: var(--font-display);
-	font-size: clamp(1.8rem, 2.35vw, 2.7rem);
-	line-height: 0.9;
-	letter-spacing: -0.06em;
+.home-topbar-morph-avatar img {
+	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 .home-topbar-morph-copy {
 	display: grid;
-	gap: 0.15rem;
+	gap: var(--motion-topbar-visual-profile-copy-gap);
+	align-content: center;
+	line-height: 1;
+}
+
+.home-topbar-morph-copy span {
+	font-size: 0.98rem;
+	font-weight: 700;
 }
 
 .home-topbar-morph-copy small {
 	font-family: var(--font-mono);
-	font-size: 0.74rem;
+	font-size: 0.72rem;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	opacity: 0.72;
-}
-
-.home-topbar-morph-copy span {
-	font-size: 0.95rem;
-	font-weight: 700;
 }
 
 .home-topbar-morph-glyph {

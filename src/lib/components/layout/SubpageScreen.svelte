@@ -1,16 +1,29 @@
 <script lang="ts">
+	import { getPublicLayoutContext } from '$lib/layout/public-layout'
+
 	let { children } = $props<{
 		children: () => unknown
 	}>()
+
+	const { getMode } = getPublicLayoutContext()
+	const isPortraitLayout = $derived(getMode() === 'portrait')
 </script>
 
-<section class="subpage-screen">
-	<div class="subpage-screen-viewport">
-		<div class="subpage-screen-content">
+{#if isPortraitLayout}
+	<section class="portrait-subpage-screen">
+		<div class="portrait-subpage-screen-content">
 			{@render children()}
 		</div>
-	</div>
-</section>
+	</section>
+{:else}
+	<section class="subpage-screen">
+		<div class="subpage-screen-viewport">
+			<div class="subpage-screen-content">
+				{@render children()}
+			</div>
+		</div>
+	</section>
+{/if}
 
 <style>
 	.subpage-screen {
@@ -34,6 +47,18 @@
 		margin: 0 auto;
 		display: grid;
 		gap: 1rem;
+	}
+
+	.portrait-subpage-screen {
+		width: 100%;
+	}
+
+	.portrait-subpage-screen-content {
+		width: min(100%, 42rem);
+		margin: 0 auto;
+		display: grid;
+		gap: 1.15rem;
+		padding: 0.05rem 0 0.75rem;
 	}
 
 	@media (width <= 760px) {

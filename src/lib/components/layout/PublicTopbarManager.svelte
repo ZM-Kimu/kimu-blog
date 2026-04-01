@@ -11,7 +11,6 @@
 	import '$lib/features/home/styles/topbar/main.css'
 	import '$lib/features/home/styles/topbar/subpage.css'
 	import '$lib/features/home/styles/topbar/motion.css'
-	import '$lib/features/home/styles/topbar/responsive.css'
 	import { translate, type LocaleMessages } from '$lib/i18n'
 	import { getNavigationContext } from '$lib/navigation/context'
 
@@ -29,12 +28,12 @@
 	let {
 		host = null,
 		messages,
-		compact = false,
+		portrait = false,
 		reducedMotion = false
 	}: {
 		host?: HTMLElement | null
 		messages?: LocaleMessages
-		compact?: boolean
+		portrait?: boolean
 		reducedMotion?: boolean
 	} = $props()
 
@@ -43,7 +42,7 @@
 	const cursorMode = $derived(navigationManager.cursorMode)
 	const backgroundAnimationPreference = $derived(navigationManager.backgroundAnimationPreference)
 	const backgroundAnimationStatus = $derived(navigationManager.backgroundAnimationStatus)
-	const backgroundAnimationDisabled = $derived(compact || reducedMotion)
+	const backgroundAnimationDisabled = $derived(portrait || reducedMotion)
 	const backgroundAnimationDescription = $derived.by(() => {
 		const segments = [t('topbar.settings.backgroundAnimationDescription')]
 
@@ -82,9 +81,7 @@
 			!topbarCollapsed &&
 			!stageHidden
 	)
-	const expandAriaLabel = $derived(
-		navigationManager.locale === 'en-US' ? 'Expand top bar' : '展开 topbar'
-	)
+	const expandAriaLabel = $derived(t('topbar.actions.expand'))
 	const mainTopbarState = $derived.by(() =>
 		resolveTopbarState('main', navigationManager.pageState, navigationManager.pendingPageState)
 	)
@@ -105,9 +102,8 @@
 
 		return subpageTopbarState
 	})
-
 	function t(key: string) {
-		return messages ? translate(messages, key) : key
+		return translate(messages, key)
 	}
 
 	function resolveTopbarState(
@@ -259,9 +255,9 @@
 			subpageActions={subpageTopbarState.actions}
 			subpageTitle={subpageTopbarState.title}
 			authorName={siteConfig.author}
-			profileLevel="90"
+			infoLabel={t('home.profile.info')}
 			profileHref="/about"
-			{compact}
+			{portrait}
 			{reducedMotion}
 			onSubpageBack={handleBack}
 			bind:this={homeTopbar}
@@ -272,6 +268,7 @@
 		{#if topbarCollapsed && !stageHidden}
 			<TopbarReopenButton
 				ariaLabel={expandAriaLabel}
+				{reducedMotion}
 				onActivate={() => navigationManager.toggleTopbarCollapsed(false)}
 			/>
 		{/if}
@@ -296,6 +293,7 @@
 		manageDescription={t('topbar.settings.manageDescription')}
 		manageActionLabel={t('topbar.settings.manageAction')}
 		{cursorMode}
+		{reducedMotion}
 		onClose={() => navigationManager.closeTopbarSettings()}
 		onSetCursorMode={(mode) => navigationManager.setCursorMode(mode)}
 		onSetBackgroundAnimationPreference={(mode) =>

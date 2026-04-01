@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/state'
+	import { translate } from '$lib/i18n'
+
+	const messages = $derived(page.data.i18n?.messages)
 </script>
 
 <section class="panel placeholder-screen">
-	<p class="eyebrow">Live Log</p>
-	<h1>动态模块</h1>
-	<p>这里会承接站点动态、正在进行的任务、最近状态变化与简短更新。当前阶段先保留为占位页面。</p>
+	<p class="eyebrow">{translate(messages, 'updates.eyebrow')}</p>
+	<h1>{translate(messages, 'updates.title')}</h1>
+	<p>{translate(messages, 'updates.description')}</p>
 </section>

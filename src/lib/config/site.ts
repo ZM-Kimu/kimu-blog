@@ -1,14 +1,13 @@
-import { env } from '$env/dynamic/public'
+const { PUBLIC_GITHUB_REPO_NAME, PUBLIC_GITHUB_REPO_OWNER, PUBLIC_SITE_NAME, PUBLIC_SITE_URL } =
+	import.meta.env
 
 export const siteConfig = {
-	name: env.PUBLIC_SITE_NAME || 'Kimu Blog',
-	description:
-		'Game UI inspired personal command center built with SvelteKit and Cloudflare Pages.',
-	url: env.PUBLIC_SITE_URL || 'https://example.com',
-	author: 'Kimu',
+	name: PUBLIC_SITE_NAME || 'Kimu Blog',
+	url: PUBLIC_SITE_URL || 'https://example.com',
+	author: 'ZM-Kimu',
 	ogImage: '/images/og-default.svg',
 	github: {
-		owner: env.PUBLIC_GITHUB_REPO_OWNER || 'ZM-Kimu',
-		repo: env.PUBLIC_GITHUB_REPO_NAME || 'kimu-blog'
+		owner: PUBLIC_GITHUB_REPO_OWNER || 'ZM-Kimu',
+		repo: PUBLIC_GITHUB_REPO_NAME || 'kimu-blog'
 	}
 } as const

@@ -34,13 +34,13 @@
 
 .home-topbar-stage > :where(.home-topbar) {
 	transition:
-		transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
-		opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+		transform var(--motion-topbar-stage-duration) var(--motion-shared-easing-standard),
+		opacity var(--motion-topbar-stage-duration) var(--motion-shared-easing-standard);
 }
 
 .home-topbar-stage-collapsed > :where(.home-topbar) {
-	transition-delay: 90ms;
-	transform: translateY(-1.2rem);
+	transition-delay: var(--motion-topbar-stage-collapse-delay);
+	transform: translateY(var(--motion-topbar-stage-collapse-offset-y));
 	opacity: 0;
 	pointer-events: none;
 }
@@ -60,9 +60,11 @@
 	backdrop-filter: blur(10px);
 	color: #47639c;
 	transition:
-		transform var(--ease),
-		box-shadow var(--ease),
-		opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		box-shadow var(--motion-shared-ease-standard),
+		opacity var(--motion-topbar-reopen-opacity-duration) var(--motion-shared-easing-standard);
 }
 
 .home-topbar-stage-reopen :where(.home-topbar-icon) {
@@ -203,8 +205,8 @@
 	justify-self: end;
 	color: #1f3f7f;
 	transition:
-		opacity var(--ease),
-		transform var(--ease);
+		opacity var(--motion-shared-ease-standard),
+		transform var(--motion-shared-ease-standard);
 }
 
 .resource-chip-hint {
@@ -221,8 +223,8 @@
 	opacity: 0;
 	transform: translateY(-50%) translateX(-0.2rem);
 	transition:
-		opacity var(--ease),
-		transform var(--ease);
+		opacity var(--motion-shared-ease-standard),
+		transform var(--motion-shared-ease-standard);
 	white-space: nowrap;
 	pointer-events: none;
 }
@@ -241,24 +243,26 @@
 
 .home-profile-chip {
 	transition:
-		transform 180ms cubic-bezier(0.28, 0.8, 0.32, 1),
-		opacity 180ms cubic-bezier(0.28, 0.8, 0.32, 1);
+		transform var(--motion-topbar-surface-duration) var(--motion-topbar-profile-easing),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard);
 }
 
 .home-topbar-main .home-topbar-aside {
 	transition:
-		transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-		opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+		transform var(--motion-topbar-surface-duration) var(--motion-shared-easing-standard),
+		opacity var(--motion-topbar-surface-duration) var(--motion-shared-easing-standard);
 }
 
 .home-topbar-stage-collapsed .home-topbar-main .home-profile-chip {
-	transform: translateX(-2rem) scale(0.97);
+	transform: translateX(var(--motion-topbar-profile-collapse-offset-x))
+		scale(var(--motion-topbar-profile-collapse-scale));
 	opacity: 0;
 }
 
 .home-topbar-stage-collapsed .home-topbar-main .home-topbar-aside {
-	transform: translateY(-0.18rem);
-	opacity: 0.94;
+	transform: translateY(var(--motion-topbar-aside-collapse-offset-y));
+	opacity: var(--motion-topbar-aside-collapse-opacity);
 }
 
 .home-topbar-tools {
@@ -285,9 +289,11 @@
 	color: #3560a6;
 	text-decoration: none;
 	transition:
-		transform var(--ease),
-		background-color var(--ease),
-		opacity var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		background-color var(--motion-shared-ease-standard),
+		opacity var(--motion-shared-ease-standard);
 }
 
 .home-topbar-tool-button .home-topbar-icon {
@@ -306,7 +312,7 @@
 }
 
 .home-topbar-tool-button:hover {
-	transform: translateY(-1px);
+	transform: translateY(var(--motion-topbar-tool-hover-lift-y));
 	background: rgb(79 120 255 / 8%);
 }
 
@@ -469,9 +475,11 @@
 	background: rgb(244 249 255 / 98%);
 	color: #1f3f7f;
 	transition:
-		transform var(--ease),
-		background-color var(--ease),
-		box-shadow var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		background-color var(--motion-shared-ease-standard),
+		box-shadow var(--motion-shared-ease-standard);
 }
 
 .home-topbar-settings-close {
@@ -518,9 +526,9 @@
 		inset 0 1px 0 rgb(255 255 255 / 82%);
 	transform: translateX(0);
 	transition:
-		transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
-		background-color var(--ease),
-		box-shadow var(--ease);
+		transform var(--motion-topbar-settings-switch-duration) var(--motion-shared-easing-standard),
+		background-color var(--motion-shared-ease-standard),
+		box-shadow var(--motion-shared-ease-standard);
 	z-index: 0;
 }
 
@@ -537,8 +545,11 @@
 	background: transparent;
 	box-shadow: none;
 	transition:
-		color 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-		opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		color var(--motion-topbar-settings-choice-color-duration) var(--motion-shared-easing-standard),
+		opacity var(--motion-topbar-settings-choice-color-duration) var(--motion-shared-easing-standard);
 }
 
 .home-topbar-settings-choice.active {
@@ -596,16 +607,4 @@
 	cursor: not-allowed;
 	background: transparent;
 	box-shadow: none;
-}
-
-@media (width <= 700px) {
-	.home-topbar-settings-option {
-		grid-template-columns: 1fr;
-		align-items: stretch;
-	}
-
-	.home-topbar-settings-controls {
-		justify-content: flex-start;
-		flex-wrap: wrap;
-	}
 }

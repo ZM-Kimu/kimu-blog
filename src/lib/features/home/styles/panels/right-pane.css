@@ -57,8 +57,10 @@
 	padding: 1.1rem 1rem;
 	box-shadow: 0 22px 40px rgb(57 143 228 / 22%);
 	transition:
-		transform var(--ease),
-		box-shadow var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		box-shadow var(--motion-shared-ease-standard);
 	appearance: none;
 }
 

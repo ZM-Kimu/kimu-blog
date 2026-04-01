@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state'
+	import { translate } from '$lib/i18n'
+
 	let { assetPaths, category, cover, date, description, html, slug, tags, title, updated } =
 		$props<{
 			assetPaths: string[]
@@ -12,15 +15,19 @@
 			title: string
 			updated: string
 		}>()
+
+	const messages = $derived(page.data.i18n?.messages)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
 </script>
 
 <section class="manage-preview panel">
 	<div class="manage-preview-intro">
 		<div>
-			<p class="eyebrow">Live Preview</p>
-			<h2>正文预览</h2>
+			<p class="eyebrow">{t('manage.preview.eyebrow')}</p>
+			<h2>{t('manage.preview.title')}</h2>
 		</div>
-		<p>Markdown / GFM / 图片按正文样式即时渲染；mdsvex 组件与 import 会显示占位块。</p>
+		<p>{t('manage.preview.intro')}</p>
 	</div>
 
 	<div class="manage-preview-viewport">
@@ -32,26 +39,26 @@
 			{/if}
 
 			<div class="manage-preview-copy">
-				<p class="eyebrow">Article Record</p>
-				<h1>{title || 'Untitled draft'}</h1>
-				<p>{description || '这里会显示摘要和导语。'}</p>
+				<p class="eyebrow">{t('manage.preview.heroEyebrow')}</p>
+				<h1>{title || t('common.untitledDraft')}</h1>
+				<p>{description || t('common.summaryPlaceholder')}</p>
 			</div>
 
 			<div class="manage-preview-meta">
 				<div>
-					<span>Slug</span>
-					<strong>{slug || 'pending-slug'}</strong>
+					<span>{t('common.slug')}</span>
+					<strong>{slug || t('common.pendingSlug')}</strong>
 				</div>
 				<div>
-					<span>Category</span>
-					<strong>{category || '未分类'}</strong>
+					<span>{t('common.category')}</span>
+					<strong>{category || t('common.uncategorized')}</strong>
 				</div>
 				<div>
-					<span>Published</span>
+					<span>{t('common.published')}</span>
 					<strong>{date || '---- -- --'}</strong>
 				</div>
 				<div>
-					<span>Updated</span>
+					<span>{t('common.updated')}</span>
 					<strong>{updated || '---- -- --'}</strong>
 				</div>
 			</div>
@@ -63,7 +70,7 @@
 					<span>{tag}</span>
 				{/each}
 			{:else}
-				<span class="manage-preview-tag-placeholder">No tags yet</span>
+				<span class="manage-preview-tag-placeholder">{t('common.noTagsYet')}</span>
 			{/if}
 		</div>
 
@@ -76,8 +83,8 @@
 			<section class="manage-preview-assets">
 				<div class="panel-heading">
 					<div>
-						<p class="eyebrow">Asset Index</p>
-						<h2>已解析资源</h2>
+						<p class="eyebrow">{t('manage.preview.assetsEyebrow')}</p>
+						<h2>{t('manage.preview.assetsTitle')}</h2>
 					</div>
 				</div>
 

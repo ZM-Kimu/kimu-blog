@@ -40,10 +40,12 @@
 	box-shadow: 0 14px 30px rgb(57 116 177 / 8%);
 	text-align: left;
 	transition:
-		transform var(--ease),
-		border-color var(--ease),
-		box-shadow var(--ease),
-		background-color var(--ease);
+		transform var(--motion-shared-ease-standard),
+		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
+		border-color var(--motion-shared-ease-standard),
+		box-shadow var(--motion-shared-ease-standard),
+		background-color var(--motion-shared-ease-standard);
 }
 
 .dock-item-icon {
@@ -54,9 +56,9 @@
 	border: 1px solid rgb(79 120 255 / 14%);
 	box-shadow: inset 0 1px 0 rgb(255 255 255 / 80%);
 	transition:
-		transform var(--ease),
-		background-color var(--ease),
-		box-shadow var(--ease);
+		transform var(--motion-shared-ease-standard),
+		background-color var(--motion-shared-ease-standard),
+		box-shadow var(--motion-shared-ease-standard);
 }
 
 .dock-item-label {

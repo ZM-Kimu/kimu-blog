@@ -3,6 +3,7 @@
 	import HomeTopbarMain from './HomeTopbarMain.svelte'
 	import HomeTopbarSubpage from './HomeTopbarSubpage.svelte'
 	import { fallbackProfilePath } from './home-topbar.constants'
+	import { createTopbarIconStyle } from './home-topbar.dom'
 	import {
 		focusAfterTransition,
 		loadMotionLibs,
@@ -31,9 +32,9 @@
 		subpageActions,
 		subpageTitle,
 		authorName,
-		profileLevel = '90',
+		infoLabel,
 		profileHref = '/about',
-		compact = false,
+		portrait = false,
 		reducedMotion = false,
 		onSubpageBack
 	}: {
@@ -45,9 +46,9 @@
 		subpageActions: readonly HomeTopbarAction[]
 		subpageTitle: string
 		authorName: string
-		profileLevel?: string
+		infoLabel: string
 		profileHref?: '/' | '/about'
-		compact?: boolean
+		portrait?: boolean
 		reducedMotion?: boolean
 		onSubpageBack?: (() => void) | undefined
 	} = $props()
@@ -152,7 +153,7 @@
 				motionLibs = libs
 			}
 
-			if (compact || reducedMotion || !libs) {
+			if (portrait || reducedMotion || !libs) {
 				if (!libs) {
 					mode = nextMode
 					await tick()
@@ -182,8 +183,8 @@
 					afterModeChange: async () => tick(),
 					setCurrentTimeline,
 					profileShellPath,
-					profileLevel,
 					authorName,
+					infoLabel,
 					subpageTitle
 				})
 			}
@@ -255,7 +256,6 @@
 		metrics={mainMetrics}
 		actions={mainActions}
 		{authorName}
-		{profileLevel}
 		{profileHref}
 		{motionLocked}
 		onAction={handleAction}
@@ -276,7 +276,10 @@
 		{#if icon.mode === 'mask'}
 			<span
 				class="home-topbar-icon home-topbar-icon-mask home-topbar-asset-bank-icon"
-				style={`--topbar-icon-src: url('${icon.src}'); --topbar-icon-tint: ${icon.tint ?? 'currentColor'};`}
+				style={createTopbarIconStyle({
+					src: icon.src,
+					tint: icon.tint ?? 'currentColor'
+				})}
 			></span>
 		{:else}
 			<img src={icon.src} alt="" loading="eager" decoding="async" />

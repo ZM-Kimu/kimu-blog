@@ -8,7 +8,10 @@ export type HomePageViewModel = {
 export function createHomePageViewModel(data: HomePageData): HomePageViewModel {
 	return {
 		missionPreview: missionCatalog.slice(0, 3).map((mission) => ({
-			...mission,
+			slug: mission.slug,
+			id: mission.id,
+			href: mission.href,
+			tone: mission.tone,
 			count:
 				data.categories
 					.filter(

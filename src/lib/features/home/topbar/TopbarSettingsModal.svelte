@@ -4,6 +4,7 @@
 	import { onMount, tick } from 'svelte'
 	import { fade } from 'svelte/transition'
 
+	import { getMotionTokens } from '$lib/motion/tokens'
 	import type { BackgroundAnimationPreference } from '$lib/navigation/types'
 
 	let {
@@ -23,6 +24,7 @@
 		manageDescription,
 		manageActionLabel,
 		cursorMode,
+		reducedMotion = false,
 		onClose,
 		onSetCursorMode,
 		onSetBackgroundAnimationPreference
@@ -43,6 +45,7 @@
 		manageDescription: string
 		manageActionLabel: string
 		cursorMode: 'custom' | 'system'
+		reducedMotion?: boolean
 		onClose: () => void
 		onSetCursorMode: (mode: 'custom' | 'system') => void
 		onSetBackgroundAnimationPreference: (mode: BackgroundAnimationPreference) => void
@@ -50,24 +53,27 @@
 
 	let customCursorButton: HTMLButtonElement | null = $state(null)
 	let systemCursorButton: HTMLButtonElement | null = $state(null)
+	const topbarMotion = $derived(getMotionTokens({ portrait: false, reducedMotion }).topbar)
 
 	function dialogRise(
 		_: Element,
 		{
-			y = 18,
-			blur = 12,
-			duration = 260
+			y = topbarMotion.settingsDialogEnterOffsetYPx,
+			blur = topbarMotion.settingsDialogEnterBlurPx,
+			duration = topbarMotion.settingsDialogEnterDurationMs,
+			scaleFrom = topbarMotion.settingsDialogEnterScaleFrom
 		}: {
 			y?: number
 			blur?: number
 			duration?: number
+			scaleFrom?: number
 		} = {}
 	) {
 		return {
 			duration,
 			easing: cubicOut,
 			css: (t: number, u: number) =>
-				`opacity: ${t}; transform: translate3d(0, ${u * y}px, 0) scale(${0.985 + t * 0.015}); filter: blur(${u * blur}px);`
+				`opacity: ${t}; transform: translate3d(0, ${u * y}px, 0) scale(${scaleFrom + t * (1 - scaleFrom)}); filter: blur(${u * blur}px);`
 		}
 	}
 
@@ -81,11 +87,12 @@
 <div class="home-topbar-settings" role="presentation">
 	<button
 		class="home-topbar-settings-scrim"
+		data-press-disabled="true"
 		type="button"
 		aria-label={closeLabel}
 		onclick={onClose}
-		in:fade={{ duration: 180 }}
-		out:fade={{ duration: 150 }}
+		in:fade={{ duration: topbarMotion.settingsScrimEnterDurationMs }}
+		out:fade={{ duration: topbarMotion.settingsScrimExitDurationMs }}
 	></button>
 
 	<div
@@ -94,7 +101,12 @@
 		aria-modal="true"
 		aria-label={title}
 		in:dialogRise
-		out:dialogRise={{ duration: 180, y: 10, blur: 8 }}
+		out:dialogRise={{
+			duration: topbarMotion.settingsDialogExitDurationMs,
+			y: topbarMotion.settingsDialogExitOffsetYPx,
+			blur: topbarMotion.settingsDialogExitBlurPx,
+			scaleFrom: topbarMotion.settingsDialogExitScaleFrom
+		}}
 	>
 		<header class="home-topbar-settings-header">
 			<div class="home-topbar-settings-heading">
@@ -190,7 +202,11 @@
 					</div>
 
 					<div class="home-topbar-settings-controls">
-						<a class="home-topbar-settings-link-button" href={resolve('/manage')} onclick={onClose}>
+						<a
+							class="home-topbar-settings-link-button"
+							href={resolve('/manage/posts')}
+							onclick={onClose}
+						>
 							<strong>{manageActionLabel}</strong>
 						</a>
 					</div>

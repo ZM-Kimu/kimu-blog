@@ -3,15 +3,40 @@
 	import { page } from '$app/state'
 	import FallbackErrorPage from '$lib/features/error/FallbackErrorPage.svelte'
 	import SeoHead from '$lib/components/ui/SeoHead.svelte'
+	import { translate } from '$lib/i18n'
 
 	let { error: propError, status: propStatus } = $props()
+	const messages = $derived(page.data.i18n?.messages)
 	const status = $derived(page.status || propStatus || 500)
-	const message = $derived(page.error?.message ?? propError?.message ?? '发生了未知错误。')
+	const rawMessage = $derived(page.error?.message ?? propError?.message ?? '')
 	const isNotFound = $derived(status === 404)
-	const title = $derived(isNotFound ? '404 / Not Found' : `错误 ${status}`)
-	const description = $derived(
-		isNotFound ? '请求的路径不存在。' : '页面发生错误，fallback 页面已接管。'
+	const title = $derived(
+		isNotFound
+			? translate(messages, 'seo.error.notFoundTitle')
+			: translate(messages, 'seo.error.statusTitle', { status })
 	)
+	const description = $derived(
+		isNotFound
+			? translate(messages, 'seo.error.notFoundDescription')
+			: translate(messages, 'seo.error.statusDescription')
+	)
+	const message = $derived.by(() => {
+		const normalized = rawMessage.trim()
+
+		if (!normalized) {
+			return isNotFound
+				? translate(messages, 'error.detailNotFound')
+				: translate(messages, 'error.detailUnknown')
+		}
+
+		if (/^[a-z0-9_:-]+$/iu.test(normalized)) {
+			return isNotFound
+				? translate(messages, 'error.detailNotFound')
+				: translate(messages, 'error.detailFallback')
+		}
+
+		return normalized
+	})
 </script>
 
 <SeoHead

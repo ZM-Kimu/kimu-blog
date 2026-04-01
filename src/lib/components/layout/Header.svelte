@@ -8,7 +8,7 @@
 	let { messages }: { messages?: LocaleMessages } = $props()
 
 	let compact = $state(false)
-	const t = (key: string) => (messages ? translate(messages, key) : key)
+	const t = (key: string) => translate(messages, key)
 
 	const currentSection = $derived.by(() => {
 		const { pathname } = page.url
@@ -67,7 +67,7 @@
 					{#each hudStatusChips as chip (chip.labelKey)}
 						<div class="hud-inline-chip">
 							<span>{t(chip.labelKey)}</span>
-							<strong>{chip.value}</strong>
+							<strong>{t(chip.valueKey)}</strong>
 						</div>
 					{/each}
 				</div>

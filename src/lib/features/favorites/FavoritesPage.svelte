@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { page } from '$app/state'
+	import { translate } from '$lib/i18n'
+
+	const messages = $derived(page.data.i18n?.messages)
 </script>
 
 <section class="panel placeholder-screen">
-	<p class="eyebrow">Curated Vault</p>
-	<h1>收藏模块</h1>
-	<p>这里会承接收藏文章、灵感参考、链接清单与资源归档。当前阶段先保留为占位页面。</p>
+	<p class="eyebrow">{translate(messages, 'favorites.eyebrow')}</p>
+	<h1>{translate(messages, 'favorites.title')}</h1>
+	<p>{translate(messages, 'favorites.description')}</p>
 </section>

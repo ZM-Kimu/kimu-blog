@@ -15,11 +15,22 @@ const DANGEROUS_SELF_CLOSING_PATTERN =
 const EVENT_HANDLER_ATTR_PATTERN = /\son[a-z-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/giu
 const URI_ATTR_PATTERN = /\s(href|src|xlink:href)\s*=\s*(?:"([^"]*)"|'([^']*)')/giu
 
-function buildPlaceholder(kind: 'component' | 'import' | 'script' | 'style', label: string) {
+type ManagePreviewPlaceholderCopy = {
+	description: string
+	scriptBlockLabel: string
+	styleBlockLabel: string
+	componentBlockLabel: (name: string) => string
+}
+
+function buildPlaceholder(
+	kind: 'component' | 'import' | 'script' | 'style',
+	label: string,
+	description: string
+) {
 	return `
 <div class="manage-preview-placeholder" data-preview-kind="${kind}">
 	<strong>${label}</strong>
-	<p>预览面板不会执行这段 mdsvex / Svelte 逻辑。</p>
+	<p>${description}</p>
 </div>
 `
 }
@@ -41,17 +52,23 @@ function replaceManageUploadPlaceholders(source: string, uploads: Map<string, st
 	return output
 }
 
-function normalizeMdsvexForPreview(source: string) {
+function normalizeMdsvexForPreview(source: string, copy: ManagePreviewPlaceholderCopy) {
 	return replaceOutsideCodeFences(source, (segment) =>
 		segment
-			.replace(IMPORT_LINE_PATTERN, (value) => buildPlaceholder('import', value.trim()))
-			.replace(SCRIPT_BLOCK_PATTERN, () => buildPlaceholder('script', '<script> block'))
-			.replace(STYLE_BLOCK_PATTERN, () => buildPlaceholder('style', '<style> block'))
+			.replace(IMPORT_LINE_PATTERN, (value) =>
+				buildPlaceholder('import', value.trim(), copy.description)
+			)
+			.replace(SCRIPT_BLOCK_PATTERN, () =>
+				buildPlaceholder('script', copy.scriptBlockLabel, copy.description)
+			)
+			.replace(STYLE_BLOCK_PATTERN, () =>
+				buildPlaceholder('style', copy.styleBlockLabel, copy.description)
+			)
 			.replace(COMPONENT_BLOCK_PATTERN, (_value, name: string) =>
-				buildPlaceholder('component', `${name} component`)
+				buildPlaceholder('component', copy.componentBlockLabel(name), copy.description)
 			)
 			.replace(COMPONENT_SELF_CLOSING_PATTERN, (_value, name: string) =>
-				buildPlaceholder('component', `${name} component`)
+				buildPlaceholder('component', copy.componentBlockLabel(name), copy.description)
 			)
 	)
 }
@@ -83,8 +100,15 @@ export function resolvePreviewAssetPath(path: string, uploads: Map<string, strin
 	return replaceManageUploadPlaceholders(path, uploads)
 }
 
-export function renderManagePreviewHtml(source: string, uploads: Map<string, string>) {
-	const normalized = normalizeMdsvexForPreview(replaceManageUploadPlaceholders(source, uploads))
+export function renderManagePreviewHtml(
+	source: string,
+	uploads: Map<string, string>,
+	copy: ManagePreviewPlaceholderCopy
+) {
+	const normalized = normalizeMdsvexForPreview(
+		replaceManageUploadPlaceholders(source, uploads),
+		copy
+	)
 	const html = marked.parse(normalized, {
 		gfm: true
 	}) as string
