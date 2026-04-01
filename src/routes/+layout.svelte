@@ -22,7 +22,7 @@
 	import { resolveRouteState } from '$lib/navigation/route-state'
 	import type { TopbarShellVariant } from '$lib/navigation/types'
 	import { bindMediaQuery } from '$lib/features/home/home-page.media'
-	import { createGlobalMotionCssVars, getMotionTokens } from '$lib/motion/tokens'
+	import { getMotionTokens } from '$lib/motion/tokens'
 
 	type SiteBootPhase = 'boot' | 'entry' | 'idle'
 	type PublicTopbarManagerHandle = {
@@ -109,7 +109,7 @@
 	const siteFrameMotionStyle = $derived.by(() => {
 		const tokens = motionTokens
 		const activeBootEntryDurationMs = siteBootPhase === 'idle' ? 0 : tokens.boot.entryDurationMs
-		return `${createGlobalMotionCssVars(tokens)} --motion-boot-active-entry-duration: ${activeBootEntryDurationMs}ms;`
+		return `--motion-boot-active-entry-duration: ${activeBootEntryDurationMs}ms;`
 	})
 	let desktopHomeEnterTimer: ReturnType<typeof setTimeout> | null = null
 	let desktopSubpageEnterTimer: ReturnType<typeof setTimeout> | null = null

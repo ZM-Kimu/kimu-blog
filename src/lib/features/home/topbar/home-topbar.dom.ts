@@ -15,6 +15,10 @@ import type {
 	TopbarMode
 } from './home-topbar.types'
 
+export function createTopbarIconStyle(icon: { src: string; tint?: string | null }) {
+	return `--topbar-icon-src: url('${icon.src}');${icon.tint ? ` --topbar-icon-tint: ${icon.tint};` : ''}`
+}
+
 export function getHostElement(host: HTMLElement | null, refs: HomeTopbarRefs) {
 	return host ?? refs.motionLayer?.parentElement ?? refs.topbarRoot?.parentElement ?? null
 }

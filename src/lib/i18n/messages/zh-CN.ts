@@ -95,9 +95,8 @@ export const zhCNMessages = {
 			missionAria: 'Mission 横幅',
 			footerAria: '主入口',
 			heightGuardEyebrow: 'Viewport Guard',
-			heightGuardTitle: '当前窗口高度不足',
-			heightGuardDescription:
-				'Home shell 需要至少 500px 的可见高度。请增大浏览器窗口，或先切换到内容页。',
+			heightGuardTitle: '当前窗口空间不足',
+			heightGuardDescription: '当前窗口大小无法正常使用此网站，请调大浏览器窗口。',
 			heightGuardPrimary: '进入内容页',
 			heightGuardSecondary: '查看简介'
 		},

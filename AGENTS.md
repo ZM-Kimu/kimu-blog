@@ -28,6 +28,7 @@
 - 内容加载使用 `import.meta.glob(...)`
 - 博客详情路由必须提供明确的 `entries()` 或等效 prerender 方案
 - 仓库样式必须通过严格 `stylelint`；覆盖 `src/**/*.{css,svelte}`
+- 组件模板中的内联样式只允许用于 **CSS 变量桥接**；禁止把静态布局、皮肤或视觉样式直接写进 `style=...`
 - 产品层用户可见文案必须走 `src/lib/i18n` messages；`zh-CN` / `en-US` 必须保持 key 对等
 - 首页使用独立 `screen-home` 布局；公开二级内容页统一收敛到 shared subpage app shell
 - 公开站点布局按页面朝向切换：**landscape 使用 large layout / desktop app-shell**，**portrait 使用 mobile 文档流布局**

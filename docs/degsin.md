@@ -488,6 +488,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `npm run validate:i18n` 用于校验双语 key parity 与产品层裸文案
 - 选择器类名统一为纯 `kebab-case`
 - 不再保留 BEM 的 `__` / `--` 变体
+- 组件模板中的内联样式只允许作为 CSS 变量桥接；静态布局和视觉样式必须回到 class、data-attr 或独立 CSS
 - 不再保留 `-webkit-*` 等 vendor prefix 样式写法
 - 颜色函数、媒体查询、`@import` 等写法统一按现代 CSS 规范收敛
 - 全站动画参数统一收口到 `src/lib/motion/tokens.ts`；CSS 变量只是派生输出，禁止在组件或样式文件里新增动画裸值

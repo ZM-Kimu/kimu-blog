@@ -3,6 +3,7 @@
 	import HomeTopbarMain from './HomeTopbarMain.svelte'
 	import HomeTopbarSubpage from './HomeTopbarSubpage.svelte'
 	import { fallbackProfilePath } from './home-topbar.constants'
+	import { createTopbarIconStyle } from './home-topbar.dom'
 	import {
 		focusAfterTransition,
 		loadMotionLibs,
@@ -275,7 +276,10 @@
 		{#if icon.mode === 'mask'}
 			<span
 				class="home-topbar-icon home-topbar-icon-mask home-topbar-asset-bank-icon"
-				style={`--topbar-icon-src: url('${icon.src}'); --topbar-icon-tint: ${icon.tint ?? 'currentColor'};`}
+				style={createTopbarIconStyle({
+					src: icon.src,
+					tint: icon.tint ?? 'currentColor'
+				})}
 			></span>
 		{:else}
 			<img src={icon.src} alt="" loading="eager" decoding="async" />

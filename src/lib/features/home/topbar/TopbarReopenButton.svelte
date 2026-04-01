@@ -2,6 +2,7 @@
 	import { cubicOut } from 'svelte/easing'
 	import type { TransitionConfig } from 'svelte/transition'
 	import { getMotionTokens } from '$lib/motion/tokens'
+	import { createTopbarIconStyle } from './home-topbar.dom'
 
 	function reopenMotion(
 		node: Element,
@@ -45,6 +46,10 @@
 	} = $props()
 
 	const topbarMotion = $derived(getMotionTokens({ portrait: false, reducedMotion }).topbar)
+	const reopenIconStyle = createTopbarIconStyle({
+		src: '/icons/topbar/expand.png',
+		tint: '#47639c'
+	})
 </script>
 
 <button
@@ -55,11 +60,6 @@
 	in:reopenMotion
 	out:reopenMotion
 >
-	<span
-		class="home-topbar-icon home-topbar-icon-mask"
-		aria-hidden="true"
-		style="
-
---topbar-icon-src: url('/icons/topbar/expand.png'); --topbar-icon-tint: #47639c;"
+	<span class="home-topbar-icon home-topbar-icon-mask" aria-hidden="true" style={reopenIconStyle}
 	></span>
 </button>

@@ -2,6 +2,7 @@
 	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
 	import { translate } from '$lib/i18n'
+	import { createTopbarIconStyle } from './home-topbar.dom'
 	import type { HomeTopbarAction, HomeTopbarMetric } from './home-topbar.types'
 
 	let {
@@ -71,7 +72,7 @@
 							<span
 								class={`home-topbar-icon home-topbar-icon-${metric.icon.mode}`}
 								aria-hidden="true"
-								style={`--topbar-icon-src: url('${metric.icon.src}');${metric.icon.tint ? ` --topbar-icon-tint: ${metric.icon.tint};` : ''}`}
+								style={createTopbarIconStyle(metric.icon)}
 							></span>
 							<span class="resource-chip-hint" aria-hidden="true">{metric.label}</span>
 						</div>
@@ -105,7 +106,7 @@
 						<span
 							class={`home-topbar-icon home-topbar-icon-${action.icon.mode}`}
 							aria-hidden="true"
-							style={`--topbar-icon-src: url('${action.icon.src}');${action.icon.tint ? ` --topbar-icon-tint: ${action.icon.tint};` : ''}`}
+							style={createTopbarIconStyle(action.icon)}
 						></span>
 					</a>
 				{:else}
@@ -120,7 +121,7 @@
 						<span
 							class={`home-topbar-icon home-topbar-icon-${action.icon.mode}`}
 							aria-hidden="true"
-							style={`--topbar-icon-src: url('${action.icon.src}');${action.icon.tint ? ` --topbar-icon-tint: ${action.icon.tint};` : ''}`}
+							style={createTopbarIconStyle(action.icon)}
 						></span>
 					</button>
 				{/if}
