@@ -27,6 +27,8 @@ type SurfaceSkin = {
 	boxShadow: string
 }
 
+type GsapTarget = Element | object
+
 type BaseTransitionArgs = {
 	libs: MotionLibs
 	getRefs: () => HomeTopbarRefs
@@ -74,6 +76,65 @@ const gsapEasePower2Out = topbarMotion.gsapEasePower2Out
 const gsapEasePower2In = topbarMotion.gsapEasePower2In
 const gsapEasePower3InOut = topbarMotion.gsapEasePower3InOut
 const gsapEaseExpoInOut = topbarMotion.gsapEaseExpoInOut
+
+function normalizeGsapTargets(
+	targets: GsapTarget | Array<GsapTarget | null | undefined | false> | null | undefined | false
+) {
+	if (Array.isArray(targets)) {
+		return targets.filter((target): target is GsapTarget => Boolean(target))
+	}
+
+	return targets ? [targets] : []
+}
+
+function setGsapTargets(
+	libs: MotionLibs,
+	targets: GsapTarget | Array<GsapTarget | null | undefined | false> | null | undefined | false,
+	vars: Record<string, unknown>
+) {
+	const resolvedTargets = normalizeGsapTargets(targets)
+	if (resolvedTargets.length === 0) {
+		return
+	}
+
+	libs.gsap.set(resolvedTargets.length === 1 ? resolvedTargets[0] : resolvedTargets, vars)
+}
+
+function setTimelineTargets(
+	timeline: ReturnType<MotionLibs['gsap']['timeline']>,
+	targets: GsapTarget | Array<GsapTarget | null | undefined | false> | null | undefined | false,
+	vars: Record<string, unknown>,
+	position?: number | string
+) {
+	const resolvedTargets = normalizeGsapTargets(targets)
+	if (resolvedTargets.length === 0) {
+		return
+	}
+
+	;(timeline.set as (...args: Array<unknown>) => unknown)(
+		resolvedTargets.length === 1 ? resolvedTargets[0] : resolvedTargets,
+		vars,
+		position
+	)
+}
+
+function toTimelineTargets(
+	timeline: ReturnType<MotionLibs['gsap']['timeline']>,
+	targets: GsapTarget | Array<GsapTarget | null | undefined | false> | null | undefined | false,
+	vars: Record<string, unknown>,
+	position?: number | string
+) {
+	const resolvedTargets = normalizeGsapTargets(targets)
+	if (resolvedTargets.length === 0) {
+		return
+	}
+
+	;(timeline.to as (...args: Array<unknown>) => unknown)(
+		resolvedTargets.length === 1 ? resolvedTargets[0] : resolvedTargets,
+		vars,
+		position
+	)
+}
 
 function getProfileContentTargets(profileChip: HTMLAnchorElement | null) {
 	if (!profileChip) {
@@ -152,7 +213,8 @@ export function resetTransitionStyles(libs: MotionLibs | null, refs: HomeTopbarR
 		return
 	}
 
-	libs.gsap.set(
+	setGsapTargets(
+		libs,
 		[
 			refs.topbarRoot,
 			refs.backButton,
@@ -161,7 +223,7 @@ export function resetTransitionStyles(libs: MotionLibs | null, refs: HomeTopbarR
 			refs.titleWrap,
 			refs.stripShell,
 			...getSharedTargets(refs)
-		].filter(Boolean),
+		],
 		{
 			clearProps:
 				'opacity,transform,clipPath,pointerEvents,height,filter,boxShadow,background,backgroundImage,backgroundColor,borderColor'
@@ -399,53 +461,53 @@ export async function runRichTransition({
 			: null
 
 	if (toolIconTransition && targetLastToolIcon) {
-		libs.gsap.set(targetLastToolIcon, { autoAlpha: 0 })
-		libs.gsap.set(toolIconTransition.targetIcon, { autoAlpha: 0 })
+		setGsapTargets(libs, targetLastToolIcon, { autoAlpha: 0 })
+		setGsapTargets(libs, toolIconTransition.targetIcon, { autoAlpha: 0 })
 	}
 
 	if (nextMode === 'subpage') {
 		targetRoot.style.height = incomingStripHeight
-		libs.gsap.set(targetRefs.stripShell, { autoAlpha: 0 })
+		setGsapTargets(libs, targetRefs.stripShell, { autoAlpha: 0 })
 		if (sourceChipSkin) {
-			libs.gsap.set(targetResourceChips, {
+			setGsapTargets(libs, targetResourceChips, {
 				backgroundColor: sourceChipSkin.backgroundColor,
 				borderColor: sourceChipSkin.borderColor,
 				boxShadow: sourceChipSkin.boxShadow
 			})
 		}
 		if (sourceToolsSkin && targetToolsSurface) {
-			libs.gsap.set(targetToolsSurface, {
+			setGsapTargets(libs, targetToolsSurface, {
 				backgroundColor: sourceToolsSkin.backgroundColor,
 				borderColor: sourceToolsSkin.borderColor,
 				boxShadow: sourceToolsSkin.boxShadow
 			})
 		}
-		libs.gsap.set(targetResourceDividers, { autoAlpha: 0 })
+		setGsapTargets(libs, targetResourceDividers, { autoAlpha: 0 })
 		if (incomingStripProxy) {
-			libs.gsap.set(incomingStripProxy.wrapper, {
+			setGsapTargets(libs, incomingStripProxy.wrapper, {
 				y: stripDropOffset,
 				autoAlpha: 1
 			})
-			libs.gsap.set(incomingStripProxy.shell, {
+			setGsapTargets(libs, incomingStripProxy.shell, {
 				clipPath: 'inset(0 0 100% 0)'
 			})
 		}
-		libs.gsap.set(targetRefs.backButton, {
+		setGsapTargets(libs, targetRefs.backButton, {
 			autoAlpha: 0
 		})
-		libs.gsap.set(targetRefs.backGlyph, { autoAlpha: 0 })
-		libs.gsap.set(targetRefs.titleWrap, { autoAlpha: 0, x: titleGhostOffsetX * -1 })
-		libs.gsap.set(morph.text, { autoAlpha: 1 })
-		libs.gsap.set(morph.glyph, { autoAlpha: 0, scale: morphGlyphHiddenScale })
+		setGsapTargets(libs, targetRefs.backGlyph, { autoAlpha: 0 })
+		setGsapTargets(libs, targetRefs.titleWrap, { autoAlpha: 0, x: titleGhostOffsetX * -1 })
+		setGsapTargets(libs, morph.text, { autoAlpha: 1 })
+		setGsapTargets(libs, morph.glyph, { autoAlpha: 0, scale: morphGlyphHiddenScale })
 	} else {
-		libs.gsap.set(targetRefs.profileChip, {
+		setGsapTargets(libs, targetRefs.profileChip, {
 			autoAlpha: 0,
 			background: 'transparent',
 			backgroundImage: 'none'
 		})
-		libs.gsap.set(targetProfileContent, { autoAlpha: 0 })
-		libs.gsap.set(morph.text, { autoAlpha: 0 })
-		libs.gsap.set(morph.glyph, { autoAlpha: 1, scale: 1 })
+		setGsapTargets(libs, targetProfileContent, { autoAlpha: 0 })
+		setGsapTargets(libs, morph.text, { autoAlpha: 0 })
+		setGsapTargets(libs, morph.glyph, { autoAlpha: 1, scale: 1 })
 	}
 
 	if (nextMode === 'subpage' && incomingStripProxy) {
@@ -514,7 +576,8 @@ export async function runRichTransition({
 				richDuration - chipSkinHandoffTailBuffer
 			)
 
-			timeline.set(
+			setTimelineTargets(
+				timeline,
 				targetRefs.stripShell,
 				{
 					autoAlpha: 1
@@ -522,7 +585,8 @@ export async function runRichTransition({
 				stripHandoffAt
 			)
 
-			timeline.set(
+			setTimelineTargets(
+				timeline,
 				incomingStripProxy.wrapper,
 				{
 					autoAlpha: 0
@@ -531,7 +595,8 @@ export async function runRichTransition({
 			)
 
 			if (targetResourceChips.length > 0) {
-				timeline.to(
+				toTimelineTargets(
+					timeline,
 					targetResourceChips,
 					{
 						backgroundColor: 'rgba(255, 255, 255, 0)',
@@ -545,7 +610,8 @@ export async function runRichTransition({
 			}
 
 			if (targetToolsSurface) {
-				timeline.to(
+				toTimelineTargets(
+					timeline,
 					targetToolsSurface,
 					{
 						backgroundColor: 'rgba(255, 255, 255, 0)',
@@ -559,7 +625,8 @@ export async function runRichTransition({
 			}
 
 			if (targetResourceDividers.length > 0) {
-				timeline.to(
+				toTimelineTargets(
+					timeline,
 					targetResourceDividers,
 					{
 						autoAlpha: 1,
@@ -572,7 +639,8 @@ export async function runRichTransition({
 		}
 
 		if (toolIconTransition) {
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				toolIconTransition.sourceIcon,
 				{
 					autoAlpha: 0,
@@ -582,7 +650,8 @@ export async function runRichTransition({
 				toolIconSwitchAt
 			)
 
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				toolIconTransition.targetIcon,
 				{
 					autoAlpha: 1,
@@ -607,7 +676,8 @@ export async function runRichTransition({
 			0
 		)
 
-		timeline.to(
+		toTimelineTargets(
+			timeline,
 			morph.wrapper,
 			{
 				left: targetAnchorBox.left,
@@ -634,7 +704,8 @@ export async function runRichTransition({
 			0
 		)
 
-		timeline.to(
+		toTimelineTargets(
+			timeline,
 			morph.startStop,
 			{
 				attr: {
@@ -647,7 +718,8 @@ export async function runRichTransition({
 			0
 		)
 
-		timeline.to(
+		toTimelineTargets(
+			timeline,
 			morph.endStop,
 			{
 				attr: {
@@ -660,7 +732,8 @@ export async function runRichTransition({
 			0
 		)
 
-		timeline.to(
+		toTimelineTargets(
+			timeline,
 			morph.gradient,
 			{
 				attr: {
@@ -678,7 +751,8 @@ export async function runRichTransition({
 		if (fromMode === 'main') {
 			const handoffAt = richDuration - morphHideLead
 
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				morph.text,
 				{
 					autoAlpha: 0,
@@ -688,7 +762,8 @@ export async function runRichTransition({
 				0
 			)
 
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				morph.glyph,
 				{
 					autoAlpha: 1,
@@ -699,7 +774,8 @@ export async function runRichTransition({
 				glyphSwitchAt
 			)
 
-			timeline.set(
+			setTimelineTargets(
+				timeline,
 				morph.wrapper,
 				{
 					autoAlpha: 0
@@ -707,7 +783,8 @@ export async function runRichTransition({
 				handoffAt
 			)
 
-			timeline.set(
+			setTimelineTargets(
+				timeline,
 				targetRefs.backButton,
 				{
 					autoAlpha: 1
@@ -715,7 +792,8 @@ export async function runRichTransition({
 				handoffAt
 			)
 
-			timeline.set(
+			setTimelineTargets(
+				timeline,
 				targetRefs.backGlyph,
 				{
 					autoAlpha: 1
@@ -724,7 +802,8 @@ export async function runRichTransition({
 			)
 
 			if (targetLastToolIcon) {
-				timeline.set(
+				setTimelineTargets(
+					timeline,
 					targetLastToolIcon,
 					{
 						clearProps: 'opacity,visibility'
@@ -734,7 +813,8 @@ export async function runRichTransition({
 			}
 
 			if (toolIconTransition) {
-				timeline.set(
+				setTimelineTargets(
+					timeline,
 					toolIconTransition.wrapper,
 					{
 						autoAlpha: 0
@@ -755,7 +835,8 @@ export async function runRichTransition({
 			)
 		} else {
 			if (titleGhost) {
-				timeline.to(
+				toTimelineTargets(
+					timeline,
 					titleGhost.wrapper,
 					{
 						x: titleGhostOffsetX * -1,
@@ -767,7 +848,8 @@ export async function runRichTransition({
 				)
 			}
 
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				morph.glyph,
 				{
 					autoAlpha: 0,
@@ -777,7 +859,8 @@ export async function runRichTransition({
 				0
 			)
 
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				morph.text,
 				{
 					autoAlpha: 1,
@@ -787,7 +870,8 @@ export async function runRichTransition({
 				morphTextRevealAt
 			)
 
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				targetRefs.profileChip,
 				{
 					autoAlpha: 1,
@@ -797,7 +881,8 @@ export async function runRichTransition({
 				profileRevealAt
 			)
 
-			timeline.set(
+			setTimelineTargets(
+				timeline,
 				targetRefs.profileChip,
 				{
 					clearProps: 'background,backgroundImage'
@@ -805,7 +890,8 @@ export async function runRichTransition({
 				richDuration
 			)
 
-			timeline.to(
+			toTimelineTargets(
+				timeline,
 				targetProfileContent,
 				{
 					autoAlpha: 1,
@@ -816,7 +902,8 @@ export async function runRichTransition({
 				profileRevealAt + profileContentRevealOffset
 			)
 
-			timeline.set(
+			setTimelineTargets(
+				timeline,
 				morph.wrapper,
 				{
 					autoAlpha: 0
@@ -825,7 +912,8 @@ export async function runRichTransition({
 			)
 
 			if (targetLastToolIcon) {
-				timeline.set(
+				setTimelineTargets(
+					timeline,
 					targetLastToolIcon,
 					{
 						clearProps: 'opacity,visibility'
@@ -835,7 +923,8 @@ export async function runRichTransition({
 			}
 
 			if (toolIconTransition) {
-				timeline.set(
+				setTimelineTargets(
+					timeline,
 					toolIconTransition.wrapper,
 					{
 						autoAlpha: 0
@@ -847,7 +936,7 @@ export async function runRichTransition({
 	})
 
 	if (targetLastToolIcon) {
-		libs.gsap.set(targetLastToolIcon, { clearProps: 'opacity,visibility' })
+		setGsapTargets(libs, targetLastToolIcon, { clearProps: 'opacity,visibility' })
 	}
 
 	toolIconTransition?.wrapper.remove()

@@ -102,17 +102,15 @@
 						return
 					}
 
-					const step = (timestamp) => {
-						const haloPhaseOffsetMs = readDurationVarMs(
-							'--motion-boot-overlay-icon-halo-phase-offset'
-						)
-						const haloCycleDurationMs = readDurationVarMs(
-							'--motion-boot-overlay-icon-cycle-duration'
-						)
-						const flipDegreesPerSecond = readNumberVar(
-							'--motion-boot-overlay-icon-flip-degrees-per-second'
-						)
+					const haloPhaseOffsetMs = readDurationVarMs(
+						'--motion-boot-overlay-icon-halo-phase-offset'
+					)
+					const haloCycleDurationMs = readDurationVarMs('--motion-boot-overlay-icon-cycle-duration')
+					const flipDegreesPerSecond = readNumberVar(
+						'--motion-boot-overlay-icon-flip-degrees-per-second'
+					)
 
+					const step = (timestamp) => {
 						if (root.dataset.siteBootPhase === 'idle') {
 							clearLoadingIconTimeline()
 							return
