@@ -2,10 +2,20 @@ import { browser } from '$app/environment'
 import { goto, invalidateAll } from '$app/navigation'
 import { resolve } from '$app/paths'
 import { DEFAULT_LOCALE, LOCALE_COOKIE, type AppLocale } from '$lib/i18n/config'
-import { getMotionTokens } from '$lib/motion/tokens'
 
-import { createPageState } from './page-state'
-import { resolveRouteState } from './route-state'
+import { AppHistoryTracker } from './app-history'
+import {
+	persistBackgroundAnimationPreference,
+	persistCursorMode,
+	readStoredBackgroundAnimationPreference,
+	readStoredCursorMode
+} from './runtime-preferences'
+import {
+	createUnknownPageState,
+	createUnknownRouteState,
+	resolveBackgroundScene,
+	resolveTransitionDurations
+} from './transition-runtime'
 
 import type {
 	BackBehavior,
@@ -18,25 +28,11 @@ import type {
 	TransitionPhase
 } from './types'
 
-type AppHistoryEntry = {
-	id: string
-	pathname: string
-}
-
-const CURSOR_MODE_STORAGE_KEY = 'cursor-mode'
-const BACKGROUND_ANIMATION_STORAGE_KEY = 'home-background-animation'
-const defaultMotionTokens = getMotionTokens({ portrait: false, reducedMotion: false })
-
-function createUnknownRouteState(): RouteState {
-	return resolveRouteState({ pathname: '/__unknown__', status: 200 })
-}
-
-function createUnknownPageState(): PageState {
-	return createPageState({
-		routeState: createUnknownRouteState(),
-		data: {}
-	})
-}
+const defaultTransitionDurations = resolveTransitionDurations({
+	options: { origin: 'initial' },
+	backgroundScene: 'neutral-default',
+	pendingBackgroundScene: 'neutral-default'
+})
 
 export class NavigationStateManager {
 	routeState = $state<RouteState>(createUnknownRouteState())
@@ -49,9 +45,9 @@ export class NavigationStateManager {
 	pendingBackgroundScene = $state<BackgroundScene | null>(null)
 	backgroundBridgeActive = $state(false)
 	phase = $state<TransitionPhase>('idle')
-	exitDurationMs = $state(defaultMotionTokens.route.exitDurationMs)
-	bridgeDurationMs = $state(defaultMotionTokens.route.bridgeDurationMs)
-	enterDurationMs = $state(defaultMotionTokens.route.entryDurationMs)
+	exitDurationMs = $state(defaultTransitionDurations.exitDurationMs)
+	bridgeDurationMs = $state(defaultTransitionDurations.bridgeDurationMs)
+	enterDurationMs = $state(defaultTransitionDurations.enterDurationMs)
 	locale = $state<AppLocale>(DEFAULT_LOCALE)
 	topbarCollapsed = $state(false)
 	settingsOpen = $state(false)
@@ -65,16 +61,7 @@ export class NavigationStateManager {
 	#backgroundBridgeReady = false
 	#exitReleaseRequested = false
 	#clientRuntimeHydrated = false
-	#appHistoryEntries: AppHistoryEntry[] = []
-	#appHistoryCursor = -1
-
-	#resolveBackgroundScene(pageState: PageState) {
-		if (pageState.backgroundPolicy === 'replace' && pageState.backgroundScene) {
-			return pageState.backgroundScene
-		}
-
-		return this.backgroundScene
-	}
+	#historyTracker = new AppHistoryTracker()
 
 	sync(routeState: RouteState, pageState: PageState, locale?: AppLocale) {
 		this.routeState = routeState
@@ -84,7 +71,7 @@ export class NavigationStateManager {
 
 		if (this.phase !== 'idle' && this.pendingTarget === routeState.pathname) {
 			this.pendingPageState = pageState
-			this.pendingBackgroundScene = this.#resolveBackgroundScene(pageState)
+			this.pendingBackgroundScene = resolveBackgroundScene(this.backgroundScene, pageState)
 
 			if (this.phase === 'exit' && this.#exitReleaseRequested) {
 				this.#exitReleaseRequested = false
@@ -123,15 +110,15 @@ export class NavigationStateManager {
 		this.exitingPageState = this.pageState
 		this.pendingTarget = targetPath
 		this.pendingPageState = targetPageState
-		this.pendingBackgroundScene = this.#resolveBackgroundScene(targetPageState)
-		const motionTokens = getMotionTokens({
-			portrait: options.portrait ?? false,
-			reducedMotion: options.reducedMotion ?? false
+		this.pendingBackgroundScene = resolveBackgroundScene(this.backgroundScene, targetPageState)
+		const transitionDurations = resolveTransitionDurations({
+			options,
+			backgroundScene: this.backgroundScene,
+			pendingBackgroundScene: this.pendingBackgroundScene
 		})
-		this.exitDurationMs = motionTokens.route.exitDurationMs
-		this.enterDurationMs = motionTokens.route.entryDurationMs
-		this.bridgeDurationMs =
-			this.pendingBackgroundScene === this.backgroundScene ? 0 : motionTokens.route.bridgeDurationMs
+		this.exitDurationMs = transitionDurations.exitDurationMs
+		this.enterDurationMs = transitionDurations.enterDurationMs
+		this.bridgeDurationMs = transitionDurations.bridgeDurationMs
 		this.settingsOpen = false
 		this.phase = 'exit'
 
@@ -212,18 +199,15 @@ export class NavigationStateManager {
 		this.#clientRuntimeHydrated = true
 		this.#seedClientHistoryCursor()
 
-		const savedCursorMode = window.localStorage.getItem(CURSOR_MODE_STORAGE_KEY)
-		if (savedCursorMode === 'custom' || savedCursorMode === 'system') {
+		const savedCursorMode = readStoredCursorMode(window.localStorage)
+		if (savedCursorMode) {
 			this.cursorMode = savedCursorMode
 		}
 
-		const savedBackgroundAnimationPreference = window.localStorage.getItem(
-			BACKGROUND_ANIMATION_STORAGE_KEY
+		const savedBackgroundAnimationPreference = readStoredBackgroundAnimationPreference(
+			window.localStorage
 		)
-		if (
-			savedBackgroundAnimationPreference === 'on' ||
-			savedBackgroundAnimationPreference === 'off'
-		) {
+		if (savedBackgroundAnimationPreference) {
 			this.backgroundAnimationPreference = savedBackgroundAnimationPreference
 		}
 	}
@@ -250,7 +234,7 @@ export class NavigationStateManager {
 		this.cursorMode = mode
 
 		if (browser) {
-			window.localStorage.setItem(CURSOR_MODE_STORAGE_KEY, mode)
+			persistCursorMode(window.localStorage, mode)
 		}
 	}
 
@@ -259,7 +243,7 @@ export class NavigationStateManager {
 		this.backgroundAnimationStatus = 'idle'
 
 		if (browser) {
-			window.localStorage.setItem(BACKGROUND_ANIMATION_STORAGE_KEY, mode)
+			persistBackgroundAnimationPreference(window.localStorage, mode)
 		}
 	}
 
@@ -284,16 +268,10 @@ export class NavigationStateManager {
 	}
 
 	async goBack(back?: BackBehavior) {
-		if (browser && this.#appHistoryCursor > 0) {
-			const currentPathname = this.routeState.pathname
-
-			for (let index = this.#appHistoryCursor - 1; index >= 0; index -= 1) {
-				const entry = this.#appHistoryEntries[index]
-				if (entry.pathname === currentPathname) {
-					continue
-				}
-
-				window.history.go(index - this.#appHistoryCursor)
+		if (browser) {
+			const historyDelta = this.#historyTracker.getPreviousPathDelta(this.routeState.pathname)
+			if (historyDelta !== null) {
+				window.history.go(historyDelta)
 				return
 			}
 		}
@@ -377,13 +355,7 @@ export class NavigationStateManager {
 	}
 
 	#seedClientHistoryCursor() {
-		const currentEntryId = this.#readClientHistoryEntryId()
-		if (currentEntryId === null) {
-			return
-		}
-
-		this.#appHistoryEntries = [{ id: currentEntryId, pathname: this.routeState.pathname }]
-		this.#appHistoryCursor = 0
+		this.#historyTracker.seed(this.#readClientHistoryEntryId(), this.routeState.pathname)
 	}
 
 	#syncClientHistoryCursor() {
@@ -391,25 +363,7 @@ export class NavigationStateManager {
 			return
 		}
 
-		const currentEntryId = this.#readClientHistoryEntryId()
-		if (currentEntryId === null) {
-			return
-		}
-
-		const existingIndex = this.#appHistoryEntries.findIndex((entry) => entry.id === currentEntryId)
-		if (existingIndex >= 0) {
-			this.#appHistoryCursor = existingIndex
-			this.#appHistoryEntries[existingIndex] = {
-				id: currentEntryId,
-				pathname: this.routeState.pathname
-			}
-			return
-		}
-
-		const nextEntries = this.#appHistoryEntries.slice(0, this.#appHistoryCursor + 1)
-		nextEntries.push({ id: currentEntryId, pathname: this.routeState.pathname })
-		this.#appHistoryEntries = nextEntries
-		this.#appHistoryCursor = nextEntries.length - 1
+		this.#historyTracker.sync(this.#readClientHistoryEntryId(), this.routeState.pathname)
 	}
 }
 

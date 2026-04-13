@@ -21,6 +21,7 @@ import {
 import type { HomeTopbarRefs, MotionLibs, TopbarMode } from './home-topbar.types'
 
 type TimelineRef = ReturnType<typeof import('gsap').gsap.timeline> | null
+type PathInterpolator = ReturnType<MotionLibs['interpolate']>
 type SurfaceSkin = {
 	backgroundColor: string
 	borderColor: string
@@ -76,6 +77,7 @@ const gsapEasePower2Out = topbarMotion.gsapEasePower2Out
 const gsapEasePower2In = topbarMotion.gsapEasePower2In
 const gsapEasePower3InOut = topbarMotion.gsapEasePower3InOut
 const gsapEaseExpoInOut = topbarMotion.gsapEaseExpoInOut
+const pathInterpolatorCache = new Map<string, PathInterpolator>()
 
 function normalizeGsapTargets(
 	targets: GsapTarget | Array<GsapTarget | null | undefined | false> | null | undefined | false
@@ -175,6 +177,20 @@ function waitForNextPaint(frames = 1) {
 	})
 }
 
+function getCachedPathInterpolator(libs: MotionLibs, fromPath: string, toPath: string) {
+	const cacheKey = `${fromPath}=>${toPath}`
+	const cachedInterpolator = pathInterpolatorCache.get(cacheKey)
+	if (cachedInterpolator) {
+		return cachedInterpolator
+	}
+
+	const nextInterpolator = libs.interpolate(fromPath, toPath, {
+		maxSegmentLength: 2
+	})
+	pathInterpolatorCache.set(cacheKey, nextInterpolator)
+	return nextInterpolator
+}
+
 export async function loadProfileShellPath() {
 	try {
 		const response = await fetch(`${assets}/icons/home-profile-chip-mask.svg`)
@@ -206,6 +222,11 @@ export async function loadMotionLibs(): Promise<MotionLibs | null> {
 	} catch {
 		return null
 	}
+}
+
+export function primeRichTransitionCaches(libs: MotionLibs, profileShellPath: string) {
+	getCachedPathInterpolator(libs, profileShellPath, backShellPath)
+	getCachedPathInterpolator(libs, backShellPath, profileShellPath)
 }
 
 export function resetTransitionStyles(libs: MotionLibs | null, refs: HomeTopbarRefs) {
@@ -440,10 +461,10 @@ export async function runRichTransition({
 			: []
 	const targetToolsSurface =
 		nextMode === 'subpage' ? targetRoot.querySelector<HTMLElement>('.home-topbar-tools') : null
-	const pathInterpolator = libs.interpolate(
+	const pathInterpolator = getCachedPathInterpolator(
+		libs,
 		fromMode === 'main' ? profileShellPath : backShellPath,
-		nextMode === 'subpage' ? backShellPath : profileShellPath,
-		{ maxSegmentLength: 2 }
+		nextMode === 'subpage' ? backShellPath : profileShellPath
 	)
 	const pathProgress = { value: 0 }
 	const targetGradient = nextMode === 'subpage' ? backGradient : profileGradient

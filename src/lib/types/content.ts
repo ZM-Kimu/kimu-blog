@@ -23,13 +23,3 @@ export interface TagResult {
 	tag: TagSummary
 	posts: BlogPost[]
 }
-
-export interface ArchiveCategoryGroup {
-	category: CategorySummary
-	posts: BlogPost[]
-}
-
-export interface ArchiveYearGroup {
-	year: string
-	posts: BlogPost[]
-}

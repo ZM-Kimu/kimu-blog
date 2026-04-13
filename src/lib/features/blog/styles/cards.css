@@ -68,10 +68,6 @@
 	gap: 1rem;
 }
 
-.compact-post-grid {
-	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-
 .post-card {
 	position: relative;
 	display: grid;

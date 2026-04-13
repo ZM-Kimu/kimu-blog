@@ -8,6 +8,7 @@
 		focusAfterTransition,
 		loadMotionLibs,
 		loadProfileShellPath,
+		primeRichTransitionCaches,
 		resetTransitionStyles,
 		runRichTransition,
 		runSimpleTransition
@@ -63,6 +64,7 @@
 	let motionLibs: MotionLibs | null = null
 	let currentTimeline: ReturnType<typeof import('gsap').gsap.timeline> | null = null
 	let profileShellPath = $state(fallbackProfilePath)
+	let warmupCancel: (() => void) | null = null
 	let topbarRoot: HTMLElement | null = $state(null)
 	let backButton: HTMLButtonElement | null = $state(null)
 	let backGlyph: HTMLSpanElement | null = $state(null)
@@ -224,11 +226,21 @@
 
 	onMount(() => {
 		void (async () => {
-			profileShellPath = await loadProfileShellPath()
-			motionLibs = await loadMotionLibs()
+			const [loadedProfileShellPath, loadedMotionLibs] = await Promise.all([
+				loadProfileShellPath(),
+				loadMotionLibs()
+			])
+			profileShellPath = loadedProfileShellPath
+			motionLibs = loadedMotionLibs
+
+			if (loadedMotionLibs) {
+				primeRichTransitionCaches(loadedMotionLibs, loadedProfileShellPath)
+			}
 		})()
 
 		return () => {
+			warmupCancel?.()
+			warmupCancel = null
 			currentTimeline?.kill()
 			currentTimeline = null
 			getRefs().motionLayer?.replaceChildren()
