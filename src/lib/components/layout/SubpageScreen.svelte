@@ -30,6 +30,9 @@
 		--home-shell-padding: clamp(0.78rem, 1.25vw, 1.05rem);
 		--home-topbar-height: 5.2rem;
 		--subpage-stage-gap: clamp(1.2rem, 2vw, 1.8rem);
+		--subpage-stage-available-height: calc(
+			100dvh - var(--home-topbar-height) - (var(--subpage-stage-gap) * 2)
+		);
 
 		position: relative;
 		min-height: 100dvh;

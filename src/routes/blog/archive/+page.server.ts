@@ -1,12 +1,13 @@
-import { getArchiveByCategory, getArchiveByYear } from '$lib/server/content/archive'
-import { getAllPosts } from '$lib/server/content/posts'
+import { getAllCategories, getAllPosts } from '$lib/server/content/posts'
 
 export const prerender = true
 
 export function load() {
+	const posts = getAllPosts()
+
 	return {
-		categoryGroups: getArchiveByCategory(),
-		yearGroups: getArchiveByYear(),
-		totalPosts: getAllPosts().length
+		posts,
+		categories: getAllCategories(),
+		totalPosts: posts.length
 	}
 }

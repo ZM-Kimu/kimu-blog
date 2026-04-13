@@ -18,6 +18,11 @@ import type {
 	TransitionPhase
 } from './types'
 
+type AppHistoryEntry = {
+	id: string
+	pathname: string
+}
+
 const CURSOR_MODE_STORAGE_KEY = 'cursor-mode'
 const BACKGROUND_ANIMATION_STORAGE_KEY = 'home-background-animation'
 const defaultMotionTokens = getMotionTokens({ portrait: false, reducedMotion: false })
@@ -36,6 +41,8 @@ function createUnknownPageState(): PageState {
 export class NavigationStateManager {
 	routeState = $state<RouteState>(createUnknownRouteState())
 	pageState = $state<PageState>(createUnknownPageState())
+	exitingRouteState = $state<RouteState | null>(null)
+	exitingPageState = $state<PageState | null>(null)
 	pendingTarget = $state<string | null>(null)
 	pendingPageState = $state<PageState | null>(null)
 	backgroundScene = $state<BackgroundScene>('neutral-default')
@@ -56,8 +63,9 @@ export class NavigationStateManager {
 	#backgroundBridgeTimer: ReturnType<typeof setTimeout> | null = null
 	#backgroundBridgeDeferred = false
 	#backgroundBridgeReady = false
+	#exitReleaseRequested = false
 	#clientRuntimeHydrated = false
-	#appHistoryEntryIds: string[] = []
+	#appHistoryEntries: AppHistoryEntry[] = []
 	#appHistoryCursor = -1
 
 	#resolveBackgroundScene(pageState: PageState) {
@@ -78,7 +86,8 @@ export class NavigationStateManager {
 			this.pendingPageState = pageState
 			this.pendingBackgroundScene = this.#resolveBackgroundScene(pageState)
 
-			if (this.phase === 'exit') {
+			if (this.phase === 'exit' && this.#exitReleaseRequested) {
+				this.#exitReleaseRequested = false
 				this.#startEntry()
 				this.#activateDeferredBackgroundBridge()
 			}
@@ -108,7 +117,10 @@ export class NavigationStateManager {
 		this.#clearBackgroundBridgeTimer()
 		this.#backgroundBridgeDeferred = false
 		this.#backgroundBridgeReady = false
+		this.#exitReleaseRequested = false
 		this.backgroundBridgeActive = false
+		this.exitingRouteState = this.routeState
+		this.exitingPageState = this.pageState
 		this.pendingTarget = targetPath
 		this.pendingPageState = targetPageState
 		this.pendingBackgroundScene = this.#resolveBackgroundScene(targetPageState)
@@ -166,11 +178,30 @@ export class NavigationStateManager {
 		this.#clearBackgroundBridgeTimer()
 		this.#backgroundBridgeDeferred = false
 		this.#backgroundBridgeReady = false
+		this.#exitReleaseRequested = false
 		this.backgroundBridgeActive = false
 		this.phase = 'idle'
+		this.exitingRouteState = null
+		this.exitingPageState = null
 		this.pendingTarget = null
 		this.pendingPageState = null
 		this.pendingBackgroundScene = null
+	}
+
+	releaseExit() {
+		if (this.phase !== 'exit') {
+			return
+		}
+
+		this.#exitReleaseRequested = true
+
+		if (this.pendingTarget !== this.routeState.pathname) {
+			return
+		}
+
+		this.#exitReleaseRequested = false
+		this.#startEntry()
+		this.#activateDeferredBackgroundBridge()
 	}
 
 	hydrateClientRuntime() {
@@ -254,8 +285,17 @@ export class NavigationStateManager {
 
 	async goBack(back?: BackBehavior) {
 		if (browser && this.#appHistoryCursor > 0) {
-			window.history.back()
-			return
+			const currentPathname = this.routeState.pathname
+
+			for (let index = this.#appHistoryCursor - 1; index >= 0; index -= 1) {
+				const entry = this.#appHistoryEntries[index]
+				if (entry.pathname === currentPathname) {
+					continue
+				}
+
+				window.history.go(index - this.#appHistoryCursor)
+				return
+			}
 		}
 
 		if (back?.fallbackHref) {
@@ -271,6 +311,8 @@ export class NavigationStateManager {
 	#startEntry() {
 		this.#clearEnterTimer()
 		this.phase = 'entry'
+		this.exitingRouteState = null
+		this.exitingPageState = null
 		this.#enterTimer = setTimeout(() => {
 			this.finishEntry()
 		}, this.enterDurationMs)
@@ -281,6 +323,7 @@ export class NavigationStateManager {
 		this.phase = 'idle'
 		this.pendingTarget = null
 		this.pendingPageState = null
+		this.#exitReleaseRequested = false
 	}
 
 	#clearEnterTimer() {
@@ -339,7 +382,7 @@ export class NavigationStateManager {
 			return
 		}
 
-		this.#appHistoryEntryIds = [currentEntryId]
+		this.#appHistoryEntries = [{ id: currentEntryId, pathname: this.routeState.pathname }]
 		this.#appHistoryCursor = 0
 	}
 
@@ -353,15 +396,19 @@ export class NavigationStateManager {
 			return
 		}
 
-		const existingIndex = this.#appHistoryEntryIds.indexOf(currentEntryId)
+		const existingIndex = this.#appHistoryEntries.findIndex((entry) => entry.id === currentEntryId)
 		if (existingIndex >= 0) {
 			this.#appHistoryCursor = existingIndex
+			this.#appHistoryEntries[existingIndex] = {
+				id: currentEntryId,
+				pathname: this.routeState.pathname
+			}
 			return
 		}
 
-		const nextEntries = this.#appHistoryEntryIds.slice(0, this.#appHistoryCursor + 1)
-		nextEntries.push(currentEntryId)
-		this.#appHistoryEntryIds = nextEntries
+		const nextEntries = this.#appHistoryEntries.slice(0, this.#appHistoryCursor + 1)
+		nextEntries.push({ id: currentEntryId, pathname: this.routeState.pathname })
+		this.#appHistoryEntries = nextEntries
 		this.#appHistoryCursor = nextEntries.length - 1
 	}
 }

@@ -7,85 +7,48 @@
 
 	interface Props {
 		title: string
-		kicker: string
 		description: string
 		href?: string
-		state?: string
 		tone?: Tone
 		count?: number
 	}
 
-	let {
-		title,
-		kicker,
-		description,
-		href,
-		state = 'Live',
-		tone = 'cyan',
-		count = 0
-	}: Props = $props()
+	let { title, description, href, tone = 'cyan', count = 0 }: Props = $props()
 
 	const messages = $derived(page.data.i18n?.messages)
+	const recordsLabel = $derived(translate(messages, 'common.recordsLabel'))
 </script>
 
 {#if href === '/favorites'}
 	<a class={`mission-card tone-${tone}`} href={resolve('/favorites')}>
-		<div class="mission-card-hud">
-			<span class="mission-card-kicker">{kicker}</span>
-			<span class="mission-card-state">{state}</span>
-		</div>
+		<span class="mission-card-count" aria-label={recordsLabel}>{count}</span>
 		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
-		</div>
-		<div class="mission-card-footer">
-			<span>{translate(messages, 'common.recordsLabel')}</span>
-			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
-{:else if href === '/blog/archive'}
-	<a class={`mission-card tone-${tone}`} href={resolve('/blog/archive')}>
-		<div class="mission-card-hud">
-			<span class="mission-card-kicker">{kicker}</span>
-			<span class="mission-card-state">{state}</span>
-		</div>
+{:else if href?.startsWith('/blog/archive?category=')}
+	<a class={`mission-card tone-${tone}`} href={resolve(href as `/blog/archive?category=${string}`)}>
+		<span class="mission-card-count" aria-label={recordsLabel}>{count}</span>
 		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
-		</div>
-		<div class="mission-card-footer">
-			<span>{translate(messages, 'common.recordsLabel')}</span>
-			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
 {:else if href}
 	<a class={`mission-card tone-${tone}`} href={resolve('/blog')}>
-		<div class="mission-card-hud">
-			<span class="mission-card-kicker">{kicker}</span>
-			<span class="mission-card-state">{state}</span>
-		</div>
+		<span class="mission-card-count" aria-label={recordsLabel}>{count}</span>
 		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
-		</div>
-		<div class="mission-card-footer">
-			<span>{translate(messages, 'common.recordsLabel')}</span>
-			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</a>
 {:else}
 	<div class={`mission-card tone-${tone}`}>
-		<div class="mission-card-hud">
-			<span class="mission-card-kicker">{kicker}</span>
-			<span class="mission-card-state">{state}</span>
-		</div>
+		<span class="mission-card-count" aria-label={recordsLabel}>{count}</span>
 		<div class="mission-card-body">
 			<h3>{title}</h3>
 			<p>{description}</p>
-		</div>
-		<div class="mission-card-footer">
-			<span>{translate(messages, 'common.recordsLabel')}</span>
-			<strong>{String(count).padStart(2, '0')}</strong>
 		</div>
 	</div>
 {/if}

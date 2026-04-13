@@ -6,6 +6,7 @@ export const enUSMessages = {
 	},
 	common: {
 		back: 'Back',
+		all: 'All',
 		home: 'Home',
 		close: 'Close',
 		info: 'Info',
@@ -181,7 +182,9 @@ export const enUSMessages = {
 			introDescription:
 				'The mission page handles entry and selection; this screen is for high-speed browsing across every record.',
 			backToBlog: 'Back to mission page',
+			openPost: 'Open article',
 			categoryEyebrow: 'Category',
+			tagsScrollHint: 'Scroll',
 			emptyDate: 'No Records',
 			emptyTitle: 'Waiting for content',
 			emptyDescription: 'This category is reserved, but there are no published posts in it yet.',
@@ -198,7 +201,21 @@ export const enUSMessages = {
 			boardEyebrow: 'Primary Categories',
 			boardTitle: 'Mission Board',
 			recentEyebrow: 'Recent Output',
-			recentTitle: 'Latest Records'
+			recentTitle: 'Latest Records',
+			cards: {
+				engineering: {
+					title: 'Engineering Records'
+				},
+				designLog: {
+					title: 'Study Records'
+				},
+				fieldNotes: {
+					title: 'Daily Notes'
+				},
+				favorites: {
+					title: 'Favorites'
+				}
+			}
 		},
 		post: {
 			heroEyebrow: 'Dossier / Article Record',

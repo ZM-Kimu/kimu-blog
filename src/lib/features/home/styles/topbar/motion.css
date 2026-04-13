@@ -105,11 +105,13 @@
 	gap: var(--motion-topbar-visual-profile-copy-gap);
 	align-content: center;
 	line-height: 1;
+	min-width: max-content;
 }
 
 .home-topbar-morph-copy span {
 	font-size: 0.98rem;
 	font-weight: 700;
+	white-space: nowrap;
 }
 
 .home-topbar-morph-copy small {
@@ -118,6 +120,7 @@
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	opacity: 0.72;
+	white-space: nowrap;
 }
 
 .home-topbar-morph-glyph {

@@ -6,6 +6,7 @@ export const zhCNMessages = {
 	},
 	common: {
 		back: '返回',
+		all: '全部',
 		home: '主页',
 		close: '关闭',
 		info: 'Info',
@@ -175,7 +176,9 @@ export const zhCNMessages = {
 			introTitle: '完整归档',
 			introDescription: '分类界面负责入口与选择，这里负责高效率浏览全部文章记录。',
 			backToBlog: '返回分类界面',
+			openPost: '进入文章',
 			categoryEyebrow: '分类',
+			tagsScrollHint: '滑动',
 			emptyDate: '暂无记录',
 			emptyTitle: '等待内容接入',
 			emptyDescription: '这个分类已经预留，但当前还没有正式文章。',
@@ -192,7 +195,21 @@ export const zhCNMessages = {
 			boardEyebrow: 'Primary Categories',
 			boardTitle: 'Mission Board',
 			recentEyebrow: 'Recent Output',
-			recentTitle: 'Latest Records'
+			recentTitle: 'Latest Records',
+			cards: {
+				engineering: {
+					title: '工程记录'
+				},
+				designLog: {
+					title: '学习记录'
+				},
+				fieldNotes: {
+					title: '日常记录'
+				},
+				favorites: {
+					title: '收藏'
+				}
+			}
 		},
 		post: {
 			heroEyebrow: 'Dossier / Article Record',

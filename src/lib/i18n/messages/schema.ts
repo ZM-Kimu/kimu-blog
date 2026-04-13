@@ -8,6 +8,7 @@ export const appMessageSkeleton = {
 	},
 	common: {
 		back: '',
+		all: '',
 		home: '',
 		close: '',
 		info: '',
@@ -177,7 +178,9 @@ export const appMessageSkeleton = {
 			introTitle: '',
 			introDescription: '',
 			backToBlog: '',
+			openPost: '',
 			categoryEyebrow: '',
+			tagsScrollHint: '',
 			emptyDate: '',
 			emptyTitle: '',
 			emptyDescription: '',
@@ -193,7 +196,21 @@ export const appMessageSkeleton = {
 			boardEyebrow: '',
 			boardTitle: '',
 			recentEyebrow: '',
-			recentTitle: ''
+			recentTitle: '',
+			cards: {
+				engineering: {
+					title: ''
+				},
+				designLog: {
+					title: ''
+				},
+				fieldNotes: {
+					title: ''
+				},
+				favorites: {
+					title: ''
+				}
+			}
 		},
 		post: {
 			heroEyebrow: '',

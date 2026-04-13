@@ -7,6 +7,7 @@
 	import '$lib/../app.css'
 
 	import BackgroundStage from '$lib/components/layout/BackgroundStage.svelte'
+	import SiteClickEffect from '$lib/components/effects/SiteClickEffect.svelte'
 	import DockNav from '$lib/components/layout/DockNav.svelte'
 	import Footer from '$lib/components/layout/Footer.svelte'
 	import Header from '$lib/components/layout/Header.svelte'
@@ -82,8 +83,13 @@
 	const isBareRoute = $derived(isPublicScreenRoute || isManageRoute)
 	const showGlobalChrome = $derived(pageState.showGlobalChrome)
 	const isRouteOutgoing = $derived(navigationManager.phase === 'exit')
-	const isDesktopHomeRoute = $derived(routeState.kind === 'home' && isLandscapePublicLayout)
-	const useDesktopHomeExit = $derived(isRouteOutgoing && isDesktopHomeRoute)
+	const exitingRouteState = $derived(navigationManager.exitingRouteState)
+	const useDesktopHomeExit = $derived(
+		isRouteOutgoing && exitingRouteState?.kind === 'home' && isLandscapePublicLayout
+	)
+	const useDesktopBlogExit = $derived(
+		isRouteOutgoing && exitingRouteState?.kind === 'blog' && isLandscapePublicLayout
+	)
 	const isRouteEntering = $derived(
 		navigationManager.phase === 'entry' && navigationManager.pendingTarget === page.url.pathname
 	)
@@ -93,6 +99,7 @@
 			navigationManager.backgroundScene !== 'neutral-default' ||
 			navigationManager.pendingBackgroundScene !== null
 	)
+	const enableSiteClickEffect = $derived(!prefersReducedMotion && siteBootPhase !== 'boot')
 	const motionTokens = $derived(
 		getMotionTokens({
 			portrait: isPortraitPublicLayout,
@@ -196,6 +203,16 @@
 		})
 	}
 
+	function waitForNextPaint() {
+		if (!browser) {
+			return Promise.resolve()
+		}
+
+		return new Promise<void>((resolvePromise) => {
+			requestAnimationFrame(() => resolvePromise())
+		})
+	}
+
 	function handleDocumentDragStart(event: DragEvent) {
 		const target = event.target
 		if (!(target instanceof Element)) {
@@ -262,20 +279,30 @@
 		})
 
 		return (async () => {
-			await wait(navigationManager.exitDurationMs)
+			const topbarBridgePromise = isLandscapePublicLayout
+				? (publicTopbarManager
+						?.bridgeTo(targetPageState.topbarShellVariant)
+						.catch(() => undefined) ?? Promise.resolve())
+				: Promise.resolve()
+
+			const exitDurationMs =
+				isLandscapePublicLayout && routeState.kind === 'blog'
+					? motionTokens.blog.missionExitTotalDurationMs
+					: navigationManager.exitDurationMs
+
+			await tick()
+			await waitForNextPaint()
+			await wait(exitDurationMs)
 			if (navigationManager.pendingTarget !== targetPath) {
 				return
 			}
 
 			navigationManager.startBackgroundBridge({ deferUntilEntry: isLandscapePublicLayout })
+			navigationManager.releaseExit()
 			await tick()
 			if (navigationManager.pendingTarget !== targetPath) {
 				return
 			}
-
-			const topbarBridgePromise =
-				publicTopbarManager?.bridgeTo(targetPageState.topbarShellVariant).catch(() => undefined) ??
-				Promise.resolve()
 
 			if (isLandscapePublicLayout) {
 				void topbarBridgePromise
@@ -492,6 +519,8 @@
 		/>
 	{/if}
 
+	<SiteClickEffect enabled={enableSiteClickEffect} />
+
 	{#if isLandscapePublicLayout}
 		<PublicTopbarManager
 			host={siteFrame}
@@ -528,9 +557,12 @@
 		{#if isPublicScreenRoute}
 			<div
 				class:screen-route-layer-entry={isRouteEntering}
-				class:screen-route-layer-exit={isRouteOutgoing && !useDesktopHomeExit}
+				class:screen-route-layer-exit={isRouteOutgoing &&
+					!useDesktopHomeExit &&
+					!useDesktopBlogExit}
 				class:screen-route-layer-home-enter-desktop={desktopHomeEnterActive}
 				class:screen-route-layer-home-exit-desktop={useDesktopHomeExit}
+				class:screen-route-layer-blog-exit-desktop={useDesktopBlogExit}
 				class:screen-route-layer-subpage-enter-desktop={desktopSubpageEnterActive}
 				class="screen-route-layer"
 			>

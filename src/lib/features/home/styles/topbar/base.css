@@ -420,6 +420,10 @@
 	padding-right: 0.2rem;
 }
 
+.home-topbar-settings-scroll {
+	min-height: 0;
+}
+
 .home-topbar-settings .home-topbar-settings-header strong {
 	font-family: var(--font-display);
 }

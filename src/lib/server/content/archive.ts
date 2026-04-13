@@ -5,7 +5,7 @@ import { getAllPosts } from './posts'
 
 export function getArchiveByCategory(): ArchiveCategoryGroup[] {
 	return missionCatalog
-		.filter((mission) => mission.href.startsWith('/blog/archive#'))
+		.filter((mission) => mission.href.startsWith('/blog/archive'))
 		.map((mission) => {
 			const posts = getAllPosts().filter(
 				(post) =>

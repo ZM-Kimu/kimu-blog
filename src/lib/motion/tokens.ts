@@ -82,7 +82,7 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 	}
 
 	const route = {
-		exitDurationMs: reducedMotion ? 5 : 10,
+		exitDurationMs: reducedMotion ? 50 : 100,
 		entryDurationMs: reducedMotion ? 80 : 160,
 		bridgeDurationMs: reducedMotion ? 0 : 180,
 		desktopHomeEnterDurationMs: reducedMotion ? 1 : 830,
@@ -136,6 +136,19 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		missionMarqueeDurationMs: 24000
 	}
 
+	const blog = {
+		missionRailEnterDurationMs: reducedMotion ? 1 : 480,
+		missionRailEnterOffsetXPx: 28,
+		missionCardEnterDurationMs: reducedMotion ? 1 : 460,
+		missionCardEnterOffsetYPx: 18,
+		missionCardEnterStaggerMs: reducedMotion ? 0 : 70,
+		missionExitDurationMs: reducedMotion ? 1 : 140,
+		missionExitOffsetXPx: 20,
+		missionExitStaggerMs: reducedMotion ? 0 : 36,
+		missionRailExitDelayMs: reducedMotion ? 0 : 108,
+		missionExitTotalDurationMs: reducedMotion ? 1 : 158
+	}
+
 	const topbar = {
 		stageDurationMs: 220,
 		stageCollapseDelayMs: 90,
@@ -184,12 +197,12 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		backTitleRevealDurationMs: 180,
 		titleGhostExitDurationMs: 160,
 		glyphFadeDurationMs: 120,
-		morphTextRevealAtMs: 280,
+		morphTextRevealAtMs: 360,
 		morphTextRevealDurationMs: 180,
 		profileChipRevealDurationMs: 180,
 		profileContentRevealDurationMs: 160,
-		profileContentRevealOffsetMs: 60,
-		profileContentStaggerMs: 30,
+		profileContentRevealOffsetMs: 0,
+		profileContentStaggerMs: 0,
 		chipSkinHandoffOffsetMs: 40,
 		chipSkinHandoffTailBufferMs: 180,
 		resourceDividerRevealOffsetMs: 30,
@@ -221,6 +234,7 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		notice,
 		error,
 		homeAmbient,
+		blog,
 		topbar,
 		topbarVisual
 	}
@@ -300,7 +314,16 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-error-headline-delay', ms(tokens.error.headlineDelayMs)],
 		['motion-error-message-duration', ms(tokens.error.messageDurationMs)],
 		['motion-error-message-delay', ms(tokens.error.messageDelayMs)],
-		['motion-home-mission-marquee-duration', ms(tokens.homeAmbient.missionMarqueeDurationMs)]
+		['motion-home-mission-marquee-duration', ms(tokens.homeAmbient.missionMarqueeDurationMs)],
+		['motion-blog-mission-rail-enter-duration', ms(tokens.blog.missionRailEnterDurationMs)],
+		['motion-blog-mission-rail-enter-offset-x', px(tokens.blog.missionRailEnterOffsetXPx)],
+		['motion-blog-mission-card-enter-duration', ms(tokens.blog.missionCardEnterDurationMs)],
+		['motion-blog-mission-card-enter-offset-y', px(tokens.blog.missionCardEnterOffsetYPx)],
+		['motion-blog-mission-card-stagger', ms(tokens.blog.missionCardEnterStaggerMs)],
+		['motion-blog-mission-exit-duration', ms(tokens.blog.missionExitDurationMs)],
+		['motion-blog-mission-exit-offset-x', px(tokens.blog.missionExitOffsetXPx)],
+		['motion-blog-mission-exit-stagger', ms(tokens.blog.missionExitStaggerMs)],
+		['motion-blog-mission-rail-exit-delay', ms(tokens.blog.missionRailExitDelayMs)]
 	])
 }
 

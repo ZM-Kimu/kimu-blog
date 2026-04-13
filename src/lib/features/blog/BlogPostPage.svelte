@@ -17,7 +17,6 @@
 	import { siteConfig } from '$lib/config/site'
 	import TagChip from './components/TagChip.svelte'
 	import { formatDate } from '$lib/utils/date'
-	import { error } from '@sveltejs/kit'
 
 	let { data } = $props()
 	const messages = $derived(page.data.i18n?.messages)
@@ -25,15 +24,7 @@
 	const t = (key: string, params?: Record<string, string | number>) =>
 		translate(messages, key, params)
 
-	const Content = $derived.by(() => {
-		const contentModule = modules[data.post.path]
-
-		if (!contentModule) {
-			throw error(404, 'post_module_missing')
-		}
-
-		return contentModule.default
-	})
+	const Content = $derived(modules[data.post.path]?.default ?? null)
 </script>
 
 <article class="dossier-shell">
@@ -81,7 +72,9 @@
 	<div class="dossier-layout">
 		<div class="panel dossier-main">
 			<div class="content-prose article-prose">
-				<Content />
+				{#if Content}
+					<Content />
+				{/if}
 			</div>
 		</div>
 

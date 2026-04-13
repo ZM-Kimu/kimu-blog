@@ -31,6 +31,21 @@
 		/>
 		<script>
 			;(() => {
+				const analyticsHosts = new Set(['www.zmkimu.com', 'zmkimu.com'])
+
+				if (!analyticsHosts.has(location.hostname)) {
+					return
+				}
+
+				const script = document.createElement('script')
+				script.defer = true
+				script.src = 'https://static.cloudflareinsights.com/beacon.min.js'
+				script.setAttribute('data-cf-beacon', '{"token":"a03b54446f484bad99a1a3129a367d80"}')
+				document.head.appendChild(script)
+			})()
+		</script>
+		<script>
+			;(() => {
 				const root = document.documentElement
 				const isManageRoute =
 					location.pathname === '/manage' || location.pathname.startsWith('/manage/')
@@ -516,6 +531,10 @@
 					animation: none;
 				}
 			}
+
+			.site-body-host {
+				display: contents;
+			}
 		</style>
 		%sveltekit.head%
 	</head>
@@ -571,6 +590,6 @@
 			</div>
 			<span class="site-boot-overlay__sr-only">正在加载站点界面</span>
 		</div>
-		%sveltekit.body%
+		<div class="site-body-host">%sveltekit.body%</div>
 	</body>
 </html>

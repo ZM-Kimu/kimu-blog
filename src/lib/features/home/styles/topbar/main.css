@@ -41,11 +41,13 @@
 	gap: var(--motion-topbar-visual-profile-copy-gap);
 	align-content: center;
 	line-height: 1;
+	min-width: max-content;
 }
 
 .home-profile-chip-copy span {
 	font-weight: 700;
 	font-size: 0.98rem;
+	white-space: nowrap;
 }
 
 .home-profile-chip-copy small {
@@ -54,6 +56,7 @@
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	opacity: 0.72;
+	white-space: nowrap;
 }
 
 .home-topbar-main .home-topbar-tools {
