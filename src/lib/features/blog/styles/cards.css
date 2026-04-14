@@ -89,14 +89,40 @@
 	gap: 0.55rem;
 }
 
+.mission-card h3,
+.post-card h3 {
+	margin: 0;
+	font-family: var(--font-display);
+	letter-spacing: -0.04em;
+}
+
 .post-card-body h3 {
 	font-size: 1.32rem;
+}
+
+.post-card-body p {
+	color: var(--ink-soft);
+	line-height: 1.7;
 }
 
 .post-meta {
 	color: var(--ink-faint);
 	font-family: var(--font-mono);
 	font-size: 0.78rem;
+}
+
+.post-card-hud {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.8rem;
+}
+
+.post-card-code {
+	font-family: var(--font-mono);
+	font-size: 0.74rem;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
 }
 
 .post-card-tags .tag-chip {

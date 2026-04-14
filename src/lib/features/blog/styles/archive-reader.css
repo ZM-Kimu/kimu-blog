@@ -1,0 +1,208 @@
+.archive-reader-browser {
+	display: grid;
+	gap: 1rem;
+	padding: 2.35rem;
+	min-height: 0;
+	height: 100%;
+	align-content: start;
+	overflow: hidden auto;
+	cursor: inherit;
+}
+
+.archive-reader-head {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.archive-reader-head-bar {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.9rem;
+	min-width: 0;
+}
+
+.archive-reader-title-line {
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+	flex: 1 1 auto;
+	gap: 0.75rem;
+	min-width: 0;
+}
+
+.archive-reader-title-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	flex: 1 1 auto;
+	gap: 0.45rem 0.9rem;
+	min-width: 0;
+}
+
+.archive-reader-head h2 {
+	margin: 0;
+	font-size: clamp(1.8rem, 2.3vw, 2.5rem);
+	line-height: 0.96;
+	min-width: 0;
+}
+
+.archive-reader-title-bar > .eyebrow,
+.archive-reader-date {
+	margin: 0;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+}
+
+:where(.archive-reader-head) > p:last-child,
+.archive-reader-no-tags {
+	margin: 0;
+	line-height: 1.75;
+	color: var(--ink-soft);
+}
+
+.archive-reader-tags-wrap {
+	--archive-reader-tags-row-height: calc((0.3rem * 2) + (0.69rem * 1.1));
+
+	display: flex;
+	align-items: center;
+	flex: 0 1 auto;
+	justify-content: flex-end;
+	gap: 0.38rem;
+	max-width: min(36%, 22rem);
+	min-width: 0;
+}
+
+.archive-reader-open-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 2;
+	inline-size: 2.9rem;
+	block-size: 2.9rem;
+	padding: 0;
+	border: 1px solid rgb(96 141 198 / 18%);
+	border-radius: 0.9rem;
+	background: rgb(255 255 255 / 76%);
+	box-shadow: 0 12px 28px rgb(29 87 148 / 10%);
+	cursor: inherit;
+	transform: translate(28%, -28%);
+}
+
+.archive-reader-open-icon {
+	display: block;
+	inline-size: 2.33rem;
+	block-size: 2.33rem;
+	background: var(--blue);
+	mask-image: url('/next_indicator.png');
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-size: contain;
+}
+
+.archive-reader-meta {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	gap: 0.75rem;
+	margin: 0;
+}
+
+.archive-reader-meta div {
+	display: grid;
+	gap: 0.2rem;
+	padding: 0.8rem 0.9rem;
+	border-radius: 18px;
+	border: 1px solid rgb(96 141 198 / 14%);
+	background: rgb(255 255 255 / 64%);
+}
+
+.archive-reader-meta dt {
+	margin: 0;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--ink-faint);
+}
+
+.archive-reader-meta dd {
+	margin: 0;
+	font-size: 0.98rem;
+	color: var(--ink);
+}
+
+.archive-reader-tags {
+	display: block;
+	flex: 0 1 auto;
+	max-width: 100%;
+	min-width: 0;
+	inline-size: 100%;
+	overflow: auto hidden;
+	overscroll-behavior-x: contain;
+	scrollbar-width: none;
+}
+
+.archive-reader-tags-list {
+	display: flex;
+	gap: 0.34rem;
+	inline-size: max-content;
+	min-inline-size: 100%;
+	justify-content: flex-end;
+}
+
+.archive-reader-tags[data-overflowing='true'] .archive-reader-tags-list {
+	justify-content: flex-start;
+	min-inline-size: max-content;
+}
+
+.archive-reader-tags::-webkit-scrollbar {
+	display: none;
+}
+
+.archive-reader-tags-list .tag-chip {
+	flex: 0 0 auto;
+	padding: 0.3rem 0.62rem;
+	font-size: 0.69rem;
+	line-height: 1.1;
+}
+
+.archive-reader-tags-list .tag-chip:hover,
+.archive-reader-tags-list .tag-chip:focus-visible {
+	transform: none;
+	border-color: var(--line);
+	background: rgb(255 255 255 / 68%);
+	box-shadow: none;
+	translate: none;
+}
+
+.archive-reader-tags-hint {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	block-size: calc(var(--archive-reader-tags-row-height) * 0.5);
+	inline-size: 1.15rem;
+	padding: 0;
+	border: 0;
+	border-radius: 999px;
+	background: rgb(32 82 148 / 8%);
+	font-family: var(--font-mono);
+	font-size: 0.56rem;
+	line-height: 1;
+	color: var(--ink-faint);
+	cursor: inherit;
+	appearance: none;
+	box-shadow: none;
+}
+
+.archive-reader-prose {
+	min-height: auto;
+	padding-right: 0.25rem;
+	overflow: visible;
+}

@@ -109,6 +109,7 @@
 		<PublicTopbarManager
 			host={siteFrame}
 			{messages}
+			allowWarmup={siteBootPhase === 'idle'}
 			portrait={false}
 			reducedMotion={prefersReducedMotion}
 			bind:this={publicTopbarManager}

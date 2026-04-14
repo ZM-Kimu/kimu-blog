@@ -1,0 +1,61 @@
+.profile-screen,
+.tag-screen {
+	display: grid;
+	gap: 1rem;
+}
+
+.content-intro,
+.placeholder-screen {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.content-intro h1,
+.profile-screen h1,
+.placeholder-screen h1,
+.tag-screen h1 {
+	margin: 0;
+	font-family: var(--font-display);
+	font-size: clamp(2.3rem, 4vw, 4.8rem);
+	line-height: 0.95;
+	letter-spacing: -0.06em;
+}
+
+.content-intro p,
+.placeholder-screen p {
+	color: var(--ink-soft);
+}
+
+.content-intro p {
+	max-width: 62ch;
+	font-size: 1.03rem;
+	line-height: 1.8;
+}
+
+.hero-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.profile-grid {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.system-list {
+	margin: 0;
+	padding-left: 1.15rem;
+	display: grid;
+	gap: 0.55rem;
+	color: var(--ink-soft);
+	line-height: 1.7;
+}
+
+.placeholder-screen {
+	min-height: 18rem;
+	align-content: start;
+}

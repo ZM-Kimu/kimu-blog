@@ -1,88 +1,105 @@
-import { browser } from '$app/environment'
-import { goto, invalidateAll } from '$app/navigation'
-import { resolve } from '$app/paths'
-import { DEFAULT_LOCALE, LOCALE_COOKIE, type AppLocale } from '$lib/i18n/config'
+import type { AppLocale } from '$lib/i18n/config'
 
-import { AppHistoryTracker } from './app-history'
-import {
-	persistBackgroundAnimationPreference,
-	persistCursorMode,
-	readStoredBackgroundAnimationPreference,
-	readStoredCursorMode
-} from './runtime-preferences'
-import {
-	createUnknownPageState,
-	createUnknownRouteState,
-	resolveBackgroundScene,
-	resolveTransitionDurations
-} from './transition-runtime'
+import { NavigationSessionRuntime } from './session-runtime.svelte'
+import { NavigationTransitionCoordinator } from './transition-coordinator.svelte'
 
 import type {
 	BackBehavior,
-	BackgroundScene,
 	BackgroundAnimationPreference,
 	BackgroundAnimationStatus,
 	BeginPageSwitchOptions,
 	PageState,
-	RouteState,
-	TransitionPhase
+	RouteState
 } from './types'
 
-const defaultTransitionDurations = resolveTransitionDurations({
-	options: { origin: 'initial' },
-	backgroundScene: 'neutral-default',
-	pendingBackgroundScene: 'neutral-default'
-})
-
 export class NavigationStateManager {
-	routeState = $state<RouteState>(createUnknownRouteState())
-	pageState = $state<PageState>(createUnknownPageState())
-	exitingRouteState = $state<RouteState | null>(null)
-	exitingPageState = $state<PageState | null>(null)
-	pendingTarget = $state<string | null>(null)
-	pendingPageState = $state<PageState | null>(null)
-	backgroundScene = $state<BackgroundScene>('neutral-default')
-	pendingBackgroundScene = $state<BackgroundScene | null>(null)
-	backgroundBridgeActive = $state(false)
-	phase = $state<TransitionPhase>('idle')
-	exitDurationMs = $state(defaultTransitionDurations.exitDurationMs)
-	bridgeDurationMs = $state(defaultTransitionDurations.bridgeDurationMs)
-	enterDurationMs = $state(defaultTransitionDurations.enterDurationMs)
-	locale = $state<AppLocale>(DEFAULT_LOCALE)
-	topbarCollapsed = $state(false)
-	settingsOpen = $state(false)
-	cursorMode = $state<'custom' | 'system'>('custom')
-	backgroundAnimationPreference = $state<BackgroundAnimationPreference>('on')
-	backgroundAnimationStatus = $state<BackgroundAnimationStatus>('idle')
+	#transition: NavigationTransitionCoordinator
+	#session: NavigationSessionRuntime
 
-	#enterTimer: ReturnType<typeof setTimeout> | null = null
-	#backgroundBridgeTimer: ReturnType<typeof setTimeout> | null = null
-	#backgroundBridgeDeferred = false
-	#backgroundBridgeReady = false
-	#exitReleaseRequested = false
-	#clientRuntimeHydrated = false
-	#historyTracker = new AppHistoryTracker()
+	constructor(initialRouteState?: RouteState, initialPageState?: PageState) {
+		this.#transition = new NavigationTransitionCoordinator(initialRouteState, initialPageState)
+		this.#session = new NavigationSessionRuntime()
+	}
+
+	get routeState() {
+		return this.#transition.routeState
+	}
+
+	get pageState() {
+		return this.#transition.pageState
+	}
+
+	get exitingRouteState() {
+		return this.#transition.exitingRouteState
+	}
+
+	get exitingPageState() {
+		return this.#transition.exitingPageState
+	}
+
+	get pendingTarget() {
+		return this.#transition.pendingTarget
+	}
+
+	get pendingPageState() {
+		return this.#transition.pendingPageState
+	}
+
+	get backgroundScene() {
+		return this.#transition.backgroundScene
+	}
+
+	get pendingBackgroundScene() {
+		return this.#transition.pendingBackgroundScene
+	}
+
+	get backgroundBridgeActive() {
+		return this.#transition.backgroundBridgeActive
+	}
+
+	get phase() {
+		return this.#transition.phase
+	}
+
+	get exitDurationMs() {
+		return this.#transition.exitDurationMs
+	}
+
+	get bridgeDurationMs() {
+		return this.#transition.bridgeDurationMs
+	}
+
+	get enterDurationMs() {
+		return this.#transition.enterDurationMs
+	}
+
+	get locale() {
+		return this.#session.locale
+	}
+
+	get topbarCollapsed() {
+		return this.#session.topbarCollapsed
+	}
+
+	get settingsOpen() {
+		return this.#session.settingsOpen
+	}
+
+	get cursorMode() {
+		return this.#session.cursorMode
+	}
+
+	get backgroundAnimationPreference() {
+		return this.#session.backgroundAnimationPreference
+	}
+
+	get backgroundAnimationStatus() {
+		return this.#session.backgroundAnimationStatus
+	}
 
 	sync(routeState: RouteState, pageState: PageState, locale?: AppLocale) {
-		this.routeState = routeState
-		this.pageState = pageState
-		this.locale = locale ?? this.locale
-		this.#syncClientHistoryCursor()
-
-		if (this.phase !== 'idle' && this.pendingTarget === routeState.pathname) {
-			this.pendingPageState = pageState
-			this.pendingBackgroundScene = resolveBackgroundScene(this.backgroundScene, pageState)
-
-			if (this.phase === 'exit' && this.#exitReleaseRequested) {
-				this.#exitReleaseRequested = false
-				this.#startEntry()
-				this.#activateDeferredBackgroundBridge()
-			}
-
-			if (this.#backgroundBridgeReady) {
-				this.finishBackgroundBridge()
-			}
-		}
+		this.#transition.sync(routeState, pageState)
+		this.#session.sync(routeState.pathname, locale)
 	}
 
 	beginPageSwitch(
@@ -90,280 +107,71 @@ export class NavigationStateManager {
 		targetPageState: PageState,
 		options: BeginPageSwitchOptions
 	): boolean {
-		void options.origin
-
-		if (this.phase !== 'idle') {
-			return false
+		const started = this.#transition.beginPageSwitch(targetPath, targetPageState, options)
+		if (started) {
+			this.#session.closeTopbarSettings()
 		}
-
-		if (this.backgroundBridgeActive) {
-			this.finishBackgroundBridge()
-		}
-
-		this.#clearEnterTimer()
-		this.#clearBackgroundBridgeTimer()
-		this.#backgroundBridgeDeferred = false
-		this.#backgroundBridgeReady = false
-		this.#exitReleaseRequested = false
-		this.backgroundBridgeActive = false
-		this.exitingRouteState = this.routeState
-		this.exitingPageState = this.pageState
-		this.pendingTarget = targetPath
-		this.pendingPageState = targetPageState
-		this.pendingBackgroundScene = resolveBackgroundScene(this.backgroundScene, targetPageState)
-		const transitionDurations = resolveTransitionDurations({
-			options,
-			backgroundScene: this.backgroundScene,
-			pendingBackgroundScene: this.pendingBackgroundScene
-		})
-		this.exitDurationMs = transitionDurations.exitDurationMs
-		this.enterDurationMs = transitionDurations.enterDurationMs
-		this.bridgeDurationMs = transitionDurations.bridgeDurationMs
-		this.settingsOpen = false
-		this.phase = 'exit'
-
-		return true
+		return started
 	}
 
 	startBackgroundBridge(options?: { deferUntilEntry?: boolean }) {
-		this.#clearBackgroundBridgeTimer()
-		this.#backgroundBridgeDeferred = false
-		this.#backgroundBridgeReady = false
-
-		if (
-			this.pendingBackgroundScene === null ||
-			this.pendingBackgroundScene === this.backgroundScene ||
-			this.bridgeDurationMs <= 0
-		) {
-			this.finishBackgroundBridge()
-			return
-		}
-
-		if (options?.deferUntilEntry && this.phase === 'exit') {
-			this.#backgroundBridgeDeferred = true
-			return
-		}
-
-		this.#activateBackgroundBridge()
+		this.#transition.startBackgroundBridge(options)
 	}
 
 	finishBackgroundBridge() {
-		this.#clearBackgroundBridgeTimer()
-		this.#backgroundBridgeDeferred = false
-		this.#backgroundBridgeReady = false
-
-		if (this.pendingBackgroundScene) {
-			this.backgroundScene = this.pendingBackgroundScene
-			this.pendingBackgroundScene = null
-		}
-
-		this.backgroundBridgeActive = false
+		this.#transition.finishBackgroundBridge()
 	}
 
 	cancelPageSwitch() {
-		this.#clearEnterTimer()
-		this.#clearBackgroundBridgeTimer()
-		this.#backgroundBridgeDeferred = false
-		this.#backgroundBridgeReady = false
-		this.#exitReleaseRequested = false
-		this.backgroundBridgeActive = false
-		this.phase = 'idle'
-		this.exitingRouteState = null
-		this.exitingPageState = null
-		this.pendingTarget = null
-		this.pendingPageState = null
-		this.pendingBackgroundScene = null
+		this.#transition.cancelPageSwitch()
 	}
 
 	releaseExit() {
-		if (this.phase !== 'exit') {
-			return
-		}
-
-		this.#exitReleaseRequested = true
-
-		if (this.pendingTarget !== this.routeState.pathname) {
-			return
-		}
-
-		this.#exitReleaseRequested = false
-		this.#startEntry()
-		this.#activateDeferredBackgroundBridge()
+		this.#transition.releaseExit()
 	}
 
 	hydrateClientRuntime() {
-		if (!browser || this.#clientRuntimeHydrated) {
-			return
-		}
-
-		this.#clientRuntimeHydrated = true
-		this.#seedClientHistoryCursor()
-
-		const savedCursorMode = readStoredCursorMode(window.localStorage)
-		if (savedCursorMode) {
-			this.cursorMode = savedCursorMode
-		}
-
-		const savedBackgroundAnimationPreference = readStoredBackgroundAnimationPreference(
-			window.localStorage
-		)
-		if (savedBackgroundAnimationPreference) {
-			this.backgroundAnimationPreference = savedBackgroundAnimationPreference
-		}
+		this.#session.hydrateClientRuntime(this.routeState.pathname)
 	}
 
 	toggleTopbarCollapsed(force?: boolean) {
-		const nextValue = force ?? !this.topbarCollapsed
-		this.topbarCollapsed = nextValue
-
-		if (nextValue) {
-			this.settingsOpen = false
-		}
+		this.#session.toggleTopbarCollapsed(force)
 	}
 
 	openTopbarSettings() {
-		this.topbarCollapsed = false
-		this.settingsOpen = true
+		this.#session.openTopbarSettings()
 	}
 
 	closeTopbarSettings() {
-		this.settingsOpen = false
+		this.#session.closeTopbarSettings()
 	}
 
 	setCursorMode(mode: 'custom' | 'system') {
-		this.cursorMode = mode
-
-		if (browser) {
-			persistCursorMode(window.localStorage, mode)
-		}
+		this.#session.setCursorMode(mode)
 	}
 
 	setBackgroundAnimationPreference(mode: BackgroundAnimationPreference) {
-		this.backgroundAnimationPreference = mode
-		this.backgroundAnimationStatus = 'idle'
-
-		if (browser) {
-			persistBackgroundAnimationPreference(window.localStorage, mode)
-		}
+		this.#session.setBackgroundAnimationPreference(mode)
 	}
 
 	setBackgroundAnimationStatus(status: BackgroundAnimationStatus) {
-		this.backgroundAnimationStatus = status
+		this.#session.setBackgroundAnimationStatus(status)
 	}
 
 	toggleCursorMode() {
-		this.setCursorMode(this.cursorMode === 'custom' ? 'system' : 'custom')
+		this.#session.toggleCursorMode()
 	}
 
 	async toggleLocale() {
-		if (!browser) {
-			return
-		}
-
-		const nextLocale: AppLocale = this.locale === 'zh-CN' ? 'en-US' : 'zh-CN'
-		this.settingsOpen = false
-		document.cookie = `${LOCALE_COOKIE}=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax`
-		this.locale = nextLocale
-		await invalidateAll()
+		await this.#session.toggleLocale()
 	}
 
 	async goBack(back?: BackBehavior) {
-		if (browser) {
-			const historyDelta = this.#historyTracker.getPreviousPathDelta(this.routeState.pathname)
-			if (historyDelta !== null) {
-				window.history.go(historyDelta)
-				return
-			}
-		}
-
-		if (back?.fallbackHref) {
-			await goto(resolve(back.fallbackHref))
-		}
+		await this.#session.goBack(this.routeState.pathname, back)
 	}
 
 	destroy() {
-		this.#clearEnterTimer()
-		this.#clearBackgroundBridgeTimer()
-	}
-
-	#startEntry() {
-		this.#clearEnterTimer()
-		this.phase = 'entry'
-		this.exitingRouteState = null
-		this.exitingPageState = null
-		this.#enterTimer = setTimeout(() => {
-			this.finishEntry()
-		}, this.enterDurationMs)
-	}
-
-	private finishEntry() {
-		this.#clearEnterTimer()
-		this.phase = 'idle'
-		this.pendingTarget = null
-		this.pendingPageState = null
-		this.#exitReleaseRequested = false
-	}
-
-	#clearEnterTimer() {
-		if (this.#enterTimer) {
-			clearTimeout(this.#enterTimer)
-			this.#enterTimer = null
-		}
-	}
-
-	#clearBackgroundBridgeTimer() {
-		if (this.#backgroundBridgeTimer) {
-			clearTimeout(this.#backgroundBridgeTimer)
-			this.#backgroundBridgeTimer = null
-		}
-	}
-
-	#activateDeferredBackgroundBridge() {
-		if (!this.#backgroundBridgeDeferred) {
-			return
-		}
-
-		this.#backgroundBridgeDeferred = false
-		this.#activateBackgroundBridge()
-	}
-
-	#activateBackgroundBridge() {
-		this.#clearBackgroundBridgeTimer()
-		this.#backgroundBridgeReady = false
-		this.backgroundBridgeActive = true
-		this.#backgroundBridgeTimer = setTimeout(() => {
-			this.#clearBackgroundBridgeTimer()
-			this.#backgroundBridgeReady = true
-
-			if (
-				this.pendingTarget === this.routeState.pathname ||
-				this.phase === 'entry' ||
-				this.phase === 'idle'
-			) {
-				this.finishBackgroundBridge()
-			}
-		}, this.bridgeDurationMs)
-	}
-
-	#readClientHistoryEntryId() {
-		if (!browser) {
-			return null
-		}
-
-		const entryId = window.history.state?.['sveltekit:history']
-		return typeof entryId === 'string' || typeof entryId === 'number' ? String(entryId) : null
-	}
-
-	#seedClientHistoryCursor() {
-		this.#historyTracker.seed(this.#readClientHistoryEntryId(), this.routeState.pathname)
-	}
-
-	#syncClientHistoryCursor() {
-		if (!browser || !this.#clientRuntimeHydrated) {
-			return
-		}
-
-		this.#historyTracker.sync(this.#readClientHistoryEntryId(), this.routeState.pathname)
+		this.#transition.destroy()
 	}
 }
 
@@ -371,19 +179,5 @@ export function createNavigationStateManager(
 	initialRouteState?: RouteState,
 	initialPageState?: PageState
 ) {
-	const manager = new NavigationStateManager()
-
-	if (initialRouteState) {
-		manager.routeState = initialRouteState
-	}
-
-	if (initialPageState) {
-		manager.pageState = initialPageState
-		manager.backgroundScene =
-			initialPageState.backgroundPolicy === 'replace' && initialPageState.backgroundScene
-				? initialPageState.backgroundScene
-				: 'neutral-default'
-	}
-
-	return manager
+	return new NavigationStateManager(initialRouteState, initialPageState)
 }

@@ -28,11 +28,13 @@
 	let {
 		host = null,
 		messages,
+		allowWarmup = false,
 		portrait = false,
 		reducedMotion = false
 	}: {
 		host?: HTMLElement | null
 		messages?: LocaleMessages
+		allowWarmup?: boolean
 		portrait?: boolean
 		reducedMotion?: boolean
 	} = $props()
@@ -80,6 +82,14 @@
 			renderedShellVariant === 'main' &&
 			!topbarCollapsed &&
 			!stageHidden
+	)
+	const warmupEnabled = $derived(
+		allowWarmup &&
+			!portrait &&
+			!reducedMotion &&
+			!stageHidden &&
+			!topbarCollapsed &&
+			renderedShellVariant !== 'none'
 	)
 	const expandAriaLabel = $derived(t('topbar.actions.expand'))
 	const mainTopbarState = $derived.by(() =>
@@ -257,6 +267,7 @@
 			authorName={siteConfig.author}
 			infoLabel={t('home.profile.info')}
 			profileHref="/about"
+			{warmupEnabled}
 			{portrait}
 			{reducedMotion}
 			onSubpageBack={handleBack}

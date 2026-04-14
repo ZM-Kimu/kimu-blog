@@ -60,6 +60,11 @@
 	font-size: 0.96rem;
 }
 
+.meta-stack span,
+.meta-stack strong {
+	color: var(--ink-soft);
+}
+
 .dossier-layout {
 	display: grid;
 	gap: 1rem;
@@ -145,17 +150,16 @@
 	cursor: default;
 }
 
-.profile-grid {
-	display: grid;
-	gap: 1rem;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+.post-description {
+	max-width: 62ch;
+	font-size: 1.03rem;
+	line-height: 1.8;
+	color: var(--ink-soft);
 }
 
-.system-list {
-	margin: 0;
-	padding-left: 1.15rem;
-	display: grid;
-	gap: 0.55rem;
-	color: var(--ink-soft);
-	line-height: 1.7;
+.tag-row,
+.post-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
 }

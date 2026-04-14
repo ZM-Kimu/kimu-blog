@@ -1,6 +1,22 @@
+import { tick } from 'svelte'
+
 import type { LocaleMessages } from '$lib/i18n'
 import { createPageState } from '$lib/navigation/page-state'
+import type { NavigationStateManager } from '$lib/navigation/navigation-state.svelte'
 import { resolveRouteState } from '$lib/navigation/route-state'
+import type { MotionTokens } from '$lib/motion/tokens'
+import type { PageState, RouteState, TopbarShellVariant } from '$lib/navigation/types'
+
+type PendingNavigation = {
+	willUnload: boolean
+	to: { url: URL } | null
+	complete: Promise<void>
+	type: string
+}
+
+type PublicTopbarManagerHandle = {
+	bridgeTo: (targetShellVariant: TopbarShellVariant) => Promise<void>
+}
 
 export function resolvePreviewRouteState(pathname: string) {
 	const previewStatus =
@@ -49,4 +65,98 @@ export function waitForNextPaint() {
 	return new Promise<void>((resolvePromise) => {
 		requestAnimationFrame(() => resolvePromise())
 	})
+}
+
+export function prepareNavigationTransition(args: {
+	navigation: PendingNavigation
+	currentPathname: string
+	data: Record<string, unknown>
+	messages?: LocaleMessages
+	pageState: PageState
+	navigationManager: NavigationStateManager
+	isLandscapePublicLayout: boolean
+	isPortraitPublicLayout: boolean
+	reducedMotion: boolean
+}) {
+	if (args.navigation.willUnload || !args.navigation.to?.url) {
+		return null
+	}
+
+	const targetPath = args.navigation.to.url.pathname
+	if (targetPath === args.currentPathname) {
+		return null
+	}
+
+	const { routeState: targetRouteState, pageState: targetPageState } = createPreviewPageState({
+		pathname: targetPath,
+		data: args.data,
+		messages: args.messages
+	})
+	const started = args.navigationManager.beginPageSwitch(targetPath, targetPageState, {
+		origin: `navigate:${args.navigation.type}`,
+		portrait: args.isPortraitPublicLayout,
+		reducedMotion: args.reducedMotion
+	})
+
+	if (!started) {
+		return null
+	}
+
+	void args.navigation.complete.catch(() => {
+		args.navigationManager.cancelPageSwitch()
+	})
+
+	return {
+		targetPath,
+		targetRouteState,
+		targetPageState,
+		queueDesktopSubpageEnter:
+			args.isLandscapePublicLayout &&
+			args.pageState.motionFamily === 'main' &&
+			targetPageState.shellMode === 'screen' &&
+			targetRouteState.kind !== 'manage' &&
+			targetPageState.motionFamily === 'subpage'
+	}
+}
+
+export async function orchestrateNavigationTransition(args: {
+	currentRouteState: RouteState
+	targetPath: string
+	targetPageState: PageState
+	navigationManager: NavigationStateManager
+	publicTopbarManager: PublicTopbarManagerHandle | null
+	isLandscapePublicLayout: boolean
+	motionTokens: MotionTokens
+}) {
+	const topbarBridgePromise = args.isLandscapePublicLayout
+		? (args.publicTopbarManager
+				?.bridgeTo(args.targetPageState.topbarShellVariant)
+				.catch(() => undefined) ?? Promise.resolve())
+		: Promise.resolve()
+
+	const exitDurationMs =
+		args.isLandscapePublicLayout && args.currentRouteState.kind === 'blog'
+			? args.motionTokens.blog.missionExitTotalDurationMs
+			: args.navigationManager.exitDurationMs
+
+	await tick()
+	await waitForNextPaint()
+	await wait(exitDurationMs)
+	if (args.navigationManager.pendingTarget !== args.targetPath) {
+		return
+	}
+
+	args.navigationManager.startBackgroundBridge({ deferUntilEntry: args.isLandscapePublicLayout })
+	args.navigationManager.releaseExit()
+	await tick()
+	if (args.navigationManager.pendingTarget !== args.targetPath) {
+		return
+	}
+
+	if (args.isLandscapePublicLayout) {
+		void topbarBridgePromise
+		return
+	}
+
+	await Promise.all([wait(args.navigationManager.bridgeDurationMs), topbarBridgePromise])
 }

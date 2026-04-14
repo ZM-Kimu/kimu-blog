@@ -14,6 +14,7 @@
 	import { page } from '$app/state'
 	import { translate } from '$lib/i18n'
 
+	import BlogPostBody from './components/BlogPostBody.svelte'
 	import BlogPostHero from './components/BlogPostHero.svelte'
 	import BlogPostSidebar from './components/BlogPostSidebar.svelte'
 
@@ -43,13 +44,7 @@
 	/>
 
 	<div class="dossier-layout">
-		<div class="panel dossier-main">
-			<div class="content-prose article-prose">
-				{#if Content}
-					<Content />
-				{/if}
-			</div>
-		</div>
+		<BlogPostBody {Content} />
 
 		<BlogPostSidebar
 			post={data.post}

@@ -12,7 +12,7 @@
 </script>
 
 <section class="tag-screen">
-	<section class="panel mission-intro">
+	<section class="panel content-intro">
 		<div>
 			<p class="eyebrow">{t('blog.tag.introEyebrow')}</p>
 			<h1>{data.tag.name}</h1>

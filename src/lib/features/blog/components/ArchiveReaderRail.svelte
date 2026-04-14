@@ -93,34 +93,34 @@
 	})
 </script>
 
-<aside class="archive-preview-rail">
+<aside class="archive-reader-rail">
 	{#if post && Content}
 		<a
-			class="archive-preview-open-link"
+			class="archive-reader-open-link"
 			href={resolve(post.permalink)}
 			aria-label={t('blog.archive.openPost')}
 		>
-			<span class="archive-preview-open-icon" aria-hidden="true"></span>
+			<span class="archive-reader-open-icon" aria-hidden="true"></span>
 		</a>
 
-		<section class="panel archive-preview-panel">
-			<ScrollChrome class="archive-preview-scroll" viewportClass="archive-preview-browser">
-				<div class="archive-preview-head">
-					<div class="archive-preview-head-bar">
-						<div class="archive-preview-title-line">
-							<div class="archive-preview-title-bar">
+		<section class="panel archive-reader-panel">
+			<ScrollChrome class="archive-reader-scroll" viewportClass="archive-reader-browser">
+				<div class="archive-reader-head">
+					<div class="archive-reader-head-bar">
+						<div class="archive-reader-title-line">
+							<div class="archive-reader-title-bar">
 								<h2>{post.title}</h2>
 								<p class="eyebrow">{post.category ?? t('common.uncategorized')}</p>
-								<p class="archive-preview-date">{formatDate(post.date, locale)}</p>
+								<p class="archive-reader-date">{formatDate(post.date, locale)}</p>
 							</div>
 							{#if post.tags.length}
-								<div class="archive-preview-tags-wrap">
+								<div class="archive-reader-tags-wrap">
 									<div
-										class="archive-preview-tags"
+										class="archive-reader-tags"
 										data-overflowing={tagsOverflowing}
 										bind:this={tagsRail}
 									>
-										<div class="archive-preview-tags-list">
+										<div class="archive-reader-tags-list">
 											{#each post.tags as tag, index (post.tagSlugs[index])}
 												<TagChip href={`/tags/${post.tagSlugs[index]}`} label={tag} />
 											{/each}
@@ -129,7 +129,7 @@
 									{#if tagsOverflowing && tagsScrollableAhead}
 										<button
 											type="button"
-											class="archive-preview-tags-hint"
+											class="archive-reader-tags-hint"
 											aria-label={t('blog.archive.tagsScrollHint')}
 											onclick={advanceTagsRail}
 										>
@@ -138,14 +138,14 @@
 									{/if}
 								</div>
 							{:else}
-								<p class="archive-preview-no-tags">{t('common.noTagsYet')}</p>
+								<p class="archive-reader-no-tags">{t('common.noTagsYet')}</p>
 							{/if}
 						</div>
 					</div>
 					<p>{post.description}</p>
 				</div>
 
-				<dl class="archive-preview-meta">
+				<dl class="archive-reader-meta">
 					{#if post.updated !== post.date}
 						<div>
 							<dt>{t('common.updated')}</dt>
@@ -160,7 +160,7 @@
 					{/if}
 				</dl>
 
-				<div class="content-prose article-prose archive-preview-prose">
+				<div class="content-prose article-prose archive-reader-prose">
 					<Content />
 				</div>
 			</ScrollChrome>

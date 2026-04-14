@@ -100,6 +100,13 @@
 		var(--motion-shared-easing-standard) both;
 }
 
+.site-main-public-portrait .screen-route-layer-entry > * {
+	animation: site-portrait-route-enter var(--motion-route-portrait-enter-duration)
+		var(--motion-shared-easing-standard) both;
+	animation-delay: var(--motion-route-portrait-enter-delay);
+	will-change: opacity, transform, filter;
+}
+
 @media (width >=901px) and (aspect-ratio >=29/20) {
 	.site-main-home .screen-route-layer-home-enter-desktop .home-left-tools,
 	.site-main-home .screen-route-layer-home-enter-desktop .home-right-pane,
@@ -350,5 +357,43 @@
 	to {
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+@keyframes portrait-orientation-toast-enter {
+	from {
+		opacity: 0;
+		transform: translate(-50%, calc(var(--motion-notice-offset-y) * -1));
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+}
+
+@keyframes portrait-orientation-toast-exit {
+	from {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+
+	to {
+		opacity: 0;
+		transform: translate(-50%, calc(var(--motion-notice-offset-y) * -1));
+	}
+}
+
+@keyframes site-portrait-route-enter {
+	from {
+		opacity: 0;
+		transform: translateY(var(--motion-route-portrait-enter-offset-y));
+		filter: blur(var(--motion-route-portrait-enter-blur));
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+		filter: blur(0);
 	}
 }

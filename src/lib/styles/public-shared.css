@@ -1,9 +1,7 @@
 .eyebrow,
 .section-link,
 .metric-pill,
-.post-card-code,
-.status-chip span,
-.year-card-head span {
+.status-chip span {
 	font-family: var(--font-mono);
 	font-size: 0.74rem;
 	letter-spacing: 0.09em;
@@ -37,6 +35,7 @@
 	font-family: var(--font-display);
 	font-size: 0.86rem;
 	line-height: 1.35;
+	color: var(--ink-soft);
 }
 
 .button-secondary,
@@ -72,13 +71,11 @@
 }
 
 .panel-heading h2,
-.mission-card h3,
-.notice-card h3,
-.signal-panel h3,
-.post-card h3,
-.year-card strong,
-.featured-link h3 {
+.status-chip strong {
 	margin: 0;
+}
+
+.panel-heading h2 {
 	font-family: var(--font-display);
 	letter-spacing: -0.04em;
 }
@@ -122,190 +119,6 @@
 	background: rgb(255 255 255 / 82%);
 }
 
-.command-stage,
-.command-grid {
-	display: grid;
-	gap: 1rem;
-}
-
-.command-stage {
-	grid-template-columns: 0.92fr 1.45fr 1fr;
-	align-items: stretch;
-}
-
-.notice-stack,
-.live-panel-highlights,
-.year-stack {
-	display: grid;
-	gap: 0.85rem;
-}
-
-.notice-card,
-.signal-panel,
-.featured-link,
-.year-card,
-.mini-mission {
-	position: relative;
-	border: 1px solid var(--line);
-	border-radius: var(--radius-lg);
-	background: rgb(255 255 255 / 62%);
-	box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%);
-}
-
-.notice-card,
-.signal-panel,
-.featured-link,
-.year-card {
-	padding: 1rem;
-}
-
-.notice-card p,
-.signal-panel p,
-.featured-link p,
-.post-card p,
-.hero-copy,
-.mission-intro p,
-.status-chip strong,
-.meta-stack span,
-.meta-stack strong,
-.placeholder-screen p {
-	color: var(--ink-soft);
-}
-
-.focus-panel {
-	min-height: 34rem;
-	padding: 1.4rem;
-}
-
-.focus-panel-body {
-	display: grid;
-	grid-template-columns: 1.05fr minmax(320px, 0.95fr);
-	gap: 1.2rem;
-	height: 100%;
-	align-items: stretch;
-}
-
-.focus-panel-copy {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	gap: 1rem;
-}
-
-.focus-panel-copy h1,
-.mission-intro h1,
-.profile-screen h1,
-.placeholder-screen h1,
-.tag-screen h1 {
-	margin: 0;
-	font-family: var(--font-display);
-	font-size: clamp(2.3rem, 4vw, 4.8rem);
-	line-height: 0.95;
-	letter-spacing: -0.06em;
-}
-
-.hero-copy,
-.mission-intro p,
-.post-description {
-	max-width: 62ch;
-	font-size: 1.03rem;
-	line-height: 1.8;
-}
-
-.hero-actions,
-.status-chip-row,
-.tag-row,
-.post-meta {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.75rem;
-}
-
-.live-panel {
-	display: grid;
-	align-content: start;
-	gap: 1rem;
-}
-
-.featured-link {
-	display: grid;
-	gap: 0.35rem;
-	transition:
-		transform var(--motion-shared-ease-standard),
-		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
-		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
-		border-color var(--motion-shared-ease-standard);
-}
-
-.command-grid {
-	grid-template-columns: 1.1fr 1fr;
-}
-
-.panel-block {
-	display: grid;
-	gap: 0.9rem;
-}
-
-.mission-mini-grid {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 0.85rem;
-}
-
-.mini-mission {
-	display: grid;
-	gap: 0.35rem;
-	padding: 1rem;
-}
-
-.mini-mission span,
-.mini-mission small {
-	font-family: var(--font-mono);
-	font-size: 0.76rem;
-	text-transform: uppercase;
-	letter-spacing: 0.07em;
-	color: var(--ink-faint);
-}
-
-.mini-mission strong {
-	font-family: var(--font-display);
-	font-size: 1.12rem;
-}
-
-.mini-mission-cyan {
-	background: linear-gradient(180deg, rgb(255 255 255 / 82%), rgb(212 244 255 / 84%));
-}
-
-.mini-mission-blue {
-	background: linear-gradient(180deg, rgb(255 255 255 / 82%), rgb(222 232 255 / 84%));
-}
-
-.mini-mission-amber {
-	background: linear-gradient(180deg, rgb(255 255 255 / 82%), rgb(255 242 212 / 84%));
-}
-
-.tag-screen,
-.profile-screen {
-	display: grid;
-	gap: 1rem;
-}
-
-.mission-intro,
-.placeholder-screen {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 1rem;
-}
-
-.post-card-hud,
-.year-card-head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.8rem;
-}
-
 .tag-chip {
 	display: inline-flex;
 	align-items: center;
@@ -316,24 +129,4 @@
 	transform: translateY(-2px);
 	border-color: var(--line-strong);
 	background: rgb(255 255 255 / 82%);
-}
-
-.year-card ul,
-.system-list {
-	margin: 0;
-	padding-left: 1.15rem;
-}
-
-.year-card ul {
-	display: grid;
-	gap: 0.6rem;
-}
-
-.year-card li a:hover {
-	color: var(--blue);
-}
-
-.placeholder-screen {
-	min-height: 18rem;
-	align-content: start;
 }
