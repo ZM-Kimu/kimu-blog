@@ -151,11 +151,12 @@
 	}
 
 	async function handleTopbarAction(event: CustomEvent<HomeTopbarActionDetail>) {
-		if (topbarMotionLocked) {
+		const actionKey = event.detail.action.key
+		if (topbarMotionLocked && actionKey !== 'home') {
 			return
 		}
 
-		switch (event.detail.action.key) {
+		switch (actionKey) {
 			case 'language':
 				await navigationManager.toggleLocale()
 				break

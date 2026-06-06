@@ -2,6 +2,7 @@
 	display: grid;
 	gap: 1rem;
 	padding: 2.35rem;
+	padding-bottom: 6rem;
 	min-height: 0;
 	height: 100%;
 	align-content: start;
@@ -80,30 +81,41 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	gap: 0.55rem;
 	position: absolute;
-	top: 0;
-	right: 0;
+	right: 1.35rem;
+	bottom: 1.35rem;
+	left: auto;
 	z-index: 2;
-	inline-size: 2.9rem;
-	block-size: 2.9rem;
-	padding: 0;
-	border: 1px solid rgb(96 141 198 / 18%);
-	border-radius: 0.9rem;
-	background: rgb(255 255 255 / 76%);
-	box-shadow: 0 12px 28px rgb(29 87 148 / 10%);
+	padding: 0.82rem 1rem 0.82rem 0.88rem;
+	border: 1px solid rgb(96 141 198 / 16%);
+	border-radius: 1rem;
+	background: rgb(255 255 255 / 84%);
+	box-shadow: 0 14px 34px rgb(29 87 148 / 12%);
+	backdrop-filter: blur(10px);
 	cursor: inherit;
-	transform: translate(28%, -28%);
+	text-decoration: none;
 }
 
 .archive-reader-open-icon {
 	display: block;
-	inline-size: 2.33rem;
-	block-size: 2.33rem;
+	flex: 0 0 auto;
+	inline-size: 1.46rem;
+	block-size: 1.46rem;
 	background: var(--blue);
 	mask-image: url('/next_indicator.png');
 	mask-position: center;
 	mask-repeat: no-repeat;
 	mask-size: contain;
+}
+
+.archive-reader-open-copy {
+	font-family: var(--font-sans);
+	font-size: 0.84rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--blue);
 }
 
 .archive-reader-meta {

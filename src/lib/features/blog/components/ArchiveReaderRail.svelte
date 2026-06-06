@@ -95,14 +95,6 @@
 
 <aside class="archive-reader-rail">
 	{#if post && Content}
-		<a
-			class="archive-reader-open-link"
-			href={resolve(post.permalink)}
-			aria-label={t('blog.archive.openPost')}
-		>
-			<span class="archive-reader-open-icon" aria-hidden="true"></span>
-		</a>
-
 		<section class="panel archive-reader-panel">
 			<ScrollChrome class="archive-reader-scroll" viewportClass="archive-reader-browser">
 				<div class="archive-reader-head">
@@ -164,6 +156,15 @@
 					<Content />
 				</div>
 			</ScrollChrome>
+
+			<a
+				class="archive-reader-open-link"
+				href={resolve(post.permalink)}
+				aria-label={t('blog.archive.openPost')}
+			>
+				<span class="archive-reader-open-icon" aria-hidden="true"></span>
+				<span class="archive-reader-open-copy">{t('blog.archive.openPost')}</span>
+			</a>
 		</section>
 	{/if}
 </aside>

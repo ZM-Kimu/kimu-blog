@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { getPublicLayoutContext } from '$lib/layout/public-layout'
 
-	let { children } = $props<{
-		children: () => unknown
-	}>()
+	let { children } = $props<{ children: () => unknown }>()
 
 	const { getMode } = getPublicLayoutContext()
 	const isPortraitLayout = $derived(getMode() === 'portrait')
@@ -30,8 +28,9 @@
 		--home-shell-padding: clamp(0.78rem, 1.25vw, 1.05rem);
 		--home-topbar-height: 5.2rem;
 		--subpage-stage-gap: clamp(1.2rem, 2vw, 1.8rem);
+		--subpage-stage-top-offset: calc(var(--home-topbar-height) + var(--subpage-stage-gap));
 		--subpage-stage-available-height: calc(
-			100dvh - var(--home-topbar-height) - (var(--subpage-stage-gap) * 2)
+			100dvh - var(--subpage-stage-top-offset) - var(--subpage-stage-gap)
 		);
 
 		position: relative;
@@ -41,8 +40,7 @@
 	.subpage-screen-viewport {
 		position: relative;
 		z-index: 1;
-		padding: calc(var(--home-topbar-height) + var(--subpage-stage-gap)) var(--home-shell-padding)
-			var(--subpage-stage-gap);
+		padding: var(--subpage-stage-top-offset) var(--home-shell-padding) var(--subpage-stage-gap);
 	}
 
 	.subpage-screen-content {

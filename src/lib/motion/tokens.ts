@@ -34,6 +34,10 @@ function rem(value: number) {
 	return `${value}rem`
 }
 
+function pct(value: number) {
+	return `${value}%`
+}
+
 export function msToSeconds(value: number) {
 	return value / 1000
 }
@@ -132,8 +136,36 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		messageDelayMs: reducedMotion ? 0 : 280
 	}
 
+	const about = {
+		enterDurationMs: reducedMotion ? 1 : 720,
+		exitDurationMs: reducedMotion ? 1 : 250,
+		cardEnterDurationMs: reducedMotion ? 1 : 640,
+		cardExitDurationMs: reducedMotion ? 1 : 320,
+		cardExitDelayMs: reducedMotion ? 0 : 60,
+		cardEnterScaleX: 0.055,
+		cardEnterScaleY: 0.965,
+		cardExitScaleX: 0,
+		cardExitScaleY: 0.975,
+		cardEnterClipInlinePercent: 94.5,
+		cardExitClipInlinePercent: 100,
+		cardEnterBlurPx: 8,
+		cardExitBlurPx: 6,
+		contentEnterDurationMs: reducedMotion ? 1 : 360,
+		contentEnterDelayMs: reducedMotion ? 0 : 190,
+		contentExitDurationMs: reducedMotion ? 1 : 180,
+		footerEnterDurationMs: reducedMotion ? 1 : 420,
+		footerEnterDelayMs: reducedMotion ? 0 : 250,
+		footerEnterStaggerMs: reducedMotion ? 0 : 90,
+		footerExitDurationMs: reducedMotion ? 1 : 220,
+		footerExitStaggerMs: reducedMotion ? 0 : 42,
+		footerEnterOffsetYPx: 18,
+		footerExitOffsetYPx: 12
+	}
+
 	const homeAmbient = {
-		missionMarqueeDurationMs: 24000
+		missionStepIntervalMs: 5000,
+		missionStepDurationMs: reducedMotion ? 1 : 520,
+		musicVolumeDurationMs: reducedMotion ? 1 : 220
 	}
 
 	const blog = {
@@ -146,7 +178,11 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		missionExitOffsetXPx: 20,
 		missionExitStaggerMs: reducedMotion ? 0 : 36,
 		missionRailExitDelayMs: reducedMotion ? 0 : 108,
-		missionExitTotalDurationMs: reducedMotion ? 1 : 158
+		missionExitTotalDurationMs: reducedMotion ? 1 : 158,
+		postReaderSwapDurationMs: reducedMotion ? 1 : 240,
+		postReaderSwapOffsetYPx: 14,
+		postAsideSwapDurationMs: reducedMotion ? 1 : 180,
+		postAsideSwapOffsetYPx: 10
 	}
 
 	const topbar = {
@@ -233,6 +269,7 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		background,
 		notice,
 		error,
+		about,
 		homeAmbient,
 		blog,
 		topbar,
@@ -314,7 +351,32 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-error-headline-delay', ms(tokens.error.headlineDelayMs)],
 		['motion-error-message-duration', ms(tokens.error.messageDurationMs)],
 		['motion-error-message-delay', ms(tokens.error.messageDelayMs)],
-		['motion-home-mission-marquee-duration', ms(tokens.homeAmbient.missionMarqueeDurationMs)],
+		['motion-about-enter-duration', ms(tokens.about.enterDurationMs)],
+		['motion-about-exit-duration', ms(tokens.about.exitDurationMs)],
+		['motion-about-card-enter-duration', ms(tokens.about.cardEnterDurationMs)],
+		['motion-about-card-exit-duration', ms(tokens.about.cardExitDurationMs)],
+		['motion-about-card-exit-delay', ms(tokens.about.cardExitDelayMs)],
+		['motion-about-card-enter-scale-x', tokens.about.cardEnterScaleX],
+		['motion-about-card-enter-scale-y', tokens.about.cardEnterScaleY],
+		['motion-about-card-exit-scale-x', tokens.about.cardExitScaleX],
+		['motion-about-card-exit-scale-y', tokens.about.cardExitScaleY],
+		['motion-about-card-enter-clip-inline', pct(tokens.about.cardEnterClipInlinePercent)],
+		['motion-about-card-exit-clip-inline', pct(tokens.about.cardExitClipInlinePercent)],
+		['motion-about-card-enter-blur', px(tokens.about.cardEnterBlurPx)],
+		['motion-about-card-exit-blur', px(tokens.about.cardExitBlurPx)],
+		['motion-about-content-enter-duration', ms(tokens.about.contentEnterDurationMs)],
+		['motion-about-content-enter-delay', ms(tokens.about.contentEnterDelayMs)],
+		['motion-about-content-exit-duration', ms(tokens.about.contentExitDurationMs)],
+		['motion-about-footer-enter-duration', ms(tokens.about.footerEnterDurationMs)],
+		['motion-about-footer-enter-delay', ms(tokens.about.footerEnterDelayMs)],
+		['motion-about-footer-enter-stagger', ms(tokens.about.footerEnterStaggerMs)],
+		['motion-about-footer-exit-duration', ms(tokens.about.footerExitDurationMs)],
+		['motion-about-footer-exit-stagger', ms(tokens.about.footerExitStaggerMs)],
+		['motion-about-footer-enter-offset-y', px(tokens.about.footerEnterOffsetYPx)],
+		['motion-about-footer-exit-offset-y', px(tokens.about.footerExitOffsetYPx)],
+		['motion-home-mission-step-interval', ms(tokens.homeAmbient.missionStepIntervalMs)],
+		['motion-home-mission-step-duration', ms(tokens.homeAmbient.missionStepDurationMs)],
+		['motion-home-music-volume-duration', ms(tokens.homeAmbient.musicVolumeDurationMs)],
 		['motion-blog-mission-rail-enter-duration', ms(tokens.blog.missionRailEnterDurationMs)],
 		['motion-blog-mission-rail-enter-offset-x', px(tokens.blog.missionRailEnterOffsetXPx)],
 		['motion-blog-mission-card-enter-duration', ms(tokens.blog.missionCardEnterDurationMs)],
@@ -323,7 +385,11 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-blog-mission-exit-duration', ms(tokens.blog.missionExitDurationMs)],
 		['motion-blog-mission-exit-offset-x', px(tokens.blog.missionExitOffsetXPx)],
 		['motion-blog-mission-exit-stagger', ms(tokens.blog.missionExitStaggerMs)],
-		['motion-blog-mission-rail-exit-delay', ms(tokens.blog.missionRailExitDelayMs)]
+		['motion-blog-mission-rail-exit-delay', ms(tokens.blog.missionRailExitDelayMs)],
+		['motion-blog-post-reader-swap-duration', ms(tokens.blog.postReaderSwapDurationMs)],
+		['motion-blog-post-reader-swap-offset-y', px(tokens.blog.postReaderSwapOffsetYPx)],
+		['motion-blog-post-aside-swap-duration', ms(tokens.blog.postAsideSwapDurationMs)],
+		['motion-blog-post-aside-swap-offset-y', px(tokens.blog.postAsideSwapOffsetYPx)]
 	])
 }
 

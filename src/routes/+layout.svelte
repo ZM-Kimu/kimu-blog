@@ -5,6 +5,7 @@
 	import '$lib/../app.css'
 
 	import SiteShell from '$lib/components/layout/SiteShell.svelte'
+	import { musicPlaylist } from '$lib/generated/music-playlist'
 	import {
 		orchestrateNavigationTransition,
 		prepareNavigationTransition
@@ -13,6 +14,8 @@
 	import { bindSiteDocumentState, bindSiteRuntimeEffects } from '$lib/layout/site-bindings.svelte'
 	import { createSiteShellState } from '$lib/layout/site-shell-state.svelte'
 	import { createSiteLayoutRuntime } from '$lib/layout/site-runtime.svelte'
+	import { setMusicPlayerContext } from '$lib/music/context'
+	import { createMusicPlayerController } from '$lib/music/music-player.svelte'
 	import { setNavigationContext } from '$lib/navigation/context'
 	import { createNavigationStateManager } from '$lib/navigation/navigation-state.svelte'
 	import { createPageState } from '$lib/navigation/page-state'
@@ -28,6 +31,7 @@
 	let publicTopbarManager: PublicTopbarManagerHandle | null = $state(null)
 
 	const siteRuntime = createSiteLayoutRuntime(page.url.pathname)
+	const musicPlayer = createMusicPlayerController(musicPlaylist)
 	const navigationManager = createNavigationStateManager(
 		untrack(() => resolveRouteState({ pathname: page.url.pathname, status: page.status })),
 		untrack(() =>
@@ -40,6 +44,7 @@
 	)
 
 	setNavigationContext({ navigationManager })
+	setMusicPlayerContext({ musicPlayer })
 	setPublicLayoutContext({
 		getMode: () => siteRuntime.publicLayoutMode
 	})
@@ -104,6 +109,7 @@
 			currentRouteState: routeState,
 			targetPath: prepared.targetPath,
 			targetPageState: prepared.targetPageState,
+			startPhase: prepared.startPhase,
 			navigationManager,
 			publicTopbarManager,
 			isLandscapePublicLayout: shellState.isLandscapePublicLayout,
@@ -124,6 +130,7 @@
 	{pageState}
 	{routeState}
 	{navigationManager}
+	{musicPlayer}
 	showBackgroundStage={shellState.showBackgroundStage}
 	enableSiteClickEffect={shellState.enableSiteClickEffect}
 	isLandscapePublicLayout={shellState.isLandscapePublicLayout}

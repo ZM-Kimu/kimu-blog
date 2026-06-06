@@ -3,6 +3,7 @@ import { tick } from 'svelte'
 import type { LocaleMessages } from '$lib/i18n'
 import { createPageState } from '$lib/navigation/page-state'
 import type { NavigationStateManager } from '$lib/navigation/navigation-state.svelte'
+import type { PageSwitchStartPhase } from '$lib/navigation/page-switch-runtime.svelte'
 import { resolveRouteState } from '$lib/navigation/route-state'
 import type { MotionTokens } from '$lib/motion/tokens'
 import type { PageState, RouteState, TopbarShellVariant } from '$lib/navigation/types'
@@ -83,7 +84,10 @@ export function prepareNavigationTransition(args: {
 	}
 
 	const targetPath = args.navigation.to.url.pathname
-	if (targetPath === args.currentPathname) {
+	const reversesActiveExit =
+		args.navigationManager.phase === 'exit' &&
+		targetPath === args.navigationManager.routeState.pathname
+	if (targetPath === args.currentPathname && !reversesActiveExit) {
 		return null
 	}
 
@@ -92,13 +96,20 @@ export function prepareNavigationTransition(args: {
 		data: args.data,
 		messages: args.messages
 	})
-	const started = args.navigationManager.beginPageSwitch(targetPath, targetPageState, {
+
+	const isIntraPostNavigation =
+		args.pageState.route.kind === 'post' && targetRouteState.kind === 'post'
+	if (isIntraPostNavigation) {
+		return null
+	}
+
+	const startPhase = args.navigationManager.beginPageSwitch(targetPath, targetPageState, {
 		origin: `navigate:${args.navigation.type}`,
 		portrait: args.isPortraitPublicLayout,
 		reducedMotion: args.reducedMotion
 	})
 
-	if (!started) {
+	if (!startPhase) {
 		return null
 	}
 
@@ -110,7 +121,9 @@ export function prepareNavigationTransition(args: {
 		targetPath,
 		targetRouteState,
 		targetPageState,
+		startPhase,
 		queueDesktopSubpageEnter:
+			startPhase === 'exit' &&
 			args.isLandscapePublicLayout &&
 			args.pageState.motionFamily === 'main' &&
 			targetPageState.shellMode === 'screen' &&
@@ -123,6 +136,7 @@ export async function orchestrateNavigationTransition(args: {
 	currentRouteState: RouteState
 	targetPath: string
 	targetPageState: PageState
+	startPhase: PageSwitchStartPhase
 	navigationManager: NavigationStateManager
 	publicTopbarManager: PublicTopbarManagerHandle | null
 	isLandscapePublicLayout: boolean
@@ -133,6 +147,17 @@ export async function orchestrateNavigationTransition(args: {
 				?.bridgeTo(args.targetPageState.topbarShellVariant)
 				.catch(() => undefined) ?? Promise.resolve())
 		: Promise.resolve()
+
+	if (args.startPhase === 'entry') {
+		await tick()
+		await waitForNextPaint()
+		if (args.navigationManager.pendingTarget !== args.targetPath) {
+			return
+		}
+
+		await wait(args.navigationManager.enterDurationMs)
+		return
+	}
 
 	const exitDurationMs =
 		args.isLandscapePublicLayout && args.currentRouteState.kind === 'blog'

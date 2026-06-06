@@ -4,6 +4,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	align-items: flex-end;
 	align-self: stretch;
 	min-height: 100%;
 	padding-top: var(--home-side-rail-offset);
@@ -13,6 +14,7 @@
 
 .home-event-banner {
 	display: grid;
+	width: 66.666%;
 	gap: 0.35rem;
 	padding: var(--home-card-padding);
 	border-radius: var(--home-card-radius);
@@ -53,7 +55,9 @@
 	align-items: flex-start;
 	gap: 0.25em;
 	color: white;
-	min-height: calc(var(--home-action-min-height) + 1.25rem);
+	width: 75%;
+	aspect-ratio: 4 / 3;
+	min-height: 0;
 	padding: 1.1rem 1rem;
 	box-shadow: 0 22px 40px rgb(57 143 228 / 22%);
 	transition:
@@ -62,10 +66,6 @@
 		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
 		box-shadow var(--motion-shared-ease-standard);
 	appearance: none;
-}
-
-.action-work:hover {
-	transform: translateY(-2px);
 }
 
 .action-work:disabled {

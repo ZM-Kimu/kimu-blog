@@ -9,8 +9,10 @@
 	import PortraitPublicHeader from '$lib/components/layout/PortraitPublicHeader.svelte'
 	import PublicTopbarManager from '$lib/components/layout/PublicTopbarManager.svelte'
 	import { siteConfig } from '$lib/config/site'
+	import MusicPlayerRuntime from '$lib/music/MusicPlayerRuntime.svelte'
 
 	import type { LocaleMessages } from '$lib/i18n'
+	import type { MusicPlayerController } from '$lib/music/music-player.svelte'
 	import type { NavigationStateManager } from '$lib/navigation/navigation-state.svelte'
 	import type { PageState, RouteState, TopbarShellVariant } from '$lib/navigation/types'
 
@@ -29,6 +31,7 @@
 		pageState,
 		routeState,
 		navigationManager,
+		musicPlayer,
 		showBackgroundStage,
 		enableSiteClickEffect,
 		isLandscapePublicLayout,
@@ -58,6 +61,7 @@
 		pageState: PageState
 		routeState: RouteState
 		navigationManager: NavigationStateManager
+		musicPlayer: MusicPlayerController
 		showBackgroundStage: boolean
 		enableSiteClickEffect: boolean
 		isLandscapePublicLayout: boolean
@@ -104,6 +108,7 @@
 	{/if}
 
 	<SiteClickEffect enabled={enableSiteClickEffect} />
+	<MusicPlayerRuntime {musicPlayer} />
 
 	{#if isLandscapePublicLayout}
 		<PublicTopbarManager
@@ -136,6 +141,7 @@
 	<main
 		class:site-main-bare={isBareRoute}
 		class:site-main-home={routeState.kind === 'home'}
+		class:site-main-post={routeState.kind === 'post'}
 		class:site-main-public-portrait={isPortraitPublicLayout}
 		class="site-main"
 	>

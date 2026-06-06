@@ -28,15 +28,23 @@ export function resolveTransitionDurations(args: {
 	options: BeginPageSwitchOptions
 	backgroundScene: BackgroundScene
 	pendingBackgroundScene: BackgroundScene | null
+	currentRouteState?: RouteState
+	targetPageState?: PageState
 }) {
 	const motionTokens = getMotionTokens({
 		portrait: args.options.portrait ?? false,
 		reducedMotion: args.options.reducedMotion ?? false
 	})
+	const exitsAbout = args.currentRouteState?.kind === 'about'
+	const entersAbout = args.targetPageState?.route.kind === 'about'
 
 	return {
-		exitDurationMs: motionTokens.route.exitDurationMs,
-		enterDurationMs: motionTokens.route.entryDurationMs,
+		exitDurationMs: exitsAbout
+			? motionTokens.about.exitDurationMs
+			: motionTokens.route.exitDurationMs,
+		enterDurationMs: entersAbout
+			? motionTokens.about.enterDurationMs
+			: motionTokens.route.entryDurationMs,
 		bridgeDurationMs:
 			args.pendingBackgroundScene === args.backgroundScene ? 0 : motionTokens.route.bridgeDurationMs
 	}

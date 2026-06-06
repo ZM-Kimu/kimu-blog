@@ -230,6 +230,11 @@ select {
 	display: block;
 }
 
+.site-main-post {
+	padding: 0;
+	display: block;
+}
+
 .site-main-bare {
 	padding: 0;
 	display: block;

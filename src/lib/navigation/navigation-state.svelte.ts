@@ -3,6 +3,7 @@ import type { AppLocale } from '$lib/i18n/config'
 import { NavigationSessionRuntime } from './session-runtime.svelte'
 import { NavigationTransitionCoordinator } from './transition-coordinator.svelte'
 
+import type { PageSwitchStartPhase } from './page-switch-runtime.svelte'
 import type {
 	BackBehavior,
 	BackgroundAnimationPreference,
@@ -106,12 +107,12 @@ export class NavigationStateManager {
 		targetPath: string,
 		targetPageState: PageState,
 		options: BeginPageSwitchOptions
-	): boolean {
-		const started = this.#transition.beginPageSwitch(targetPath, targetPageState, options)
-		if (started) {
+	): PageSwitchStartPhase | null {
+		const startPhase = this.#transition.beginPageSwitch(targetPath, targetPageState, options)
+		if (startPhase) {
 			this.#session.closeTopbarSettings()
 		}
-		return started
+		return startPhase
 	}
 
 	startBackgroundBridge(options?: { deferUntilEntry?: boolean }) {

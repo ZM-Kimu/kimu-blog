@@ -1,5 +1,8 @@
 import { NavigationBackgroundBridgeRuntime } from './background-bridge-runtime.svelte'
-import { NavigationPageSwitchRuntime } from './page-switch-runtime.svelte'
+import {
+	NavigationPageSwitchRuntime,
+	type PageSwitchStartPhase
+} from './page-switch-runtime.svelte'
 import { resolveBackgroundScene, resolveTransitionDurations } from './transition-runtime'
 
 import type { BackgroundScene, BeginPageSwitchOptions, PageState, RouteState } from './types'
@@ -118,26 +121,33 @@ export class NavigationTransitionCoordinator {
 		targetPath: string,
 		targetPageState: PageState,
 		options: BeginPageSwitchOptions
-	): boolean {
+	): PageSwitchStartPhase | null {
 		const nextBackgroundScene = resolveBackgroundScene(this.backgroundScene, targetPageState)
 		const transitionDurations = resolveTransitionDurations({
 			options,
 			backgroundScene: this.backgroundScene,
-			pendingBackgroundScene: nextBackgroundScene
+			pendingBackgroundScene: nextBackgroundScene,
+			currentRouteState: this.routeState,
+			targetPageState
 		})
 
-		const started = this.#pageSwitch.beginPageSwitch({
+		const startPhase = this.#pageSwitch.beginPageSwitch({
 			targetPath,
 			targetPageState,
 			exitDurationMs: transitionDurations.exitDurationMs,
 			enterDurationMs: transitionDurations.enterDurationMs
 		})
-		if (!started) {
-			return false
+		if (!startPhase) {
+			return null
+		}
+
+		if (startPhase === 'entry') {
+			this.#backgroundBridge.cancelPageSwitch()
+			return startPhase
 		}
 
 		this.#backgroundBridge.beginPageSwitch(targetPageState, transitionDurations.bridgeDurationMs)
-		return true
+		return startPhase
 	}
 
 	startBackgroundBridge(options?: { deferUntilEntry?: boolean }) {

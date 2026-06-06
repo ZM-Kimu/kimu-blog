@@ -106,6 +106,17 @@ export const appMessageSkeleton = {
 		profile: {
 			info: ''
 		},
+		music: {
+			emptyTitle: '',
+			play: '',
+			pause: '',
+			previous: '',
+			next: '',
+			progress: '',
+			volume: '',
+			mute: '',
+			unmute: ''
+		},
 		missions: {
 			engineering: {
 				title: '',
@@ -213,8 +224,11 @@ export const appMessageSkeleton = {
 			}
 		},
 		post: {
-			heroEyebrow: '',
+			headerEyebrow: '',
 			backArchive: '',
+			listEyebrow: '',
+			listTitle: '',
+			asideEyebrow: '',
 			statusFeatured: '',
 			statusPublished: '',
 			metadataEyebrow: '',
@@ -233,25 +247,15 @@ export const appMessageSkeleton = {
 		}
 	},
 	about: {
-		heroEyebrow: '',
-		backHome: '',
 		title: '',
-		description: '',
-		systemsEyebrow: '',
-		systemsTitle: '',
-		nextEyebrow: '',
-		nextTitle: '',
-		items: {
-			cloudflarePages: '',
-			mdsvex: '',
-			schemaValidation: '',
-			entries: '',
-			gameUi: '',
-			replacePlaceholders: '',
-			profileData: '',
-			realContent: '',
-			searchCommentsAnalytics: ''
-		}
+		personalTitle: '',
+		githubAriaLabel: '',
+		githubFooterLabel: '',
+		techStackTitle: '',
+		entertainmentTitle: '',
+		emailAriaLabel: '',
+		mailFooterLabel: '',
+		maimaiImageAlt: ''
 	},
 	updates: {
 		eyebrow: '',
@@ -491,6 +495,7 @@ export const appMessageSkeleton = {
 	a11y: {
 		home: {
 			missionBanner: '',
+			musicPlayer: '',
 			footerNav: ''
 		}
 	}

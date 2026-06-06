@@ -1,5 +1,7 @@
 import type { PageState, RouteState, TransitionPhase } from './types'
 
+export type PageSwitchStartPhase = 'entry' | 'exit'
+
 export class NavigationPageSwitchRuntime {
 	routeState = $state<RouteState>({
 		kind: 'unknown',
@@ -67,21 +69,30 @@ export class NavigationPageSwitchRuntime {
 		targetPageState: PageState
 		exitDurationMs: number
 		enterDurationMs: number
-	}) {
-		if (this.phase !== 'idle') {
-			return false
-		}
-
+	}): PageSwitchStartPhase | null {
 		this.#clearEnterTimer()
 		this.#exitReleaseRequested = false
+		this.exitDurationMs = args.exitDurationMs
+		this.enterDurationMs = args.enterDurationMs
+
+		if (this.phase === 'exit') {
+			this.pendingTarget = args.targetPath
+			this.pendingPageState = args.targetPageState
+
+			if (args.targetPath === this.routeState.pathname) {
+				this.#startEntry()
+				return 'entry'
+			}
+
+			return 'exit'
+		}
+
 		this.exitingRouteState = this.routeState
 		this.exitingPageState = this.pageState
 		this.pendingTarget = args.targetPath
 		this.pendingPageState = args.targetPageState
-		this.exitDurationMs = args.exitDurationMs
-		this.enterDurationMs = args.enterDurationMs
 		this.phase = 'exit'
-		return true
+		return 'exit'
 	}
 
 	releaseExit(onReleased?: () => void) {

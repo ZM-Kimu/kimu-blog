@@ -104,6 +104,17 @@ export const zhCNMessages = {
 		profile: {
 			info: 'Info'
 		},
+		music: {
+			emptyTitle: '暂无曲目',
+			play: '播放',
+			pause: '暂停',
+			previous: '上一首',
+			next: '下一首',
+			progress: '播放进度',
+			volume: '音量',
+			mute: '静音',
+			unmute: '取消静音'
+		},
 		missions: {
 			engineering: {
 				title: 'Engineering',
@@ -212,8 +223,11 @@ export const zhCNMessages = {
 			}
 		},
 		post: {
-			heroEyebrow: 'Dossier / Article Record',
+			headerEyebrow: 'Article Record',
 			backArchive: '返回归档',
+			listEyebrow: 'Article Index',
+			listTitle: '文章列表',
+			asideEyebrow: 'content 无关内容',
 			statusFeatured: '精选',
 			statusPublished: '已发布',
 			metadataEyebrow: 'Metadata',
@@ -232,26 +246,15 @@ export const zhCNMessages = {
 		}
 	},
 	about: {
-		heroEyebrow: 'Profile Dossier',
-		backHome: '返回主界面',
-		title: '关于这个站点',
-		description:
-			'Kimu Blog 被设计成一个游戏主界面式的个人站：内容是核心，界面组织方式则参考 mission board 与 dossier UI。',
-		systemsEyebrow: 'Loaded Systems',
-		systemsTitle: '当前能力',
-		nextEyebrow: 'Next Missions',
-		nextTitle: '下一步',
-		items: {
-			cloudflarePages: 'Cloudflare Pages 构建与分发',
-			mdsvex: 'mdsvex 内容接入',
-			schemaValidation: 'frontmatter schema 校验',
-			entries: '`entries()` + prerender 详情页生成',
-			gameUi: '游戏 UI 风格页面骨架',
-			replacePlaceholders: '替换 placeholder 资产',
-			profileData: '补动态数据和更细的个人资料字段',
-			realContent: '完善 archive / favorites / updates 的真实内容',
-			searchCommentsAnalytics: '补搜索、评论、统计'
-		}
+		title: 'Kimu Profile',
+		personalTitle: '个人',
+		githubAriaLabel: 'GitHub: {account}',
+		githubFooterLabel: 'Github',
+		techStackTitle: '技术栈',
+		entertainmentTitle: '其他',
+		emailAriaLabel: '发送邮件到 {email}',
+		mailFooterLabel: 'Mail',
+		maimaiImageAlt: 'MaiMai DX Rating 图片'
 	},
 	updates: {
 		eyebrow: 'Live Log',
@@ -463,8 +466,8 @@ export const zhCNMessages = {
 			description: 'Kimu Blog 的主界面。以 game home screen 的方式组织个人信息、动态和内容入口。'
 		},
 		about: {
-			title: '关于项目',
-			description: 'Kimu Blog 当前脚手架与开发方向说明。'
+			title: '个人资料',
+			description: 'Kimu 的个人与其他信息。'
 		},
 		blog: {
 			title: '分类界面',
@@ -500,6 +503,7 @@ export const zhCNMessages = {
 	a11y: {
 		home: {
 			missionBanner: 'Mission 横幅',
+			musicPlayer: '主页音乐播放器',
 			footerNav: '主入口'
 		}
 	}

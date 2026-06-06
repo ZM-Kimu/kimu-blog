@@ -28,7 +28,8 @@
 	color: var(--ink-soft);
 }
 
-.content-intro p {
+.content-intro p,
+.content-description {
 	max-width: 62ch;
 	font-size: 1.03rem;
 	line-height: 1.8;

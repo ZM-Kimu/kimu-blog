@@ -304,6 +304,8 @@ export function createPageState({
 								: routeState.kind === 'debugManage'
 									? '/'
 									: '/'
+	const inheritsBackground =
+		routeState.kind === 'blog' || routeState.kind === 'archive' || routeState.kind === 'about'
 
 	return {
 		route: routeState,
@@ -312,14 +314,12 @@ export function createPageState({
 		motionFamily: 'subpage',
 		shellMode: isScreenRoute || usesSubpageScreen ? 'screen' : 'shell',
 		showGlobalChrome: !(isScreenRoute || usesSubpageScreen),
-		backgroundPolicy:
-			routeState.kind === 'blog' || routeState.kind === 'archive' ? 'inherit' : 'replace',
-		backgroundScene:
-			routeState.kind === 'blog' || routeState.kind === 'archive'
-				? undefined
-				: usesSubpageScreen
-					? 'subpage-room'
-					: 'neutral-default',
+		backgroundPolicy: inheritsBackground ? 'inherit' : 'replace',
+		backgroundScene: inheritsBackground
+			? undefined
+			: usesSubpageScreen
+				? 'subpage-room'
+				: 'neutral-default',
 		topbarShellVariant: usesSubpageScreen ? 'subpage' : 'none',
 		topbar: {
 			variant: 'subpage',

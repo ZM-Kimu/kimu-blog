@@ -25,15 +25,22 @@
 		}
 
 		const token = ++mountToken
-		const { createClickFx } = await import('blue-archive-touch-effect')
+		const { createTouchEffect } = await import('blue-archive-touch-effect')
 		if (token !== mountToken || !enabled || !host || instance) {
 			return
 		}
 
-		instance = createClickFx({
+		instance = createTouchEffect({
 			target: host,
 			listenTarget: window,
-			pixelRatioCap: 1.5
+			pixelRatioCap: 1.5,
+			config: {
+				swipe: {
+					input: {
+						pointerCapture: false
+					}
+				}
+			}
 		})
 	}
 

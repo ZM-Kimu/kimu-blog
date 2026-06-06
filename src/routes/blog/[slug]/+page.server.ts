@@ -1,4 +1,9 @@
-import { getPostBySlug, getPostEntries, getRelatedPosts } from '$lib/server/content/posts'
+import {
+	getAllPosts,
+	getPostBySlug,
+	getPostEntries,
+	getRelatedPosts
+} from '$lib/server/content/posts'
 import { error } from '@sveltejs/kit'
 
 const postModules = import.meta.glob('/src/lib/content/blog/*.{md,svx}')
@@ -22,6 +27,7 @@ export function load({ params }) {
 
 	return {
 		post,
+		allPosts: getAllPosts(),
 		relatedPosts: getRelatedPosts(post)
 	}
 }

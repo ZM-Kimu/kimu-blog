@@ -2,11 +2,12 @@
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
 	import { homeDockItems, homeQuickActions } from './config'
+	import HomeMiniPlayer from './components/HomeMiniPlayer.svelte'
 	import PortraitHomePage from './PortraitHomePage.svelte'
 	import type { HomePageData } from './home-page.types'
-	import { createHomePageViewModel } from './home-page.view-model'
 	import { translate, type I18nPayload } from '$lib/i18n'
 	import { getPublicLayoutContext } from '$lib/layout/public-layout'
+	import { getMusicPlayerContext } from '$lib/music/context'
 	import { getNavigationContext } from '$lib/navigation/context'
 
 	const homeWorkTarget = '/blog'
@@ -14,9 +15,9 @@
 	let { data }: { data: HomePageData & { i18n?: I18nPayload } } = $props()
 
 	const { navigationManager } = getNavigationContext()
+	const { musicPlayer } = getMusicPlayerContext()
 	const { getMode } = getPublicLayoutContext()
 	const messages = $derived(data.i18n?.messages)
-	const viewModel = $derived.by(() => createHomePageViewModel(data))
 	const isPortraitLayout = $derived(getMode() === 'portrait')
 
 	function t(key: string, params?: Record<string, string | number>) {
@@ -67,28 +68,9 @@
 				</button>
 			</aside>
 
-			<section class="home-mission-strip" aria-label={t('a11y.home.missionBanner')}>
-				<div class="mission-strip-marquee">
-					{#each [false, true] as isClone (isClone)}
-						<div class="mission-strip-group" aria-hidden={isClone}>
-							{#each viewModel.missionPreview as mission (`${isClone ? 'clone' : 'base'}-${mission.slug}`)}
-								<a
-									class={`mission-strip-item mission-strip-item-${mission.tone}`}
-									href={resolve(mission.href)}
-									tabindex={isClone ? -1 : undefined}
-								>
-									<span>{t(`home.missions.${mission.id}.kicker`)}</span>
-									<strong>{t(`home.missions.${mission.id}.title`)}</strong>
-									<small>
-										{t('common.records', { count: String(mission.count).padStart(2, '0') })}
-									</small>
-									<em>{t(`home.missions.${mission.id}.state`)}</em>
-								</a>
-							{/each}
-						</div>
-					{/each}
-				</div>
-			</section>
+			{#if musicPlayer.hasTracks}
+				<HomeMiniPlayer {messages} />
+			{/if}
 
 			<footer class="home-footer">
 				<nav class="home-footer-dock" aria-label={t('a11y.home.footerNav')}>

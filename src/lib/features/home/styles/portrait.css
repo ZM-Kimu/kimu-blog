@@ -60,7 +60,8 @@
 	gap: 0.9rem;
 }
 
-.portrait-home-mission-list .mission-strip-item {
+.portrait-home-mission-item {
+	position: relative;
 	display: grid;
 	grid-template-columns: 1fr auto;
 	grid-template-areas:
@@ -69,6 +70,8 @@
 		'state state';
 	gap: 0.4rem 0.95rem;
 	padding: 1.08rem 1rem 1rem 1.35rem;
+	color: inherit;
+	text-decoration: none;
 	white-space: normal;
 	border: 1px solid rgb(92 148 204 / 16%);
 	border-radius: 26px;
@@ -84,27 +87,40 @@
 		0 16px 28px rgb(57 116 177 / 8%);
 }
 
-.portrait-home-mission-list .mission-strip-item::before {
+.portrait-home-mission-item::before {
+	content: '';
 	position: absolute;
 	left: 0.92rem;
 	top: 1.28rem;
+	width: 0.52rem;
+	height: 0.52rem;
+	border-radius: 999px;
+	background: var(--mission-accent, #0ea5e9);
+	box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--mission-accent, #0ea5e9) 18%, transparent);
 }
 
-.portrait-home-mission-list .mission-strip-item::after {
-	display: none;
-}
-
-.portrait-home-mission-list .mission-strip-item span {
+.portrait-home-mission-item span {
 	grid-area: kicker;
 }
 
-.portrait-home-mission-list .mission-strip-item strong {
+.portrait-home-mission-item span,
+.portrait-home-mission-item small,
+.portrait-home-mission-item em {
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--ink-faint);
+}
+
+.portrait-home-mission-item strong {
 	grid-area: title;
+	font-family: var(--font-display);
 	font-size: 1.05rem;
 	line-height: 1.08;
 }
 
-.portrait-home-mission-list .mission-strip-item small {
+.portrait-home-mission-item small {
 	grid-area: count;
 	justify-self: end;
 	padding: 0.2rem 0.5rem;
@@ -112,8 +128,26 @@
 	background: rgb(255 255 255 / 70%);
 }
 
-.portrait-home-mission-list .mission-strip-item em {
+.portrait-home-mission-item em {
 	grid-area: state;
+	font-style: normal;
+	color: color-mix(in srgb, var(--mission-accent, #0ea5e9) 84%, #1f5c99);
+}
+
+.portrait-home-mission-item-cyan {
+	--mission-accent: #0ea5e9;
+}
+
+.portrait-home-mission-item-blue {
+	--mission-accent: #4f78ff;
+}
+
+.portrait-home-mission-item-amber {
+	--mission-accent: #f7b94f;
+}
+
+.portrait-home-mission-item-slate {
+	--mission-accent: #7b8ca5;
 }
 
 @media (width <= 640px) {

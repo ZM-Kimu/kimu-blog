@@ -1,9 +1,21 @@
 <script lang="ts">
 	import { browser } from '$app/environment'
-	import type { Snippet } from 'svelte'
+	import { createEventDispatcher, type Snippet } from 'svelte'
 	import { onDestroy, onMount } from 'svelte'
 
 	type ScrollAxis = 'x' | 'y' | 'both'
+	type ScrollChromeScrollDetail = {
+		scrollTop: number
+		scrollLeft: number
+	}
+	type ScrollChromeWheelIntentDetail = {
+		deltaX: number
+		deltaY: number
+		scrollTop: number
+		scrollLeft: number
+		hasXOverflow: boolean
+		hasYOverflow: boolean
+	}
 
 	let {
 		axis = 'y',
@@ -32,6 +44,10 @@
 	let releasePointerListeners: (() => void) | null = null
 
 	const minThumbSizePx = 28
+	const dispatch = createEventDispatcher<{
+		scroll: ScrollChromeScrollDetail
+		wheelintent: ScrollChromeWheelIntentDetail
+	}>()
 	const usesYAxis = $derived(axis === 'y' || axis === 'both')
 	const usesXAxis = $derived(axis === 'x' || axis === 'both')
 	const chromeStyle = $derived.by(
@@ -218,6 +234,20 @@
 		})
 		const handleScroll = () => {
 			updateMetrics()
+			dispatch('scroll', {
+				scrollTop: viewport?.scrollTop ?? 0,
+				scrollLeft: viewport?.scrollLeft ?? 0
+			})
+		}
+		const handleWheel = (event: WheelEvent) => {
+			dispatch('wheelintent', {
+				deltaX: event.deltaX,
+				deltaY: event.deltaY,
+				scrollTop: viewport?.scrollTop ?? 0,
+				scrollLeft: viewport?.scrollLeft ?? 0,
+				hasXOverflow,
+				hasYOverflow
+			})
 		}
 		const handleContentLoad = () => {
 			scheduleUpdate()
@@ -236,6 +266,7 @@
 			characterData: true
 		})
 		viewport.addEventListener('scroll', handleScroll, { passive: true })
+		viewport.addEventListener('wheel', handleWheel, { passive: true })
 		viewport.addEventListener('load', handleContentLoad, true)
 		void document.fonts?.ready.then(() => {
 			scheduleUpdate()
@@ -247,6 +278,7 @@
 			resizeObserver.disconnect()
 			mutationObserver.disconnect()
 			viewport?.removeEventListener('scroll', handleScroll)
+			viewport?.removeEventListener('wheel', handleWheel)
 			viewport?.removeEventListener('load', handleContentLoad, true)
 		}
 	})

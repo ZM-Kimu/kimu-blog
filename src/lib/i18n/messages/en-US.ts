@@ -105,6 +105,17 @@ export const enUSMessages = {
 		profile: {
 			info: 'Info'
 		},
+		music: {
+			emptyTitle: 'No tracks',
+			play: 'Play',
+			pause: 'Pause',
+			previous: 'Previous track',
+			next: 'Next track',
+			progress: 'Playback progress',
+			volume: 'Volume',
+			mute: 'Mute',
+			unmute: 'Unmute'
+		},
 		missions: {
 			engineering: {
 				title: 'Engineering',
@@ -218,8 +229,11 @@ export const enUSMessages = {
 			}
 		},
 		post: {
-			heroEyebrow: 'Dossier / Article Record',
+			headerEyebrow: 'Article Record',
 			backArchive: 'Back to archive',
+			listEyebrow: 'Article Index',
+			listTitle: 'Article List',
+			asideEyebrow: 'Outside content',
 			statusFeatured: 'Featured',
 			statusPublished: 'Published',
 			metadataEyebrow: 'Metadata',
@@ -240,26 +254,15 @@ export const enUSMessages = {
 		}
 	},
 	about: {
-		heroEyebrow: 'Profile Dossier',
-		backHome: 'Back to home',
-		title: 'About this site',
-		description:
-			'Kimu Blog is designed as a game-like personal command center: content stays central, while the interface structure borrows from mission board and dossier UI patterns.',
-		systemsEyebrow: 'Loaded Systems',
-		systemsTitle: 'Current capabilities',
-		nextEyebrow: 'Next Missions',
-		nextTitle: 'Next steps',
-		items: {
-			cloudflarePages: 'Cloudflare Pages build and delivery',
-			mdsvex: 'mdsvex content integration',
-			schemaValidation: 'frontmatter schema validation',
-			entries: '`entries()` + prerender detail generation',
-			gameUi: 'game UI styled page framework',
-			replacePlaceholders: 'replace placeholder assets',
-			profileData: 'add dynamic data and richer profile fields',
-			realContent: 'ship real archive / favorites / updates content',
-			searchCommentsAnalytics: 'add search, comments, and analytics'
-		}
+		title: 'Kimu Profile',
+		personalTitle: 'Personal',
+		githubAriaLabel: 'GitHub: {account}',
+		githubFooterLabel: 'Github',
+		techStackTitle: 'Tech Stack',
+		entertainmentTitle: 'Other',
+		emailAriaLabel: 'Send email to {email}',
+		mailFooterLabel: 'Mail',
+		maimaiImageAlt: 'MaiMai DX Rating image'
 	},
 	updates: {
 		eyebrow: 'Live Log',
@@ -477,8 +480,8 @@ export const enUSMessages = {
 				'The main interface of Kimu Blog, organized like a game home screen for personal identity, updates, and content entry points.'
 		},
 		about: {
-			title: 'About',
-			description: 'The current scaffold and development direction of Kimu Blog.'
+			title: 'Profile',
+			description: 'Personal and other information for Kimu.'
 		},
 		blog: {
 			title: 'Mission Page',
@@ -516,6 +519,7 @@ export const enUSMessages = {
 	a11y: {
 		home: {
 			missionBanner: 'Mission banner',
+			musicPlayer: 'Home music player',
 			footerNav: 'Primary destinations'
 		}
 	}
