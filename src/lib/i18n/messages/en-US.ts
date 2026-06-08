@@ -180,8 +180,7 @@ export const enUSMessages = {
 				'Automatically disabled on portrait document-flow layout or reduced motion.',
 			backgroundAnimationFailed: 'Asset loading failed, so the default background is being used.',
 			manage: 'Manage Workbench',
-			manageDescription:
-				'Open the content maintenance panel for post lists, editor states, and repository writes.',
+			manageDescription: 'Enter the post management page.',
 			manageAction: 'Open'
 		}
 	},

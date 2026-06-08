@@ -18,7 +18,10 @@
 
 	type SiteBootPhase = 'boot' | 'entry' | 'idle'
 	type PublicTopbarManagerHandle = {
-		bridgeTo: (targetShellVariant: TopbarShellVariant) => Promise<void>
+		bridgeTo: (
+			targetShellVariant: TopbarShellVariant,
+			options?: { immediate?: boolean }
+		) => Promise<void>
 	}
 
 	let {

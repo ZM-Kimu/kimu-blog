@@ -16,7 +16,10 @@ type PendingNavigation = {
 }
 
 type PublicTopbarManagerHandle = {
-	bridgeTo: (targetShellVariant: TopbarShellVariant) => Promise<void>
+	bridgeTo: (
+		targetShellVariant: TopbarShellVariant,
+		options?: { immediate?: boolean }
+	) => Promise<void>
 }
 
 export function resolvePreviewRouteState(pathname: string) {
@@ -142,9 +145,10 @@ export async function orchestrateNavigationTransition(args: {
 	isLandscapePublicLayout: boolean
 	motionTokens: MotionTokens
 }) {
+	const topbarBridgeImmediate = args.targetPageState.topbar.motionPolicy === 'reduced'
 	const topbarBridgePromise = args.isLandscapePublicLayout
 		? (args.publicTopbarManager
-				?.bridgeTo(args.targetPageState.topbarShellVariant)
+				?.bridgeTo(args.targetPageState.topbarShellVariant, { immediate: topbarBridgeImmediate })
 				.catch(() => undefined) ?? Promise.resolve())
 		: Promise.resolve()
 

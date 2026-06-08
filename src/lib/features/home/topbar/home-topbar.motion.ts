@@ -247,7 +247,7 @@ export function resetTransitionStyles(libs: MotionLibs | null, refs: HomeTopbarR
 		],
 		{
 			clearProps:
-				'opacity,transform,clipPath,pointerEvents,height,filter,boxShadow,background,backgroundImage,backgroundColor,borderColor'
+				'opacity,visibility,transform,clipPath,pointerEvents,height,filter,boxShadow,background,backgroundImage,backgroundColor,borderColor'
 		}
 	)
 }

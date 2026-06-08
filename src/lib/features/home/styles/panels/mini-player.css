@@ -6,7 +6,7 @@
 	justify-self: start;
 	width: var(--home-mission-width);
 	min-height: var(--home-mission-min-height);
-	padding: 0.84rem 0.9rem;
+	padding: 1.08rem 0.9rem 0.84rem;
 	border: 1px solid rgb(92 148 204 / 18%);
 	border-radius: calc(var(--home-card-radius) + 4px);
 	background:
@@ -46,6 +46,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 0.52rem;
+	margin-top: calc(2.62rem / 6);
 }
 
 .home-mini-player-control {

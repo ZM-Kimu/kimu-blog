@@ -23,7 +23,10 @@
 	import type { TopbarShellVariant } from '$lib/navigation/types'
 
 	type PublicTopbarManagerHandle = {
-		bridgeTo: (targetShellVariant: TopbarShellVariant) => Promise<void>
+		bridgeTo: (
+			targetShellVariant: TopbarShellVariant,
+			options?: { immediate?: boolean }
+		) => Promise<void>
 	}
 
 	let { children, data } = $props()
@@ -88,6 +91,10 @@
 	})
 
 	onNavigate((navigation) => {
+		if (!navigation.willUnload && navigation.to?.url.pathname === '/') {
+			musicPlayer.activateHome()
+		}
+
 		const prepared = prepareNavigationTransition({
 			navigation,
 			currentPathname: page.url.pathname,

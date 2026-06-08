@@ -24,6 +24,9 @@
 		transitionTo: (nextMode: TopbarMode, origin: 'cta' | 'back') => Promise<void>
 		setModeImmediate: (nextMode: TopbarMode) => void
 	}
+	type TopbarBridgeOptions = {
+		immediate?: boolean
+	}
 
 	let {
 		host = null,
@@ -172,8 +175,12 @@
 		}
 	}
 
-	export async function bridgeTo(targetShellVariant: TopbarShellVariant) {
+	export async function bridgeTo(
+		targetShellVariant: TopbarShellVariant,
+		options: TopbarBridgeOptions = {}
+	) {
 		const requestToken = ++bridgeRequestToken
+		const immediate = options.immediate ?? false
 		navigationManager.closeTopbarSettings()
 
 		if (targetShellVariant === 'none') {
@@ -203,7 +210,7 @@
 
 		const nextMode: TopbarMode = targetShellVariant === 'subpage' ? 'subpage' : 'main'
 		if (homeTopbar && topbarMode !== nextMode) {
-			if (topbarCollapsed) {
+			if (immediate || topbarCollapsed) {
 				homeTopbar.setModeImmediate(nextMode)
 			} else {
 				await homeTopbar.transitionTo(nextMode, 'cta')

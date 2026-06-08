@@ -176,7 +176,7 @@ export const zhCNMessages = {
 			backgroundAnimationDisabled: '当前在 portrait 文档流布局或减动效模式下自动停用。',
 			backgroundAnimationFailed: '资源加载失败，已回退到默认背景。',
 			manage: 'Manage 工作台',
-			manageDescription: '打开内容维护面板，进入文章列表、编辑器与仓库写入流程。',
+			manageDescription: '进入文章管理页。',
 			manageAction: '进入'
 		}
 	},

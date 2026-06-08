@@ -3,15 +3,12 @@
 
 	import { translate, type LocaleMessages } from '$lib/i18n'
 	import { getMusicPlayerContext } from '$lib/music/context'
-	import { getNavigationContext } from '$lib/navigation/context'
 
 	type VolumePanelState = 'closed' | 'opening' | 'open' | 'closing'
-	type SiteBootPhase = 'boot' | 'entry' | 'idle'
 
 	let { messages }: { messages?: LocaleMessages } = $props()
 
 	const { musicPlayer } = getMusicPlayerContext()
-	const { navigationManager } = getNavigationContext()
 	const currentTrack = $derived(musicPlayer.currentTrack)
 	const currentTitle = $derived(currentTrack?.title ?? t('home.music.emptyTitle'))
 	const toggleLabel = $derived(musicPlayer.playing ? t('home.music.pause') : t('home.music.play'))
@@ -45,7 +42,6 @@
 		volumePanelState === 'opening' || volumePanelState === 'open' || volumePanelState === 'closing'
 	)
 	let volumePanelProgress = $state(0)
-	let siteBootPhase = $state<SiteBootPhase>('boot')
 	let homeMusicActivated = false
 	const volumePopoverStyle = $derived(
 		volumePopoverVisible
@@ -60,7 +56,6 @@
 	)
 	let volumePanelOpenFrame: number | undefined
 	let volumePanelAnimationFrame: number | undefined
-	let siteBootObserver: MutationObserver | undefined
 
 	function t(key: string, params?: Record<string, string | number>) {
 		return translate(messages, key, params)
@@ -103,11 +98,6 @@
 	function clearVolumePanelTimers() {
 		clearVolumePanelOpenFrame()
 		clearVolumePanelAnimationFrame()
-	}
-
-	function syncSiteBootPhase() {
-		const nextPhase = document.documentElement.dataset.siteBootPhase
-		siteBootPhase = nextPhase === 'entry' || nextPhase === 'idle' ? nextPhase : 'boot'
 	}
 
 	function getVolumePanelDurationMs() {
@@ -201,7 +191,6 @@
 
 	onDestroy(() => {
 		clearVolumePanelTimers()
-		siteBootObserver?.disconnect()
 
 		if (homeMusicActivated) {
 			musicPlayer.deactivateHome()
@@ -209,19 +198,6 @@
 	})
 
 	onMount(() => {
-		syncSiteBootPhase()
-		siteBootObserver = new MutationObserver(syncSiteBootPhase)
-		siteBootObserver.observe(document.documentElement, {
-			attributes: true,
-			attributeFilter: ['data-site-boot-phase']
-		})
-	})
-
-	$effect(() => {
-		if (homeMusicActivated || siteBootPhase !== 'idle' || navigationManager.phase !== 'idle') {
-			return
-		}
-
 		homeMusicActivated = true
 		musicPlayer.activateHome()
 	})
@@ -288,7 +264,7 @@
 				max={musicPlayer.duration || 0}
 				min="0"
 				oninput={handleSeek}
-				step="1"
+				step="0.01"
 				type="range"
 				value={musicPlayer.currentTime}
 			/>

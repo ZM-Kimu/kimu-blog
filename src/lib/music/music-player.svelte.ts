@@ -6,6 +6,23 @@ export type MusicPlayerStatus = 'empty' | 'armed' | 'playing' | 'paused' | 'bloc
 
 const DEFAULT_VOLUME = 0.35
 const VOLUME_STORAGE_KEY = 'kimu-blog.music.volume'
+const MUTED_STORAGE_KEY = 'kimu-blog.music.muted'
+const MEDIA_SESSION_SEEK_STEP_SECONDS = 10
+const MEDIA_SESSION_ACTIONS = [
+	'play',
+	'pause',
+	'previoustrack',
+	'nexttrack',
+	'seekbackward',
+	'seekforward',
+	'seekto',
+	'stop'
+] as const satisfies readonly MediaSessionAction[]
+
+type MediaSessionHandler = Parameters<MediaSession['setActionHandler']>[1]
+type MediaSessionWithPosition = MediaSession & {
+	setPositionState?: (state?: MediaPositionState) => void
+}
 
 export class MusicPlayerController {
 	readonly tracks: readonly MusicTrack[]
@@ -25,6 +42,8 @@ export class MusicPlayerController {
 	#initialTrackSelected = false
 	#homeAutoplayRetryController: AbortController | null = null
 	#homeAutoplayAttemptPending = false
+	#progressAnimationFrame: number | null = null
+	#mediaSessionActive = false
 
 	constructor(tracks: readonly MusicTrack[]) {
 		this.tracks = tracks
@@ -73,25 +92,30 @@ export class MusicPlayerController {
 		this.#audio.preload = 'metadata'
 		this.#audio.src = this.currentTrack?.src ?? ''
 		this.#audio.volume = this.volume
-		this.#audio.muted = this.muted
+		this.#syncAudioMuted()
 
 		const audio = this.#audio
 		const syncTime = () => {
-			this.currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0
+			this.#syncCurrentTime({ mediaSession: true })
 		}
 		const syncDuration = () => {
 			this.duration = Number.isFinite(audio.duration) ? audio.duration : 0
+			this.#syncMediaSessionPosition()
 		}
 		const handleEnded = () => {
 			this.next({ autoplay: true })
 		}
 		const handlePause = () => {
 			this.playing = false
+			this.#stopProgressClock()
+			this.#syncMediaSessionPlaybackState()
 		}
 		const handlePlay = () => {
 			this.playing = true
 			this.blocked = false
-			this.#clearHomeAutoplayRetryListeners()
+			this.#startProgressClock()
+			this.#clearHomeAutoplayRetries()
+			this.#syncMediaSessionPlaybackState()
 		}
 
 		audio.addEventListener('timeupdate', syncTime)
@@ -100,12 +124,15 @@ export class MusicPlayerController {
 		audio.addEventListener('ended', handleEnded)
 		audio.addEventListener('pause', handlePause)
 		audio.addEventListener('play', handlePlay)
+		this.#setupMediaSession()
 		if (this.#homeActive && !this.#manualPause) {
 			this.#attemptHomeAutoplay()
 		}
 
 		return () => {
-			this.#clearHomeAutoplayRetryListeners()
+			this.#clearHomeAutoplayRetries()
+			this.#stopProgressClock()
+			this.#clearMediaSession()
 			audio.removeEventListener('timeupdate', syncTime)
 			audio.removeEventListener('loadedmetadata', syncDuration)
 			audio.removeEventListener('durationchange', syncDuration)
@@ -143,7 +170,7 @@ export class MusicPlayerController {
 
 	deactivateHome() {
 		this.#homeActive = false
-		this.#clearHomeAutoplayRetryListeners()
+		this.#clearHomeAutoplayRetries()
 	}
 
 	async play() {
@@ -153,24 +180,31 @@ export class MusicPlayerController {
 
 		this.#manualPause = false
 		this.#audio.src ||= this.currentTrack.src
+		this.#syncAudioMuted()
 		this.blocked = false
 
 		try {
 			await this.#audio.play()
 			this.playing = true
 			this.blocked = false
+			this.#startProgressClock()
 		} catch {
 			this.playing = false
 			this.blocked = true
+			this.#stopProgressClock()
+		} finally {
+			this.#syncMediaSessionPlaybackState()
 		}
 	}
 
 	pause() {
 		this.#manualPause = true
-		this.#clearHomeAutoplayRetryListeners()
+		this.#clearHomeAutoplayRetries()
 		this.#audio?.pause()
 		this.blocked = false
 		this.playing = false
+		this.#stopProgressClock()
+		this.#syncMediaSessionPlaybackState()
 	}
 
 	toggle() {
@@ -205,7 +239,7 @@ export class MusicPlayerController {
 		}
 
 		this.#audio.currentTime = Math.max(0, Math.min(nextTime, this.duration || nextTime))
-		this.currentTime = this.#audio.currentTime
+		this.#syncCurrentTime({ mediaSession: true })
 	}
 
 	setVolume(nextVolume: number) {
@@ -219,16 +253,15 @@ export class MusicPlayerController {
 
 		if (this.#audio) {
 			this.#audio.volume = this.volume
-			this.#audio.muted = this.muted
+			this.#syncAudioMuted()
 		}
 	}
 
 	toggleMute() {
 		this.muted = !this.muted
+		this.#saveVolumePreference()
 
-		if (this.#audio) {
-			this.#audio.muted = this.muted
-		}
+		this.#syncAudioMuted()
 	}
 
 	#selectTrack(nextIndex: number, options: { autoplay?: boolean }) {
@@ -241,6 +274,7 @@ export class MusicPlayerController {
 		if (nextIndex === this.currentIndex) {
 			this.#audio.currentTime = 0
 			this.currentTime = 0
+			this.#syncMediaSessionPosition()
 
 			if (shouldPlay) {
 				this.play()
@@ -254,6 +288,8 @@ export class MusicPlayerController {
 		this.duration = 0
 		this.#audio.src = this.currentTrack?.src ?? ''
 		this.#audio.load()
+		this.#syncMediaSessionMetadata()
+		this.#syncMediaSessionPosition()
 
 		if (shouldPlay) {
 			this.play()
@@ -266,9 +302,7 @@ export class MusicPlayerController {
 		}
 
 		this.#armHomeAutoplayRetryListeners()
-		window.setTimeout(() => {
-			this.#tryHomeAutoplay()
-		}, 0)
+		this.#tryHomeAutoplay()
 	}
 
 	#tryHomeAutoplay() {
@@ -301,18 +335,33 @@ export class MusicPlayerController {
 		const retryHomeAutoplay = () => {
 			this.#tryHomeAutoplay()
 		}
-		const retryHomeAutoplayWhenVisible = () => {
-			if (document.visibilityState === 'visible') {
-				this.#tryHomeAutoplay()
-			}
-		}
 
 		window.addEventListener('pointerdown', retryHomeAutoplay, {
 			capture: true,
 			passive: true,
 			signal: controller.signal
 		})
+		window.addEventListener('pointerup', retryHomeAutoplay, {
+			capture: true,
+			passive: true,
+			signal: controller.signal
+		})
+		window.addEventListener('mousedown', retryHomeAutoplay, {
+			capture: true,
+			passive: true,
+			signal: controller.signal
+		})
+		window.addEventListener('mouseup', retryHomeAutoplay, {
+			capture: true,
+			passive: true,
+			signal: controller.signal
+		})
 		window.addEventListener('touchstart', retryHomeAutoplay, {
+			capture: true,
+			passive: true,
+			signal: controller.signal
+		})
+		window.addEventListener('touchend', retryHomeAutoplay, {
 			capture: true,
 			passive: true,
 			signal: controller.signal
@@ -326,15 +375,8 @@ export class MusicPlayerController {
 			capture: true,
 			signal: controller.signal
 		})
-		window.addEventListener('focus', retryHomeAutoplay, {
+		window.addEventListener('keyup', retryHomeAutoplay, {
 			capture: true,
-			signal: controller.signal
-		})
-		window.addEventListener('pageshow', retryHomeAutoplay, {
-			capture: true,
-			signal: controller.signal
-		})
-		document.addEventListener('visibilitychange', retryHomeAutoplayWhenVisible, {
 			signal: controller.signal
 		})
 		this.#homeAutoplayRetryController = controller
@@ -343,6 +385,10 @@ export class MusicPlayerController {
 	#clearHomeAutoplayRetryListeners() {
 		this.#homeAutoplayRetryController?.abort()
 		this.#homeAutoplayRetryController = null
+	}
+
+	#clearHomeAutoplayRetries() {
+		this.#clearHomeAutoplayRetryListeners()
 	}
 
 	#selectRandomTrack(options: { autoplay?: boolean } = {}) {
@@ -364,6 +410,179 @@ export class MusicPlayerController {
 		this.currentIndex = nextIndex
 		this.currentTime = 0
 		this.duration = 0
+		this.#syncMediaSessionMetadata()
+		this.#syncMediaSessionPosition()
+	}
+
+	#setupMediaSession() {
+		if (!this.#canUseMediaSession()) {
+			return
+		}
+
+		this.#setMediaSessionActionHandler('play', () => {
+			void this.play()
+		})
+		this.#setMediaSessionActionHandler('pause', () => {
+			this.pause()
+		})
+		this.#setMediaSessionActionHandler('previoustrack', () => {
+			this.previous()
+		})
+		this.#setMediaSessionActionHandler('nexttrack', () => {
+			this.next({ autoplay: this.playing })
+		})
+		this.#setMediaSessionActionHandler('seekbackward', (details) => {
+			this.seek(this.currentTime - (details.seekOffset ?? MEDIA_SESSION_SEEK_STEP_SECONDS))
+		})
+		this.#setMediaSessionActionHandler('seekforward', (details) => {
+			this.seek(this.currentTime + (details.seekOffset ?? MEDIA_SESSION_SEEK_STEP_SECONDS))
+		})
+		this.#setMediaSessionActionHandler('seekto', (details) => {
+			if (typeof details.seekTime === 'number') {
+				this.seek(details.seekTime)
+			}
+		})
+		this.#setMediaSessionActionHandler('stop', () => {
+			this.pause()
+			this.seek(0)
+		})
+
+		this.#mediaSessionActive = true
+		this.#syncMediaSessionMetadata()
+		this.#syncMediaSessionPlaybackState()
+		this.#syncMediaSessionPosition()
+	}
+
+	#clearMediaSession() {
+		if (!this.#canUseMediaSession() || !this.#mediaSessionActive) {
+			return
+		}
+
+		for (const action of MEDIA_SESSION_ACTIONS) {
+			this.#setMediaSessionActionHandler(action, null)
+		}
+
+		try {
+			navigator.mediaSession.metadata = null
+			navigator.mediaSession.playbackState = 'none'
+		} catch {
+			// Some browsers expose a partial Media Session implementation.
+		}
+
+		this.#mediaSessionActive = false
+	}
+
+	#canUseMediaSession() {
+		return browser && typeof navigator !== 'undefined' && 'mediaSession' in navigator
+	}
+
+	#setMediaSessionActionHandler(action: MediaSessionAction, handler: MediaSessionHandler) {
+		if (!this.#canUseMediaSession()) {
+			return
+		}
+
+		try {
+			navigator.mediaSession.setActionHandler(action, handler)
+		} catch {
+			// Unsupported actions should not prevent the supported media controls from working.
+		}
+	}
+
+	#syncMediaSessionMetadata() {
+		if (!this.#canUseMediaSession() || typeof MediaMetadata === 'undefined') {
+			return
+		}
+
+		try {
+			navigator.mediaSession.metadata = this.currentTrack
+				? new MediaMetadata({
+						title: this.currentTrack.title,
+						artist: 'Kimu Blog'
+					})
+				: null
+		} catch {
+			// Metadata is progressive enhancement; playback remains the source of truth.
+		}
+	}
+
+	#syncMediaSessionPlaybackState() {
+		if (!this.#canUseMediaSession()) {
+			return
+		}
+
+		try {
+			navigator.mediaSession.playbackState = this.playing
+				? 'playing'
+				: this.hasTracks
+					? 'paused'
+					: 'none'
+		} catch {
+			// Partial implementations may reject playbackState writes.
+		}
+	}
+
+	#syncMediaSessionPosition() {
+		if (!this.#canUseMediaSession() || this.duration <= 0) {
+			return
+		}
+
+		const session = navigator.mediaSession as MediaSessionWithPosition
+		const position = Math.max(0, Math.min(this.currentTime, this.duration))
+
+		try {
+			session.setPositionState?.({
+				duration: this.duration,
+				playbackRate: 1,
+				position
+			})
+		} catch {
+			// Position state is optional and can be rejected for partially loaded media.
+		}
+	}
+
+	#syncCurrentTime(options: { mediaSession?: boolean } = {}) {
+		if (!this.#audio) {
+			return
+		}
+
+		this.currentTime = Number.isFinite(this.#audio.currentTime) ? this.#audio.currentTime : 0
+
+		if (options.mediaSession) {
+			this.#syncMediaSessionPosition()
+		}
+	}
+
+	#startProgressClock() {
+		if (!browser || this.#progressAnimationFrame !== null) {
+			return
+		}
+
+		const tick = () => {
+			if (!this.#audio || !this.playing) {
+				this.#progressAnimationFrame = null
+				return
+			}
+
+			this.#syncCurrentTime()
+			this.#progressAnimationFrame = window.requestAnimationFrame(tick)
+		}
+
+		this.#progressAnimationFrame = window.requestAnimationFrame(tick)
+	}
+
+	#stopProgressClock() {
+		if (this.#progressAnimationFrame !== null) {
+			window.cancelAnimationFrame(this.#progressAnimationFrame)
+			this.#progressAnimationFrame = null
+		}
+
+		this.#syncCurrentTime({ mediaSession: true })
+	}
+
+	#syncAudioMuted() {
+		if (this.#audio) {
+			this.#audio.muted = this.muted
+		}
 	}
 
 	#loadVolumePreference() {
@@ -372,23 +591,27 @@ export class MusicPlayerController {
 		}
 
 		let rawVolume: string | null
+		let rawMuted: string | null
 		try {
 			rawVolume = window.localStorage.getItem(VOLUME_STORAGE_KEY)
+			rawMuted = window.localStorage.getItem(MUTED_STORAGE_KEY)
 		} catch {
 			return
 		}
 
-		if (rawVolume === null) {
+		if (rawVolume !== null) {
+			const storedVolume = Number(rawVolume)
+
+			if (Number.isFinite(storedVolume)) {
+				this.volume = Math.max(0, Math.min(storedVolume, 1))
+			}
+		}
+
+		if (rawMuted !== null) {
+			this.muted = rawMuted === 'true'
 			return
 		}
 
-		const storedVolume = Number(rawVolume)
-
-		if (!Number.isFinite(storedVolume)) {
-			return
-		}
-
-		this.volume = Math.max(0, Math.min(storedVolume, 1))
 		this.muted = this.volume <= 0
 	}
 
@@ -399,6 +622,7 @@ export class MusicPlayerController {
 
 		try {
 			window.localStorage.setItem(VOLUME_STORAGE_KEY, String(this.volume))
+			window.localStorage.setItem(MUTED_STORAGE_KEY, String(this.muted))
 		} catch {
 			// Playback should keep working even when storage is blocked.
 		}

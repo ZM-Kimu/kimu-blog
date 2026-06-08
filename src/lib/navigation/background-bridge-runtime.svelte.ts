@@ -110,8 +110,9 @@ export class NavigationBackgroundBridgeRuntime {
 		this.#backgroundBridgeReady = false
 		this.backgroundBridgeActive = true
 		this.#backgroundBridgeTimer = setTimeout(() => {
-			this.#clearBackgroundBridgeTimer()
+			this.#backgroundBridgeTimer = null
 			this.#backgroundBridgeReady = true
+			this.finishBackgroundBridge()
 		}, this.bridgeDurationMs)
 	}
 }
