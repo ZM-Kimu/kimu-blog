@@ -83,6 +83,16 @@
 		lastReaderScrollTop = scrollTop
 	}
 
+	function expandReaderTopbar(scrollTop: number) {
+		if (!navigationManager.topbarCollapsed) {
+			return
+		}
+
+		navigationManager.toggleTopbarCollapsed(false)
+		readerCollapsedTopbar = false
+		lockReaderTopbarScroll(scrollTop)
+	}
+
 	function handleReaderScroll(event: CustomEvent<{ scrollTop: number; scrollLeft: number }>) {
 		if (!isLandscapeLayout) {
 			return
@@ -104,10 +114,10 @@
 		lastReaderScrollTop = nextScrollTop
 
 		if (nextScrollTop <= readerTopResetThreshold) {
+			const hasUpwardIntent = delta < -1
 			readerScrollIntent = 0
-			if (navigationManager.topbarCollapsed) {
-				navigationManager.toggleTopbarCollapsed(false)
-				lockReaderTopbarScroll(nextScrollTop)
+			if (readerCollapsedTopbar || hasUpwardIntent) {
+				expandReaderTopbar(nextScrollTop)
 			}
 			readerCollapsedTopbar = false
 			return
@@ -134,11 +144,7 @@
 		}
 
 		if (readerScrollIntent <= -readerScrollThreshold) {
-			if (navigationManager.topbarCollapsed) {
-				navigationManager.toggleTopbarCollapsed(false)
-				lockReaderTopbarScroll(nextScrollTop)
-			}
-			readerCollapsedTopbar = false
+			expandReaderTopbar(nextScrollTop)
 			readerScrollIntent = 0
 		}
 	}
@@ -158,7 +164,7 @@
 		}
 
 		const { deltaY, hasYOverflow, scrollTop } = event.detail
-		if (hasYOverflow || deltaY >= -1) {
+		if (deltaY >= -1) {
 			return
 		}
 
@@ -166,10 +172,8 @@
 			return
 		}
 
-		if (navigationManager.topbarCollapsed) {
-			navigationManager.toggleTopbarCollapsed(false)
-			readerCollapsedTopbar = false
-			lockReaderTopbarScroll(scrollTop)
+		if (scrollTop <= readerTopResetThreshold || !hasYOverflow) {
+			expandReaderTopbar(scrollTop)
 		}
 	}
 

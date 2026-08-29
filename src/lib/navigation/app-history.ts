@@ -3,6 +3,10 @@ type AppHistoryEntry = {
 	pathname: string
 }
 
+type PreviousPathOptions = {
+	skipPathname?: (pathname: string) => boolean
+}
+
 export class AppHistoryTracker {
 	#entries: AppHistoryEntry[] = []
 	#cursor = -1
@@ -37,14 +41,14 @@ export class AppHistoryTracker {
 		this.#cursor = nextEntries.length - 1
 	}
 
-	getPreviousPathDelta(currentPathname: string) {
+	getPreviousPathDelta(currentPathname: string, options: PreviousPathOptions = {}) {
 		if (this.#cursor <= 0) {
 			return null
 		}
 
 		for (let index = this.#cursor - 1; index >= 0; index -= 1) {
 			const entry = this.#entries[index]
-			if (entry.pathname === currentPathname) {
+			if (entry.pathname === currentPathname || options.skipPathname?.(entry.pathname)) {
 				continue
 			}
 

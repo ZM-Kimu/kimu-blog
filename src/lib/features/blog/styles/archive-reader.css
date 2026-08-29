@@ -1,3 +1,19 @@
+.archive-reader-panel {
+	--archive-reader-content-opacity: 1;
+	--archive-reader-content-offset-y: 0px;
+	--archive-reader-content-blur: 0px;
+}
+
+.archive-reader-panel-content {
+	position: relative;
+	display: grid;
+	height: 100%;
+	min-height: 0;
+	opacity: var(--archive-reader-content-opacity);
+	transform: translateY(var(--archive-reader-content-offset-y));
+	filter: blur(var(--archive-reader-content-blur));
+}
+
 .archive-reader-browser {
 	display: grid;
 	gap: 1rem;

@@ -1,4 +1,4 @@
-import { getPostsByTag, getTagEntries } from '$lib/server/content/posts'
+import { getAllTags, getPostsByTag, getTagEntries } from '$lib/server/content/posts'
 import { error } from '@sveltejs/kit'
 
 export const prerender = true
@@ -14,5 +14,8 @@ export function load({ params }) {
 		throw error(404, 'tag_not_found')
 	}
 
-	return result
+	return {
+		...result,
+		allTags: getAllTags()
+	}
 }

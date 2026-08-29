@@ -5,6 +5,7 @@
 	import UpdatesPage from '$lib/features/updates/UpdatesPage.svelte'
 	import SeoHead from '$lib/components/ui/SeoHead.svelte'
 
+	let { data } = $props()
 	const messages = $derived(page.data.i18n?.messages)
 </script>
 
@@ -15,5 +16,5 @@
 />
 
 <SubpageScreen>
-	<UpdatesPage />
+	<UpdatesPage {data} />
 </SubpageScreen>

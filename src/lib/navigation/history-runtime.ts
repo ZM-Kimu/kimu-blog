@@ -3,8 +3,9 @@ import { goto } from '$app/navigation'
 import { resolve } from '$app/paths'
 
 import { AppHistoryTracker } from './app-history'
+import { resolveRouteState } from './route-state'
 
-import type { BackBehavior } from './types'
+import type { BackBehavior, RouteKind } from './types'
 
 export class NavigationHistoryRuntime {
 	#historyTracker = new AppHistoryTracker()
@@ -27,7 +28,10 @@ export class NavigationHistoryRuntime {
 
 	async goBack(currentPathname: string, back?: BackBehavior) {
 		if (browser) {
-			const historyDelta = this.#historyTracker.getPreviousPathDelta(currentPathname)
+			const skipRouteKinds = back?.skipRouteKinds ?? []
+			const historyDelta = this.#historyTracker.getPreviousPathDelta(currentPathname, {
+				skipPathname: (pathname) => this.#shouldSkipHistoryPath(pathname, skipRouteKinds)
+			})
 			if (historyDelta !== null) {
 				window.history.go(historyDelta)
 				return
@@ -46,5 +50,13 @@ export class NavigationHistoryRuntime {
 
 		const entryId = window.history.state?.['sveltekit:history']
 		return typeof entryId === 'string' || typeof entryId === 'number' ? String(entryId) : null
+	}
+
+	#shouldSkipHistoryPath(pathname: string, skipRouteKinds: readonly RouteKind[]) {
+		if (!skipRouteKinds.length) {
+			return false
+		}
+
+		return skipRouteKinds.includes(resolveRouteState({ pathname }).kind)
 	}
 }

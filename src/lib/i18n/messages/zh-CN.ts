@@ -44,7 +44,8 @@ export const zhCNMessages = {
 		blog: '分类',
 		updates: '动态',
 		favorites: '收藏',
-		about: '关于'
+		about: '关于',
+		tags: '标签'
 	},
 	shell: {
 		brand: {
@@ -159,8 +160,8 @@ export const zhCNMessages = {
 		},
 		metrics: {
 			articles: '站点文章数',
-			todos: '待办事项数',
-			recentActivity: '最近 30 天更新/新增文章数'
+			recentActiveArticles: '最近活跃文章数',
+			recentUpdates: '最近动态数'
 		},
 		settings: {
 			title: '站点配置',
@@ -190,7 +191,7 @@ export const zhCNMessages = {
 			openPost: '进入文章',
 			categoryEyebrow: '分类',
 			tagsScrollHint: '滑动',
-			emptyDate: '暂无记录',
+			emptyDate: '暂无内容...',
 			emptyTitle: '等待内容接入',
 			emptyDescription: '这个分类已经预留，但当前还没有正式文章。',
 			yearEyebrow: '年份索引',
@@ -241,7 +242,7 @@ export const zhCNMessages = {
 		},
 		tag: {
 			introEyebrow: 'Tag Filter',
-			introDescription: '当前共有 {count} 篇文章归类在这个标签下，可作为辅助筛选入口使用。',
+			introDescription: '有 {count} 篇文章包含了此标签',
 			backArchive: '返回归档'
 		}
 	},
@@ -257,15 +258,47 @@ export const zhCNMessages = {
 		maimaiImageAlt: 'MaiMai DX Rating 图片'
 	},
 	updates: {
-		eyebrow: 'Live Log',
-		title: '动态模块',
+		title: '动态',
 		description:
-			'这里会承接站点动态、正在进行的任务、最近状态变化与简短更新。当前阶段先保留为占位页面。'
+			'站点改动、正在推进的任务、短状态与最近变化会在这里汇总成一条可扫描的时间线。',
+		summaryAria: '动态概览',
+		totalLabel: '总动态',
+		latestLabel: '最近更新',
+		filtersLabel: '动态类型筛选',
+		feedAria: '动态时间线',
+		openItem: '打开动态：{title}',
+		openLabel: '进入',
+		emptyTitle: '暂无动态',
+		emptyDescription: '当前筛选条件下没有动态记录。',
+		kind: {
+			site: '站点',
+			writing: '写作',
+			design: '设计',
+			work: '任务'
+		},
+		status: {
+			live: '进行中',
+			shipped: '已完成',
+			tracking: '跟踪中',
+			queued: '排队'
+		}
 	},
 	favorites: {
-		eyebrow: 'Curated Vault',
-		title: '收藏模块',
-		description: '这里会承接收藏文章、灵感参考、链接清单与资源归档。当前阶段先保留为占位页面。'
+		title: '收藏',
+		description: '收藏文章、工具、外部参考与站内入口会按精选和分组收藏板的方式沉淀在这里。',
+		summaryAria: '收藏概览',
+		totalLabel: '总收藏',
+		filtersLabel: '收藏分类筛选',
+		collectionsAria: '收藏分组',
+		openItem: '打开收藏：{title}',
+		emptyTitle: '暂无收藏',
+		emptyDescription: '当前筛选条件下没有收藏条目。',
+		kind: {
+			article: '文章',
+			tool: '工具',
+			reference: '参考',
+			site: '站点'
+		}
 	},
 	error: {
 		title: '错误',
@@ -479,11 +512,11 @@ export const zhCNMessages = {
 		},
 		updates: {
 			title: '动态',
-			description: 'Kimu Blog 的动态模块占位页。'
+			description: '浏览 Kimu Blog 的站点动态、进行中任务与最近状态变化。'
 		},
 		favorites: {
 			title: '收藏',
-			description: 'Kimu Blog 的收藏模块占位页。'
+			description: '浏览 Kimu Blog 的精选链接、站内入口、工具与灵感参考。'
 		},
 		manageDebug: {
 			title: 'Manage Debug',

@@ -17,6 +17,7 @@
 	import type { PageState, RouteState, TopbarShellVariant } from '$lib/navigation/types'
 
 	type SiteBootPhase = 'boot' | 'entry' | 'idle'
+	type HomeControlsMotionState = 'idle' | 'enter' | 'exit'
 	type PublicTopbarManagerHandle = {
 		bridgeTo: (
 			targetShellVariant: TopbarShellVariant,
@@ -85,6 +86,34 @@
 		siteFrame?: HTMLDivElement | null
 		publicTopbarManager?: PublicTopbarManagerHandle | null
 	} = $props()
+
+	let previousTopbarCollapsed = $state<boolean | null>(null)
+	let homeControlsMotionState = $state<HomeControlsMotionState>('idle')
+
+	$effect(() => {
+		const collapsed = navigationManager.topbarCollapsed
+		const isHomeRoute = routeState.kind === 'home'
+		const canAnimateHomeControls =
+			isHomeRoute && siteBootPhase === 'idle' && !isRouteEntering && !isRouteOutgoing
+
+		if (previousTopbarCollapsed === null) {
+			previousTopbarCollapsed = collapsed
+			return
+		}
+
+		if (!isHomeRoute) {
+			previousTopbarCollapsed = collapsed
+			homeControlsMotionState = 'idle'
+			return
+		}
+
+		if (collapsed === previousTopbarCollapsed) {
+			return
+		}
+
+		previousTopbarCollapsed = collapsed
+		homeControlsMotionState = canAnimateHomeControls ? (collapsed ? 'exit' : 'enter') : 'idle'
+	})
 </script>
 
 <svelte:head>
@@ -146,6 +175,9 @@
 		class:site-main-home={routeState.kind === 'home'}
 		class:site-main-post={routeState.kind === 'post'}
 		class:site-main-public-portrait={isPortraitPublicLayout}
+		class:site-main-topbar-collapsed={navigationManager.topbarCollapsed}
+		class:site-main-home-controls-enter={homeControlsMotionState === 'enter'}
+		class:site-main-home-controls-exit={homeControlsMotionState === 'exit'}
 		class="site-main"
 	>
 		{#if isPublicScreenRoute}

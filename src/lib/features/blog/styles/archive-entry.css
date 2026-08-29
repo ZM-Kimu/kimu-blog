@@ -1,10 +1,8 @@
 .archive-entry-stack {
 	display: grid;
-	gap: 0.9rem;
-	max-height: var(--subpage-stage-available-height);
 	min-height: 0;
 	height: 100%;
-	padding: 0.92rem;
+	padding: 0 0.92rem 0.92rem;
 	border-radius: inherit;
 	clip-path: inset(0 round calc(var(--radius-xl) - 1px));
 	overflow: hidden auto;
@@ -14,6 +12,7 @@
 
 .archive-entry-toolbar {
 	display: block;
+	padding: 0.92rem 0.92rem 0.52rem;
 }
 
 .archive-entry-filter-nav {
@@ -170,12 +169,27 @@
 }
 
 .archive-entry-empty {
-	display: flex;
-	align-items: center;
-	padding: 1.1rem;
+	display: grid;
+	place-items: center;
+	gap: 0.27rem;
+	min-height: min(24rem, calc(var(--subpage-stage-available-height) - 7rem));
+	padding: 1.4rem;
+	text-align: center;
+}
+
+.archive-entry-empty-image {
+	display: block;
+	inline-size: min(58%, 16rem);
+	max-block-size: 13rem;
+	object-fit: contain;
+	user-select: none;
+	pointer-events: none;
 }
 
 :where(.archive-entry-empty) > p:last-child {
 	margin: 0;
+	font-size: 0.95rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
 	color: var(--ink-soft);
 }

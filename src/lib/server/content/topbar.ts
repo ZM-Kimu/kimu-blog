@@ -1,3 +1,5 @@
+import { updateEntries } from '$lib/content/updates'
+
 import { getAllPosts } from './posts'
 
 import type { TopbarMetricsData } from '$lib/navigation/types'
@@ -15,10 +17,14 @@ export function getTopbarMetrics(referenceDate = new Date()): TopbarMetricsData 
 		const activityAt = Math.max(parseIsoDate(post.date), parseIsoDate(post.updated))
 		return Number.isFinite(activityAt) && activityAt >= threshold
 	}).length
+	const recentUpdateCount30d = updateEntries.filter((entry) => {
+		const activityAt = parseIsoDate(entry.date)
+		return Number.isFinite(activityAt) && activityAt >= threshold
+	}).length
 
 	return {
 		articleCount: posts.length,
-		todoCount: null,
-		recentPostActivityCount30d
+		recentPostActivityCount30d,
+		recentUpdateCount30d
 	}
 }

@@ -44,7 +44,8 @@ export const enUSMessages = {
 		blog: 'Missions',
 		updates: 'Updates',
 		favorites: 'Favorites',
-		about: 'About'
+		about: 'About',
+		tags: 'Tags'
 	},
 	shell: {
 		brand: {
@@ -161,8 +162,8 @@ export const enUSMessages = {
 		},
 		metrics: {
 			articles: 'Site articles',
-			todos: 'Open todos',
-			recentActivity: 'Posts added or updated in the last 30 days'
+			recentActiveArticles: 'Recently active articles',
+			recentUpdates: 'Recent updates'
 		},
 		settings: {
 			title: 'Site Settings',
@@ -195,7 +196,7 @@ export const enUSMessages = {
 			openPost: 'Open article',
 			categoryEyebrow: 'Category',
 			tagsScrollHint: 'Scroll',
-			emptyDate: 'No Records',
+			emptyDate: 'No content...',
 			emptyTitle: 'Waiting for content',
 			emptyDescription: 'This category is reserved, but there are no published posts in it yet.',
 			yearEyebrow: 'Year Index',
@@ -247,8 +248,7 @@ export const enUSMessages = {
 		},
 		tag: {
 			introEyebrow: 'Tag Filter',
-			introDescription:
-				'There are currently {count} posts grouped under this tag, so it can serve as a secondary filter entry.',
+			introDescription: '{count} posts include this tag.',
 			backArchive: 'Back to archive'
 		}
 	},
@@ -264,16 +264,48 @@ export const enUSMessages = {
 		maimaiImageAlt: 'MaiMai DX Rating image'
 	},
 	updates: {
-		eyebrow: 'Live Log',
-		title: 'Updates module',
+		title: 'Updates',
 		description:
-			'This page will hold site updates, in-progress work, recent state changes, and short status notes. It stays as a placeholder for now.'
+			'Site changes, in-progress work, short status notes, and recent shifts are collected here as a scan-friendly timeline.',
+		summaryAria: 'Updates summary',
+		totalLabel: 'Total updates',
+		latestLabel: 'Latest update',
+		filtersLabel: 'Update type filters',
+		feedAria: 'Updates timeline',
+		openItem: 'Open update: {title}',
+		openLabel: 'Open',
+		emptyTitle: 'No updates',
+		emptyDescription: 'There are no updates under the current filter.',
+		kind: {
+			site: 'Site',
+			writing: 'Writing',
+			design: 'Design',
+			work: 'Work'
+		},
+		status: {
+			live: 'Live',
+			shipped: 'Shipped',
+			tracking: 'Tracking',
+			queued: 'Queued'
+		}
 	},
 	favorites: {
-		eyebrow: 'Curated Vault',
-		title: 'Favorites module',
+		title: 'Favorites',
 		description:
-			'This page will hold saved articles, inspiration references, link lists, and archived resources. It stays as a placeholder for now.'
+			'Saved articles, tools, references, and internal entries are organized as featured picks and collection groups.',
+		summaryAria: 'Favorites summary',
+		totalLabel: 'Total saves',
+		filtersLabel: 'Favorite category filters',
+		collectionsAria: 'Favorite collections',
+		openItem: 'Open favorite: {title}',
+		emptyTitle: 'No favorites',
+		emptyDescription: 'There are no saved items under the current filter.',
+		kind: {
+			article: 'Article',
+			tool: 'Tool',
+			reference: 'Reference',
+			site: 'Site'
+		}
 	},
 	error: {
 		title: 'Error',
@@ -493,11 +525,11 @@ export const enUSMessages = {
 		},
 		updates: {
 			title: 'Updates',
-			description: 'Placeholder page for the updates module of Kimu Blog.'
+			description: 'Browse Kimu Blog site updates, in-progress work, and recent status changes.'
 		},
 		favorites: {
 			title: 'Favorites',
-			description: 'Placeholder page for the favorites module of Kimu Blog.'
+			description: 'Browse curated links, internal entries, tools, and inspiration references from Kimu Blog.'
 		},
 		manageDebug: {
 			title: 'Manage Debug',

@@ -1,4 +1,6 @@
 .codex*
+.playwright*
+output/
 
 node_modules
 

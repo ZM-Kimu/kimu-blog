@@ -55,6 +55,30 @@
 .post-list-lane,
 .post-aside-lane {
 	align-self: stretch;
+	opacity: 1;
+	filter: blur(0);
+	transform: translateX(0);
+	transition:
+		opacity var(--motion-topbar-stage-duration) var(--motion-shared-easing-standard),
+		transform var(--motion-topbar-stage-duration) var(--motion-shared-easing-standard),
+		filter var(--motion-topbar-stage-duration) var(--motion-shared-easing-standard);
+	will-change: opacity, transform, filter;
+}
+
+.post-shell-topbar-collapsed .post-list-lane,
+.post-shell-topbar-collapsed .post-aside-lane {
+	opacity: 0;
+	filter: blur(var(--motion-topbar-reopen-blur));
+	pointer-events: none;
+	transition-delay: var(--motion-topbar-stage-collapse-delay);
+}
+
+.post-shell-topbar-collapsed .post-list-lane {
+	transform: translateX(calc((var(--post-list-width) + var(--post-stage-inline-gap)) * -1));
+}
+
+.post-shell-topbar-collapsed .post-aside-lane {
+	transform: translateX(calc(var(--post-aside-width) + var(--post-stage-inline-gap)));
 }
 
 .post-reader-lane {

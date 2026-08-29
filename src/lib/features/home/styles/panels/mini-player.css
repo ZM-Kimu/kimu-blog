@@ -4,6 +4,7 @@
 	display: grid;
 	gap: 0.68rem;
 	justify-self: start;
+	margin-left: var(--home-footer-left-offset);
 	width: var(--home-mission-width);
 	min-height: var(--home-mission-min-height);
 	padding: 1.08rem 0.9rem 0.84rem;

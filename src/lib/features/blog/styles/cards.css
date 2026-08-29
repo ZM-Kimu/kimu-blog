@@ -157,3 +157,38 @@
 	line-height: 1;
 	color: rgb(34 88 141 / 78%);
 }
+
+@media (width >=901px) and (orientation: landscape) and (height <=780px) {
+	.blog-mission-page .mission-card {
+		min-height: 0;
+		aspect-ratio: auto;
+		gap: 0.5rem;
+		padding: clamp(0.92rem, 2.2vh, 1.28rem) clamp(1rem, 2.4vh, 1.38rem)
+			clamp(0.86rem, 2vh, 1.16rem);
+		overflow: hidden;
+		border-radius: 18px;
+	}
+
+	.blog-mission-page .mission-card-body {
+		min-height: 0;
+		align-content: start;
+		font-size: clamp(1.28rem, 3.35vh, 1.58rem);
+		padding-bottom: clamp(1.48rem, 3.4vh, 1.92rem);
+	}
+
+	.blog-mission-page .mission-card-body h3 {
+		font-size: clamp(1.62rem, 4.75vh, 2.2rem);
+		line-height: 0.98;
+	}
+
+	.blog-mission-page .mission-card-body p {
+		font-size: 0.56em;
+		line-height: 1.36;
+	}
+
+	.blog-mission-page .mission-card-count {
+		right: clamp(0.95rem, 2.2vh, 1.2rem);
+		bottom: clamp(0.82rem, 2vh, 1.05rem);
+		font-size: clamp(0.98rem, 2.7vh, 1.08rem);
+	}
+}

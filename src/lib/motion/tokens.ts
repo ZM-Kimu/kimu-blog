@@ -168,6 +168,13 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		musicVolumeDurationMs: reducedMotion ? 1 : 220
 	}
 
+	const archiveColumnEnterDurationMs = reducedMotion ? 1 : 520
+	const archiveReaderEnterDurationMs = reducedMotion ? 1 : 580
+	const archiveColumnEnterDelayMs = reducedMotion ? 0 : 30
+	const archiveReaderEnterDelayMs = reducedMotion ? 0 : 95
+	const archiveExitDurationMs = reducedMotion ? 1 : 150
+	const archiveExitStaggerMs = reducedMotion ? 0 : 38
+
 	const blog = {
 		missionRailEnterDurationMs: reducedMotion ? 1 : 480,
 		missionRailEnterOffsetXPx: 28,
@@ -179,6 +186,38 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		missionExitStaggerMs: reducedMotion ? 0 : 36,
 		missionRailExitDelayMs: reducedMotion ? 0 : 108,
 		missionExitTotalDurationMs: reducedMotion ? 1 : 158,
+		archiveColumnEnterDurationMs,
+		archiveReaderEnterDurationMs,
+		archiveColumnEnterDelayMs,
+		archiveReaderEnterDelayMs,
+		archiveEnterOffsetXPx: 26,
+		archiveEnterOffsetYPx: 8,
+		archiveEnterBlurPx: 8,
+		archiveExitDurationMs,
+		archiveExitStaggerMs,
+		archiveExitOffsetXPx: 20,
+		archiveExitBlurPx: 4,
+		archiveEntryShapeDurationMs: reducedMotion ? 1 : 260,
+		archiveReaderMorphDurationMs: reducedMotion ? 1 : 520,
+		archiveReaderPanelExitDurationMs: reducedMotion ? 1 : 230,
+		archiveReaderFallbackOffsetXPx: 18,
+		archiveReaderFallbackOffsetYPx: 8,
+		archiveReaderMorphBlurPx: reducedMotion ? 0 : 6,
+		archiveReaderContentRevealStart: reducedMotion ? 0 : 0.36,
+		archiveReaderContentOffsetYPx: 10,
+		archiveReaderContentBlurPx: reducedMotion ? 0 : 5,
+		archiveReaderExitOffsetXPx: 22,
+		archiveReaderExitOffsetYPx: 6,
+		archiveReaderExitBlurPx: reducedMotion ? 0 : 5,
+		archiveEnterTotalDurationMs: Math.max(
+			archiveColumnEnterDelayMs + archiveColumnEnterDurationMs,
+			archiveReaderEnterDelayMs + archiveReaderEnterDurationMs
+		),
+		archiveExitTotalDurationMs: archiveExitDurationMs + archiveExitStaggerMs,
+		tagListSwapEnterDurationMs: reducedMotion ? 1 : 420,
+		tagListSwapExitDurationMs: reducedMotion ? 1 : 280,
+		tagListSwapOffsetYPx: 12,
+		tagListSwapBlurPx: reducedMotion ? 0 : 5,
 		postReaderSwapDurationMs: reducedMotion ? 1 : 240,
 		postReaderSwapOffsetYPx: 14,
 		postAsideSwapDurationMs: reducedMotion ? 1 : 180,
@@ -386,6 +425,45 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-blog-mission-exit-offset-x', px(tokens.blog.missionExitOffsetXPx)],
 		['motion-blog-mission-exit-stagger', ms(tokens.blog.missionExitStaggerMs)],
 		['motion-blog-mission-rail-exit-delay', ms(tokens.blog.missionRailExitDelayMs)],
+		['motion-blog-archive-column-enter-duration', ms(tokens.blog.archiveColumnEnterDurationMs)],
+		['motion-blog-archive-reader-enter-duration', ms(tokens.blog.archiveReaderEnterDurationMs)],
+		['motion-blog-archive-column-enter-delay', ms(tokens.blog.archiveColumnEnterDelayMs)],
+		['motion-blog-archive-reader-enter-delay', ms(tokens.blog.archiveReaderEnterDelayMs)],
+		['motion-blog-archive-enter-offset-x', px(tokens.blog.archiveEnterOffsetXPx)],
+		['motion-blog-archive-enter-offset-y', px(tokens.blog.archiveEnterOffsetYPx)],
+		['motion-blog-archive-enter-blur', px(tokens.blog.archiveEnterBlurPx)],
+		['motion-blog-archive-exit-duration', ms(tokens.blog.archiveExitDurationMs)],
+		['motion-blog-archive-exit-stagger', ms(tokens.blog.archiveExitStaggerMs)],
+		['motion-blog-archive-exit-offset-x', px(tokens.blog.archiveExitOffsetXPx)],
+		['motion-blog-archive-exit-blur', px(tokens.blog.archiveExitBlurPx)],
+		['motion-blog-archive-entry-shape-duration', ms(tokens.blog.archiveEntryShapeDurationMs)],
+		['motion-blog-archive-reader-morph-duration', ms(tokens.blog.archiveReaderMorphDurationMs)],
+		[
+			'motion-blog-archive-reader-panel-exit-duration',
+			ms(tokens.blog.archiveReaderPanelExitDurationMs)
+		],
+		[
+			'motion-blog-archive-reader-fallback-offset-x',
+			px(tokens.blog.archiveReaderFallbackOffsetXPx)
+		],
+		[
+			'motion-blog-archive-reader-fallback-offset-y',
+			px(tokens.blog.archiveReaderFallbackOffsetYPx)
+		],
+		['motion-blog-archive-reader-morph-blur', px(tokens.blog.archiveReaderMorphBlurPx)],
+		[
+			'motion-blog-archive-reader-content-reveal-start',
+			tokens.blog.archiveReaderContentRevealStart
+		],
+		['motion-blog-archive-reader-content-offset-y', px(tokens.blog.archiveReaderContentOffsetYPx)],
+		['motion-blog-archive-reader-content-blur', px(tokens.blog.archiveReaderContentBlurPx)],
+		['motion-blog-archive-reader-exit-offset-x', px(tokens.blog.archiveReaderExitOffsetXPx)],
+		['motion-blog-archive-reader-exit-offset-y', px(tokens.blog.archiveReaderExitOffsetYPx)],
+		['motion-blog-archive-reader-exit-blur', px(tokens.blog.archiveReaderExitBlurPx)],
+		['motion-blog-tag-list-swap-enter-duration', ms(tokens.blog.tagListSwapEnterDurationMs)],
+		['motion-blog-tag-list-swap-exit-duration', ms(tokens.blog.tagListSwapExitDurationMs)],
+		['motion-blog-tag-list-swap-offset-y', px(tokens.blog.tagListSwapOffsetYPx)],
+		['motion-blog-tag-list-swap-blur', px(tokens.blog.tagListSwapBlurPx)],
 		['motion-blog-post-reader-swap-duration', ms(tokens.blog.postReaderSwapDurationMs)],
 		['motion-blog-post-reader-swap-offset-y', px(tokens.blog.postReaderSwapOffsetYPx)],
 		['motion-blog-post-aside-swap-duration', ms(tokens.blog.postAsideSwapDurationMs)],
@@ -414,6 +492,7 @@ export function createTopbarMotionCssVars(tokens: MotionTokens) {
 		['motion-topbar-simple-transition-offset-y', px(tokens.topbar.simpleTransitionOffsetYPx)],
 		['motion-topbar-title-ghost-offset-x', px(tokens.topbar.titleGhostOffsetXPx)],
 		['motion-topbar-morph-glyph-hidden-scale', tokens.topbar.morphGlyphHiddenScale],
+		['motion-topbar-reopen-blur', px(tokens.topbar.reopenBlurPx)],
 		['motion-topbar-visual-profile-chip-gap', rem(tokens.topbarVisual.profileChipGapRem)],
 		['motion-topbar-visual-profile-avatar-shift-x', tokens.topbarVisual.profileAvatarShiftX],
 		['motion-topbar-visual-profile-copy-gap', rem(tokens.topbarVisual.profileCopyGapRem)]

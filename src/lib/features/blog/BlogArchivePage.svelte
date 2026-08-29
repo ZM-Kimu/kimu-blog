@@ -22,6 +22,13 @@
 	import ArchiveEntryColumn from './components/ArchiveEntryColumn.svelte'
 	import ArchiveReaderRail from './components/ArchiveReaderRail.svelte'
 
+	type ArchiveSelectionSourceRect = {
+		left: number
+		top: number
+		width: number
+		height: number
+	}
+
 	let {
 		data
 	}: {
@@ -40,20 +47,22 @@
 	const archiveBrowser = createArchiveBrowserState()
 	const requestedCategory = $derived(archiveBrowser.requestedCategory)
 	const selectedSlug = $derived(archiveBrowser.selectedSlug)
-	const activeMission = $derived.by(() =>
-		requestedCategory
-			? (missionCatalog.find((entry) => entry.slug === requestedCategory) ?? null)
-			: null
-	)
-	const filteredPosts = $derived.by(() =>
-		activeMission
+	function resolveMission(slug: string | null) {
+		return slug ? (missionCatalog.find((entry) => entry.slug === slug) ?? null) : null
+	}
+
+	function filterPostsByCategory(slug: string | null) {
+		const mission = resolveMission(slug)
+		return mission
 			? data.posts.filter(
 					(post) =>
-						(post.categorySlug && activeMission.matches.includes(post.categorySlug)) ||
-						(post.category && activeMission.matches.includes(post.category))
+						(post.categorySlug && mission.matches.includes(post.categorySlug)) ||
+						(post.category && mission.matches.includes(post.category))
 				)
 			: data.posts
-	)
+	}
+
+	const filteredPosts = $derived.by(() => filterPostsByCategory(requestedCategory))
 	const archiveFilterMissions = missionCatalog.filter((entry) => entry.href !== '/favorites')
 	const categoryOptions = $derived.by(() =>
 		archiveFilterMissions.map((mission) => ({
@@ -73,23 +82,34 @@
 		return modules[selectedPost.path]?.default ?? null
 	})
 
+	let readerSelectionSourceRect = $state<ArchiveSelectionSourceRect | null>(null)
+
 	$effect(() => {
-		archiveBrowser.ensureValidSelection(filteredPosts)
+		archiveBrowser.ensureValidSelection(filteredPosts, {
+			autoSelectFirst: requestedCategory !== null
+		})
 	})
 
-	function selectPost(slug: string) {
+	function selectPost(slug: string, sourceRect: ArchiveSelectionSourceRect | null) {
+		readerSelectionSourceRect = sourceRect
 		archiveBrowser.selectPost(slug)
 	}
 
 	function selectCategory(slug: string | null) {
-		archiveBrowser.selectCategory(slug)
+		readerSelectionSourceRect = null
+		archiveBrowser.selectCategory(slug, filterPostsByCategory(slug)[0]?.slug ?? null)
+	}
+
+	function syncArchiveFromLocation() {
+		readerSelectionSourceRect = null
+		archiveBrowser.syncFromLocation()
 	}
 
 	onMount(() => {
-		archiveBrowser.syncFromLocation()
+		syncArchiveFromLocation()
 
 		const handlePopState = () => {
-			archiveBrowser.syncFromLocation()
+			syncArchiveFromLocation()
 		}
 
 		window.addEventListener('popstate', handlePopState)
@@ -100,7 +120,7 @@
 	})
 
 	afterNavigate(() => {
-		archiveBrowser.syncFromLocation()
+		syncArchiveFromLocation()
 	})
 </script>
 
@@ -121,6 +141,10 @@
 			onSelectPost={selectPost}
 		/>
 
-		<ArchiveReaderRail post={selectedPost} {Content} />
+		<ArchiveReaderRail
+			post={selectedPost}
+			{Content}
+			selectionSourceRect={readerSelectionSourceRect}
+		/>
 	</section>
 </section>

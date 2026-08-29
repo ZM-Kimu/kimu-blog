@@ -46,7 +46,8 @@ export const appMessageSkeleton = {
 		blog: '',
 		updates: '',
 		favorites: '',
-		about: ''
+		about: '',
+		tags: ''
 	},
 	shell: {
 		brand: {
@@ -161,8 +162,8 @@ export const appMessageSkeleton = {
 		},
 		metrics: {
 			articles: '',
-			todos: '',
-			recentActivity: ''
+			recentActiveArticles: '',
+			recentUpdates: ''
 		},
 		settings: {
 			title: '',
@@ -258,14 +259,46 @@ export const appMessageSkeleton = {
 		maimaiImageAlt: ''
 	},
 	updates: {
-		eyebrow: '',
 		title: '',
-		description: ''
+		description: '',
+		summaryAria: '',
+		totalLabel: '',
+		latestLabel: '',
+		filtersLabel: '',
+		feedAria: '',
+		openItem: '',
+		openLabel: '',
+		emptyTitle: '',
+		emptyDescription: '',
+		kind: {
+			site: '',
+			writing: '',
+			design: '',
+			work: ''
+		},
+		status: {
+			live: '',
+			shipped: '',
+			tracking: '',
+			queued: ''
+		}
 	},
 	favorites: {
-		eyebrow: '',
 		title: '',
-		description: ''
+		description: '',
+		summaryAria: '',
+		totalLabel: '',
+		filtersLabel: '',
+		collectionsAria: '',
+		openItem: '',
+		emptyTitle: '',
+		emptyDescription: '',
+		kind: {
+			article: '',
+			tool: '',
+			reference: '',
+			site: ''
+		}
 	},
 	error: {
 		title: '',
