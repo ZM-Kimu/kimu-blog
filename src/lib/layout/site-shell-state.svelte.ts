@@ -30,6 +30,9 @@ export function createSiteShellState(args: {
 	const useDesktopBlogExit = $derived(
 		isRouteOutgoing && exitingRouteState?.kind === 'blog' && isLandscapePublicLayout
 	)
+	const useDesktopPostExit = $derived(
+		isRouteOutgoing && exitingRouteState?.kind === 'post' && isLandscapePublicLayout
+	)
 	const isRouteEntering = $derived(
 		args.navigationManager.phase === 'entry' &&
 			args.navigationManager.pendingTarget === args.getRouteState().pathname
@@ -84,6 +87,9 @@ export function createSiteShellState(args: {
 		},
 		get useDesktopBlogExit() {
 			return useDesktopBlogExit
+		},
+		get useDesktopPostExit() {
+			return useDesktopPostExit
 		},
 		get isRouteEntering() {
 			return isRouteEntering

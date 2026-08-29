@@ -21,15 +21,15 @@
 		axis = 'y',
 		class: className = '',
 		viewportClass = '',
+		viewport = $bindable<HTMLDivElement | null>(null),
 		children
 	}: {
 		axis?: ScrollAxis
 		class?: string
 		viewportClass?: string
+		viewport?: HTMLDivElement | null
 		children: Snippet
 	} = $props()
-
-	let viewport: HTMLDivElement | null = $state(null)
 	let trackY: HTMLDivElement | null = $state(null)
 	let trackX: HTMLDivElement | null = $state(null)
 

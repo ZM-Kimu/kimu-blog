@@ -221,7 +221,23 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		postReaderSwapDurationMs: reducedMotion ? 1 : 240,
 		postReaderSwapOffsetYPx: 14,
 		postAsideSwapDurationMs: reducedMotion ? 1 : 180,
-		postAsideSwapOffsetYPx: 10
+		postAsideSwapOffsetYPx: 10,
+		postPageEnterDurationMs: reducedMotion ? 1 : 480,
+		postPageEnterSideOffsetXPx: 32,
+		postPageEnterBlurPx: reducedMotion ? 0 : 8,
+		postPageExitDurationMs: reducedMotion ? 1 : 240,
+		postPageExitSideOffsetXPx: 28,
+		postPageExitBlurPx: reducedMotion ? 0 : 6,
+		postTextRowOutDurationMs: reducedMotion ? 1 : 180,
+		postTextRowInDurationMs: reducedMotion ? 1 : 320,
+		postTextRowStaggerRatio: reducedMotion ? 0 : 0.45,
+		postReaderTopDurationMs: reducedMotion ? 1 : 220,
+		postListAlignDurationMs: reducedMotion ? 1 : 320,
+		postAsideTextOutDurationMs: reducedMotion ? 1 : 120,
+		postAsideTextInDurationMs: reducedMotion ? 1 : 180,
+		postAsideLayoutDurationMs: reducedMotion ? 1 : 280,
+		postAsideTagCollapsedScaleX: 0,
+		postScrollEasePower: 3
 	}
 
 	const topbar = {
@@ -467,7 +483,22 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-blog-post-reader-swap-duration', ms(tokens.blog.postReaderSwapDurationMs)],
 		['motion-blog-post-reader-swap-offset-y', px(tokens.blog.postReaderSwapOffsetYPx)],
 		['motion-blog-post-aside-swap-duration', ms(tokens.blog.postAsideSwapDurationMs)],
-		['motion-blog-post-aside-swap-offset-y', px(tokens.blog.postAsideSwapOffsetYPx)]
+		['motion-blog-post-aside-swap-offset-y', px(tokens.blog.postAsideSwapOffsetYPx)],
+		['motion-blog-post-page-enter-duration', ms(tokens.blog.postPageEnterDurationMs)],
+		['motion-blog-post-page-enter-side-offset-x', px(tokens.blog.postPageEnterSideOffsetXPx)],
+		['motion-blog-post-page-enter-blur', px(tokens.blog.postPageEnterBlurPx)],
+		['motion-blog-post-page-exit-duration', ms(tokens.blog.postPageExitDurationMs)],
+		['motion-blog-post-page-exit-side-offset-x', px(tokens.blog.postPageExitSideOffsetXPx)],
+		['motion-blog-post-page-exit-blur', px(tokens.blog.postPageExitBlurPx)],
+		['motion-blog-post-text-row-out-duration', ms(tokens.blog.postTextRowOutDurationMs)],
+		['motion-blog-post-text-row-in-duration', ms(tokens.blog.postTextRowInDurationMs)],
+		['motion-blog-post-text-row-stagger-ratio', tokens.blog.postTextRowStaggerRatio],
+		['motion-blog-post-reader-top-duration', ms(tokens.blog.postReaderTopDurationMs)],
+		['motion-blog-post-list-align-duration', ms(tokens.blog.postListAlignDurationMs)],
+		['motion-blog-post-aside-text-out-duration', ms(tokens.blog.postAsideTextOutDurationMs)],
+		['motion-blog-post-aside-text-in-duration', ms(tokens.blog.postAsideTextInDurationMs)],
+		['motion-blog-post-aside-layout-duration', ms(tokens.blog.postAsideLayoutDurationMs)],
+		['motion-blog-post-aside-tag-collapsed-scale-x', tokens.blog.postAsideTagCollapsedScaleX]
 	])
 }
 

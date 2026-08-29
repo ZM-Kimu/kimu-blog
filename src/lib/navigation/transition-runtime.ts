@@ -41,10 +41,13 @@ export function resolveTransitionDurations(args: {
 	const entersArchive = args.targetPageState?.route.kind === 'archive'
 	const exitsTag = args.currentRouteState?.kind === 'tag'
 	const entersTag = args.targetPageState?.route.kind === 'tag'
+	const exitsPost = args.currentRouteState?.kind === 'post'
+	const entersPost = args.targetPageState?.route.kind === 'post'
 	const exitsInfoFlow =
 		args.currentRouteState?.kind === 'updates' || args.currentRouteState?.kind === 'favorites'
 	const entersInfoFlow =
-		args.targetPageState?.route.kind === 'updates' || args.targetPageState?.route.kind === 'favorites'
+		args.targetPageState?.route.kind === 'updates' ||
+		args.targetPageState?.route.kind === 'favorites'
 	const entersBlog = args.targetPageState?.route.kind === 'blog'
 	const usesDesktopPublicEntry = !args.options.portrait
 	const tagEnterDurationMs = motionTokens.reducedMotion
@@ -60,20 +63,24 @@ export function resolveTransitionDurations(args: {
 				? motionTokens.blog.archiveExitTotalDurationMs
 				: exitsTag
 					? motionTokens.blog.tagListSwapExitDurationMs
-					: exitsInfoFlow
-						? motionTokens.blog.tagListSwapExitDurationMs
-						: motionTokens.route.exitDurationMs,
+					: exitsPost && usesDesktopPublicEntry
+						? motionTokens.blog.postPageExitDurationMs
+						: exitsInfoFlow
+							? motionTokens.blog.tagListSwapExitDurationMs
+							: motionTokens.route.exitDurationMs,
 		enterDurationMs: entersAbout
 			? motionTokens.about.enterDurationMs
 			: entersArchive
 				? motionTokens.blog.archiveEnterTotalDurationMs
 				: entersTag
 					? tagEnterDurationMs
-					: entersBlog && usesDesktopPublicEntry
-						? motionTokens.route.desktopSubpageEnterDurationMs
-						: entersInfoFlow && args.currentRouteState?.kind === 'home' && usesDesktopPublicEntry
+					: entersPost && usesDesktopPublicEntry
+						? motionTokens.blog.postPageEnterDurationMs
+						: entersBlog && usesDesktopPublicEntry
 							? motionTokens.route.desktopSubpageEnterDurationMs
-							: motionTokens.route.entryDurationMs,
+							: entersInfoFlow && args.currentRouteState?.kind === 'home' && usesDesktopPublicEntry
+								? motionTokens.route.desktopSubpageEnterDurationMs
+								: motionTokens.route.entryDurationMs,
 		bridgeDurationMs:
 			args.pendingBackgroundScene === args.backgroundScene ? 0 : motionTokens.route.bridgeDurationMs
 	}

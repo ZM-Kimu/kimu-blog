@@ -18,3 +18,28 @@ test('getPreviousPathDelta skips matching historical paths', () => {
 		-3
 	)
 })
+
+test('replace-style post sync keeps the previous non-post entry', () => {
+	const tracker = new AppHistoryTracker()
+
+	tracker.seed('1', '/blog/archive')
+	tracker.sync('2', '/blog/hello-kimu')
+	tracker.sync('2', '/blog/archive-fake-engineering-01')
+
+	assert.equal(tracker.getPreviousPathDelta('/blog/archive-fake-engineering-01'), -1)
+})
+
+test('post back policy skips contiguous post entries', () => {
+	const tracker = new AppHistoryTracker()
+
+	tracker.seed('1', '/blog')
+	tracker.sync('2', '/blog/hello-kimu')
+	tracker.sync('3', '/blog/archive-fake-engineering-01')
+
+	assert.equal(
+		tracker.getPreviousPathDelta('/blog/archive-fake-engineering-01', {
+			skipPathname: (pathname) => pathname.startsWith('/blog/')
+		}),
+		-2
+	)
+})

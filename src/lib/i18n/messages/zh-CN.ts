@@ -228,6 +228,7 @@ export const zhCNMessages = {
 			backArchive: '返回归档',
 			listEyebrow: 'Article Index',
 			listTitle: '文章列表',
+			descriptionLabel: '简介',
 			asideEyebrow: 'content 无关内容',
 			statusFeatured: '精选',
 			statusPublished: '已发布',
@@ -259,8 +260,7 @@ export const zhCNMessages = {
 	},
 	updates: {
 		title: '动态',
-		description:
-			'站点改动、正在推进的任务、短状态与最近变化会在这里汇总成一条可扫描的时间线。',
+		description: '站点改动、正在推进的任务、短状态与最近变化会在这里汇总成一条可扫描的时间线。',
 		summaryAria: '动态概览',
 		totalLabel: '总动态',
 		latestLabel: '最近更新',

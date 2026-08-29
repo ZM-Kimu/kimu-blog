@@ -48,6 +48,7 @@
 		isRouteOutgoing,
 		useDesktopHomeExit,
 		useDesktopBlogExit,
+		useDesktopPostExit,
 		desktopHomeEnterActive,
 		desktopSubpageEnterActive,
 		portraitOrientationToastVisible,
@@ -78,6 +79,7 @@
 		isRouteOutgoing: boolean
 		useDesktopHomeExit: boolean
 		useDesktopBlogExit: boolean
+		useDesktopPostExit: boolean
 		desktopHomeEnterActive: boolean
 		desktopSubpageEnterActive: boolean
 		portraitOrientationToastVisible: boolean
@@ -185,10 +187,15 @@
 				class:screen-route-layer-entry={isRouteEntering}
 				class:screen-route-layer-exit={isRouteOutgoing &&
 					!useDesktopHomeExit &&
-					!useDesktopBlogExit}
+					!useDesktopBlogExit &&
+					!useDesktopPostExit}
 				class:screen-route-layer-home-enter-desktop={desktopHomeEnterActive}
 				class:screen-route-layer-home-exit-desktop={useDesktopHomeExit}
 				class:screen-route-layer-blog-exit-desktop={useDesktopBlogExit}
+				class:screen-route-layer-post-enter-desktop={isRouteEntering &&
+					routeState.kind === 'post' &&
+					isLandscapePublicLayout}
+				class:screen-route-layer-post-exit-desktop={useDesktopPostExit}
 				class:screen-route-layer-subpage-enter-desktop={desktopSubpageEnterActive}
 				class="screen-route-layer"
 			>

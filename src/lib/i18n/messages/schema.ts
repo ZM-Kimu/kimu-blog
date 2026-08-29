@@ -229,6 +229,7 @@ export const appMessageSkeleton = {
 			backArchive: '',
 			listEyebrow: '',
 			listTitle: '',
+			descriptionLabel: '',
 			asideEyebrow: '',
 			statusFeatured: '',
 			statusPublished: '',

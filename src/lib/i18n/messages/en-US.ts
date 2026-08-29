@@ -233,6 +233,7 @@ export const enUSMessages = {
 			backArchive: 'Back to archive',
 			listEyebrow: 'Article Index',
 			listTitle: 'Article List',
+			descriptionLabel: 'Summary',
 			asideEyebrow: 'Outside content',
 			statusFeatured: 'Featured',
 			statusPublished: 'Published',
@@ -529,7 +530,8 @@ export const enUSMessages = {
 		},
 		favorites: {
 			title: 'Favorites',
-			description: 'Browse curated links, internal entries, tools, and inspiration references from Kimu Blog.'
+			description:
+				'Browse curated links, internal entries, tools, and inspiration references from Kimu Blog.'
 		},
 		manageDebug: {
 			title: 'Manage Debug',

@@ -85,6 +85,10 @@
 	display: grid;
 }
 
+.post-shell-switching .post-reader-lane {
+	pointer-events: none;
+}
+
 .post-reader-scroll {
 	width: 100%;
 	height: 100%;
@@ -352,6 +356,11 @@
 	letter-spacing: -0.03em;
 }
 
+.post-aside-fact-description dd {
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+
 .post-aside-tag-block {
 	padding-top: 0.75rem;
 	border-top: 1px solid rgb(96 141 198 / 12%);
@@ -362,10 +371,38 @@
 	gap: 0.75rem;
 }
 
+.post-aside-value,
+.post-aside-tags .tag-chip-label {
+	display: inline-block;
+	opacity: 1;
+	transition: opacity var(--motion-blog-post-aside-text-in-duration)
+		var(--motion-shared-easing-standard);
+}
+
+.post-aside-values-out :is(.post-aside-value, .tag-chip-label),
+.post-aside-values-in :is(.post-aside-value, .tag-chip-label) {
+	opacity: 0;
+}
+
+.post-aside-values-out :is(.post-aside-value, .tag-chip-label) {
+	transition-duration: var(--motion-blog-post-aside-text-out-duration);
+}
+
+.post-aside-values-in :is(.post-aside-value, .tag-chip-label) {
+	animation: post-aside-text-enter var(--motion-blog-post-aside-text-in-duration)
+		var(--motion-shared-easing-standard) both;
+}
+
 .post-aside-tags {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.42rem;
+}
+
+.post-aside-tag-shell {
+	display: inline-flex;
+	min-width: 0;
+	transform-origin: left center;
 }
 
 .post-aside-tags .tag-chip {
@@ -440,6 +477,16 @@
 
 	50% {
 		transform: translateY(0.22rem);
+		opacity: 1;
+	}
+}
+
+@keyframes post-aside-text-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
 		opacity: 1;
 	}
 }

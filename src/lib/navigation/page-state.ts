@@ -340,7 +340,8 @@ export function createPageState({
 			back: {
 				kind: 'history',
 				fallbackHref,
-				skipRouteKinds: routeState.kind === 'tag' ? ['tag'] : undefined
+				skipRouteKinds:
+					routeState.kind === 'tag' ? ['tag'] : routeState.kind === 'post' ? ['post'] : undefined
 			},
 			motionPolicy: 'rich'
 		}

@@ -14,5 +14,5 @@
 	class:tag-chip-selected={active}
 	class="tag-chip"
 	href={resolve(href)}
-	aria-current={active ? 'page' : undefined}>{label}</a
+	aria-current={active ? 'page' : undefined}><span class="tag-chip-label">{label}</span></a
 >

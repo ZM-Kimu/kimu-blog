@@ -7,19 +7,28 @@
 	import type { BlogPost } from '$lib/types/content'
 	import { formatDate } from '$lib/utils/date'
 	import { onDestroy, tick } from 'svelte'
+	import { animateScrollTop } from '../post-motion'
 
 	let {
 		posts,
 		currentSlug,
 		locale,
 		listTitle,
-		uncategorizedLabel
+		uncategorizedLabel,
+		alignDurationMs,
+		scrollEasePower,
+		motionEnabled,
+		onSelectPost
 	}: {
 		posts: BlogPost[]
 		currentSlug: string
 		locale?: AppLocale
 		listTitle: string
 		uncategorizedLabel: string
+		alignDurationMs: number
+		scrollEasePower: number
+		motionEnabled: boolean
+		onSelectPost?: (post: BlogPost, event: MouseEvent) => void
 	} = $props()
 
 	let railRoot: HTMLElement | null = $state(null)
@@ -33,6 +42,8 @@
 	let dragStartY = 0
 	let dragStartScrollTop = 0
 	let releaseDragListeners: (() => void) | null = null
+	let cancelAlignment: (() => void) | null = null
+	let alignedSlug: string | null = null
 
 	function clamp(value: number, min: number, max: number) {
 		return Math.min(Math.max(value, min), max)
@@ -51,52 +62,73 @@
 			dragViewport.scrollTop + dragViewport.clientHeight < dragViewport.scrollHeight - 1
 	}
 
-	function resolveViewport() {
-		if (!browser || !railRoot) {
-			dragViewport = null
-			return
+	function findPostItem(slug: string) {
+		if (!dragViewport) {
+			return null
 		}
 
-		dragViewport = railRoot.querySelector('[data-scroll-chrome-viewport="true"]')
-		updateListScrollState()
+		return (
+			Array.from(dragViewport.querySelectorAll<HTMLElement>('[data-post-slug]')).find(
+				(item) => item.dataset.postSlug === slug
+			) ?? null
+		)
 	}
 
-	function scrollCurrentPostIntoView() {
+	function scrollPostIntoView(slug: string, animated: boolean) {
 		if (!browser || !dragViewport) {
 			return
 		}
 
-		const currentItem = dragViewport.querySelector<HTMLElement>('[data-post-current="true"]')
-		if (!currentItem) {
+		const postItem = findPostItem(slug)
+		if (!postItem) {
 			updateListScrollState()
 			return
 		}
 
 		const maxScrollTop = Math.max(dragViewport.scrollHeight - dragViewport.clientHeight, 0)
 		const nextScrollTop = clamp(
-			currentItem.offsetTop - (dragViewport.clientHeight - currentItem.offsetHeight) / 2,
+			postItem.offsetTop - (dragViewport.clientHeight - postItem.offsetHeight) / 2,
 			0,
 			maxScrollTop
 		)
-		dragViewport.scrollTop = nextScrollTop
-		updateListScrollState()
+		cancelAlignment?.()
+		const alignment = animateScrollTop(
+			dragViewport,
+			nextScrollTop,
+			animated ? alignDurationMs : 1,
+			scrollEasePower
+		)
+		cancelAlignment = alignment.cancel
+		void alignment.finished.then(() => {
+			if (cancelAlignment === alignment.cancel) {
+				cancelAlignment = null
+			}
+			updateListScrollState()
+		})
 	}
 
 	function handleListScroll() {
 		updateListScrollState()
 	}
 
-	function scheduleCurrentPostAlignment() {
+	function schedulePostAlignment(slug: string, animated: boolean) {
 		if (!browser) {
 			return
 		}
 
 		requestAnimationFrame(() => {
-			scrollCurrentPostIntoView()
+			scrollPostIntoView(slug, animated)
 			requestAnimationFrame(() => {
-				scrollCurrentPostIntoView()
+				if (!animated) {
+					scrollPostIntoView(slug, false)
+				}
 			})
 		})
+	}
+
+	export function alignToSlug(slug: string, animated = true) {
+		alignedSlug = slug
+		schedulePostAlignment(slug, animated && motionEnabled)
 	}
 
 	function handlePointerDown(event: PointerEvent) {
@@ -112,6 +144,9 @@
 		if (target?.closest('.scroll-chrome-track, .scroll-chrome-thumb')) {
 			return
 		}
+
+		cancelAlignment?.()
+		cancelAlignment = null
 
 		dragActive = true
 		dragMoved = false
@@ -173,7 +208,7 @@
 	}
 
 	$effect(() => {
-		void currentSlug
+		const nextSlug = currentSlug
 		void posts.length
 
 		if (!browser) {
@@ -181,8 +216,14 @@
 		}
 
 		void tick().then(() => {
-			resolveViewport()
-			scheduleCurrentPostAlignment()
+			updateListScrollState()
+			if (alignedSlug === nextSlug) {
+				return
+			}
+
+			const animated = motionEnabled && alignedSlug !== null
+			alignedSlug = nextSlug
+			schedulePostAlignment(nextSlug, animated)
 		})
 	})
 
@@ -192,13 +233,20 @@
 		}
 
 		dragViewport.addEventListener('pointerdown', handlePointerDown)
+		const cancelScrollAlignment = () => {
+			cancelAlignment?.()
+			cancelAlignment = null
+		}
+		dragViewport.addEventListener('wheel', cancelScrollAlignment, { passive: true })
 		return () => {
 			dragViewport?.removeEventListener('pointerdown', handlePointerDown)
+			dragViewport?.removeEventListener('wheel', cancelScrollAlignment)
 		}
 	})
 
 	onDestroy(() => {
 		releaseDragListeners?.()
+		cancelAlignment?.()
 	})
 </script>
 
@@ -212,6 +260,7 @@
 		axis="y"
 		class="post-list-scroll"
 		viewportClass="post-list-viewport"
+		bind:viewport={dragViewport}
 		on:scroll={handleListScroll}
 	>
 		<nav class="post-list-items" aria-label={listTitle}>
@@ -220,8 +269,11 @@
 					class:post-list-item-current={item.slug === currentSlug}
 					class="post-list-item"
 					data-post-current={item.slug === currentSlug ? 'true' : undefined}
+					data-post-slug={item.slug}
 					href={resolve(item.permalink)}
 					aria-current={item.slug === currentSlug ? 'page' : undefined}
+					data-sveltekit-preload-data="hover"
+					onclick={(event) => onSelectPost?.(item, event)}
 				>
 					<strong>{item.title}</strong>
 					<span>{item.category ?? uncategorizedLabel}</span>

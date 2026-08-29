@@ -150,6 +150,7 @@
 	isRouteOutgoing={shellState.isRouteOutgoing}
 	useDesktopHomeExit={shellState.useDesktopHomeExit}
 	useDesktopBlogExit={shellState.useDesktopBlogExit}
+	useDesktopPostExit={shellState.useDesktopPostExit}
 	desktopHomeEnterActive={siteRuntime.desktopHomeEnterActive}
 	desktopSubpageEnterActive={siteRuntime.desktopSubpageEnterActive}
 	portraitOrientationToastVisible={siteRuntime.portraitOrientationToastVisible}
