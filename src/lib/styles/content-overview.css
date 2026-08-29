@@ -568,7 +568,9 @@
 	align-self: center;
 }
 
-.favorites-flow-head .info-flow-filter-row button:hover:not(:focus-visible, .info-flow-filter-active) {
+.favorites-flow-head
+	.info-flow-filter-row
+	button:hover:not(:focus-visible, .info-flow-filter-active) {
 	border-color: var(--line);
 	background: rgb(255 255 255 / 62%);
 	box-shadow: none;

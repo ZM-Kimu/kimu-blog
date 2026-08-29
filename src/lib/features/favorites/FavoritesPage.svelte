@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { base } from '$app/paths'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/state'
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import { translate } from '$lib/i18n'
@@ -101,12 +101,10 @@
 		)
 	}
 
-	function isExternalHref(href: string) {
+	function isExternalHref(
+		href: FavoriteEntry['href']
+	): href is `http://${string}` | `https://${string}` {
 		return /^https?:\/\//.test(href)
-	}
-
-	function itemHref(entry: FavoriteEntry) {
-		return isExternalHref(entry.href) ? entry.href : `${base}${entry.href}`
 	}
 
 	function removeContentPanel(key: string) {
@@ -126,6 +124,16 @@
 		removeContentPanel(panel.key)
 	}
 </script>
+
+{#snippet favoriteCardContent(item: FavoriteEntry)}
+	<div class="info-flow-card-hud">
+		<span>{kindLabel(item.kind)}</span>
+		<span>{collectionLabel(item.collection)}</span>
+		<span>{item.sourceLabel}</span>
+	</div>
+	<h3>{item.title}</h3>
+	<p>{item.description}</p>
+{/snippet}
 
 <section class="info-flow-screen favorites-screen">
 	<section class="panel favorites-flow-panel" aria-label={t('favorites.collectionsAria')}>
@@ -180,21 +188,25 @@
 								<div class="favorites-flow">
 									<div class="favorites-collections">
 										{#each panel.entries as item (item.id)}
-											<a
-												class="favorite-card"
-												href={itemHref(item)}
-												target={isExternalHref(item.href) ? '_blank' : undefined}
-												rel={isExternalHref(item.href) ? 'noreferrer' : undefined}
-												aria-label={t('favorites.openItem', { title: item.title })}
-											>
-												<div class="info-flow-card-hud">
-													<span>{kindLabel(item.kind)}</span>
-													<span>{collectionLabel(item.collection)}</span>
-													<span>{item.sourceLabel}</span>
-												</div>
-												<h3>{item.title}</h3>
-												<p>{item.description}</p>
-											</a>
+											{#if isExternalHref(item.href)}
+												<a
+													class="favorite-card"
+													href={item.href}
+													target="_blank"
+													rel="external noreferrer"
+													aria-label={t('favorites.openItem', { title: item.title })}
+												>
+													{@render favoriteCardContent(item)}
+												</a>
+											{:else}
+												<a
+													class="favorite-card"
+													href={resolve(item.href)}
+													aria-label={t('favorites.openItem', { title: item.title })}
+												>
+													{@render favoriteCardContent(item)}
+												</a>
+											{/if}
 										{/each}
 									</div>
 								</div>

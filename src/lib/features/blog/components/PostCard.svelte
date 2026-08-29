@@ -23,12 +23,12 @@
 	}: Props = $props()
 	const messages = $derived(page.data.i18n?.messages)
 	const locale = $derived(page.data.i18n?.locale)
-	const postHref = $derived(resolve(post.permalink))
 </script>
 
 <article class:post-card-compact={compact} class="post-card">
 	{#if compact}
-		<a class="post-card-hitbox" href={postHref} aria-label={post.title} tabindex="-1"></a>
+		<a class="post-card-hitbox" href={resolve(post.permalink)} aria-label={post.title} tabindex="-1"
+		></a>
 	{/if}
 
 	<div class="post-card-hud">
@@ -50,7 +50,7 @@
 				<span>{post.category ?? translate(messages, 'common.uncategorized')}</span>
 			{/if}
 		</div>
-		<h3><a href={postHref}>{post.title}</a></h3>
+		<h3><a href={resolve(post.permalink)}>{post.title}</a></h3>
 		<p>{post.description}</p>
 	</div>
 

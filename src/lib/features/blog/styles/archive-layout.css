@@ -80,7 +80,8 @@
 
 	.screen-route-layer-entry .archive-entry-list,
 	.screen-route-layer-subpage-enter-desktop .archive-entry-list {
-		animation: site-blog-archive-column-enter var(--motion-blog-archive-column-enter-duration) var(--motion-shared-easing-standard) both;
+		animation: site-blog-archive-column-enter var(--motion-blog-archive-column-enter-duration)
+			var(--motion-shared-easing-standard) both;
 		animation-delay: var(--motion-blog-archive-column-enter-delay);
 		will-change: opacity, transform;
 	}
@@ -94,13 +95,15 @@
 	}
 
 	.screen-route-layer-exit .archive-entry-column {
-		animation: site-blog-archive-column-exit var(--motion-blog-archive-exit-duration) var(--motion-shared-easing-standard) both;
+		animation: site-blog-archive-column-exit var(--motion-blog-archive-exit-duration)
+			var(--motion-shared-easing-standard) both;
 		animation-delay: var(--motion-blog-archive-exit-stagger);
 		will-change: opacity, transform, filter;
 	}
 
 	.screen-route-layer-exit .archive-reader-rail {
-		animation: site-blog-archive-reader-exit var(--motion-blog-archive-exit-duration) var(--motion-shared-easing-standard) both;
+		animation: site-blog-archive-reader-exit var(--motion-blog-archive-exit-duration)
+			var(--motion-shared-easing-standard) both;
 		will-change: opacity, transform, filter;
 	}
 }
@@ -108,8 +111,10 @@
 @keyframes site-blog-archive-column-enter {
 	from {
 		opacity: 0;
-		transform: translate(calc(var(--motion-blog-archive-enter-offset-x) * -1),
-				var(--motion-blog-archive-enter-offset-y));
+		transform: translate(
+			calc(var(--motion-blog-archive-enter-offset-x) * -1),
+			var(--motion-blog-archive-enter-offset-y)
+		);
 	}
 
 	to {
@@ -121,8 +126,10 @@
 @keyframes site-blog-archive-reader-enter {
 	from {
 		opacity: 0;
-		transform: translate(var(--motion-blog-archive-enter-offset-x),
-				var(--motion-blog-archive-enter-offset-y));
+		transform: translate(
+			var(--motion-blog-archive-enter-offset-x),
+			var(--motion-blog-archive-enter-offset-y)
+		);
 	}
 
 	to {

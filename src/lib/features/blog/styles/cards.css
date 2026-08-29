@@ -163,8 +163,7 @@
 		min-height: 0;
 		aspect-ratio: auto;
 		gap: 0.5rem;
-		padding: clamp(0.92rem, 2.2vh, 1.28rem) clamp(1rem, 2.4vh, 1.38rem)
-			clamp(0.86rem, 2vh, 1.16rem);
+		padding: clamp(0.92rem, 2.2vh, 1.28rem) clamp(1rem, 2.4vh, 1.38rem) clamp(0.86rem, 2vh, 1.16rem);
 		overflow: hidden;
 		border-radius: 18px;
 	}

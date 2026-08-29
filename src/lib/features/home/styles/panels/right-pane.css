@@ -42,7 +42,9 @@
 }
 
 .action-work {
-	--action-work-icon-image: url('/icons/home-action/work-book.png');
+	--action-work-icon-image: url('/icons/home-action/Lobby_Icon_Work.png');
+	--action-work-label-mask-image: url('/icons/home-action/Img_Deco_LobbyBottom.png');
+	--action-work-label-shape: url('/icons/home-action/action-label-trapezoid-mask.svg');
 	--action-work-label-left-overhang: 0.24rem;
 
 	position: relative;
@@ -83,7 +85,7 @@
 	display: block;
 	width: 100%;
 	height: 100%;
-	background: var(--action-work-icon-image) center / contain no-repeat;
+	background: var(--action-work-icon-image) center 75% / 75% auto no-repeat;
 	filter: drop-shadow(0 12px 16px rgb(26 77 136 / 20%));
 	pointer-events: none;
 	transform-origin: center;
@@ -118,19 +120,35 @@
 		0 1px 0 rgb(22 43 74 / 64%),
 		0 3px 8px rgb(7 24 48 / 42%),
 		0 0 14px rgb(56 189 248 / 36%);
+	isolation: isolate;
+	pointer-events: auto;
+	cursor: inherit;
 }
 
 .action-label-primary::before {
 	content: '';
 	position: absolute;
 	inset: 0;
+	z-index: -2;
+	border-radius: 0.7rem 0.54rem 0.54rem 0.72rem;
+	background: rgb(116 133 149 / 75%);
+	backdrop-filter: blur(0.12rem) saturate(80%);
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / 14%),
+		inset 0 -1px 0 rgb(31 43 54 / 32%);
+	mask: var(--action-work-label-shape) center / 100% 100% no-repeat;
+	filter: drop-shadow(0 0.18rem 0 rgb(42 53 64 / 52%));
+	transform-origin: center;
+}
+
+.action-label-primary::after {
+	content: '';
+	position: absolute;
+	inset: 0;
 	z-index: -1;
 	border-radius: 0.7rem 0.54rem 0.54rem 0.72rem;
-	background: rgb(93 106 119);
-	box-shadow: inset 0 -1px 0 rgb(31 43 54 / 26%);
-	clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
-	filter: drop-shadow(0 0.18rem 0 rgb(42 53 64 / 72%));
-	transform-origin: center;
+	background: var(--action-work-label-mask-image) center / cover no-repeat;
+	mask: var(--action-work-label-shape) center / 100% 100% no-repeat;
 }
 
 .action-work:focus-visible {

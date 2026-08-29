@@ -27,12 +27,13 @@ export interface UpdatesPageData {
 }
 
 export type FavoriteKind = 'article' | 'tool' | 'reference' | 'site'
+export type FavoriteHref = `http://${string}` | `https://${string}` | `/${string}`
 
 export interface FavoriteEntry {
 	id: string
 	title: string
 	description: string
-	href: string
+	href: FavoriteHref
 	kind: FavoriteKind
 	sourceLabel: string
 	collection: string
