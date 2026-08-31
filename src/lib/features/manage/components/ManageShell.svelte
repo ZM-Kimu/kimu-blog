@@ -1,16 +1,7 @@
 <script lang="ts">
-	import type { ManageSessionResponse } from '$lib/features/manage/types'
-	import type { InternalHref } from '$lib/navigation/types'
 	import type { Snippet } from 'svelte'
 
-	let {
-		children
-	}: {
-		children: Snippet
-		session: ManageSessionResponse
-		postsHref?: InternalHref | `#${string}`
-		backHref?: InternalHref | `#${string}`
-	} = $props()
+	let { children }: { children: Snippet } = $props()
 </script>
 
 <svelte:head>
@@ -25,6 +16,9 @@
 	.manage-shell {
 		display: grid;
 		gap: 1rem;
+		align-content: start;
 		width: 100%;
+		height: 100%;
+		min-height: 0;
 	}
 </style>

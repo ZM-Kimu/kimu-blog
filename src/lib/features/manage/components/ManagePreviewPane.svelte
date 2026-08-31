@@ -1,21 +1,44 @@
 <script lang="ts">
-	let { html } = $props<{ html: string }>()
+	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
+
+	let { html, emptyLabel } = $props<{ html: string; emptyLabel: string }>()
+
+	const hasPreviewContent = $derived(Boolean(html.trim()))
 </script>
 
 <section class="manage-preview panel">
-	<div class="content-prose article-prose post-reader-prose manage-preview-content">
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html html}
-	</div>
+	<ScrollChrome class="manage-preview-scroll" viewportClass="manage-preview-viewport">
+		<div class="content-prose article-prose post-reader-prose manage-preview-content">
+			{#if hasPreviewContent}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html html}
+			{:else}
+				<p class="manage-preview-empty">{emptyLabel}</p>
+			{/if}
+		</div>
+	</ScrollChrome>
 </section>
 
 <style>
 	.manage-preview {
-		padding: clamp(1rem, 1.6vw, 1.4rem);
+		height: 100%;
+		min-height: 0;
+		padding: 0;
 	}
 
 	.manage-preview-content {
 		width: 100%;
 		padding: 0;
+	}
+
+	.manage-preview-empty {
+		margin: 0;
+		color: var(--ink-faint);
+	}
+
+	@media (width <= 1180px) {
+		.manage-preview {
+			height: auto;
+		}
 	}
 </style>

@@ -352,8 +352,8 @@ export const zhCNMessages = {
 			source: '正文内容',
 			tabs: {
 				ariaLabel: '文章编辑模式',
-				information: '信息编辑',
-				content: '内容编辑'
+				information: '信息',
+				content: '内容'
 			},
 			previewVisibility: {
 				show: '展开预览',
@@ -411,6 +411,7 @@ export const zhCNMessages = {
 			}
 		},
 		preview: {
+			empty: '当前没有可渲染的正文。',
 			placeholders: {
 				description: '预览面板不会执行这段 mdsvex / Svelte 逻辑。',
 				scriptBlock: '<script> 区块',

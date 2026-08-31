@@ -412,6 +412,7 @@ export const appMessageSkeleton = {
 			}
 		},
 		preview: {
+			empty: '',
 			placeholders: {
 				description: '',
 				scriptBlock: '',

@@ -72,6 +72,7 @@
 
 	.subpage-screen-content-contained {
 		height: var(--subpage-stage-available-height);
+		padding: 0.75rem 1.6rem 2.8rem;
 		overflow: hidden auto;
 		overscroll-behavior: contain;
 		scrollbar-gutter: stable;
@@ -96,6 +97,7 @@
 
 	.portrait-subpage-screen-content-contained {
 		max-height: 100dvh;
+		padding: 0.45rem 1rem 2rem;
 		overflow: hidden auto;
 		overscroll-behavior: contain;
 	}

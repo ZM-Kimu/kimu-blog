@@ -420,6 +420,7 @@ export const enUSMessages = {
 			}
 		},
 		preview: {
+			empty: 'There is no body content to render yet.',
 			placeholders: {
 				description: 'The preview panel does not execute this mdsvex / Svelte logic.',
 				scriptBlock: '<script> block',

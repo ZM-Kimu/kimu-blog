@@ -8,10 +8,16 @@
 
 	let {
 		items,
+		loading = false,
+		errorMessage = '',
+		onRetry,
 		createHref = '/manage/posts/new',
 		resolveItemHref = (slug: string) => `/manage/posts/${slug}` as InternalHref
 	} = $props<{
 		items: ManagePostListItem[]
+		loading?: boolean
+		errorMessage?: string
+		onRetry?: () => void
 		createHref?: InternalHref | `#${string}`
 		resolveItemHref?: (slug: string) => InternalHref | `#${string}`
 	}>()
@@ -86,7 +92,21 @@
 	</div>
 
 	<div class="manage-list-rows">
-		{#if filteredItems.length}
+		{#if loading}
+			<div aria-busy="true" aria-live="polite" class="manage-list-state">
+				<span>{t('manage.list.loadingTitle')}</span>
+			</div>
+		{:else if errorMessage}
+			<div class="manage-list-state manage-list-state-error">
+				<strong>{t('manage.list.errorTitle')}</strong>
+				<span>{errorMessage}</span>
+				{#if onRetry}
+					<button class="button-secondary" type="button" onclick={onRetry}>
+						{t('manage.list.retry')}
+					</button>
+				{/if}
+			</div>
+		{:else if filteredItems.length}
 			{#each filteredItems as item (item.slug)}
 				{@const itemHref = resolveItemHref(item.slug)}
 				{#if itemHref.startsWith('#')}
@@ -156,6 +176,7 @@
 	.manage-list {
 		display: grid;
 		gap: clamp(0.85rem, 1.2vw, 1.1rem);
+		align-self: start;
 		padding: clamp(0.9rem, 1.35vw, 1.25rem);
 	}
 
@@ -359,6 +380,27 @@
 		border-radius: 17px;
 		background: rgb(250 253 255 / 42%);
 		text-align: center;
+	}
+
+	.manage-list-state {
+		display: grid;
+		gap: 0.4rem;
+		align-content: center;
+		justify-items: start;
+		min-height: 6.5rem;
+		padding: 1rem 1.2rem;
+		border: 1px solid var(--line);
+		border-radius: 17px;
+		background: rgb(250 253 255 / 58%);
+		color: var(--ink-soft);
+	}
+
+	.manage-list-state-error strong {
+		color: var(--ink);
+	}
+
+	.manage-list-state .button-secondary {
+		margin-top: 0.25rem;
 	}
 
 	@media (width <= 860px) {

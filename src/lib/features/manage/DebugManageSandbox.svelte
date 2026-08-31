@@ -149,7 +149,7 @@
 	const debugErrorMessage = $derived(visualState === 'error' ? t('manage.debug.errorState') : '')
 </script>
 
-<ManageShell session={mockSession} postsHref="#debug-list" backHref="/">
+<ManageShell>
 	<section class="panel manage-debug-controls">
 		<div class="panel-heading">
 			<div>

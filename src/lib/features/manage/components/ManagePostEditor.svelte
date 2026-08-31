@@ -20,6 +20,7 @@
 	import { resolveManageErrorMessage } from '$lib/features/manage/copy'
 	import { renderManagePreviewHtml } from '$lib/features/manage/preview'
 	import type { ManagePostDocument, ManagePostFormState } from '$lib/features/manage/types'
+	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import ManageFormatSelect from '$lib/features/manage/components/ManageFormatSelect.svelte'
 	import ManagePreviewPane from '$lib/features/manage/components/ManagePreviewPane.svelte'
 	import { translate } from '$lib/i18n'
@@ -138,7 +139,7 @@
 	const effectiveSubmitting = $derived(debugMode ? debugSubmitting : isSubmitting)
 	const editorDisabled = $derived(debugDisabled || effectiveSubmitting)
 	const effectivePreviewVisible = $derived(previewVisible && (!debugMode || debugPreviewVisible))
-	const slugAvailabilityText = $derived(
+	const slugStatusText = $derived(
 		titleEdited && form.slug
 			? slugIndexLoading
 				? t('manage.editor.slugStatus.checking')
@@ -146,6 +147,10 @@
 					? t('manage.editor.slugStatus.available')
 					: ''
 			: ''
+	)
+	const slugChecking = $derived(Boolean(titleEdited && form.slug && slugIndexLoading))
+	const slugAvailable = $derived(
+		Boolean(titleEdited && form.slug && slugIndexReady && !slugIndexLoading)
 	)
 
 	function hashSlugSource(value: string) {
@@ -449,12 +454,31 @@
 >
 	<form class="manage-editor-panel panel" onsubmit={handleSubmit}>
 		<div class="manage-editor-heading">
-			<div>
-				<h2>
-					{mode === 'create'
-						? t('manage.editor.createTitle')
-						: t('manage.editor.editTitle', { slug: currentSlug })}
-				</h2>
+			<div aria-label={t('manage.editor.tabs.ariaLabel')} class="manage-editor-tabs" role="tablist">
+				<button
+					aria-controls="manage-editor-information-panel"
+					aria-selected={activeEditorTab === 'information'}
+					class:active={activeEditorTab === 'information'}
+					data-press-disabled="true"
+					id="manage-editor-information-tab"
+					onclick={() => (activeEditorTab = 'information')}
+					role="tab"
+					type="button"
+				>
+					{t('manage.editor.tabs.information')}
+				</button>
+				<button
+					aria-controls="manage-editor-content-panel"
+					aria-selected={activeEditorTab === 'content'}
+					class:active={activeEditorTab === 'content'}
+					data-press-disabled="true"
+					id="manage-editor-content-tab"
+					onclick={() => (activeEditorTab = 'content')}
+					role="tab"
+					type="button"
+				>
+					{t('manage.editor.tabs.content')}
+				</button>
 			</div>
 
 			<div class="manage-editor-toolbar">
@@ -466,24 +490,6 @@
 				{#if effectiveErrorMessage}
 					<p class="manage-editor-status manage-editor-status-error">{effectiveErrorMessage}</p>
 				{/if}
-				<button
-					aria-label={effectivePreviewVisible
-						? t('manage.editor.previewVisibility.hide')
-						: t('manage.editor.previewVisibility.show')}
-					aria-pressed={effectivePreviewVisible}
-					class="manage-editor-icon-button manage-editor-preview-toggle"
-					onclick={() => (previewVisible = !previewVisible)}
-					title={effectivePreviewVisible
-						? t('manage.editor.previewVisibility.hide')
-						: t('manage.editor.previewVisibility.show')}
-					type="button"
-				>
-					<svg aria-hidden="true" viewBox="0 0 24 24">
-						<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-						<circle cx="12" cy="12" r="2.7" />
-						{#if !effectivePreviewVisible}<path d="m4 4 16 16" />{/if}
-					</svg>
-				</button>
 				<button
 					aria-label={effectiveSubmitting ? t('manage.editor.submitting') : submitLabel}
 					class="manage-editor-icon-button manage-editor-save"
@@ -510,263 +516,275 @@
 						</svg>
 					</button>
 				{/if}
+				<button
+					aria-label={effectivePreviewVisible
+						? t('manage.editor.previewVisibility.hide')
+						: t('manage.editor.previewVisibility.show')}
+					aria-pressed={effectivePreviewVisible}
+					class="manage-editor-icon-button manage-editor-preview-toggle"
+					onclick={() => (previewVisible = !previewVisible)}
+					title={effectivePreviewVisible
+						? t('manage.editor.previewVisibility.hide')
+						: t('manage.editor.previewVisibility.show')}
+					type="button"
+				>
+					<span aria-hidden="true" class="manage-editor-preview-toggle-icon"></span>
+				</button>
 			</div>
 		</div>
 
-		<div aria-label={t('manage.editor.tabs.ariaLabel')} class="manage-editor-tabs" role="tablist">
-			<button
-				aria-controls="manage-editor-information-panel"
-				aria-selected={activeEditorTab === 'information'}
-				class:active={activeEditorTab === 'information'}
-				data-press-disabled="true"
-				id="manage-editor-information-tab"
-				onclick={() => (activeEditorTab = 'information')}
-				role="tab"
-				type="button"
-			>
-				{t('manage.editor.tabs.information')}
-			</button>
-			<button
-				aria-controls="manage-editor-content-panel"
-				aria-selected={activeEditorTab === 'content'}
-				class:active={activeEditorTab === 'content'}
-				data-press-disabled="true"
-				id="manage-editor-content-tab"
-				onclick={() => (activeEditorTab = 'content')}
-				role="tab"
-				type="button"
-			>
-				{t('manage.editor.tabs.content')}
-			</button>
-		</div>
+		<ScrollChrome class="manage-editor-scroll" viewportClass="manage-editor-scroll-viewport">
+			{#key activeEditorTab}
+				<div class="manage-editor-tab-frame" data-tab={activeEditorTab}>
+					{#if activeEditorTab === 'information'}
+						<div
+							aria-labelledby="manage-editor-information-tab"
+							class="manage-editor-tab-panel"
+							id="manage-editor-information-panel"
+							role="tabpanel"
+						>
+							<div class="manage-editor-fields">
+								<label>
+									<span>{t('manage.editor.fields.title')}</span>
+									<input
+										disabled={editorDisabled}
+										oninput={handleTitleInput}
+										required
+										type="text"
+										value={form.title}
+									/>
+								</label>
 
-		{#if activeEditorTab === 'information'}
-			<div
-				aria-labelledby="manage-editor-information-tab"
-				class="manage-editor-tab-panel"
-				id="manage-editor-information-panel"
-				role="tabpanel"
-			>
-				<div class="manage-editor-fields">
-					<label>
-						<span>{t('manage.editor.fields.title')}</span>
-						<input
-							disabled={editorDisabled}
-							oninput={handleTitleInput}
-							required
-							type="text"
-							value={form.title}
-						/>
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.slug')}</span>
-						<input
-							aria-describedby="manage-editor-slug-status"
-							disabled={editorDisabled}
-							readonly
-							required
-							type="text"
-							value={form.slug}
-						/>
-						{#if slugAvailabilityText}
-							<small id="manage-editor-slug-status">{slugAvailabilityText}</small>
-						{/if}
-					</label>
-
-					<label class="manage-editor-field-wide">
-						<span>{t('manage.editor.fields.description')}</span>
-						<textarea
-							bind:value={form.description}
-							class="manage-editor-description"
-							disabled={editorDisabled}
-							required
-							rows="3"
-						></textarea>
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.date')}</span>
-						<input bind:value={form.date} disabled={editorDisabled} required type="date" />
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.updated')}</span>
-						<input bind:value={form.updated} disabled={editorDisabled} required type="date" />
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.category')}</span>
-						<input
-							bind:value={form.category}
-							disabled={editorDisabled}
-							placeholder={t('manage.editor.placeholders.category')}
-							type="text"
-						/>
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.author')}</span>
-						<input bind:value={form.author} disabled={editorDisabled} type="text" />
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.series')}</span>
-						<input bind:value={form.series} disabled={editorDisabled} type="text" />
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.readingTime')}</span>
-						<input
-							bind:value={form.readingTime}
-							disabled={editorDisabled}
-							placeholder={t('manage.editor.placeholders.readingTime')}
-							type="text"
-						/>
-					</label>
-
-					<label>
-						<span>{t('manage.editor.fields.canonical')}</span>
-						<input
-							bind:value={form.canonical}
-							disabled={editorDisabled}
-							placeholder={t('manage.editor.placeholders.canonical')}
-							type="url"
-						/>
-					</label>
-
-					<div class="manage-editor-field">
-						<span>{t('manage.editor.fields.format')}</span>
-						<ManageFormatSelect
-							bind:value={form.format}
-							disabled={editorDisabled}
-							label={t('manage.editor.fields.format')}
-						/>
-					</div>
-
-					<label class="manage-editor-field-wide">
-						<span>{t('manage.editor.fields.tags')}</span>
-						<input
-							bind:value={form.tagsInput}
-							disabled={editorDisabled}
-							placeholder={t('manage.editor.placeholders.tags')}
-							type="text"
-						/>
-					</label>
-
-					<label class="manage-editor-field-wide">
-						<span>{t('manage.editor.fields.cover')}</span>
-						<input
-							bind:value={form.cover}
-							disabled={editorDisabled}
-							placeholder={t('manage.editor.placeholders.cover')}
-							type="text"
-						/>
-					</label>
-				</div>
-
-				<div class="manage-editor-toggles">
-					<label
-						><input bind:checked={form.draft} disabled={editorDisabled} type="checkbox" />
-						{t('manage.editor.toggles.draft')}</label
-					>
-					<label
-						><input bind:checked={form.featured} disabled={editorDisabled} type="checkbox" />
-						{t('manage.editor.toggles.featured')}</label
-					>
-					<label
-						><input bind:checked={form.toc} disabled={editorDisabled} type="checkbox" />
-						{t('manage.editor.toggles.toc')}</label
-					>
-				</div>
-			</div>
-		{:else}
-			<div
-				aria-labelledby="manage-editor-content-tab"
-				class="manage-editor-tab-panel manage-editor-content-panel"
-				id="manage-editor-content-panel"
-				role="tabpanel"
-			>
-				<section class="manage-editor-uploads">
-					<div class="panel-heading">
-						<h2>{t('manage.editor.uploads.title')}</h2>
-					</div>
-
-					<label
-						class:manage-editor-upload-picker-active={isUploadDragActive}
-						class="manage-editor-upload-picker"
-						ondragenter={handleUploadDragEnter}
-						ondragleave={handleUploadDragLeave}
-						ondragover={handleUploadDragOver}
-						ondrop={handleUploadDrop}
-					>
-						<input
-							accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
-							aria-label={t('manage.editor.uploads.pickFiles')}
-							disabled={editorDisabled}
-							multiple
-							onchange={handleFileSelection}
-							type="file"
-						/>
-						<i aria-hidden="true">+</i>
-						<strong>{t('manage.editor.uploads.dropTitle')}</strong>
-						<span>{t('manage.editor.uploads.dropDescription')}</span>
-					</label>
-
-					{#if pendingUploads.length}
-						<div class="manage-editor-upload-list">
-							{#each pendingUploads as upload (upload.placeholder)}
-								<div class="manage-editor-upload-card">
-									<img alt="" src={upload.previewUrl} />
-									<div>
-										<strong>{upload.file.name}</strong>
-										<code>{upload.placeholder}</code>
+								<label>
+									<span>{t('manage.editor.fields.slug')}</span>
+									<div class="manage-editor-input-status-wrap">
+										<input
+											aria-describedby="manage-editor-slug-status"
+											disabled={editorDisabled}
+											readonly
+											required
+											type="text"
+											value={form.slug}
+										/>
+										{#if slugChecking}
+											<span
+												aria-hidden="true"
+												class="manage-editor-slug-indicator"
+												data-state="checking"
+											></span>
+										{:else if slugAvailable}
+											<span
+												aria-hidden="true"
+												class="manage-editor-slug-indicator"
+												data-state="available"
+											>
+												<svg viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" /></svg>
+											</span>
+										{/if}
 									</div>
-									<div class="manage-editor-upload-actions">
-										<button
-											disabled={editorDisabled}
-											onclick={() => useUploadAsCover(upload.placeholder)}
-											type="button"
-										>
-											{t('manage.editor.uploads.setCover')}
-										</button>
-										<button
-											disabled={editorDisabled}
-											onclick={() => insertUploadIntoSource(upload.placeholder)}
-											type="button"
-										>
-											{t('manage.editor.uploads.insertBody')}
-										</button>
-										<button
-											disabled={editorDisabled}
-											onclick={() => removeUpload(upload.placeholder)}
-											type="button"
-										>
-											{t('manage.editor.uploads.remove')}
-										</button>
-									</div>
+									<span
+										aria-live="polite"
+										class="manage-editor-visually-hidden"
+										id="manage-editor-slug-status">{slugStatusText}</span
+									>
+								</label>
+
+								<label class="manage-editor-field-wide">
+									<span>{t('manage.editor.fields.description')}</span>
+									<textarea
+										bind:value={form.description}
+										class="manage-editor-description"
+										disabled={editorDisabled}
+										required
+										rows="3"
+									></textarea>
+								</label>
+
+								<label>
+									<span>{t('manage.editor.fields.date')}</span>
+									<input bind:value={form.date} disabled={editorDisabled} required type="date" />
+								</label>
+
+								<label>
+									<span>{t('manage.editor.fields.updated')}</span>
+									<input bind:value={form.updated} disabled={editorDisabled} required type="date" />
+								</label>
+
+								<label>
+									<span>{t('manage.editor.fields.category')}</span>
+									<input
+										bind:value={form.category}
+										disabled={editorDisabled}
+										placeholder={t('manage.editor.placeholders.category')}
+										type="text"
+									/>
+								</label>
+
+								<label>
+									<span>{t('manage.editor.fields.author')}</span>
+									<input bind:value={form.author} disabled={editorDisabled} type="text" />
+								</label>
+
+								<label>
+									<span>{t('manage.editor.fields.series')}</span>
+									<input bind:value={form.series} disabled={editorDisabled} type="text" />
+								</label>
+
+								<label>
+									<span>{t('manage.editor.fields.readingTime')}</span>
+									<input
+										bind:value={form.readingTime}
+										disabled={editorDisabled}
+										placeholder={t('manage.editor.placeholders.readingTime')}
+										type="text"
+									/>
+								</label>
+
+								<label>
+									<span>{t('manage.editor.fields.canonical')}</span>
+									<input
+										bind:value={form.canonical}
+										disabled={editorDisabled}
+										placeholder={t('manage.editor.placeholders.canonical')}
+										type="url"
+									/>
+								</label>
+
+								<div class="manage-editor-field">
+									<span>{t('manage.editor.fields.format')}</span>
+									<ManageFormatSelect
+										bind:value={form.format}
+										disabled={editorDisabled}
+										label={t('manage.editor.fields.format')}
+									/>
 								</div>
-							{/each}
+
+								<label class="manage-editor-field-wide">
+									<span>{t('manage.editor.fields.tags')}</span>
+									<input
+										bind:value={form.tagsInput}
+										disabled={editorDisabled}
+										placeholder={t('manage.editor.placeholders.tags')}
+										type="text"
+									/>
+								</label>
+
+								<label class="manage-editor-field-wide">
+									<span>{t('manage.editor.fields.cover')}</span>
+									<input
+										bind:value={form.cover}
+										disabled={editorDisabled}
+										placeholder={t('manage.editor.placeholders.cover')}
+										type="text"
+									/>
+								</label>
+							</div>
+
+							<div class="manage-editor-toggles">
+								<label
+									><input bind:checked={form.draft} disabled={editorDisabled} type="checkbox" />
+									{t('manage.editor.toggles.draft')}</label
+								>
+								<label
+									><input bind:checked={form.featured} disabled={editorDisabled} type="checkbox" />
+									{t('manage.editor.toggles.featured')}</label
+								>
+								<label
+									><input bind:checked={form.toc} disabled={editorDisabled} type="checkbox" />
+									{t('manage.editor.toggles.toc')}</label
+								>
+							</div>
+						</div>
+					{:else}
+						<div
+							aria-labelledby="manage-editor-content-tab"
+							class="manage-editor-tab-panel manage-editor-content-panel"
+							id="manage-editor-content-panel"
+							role="tabpanel"
+						>
+							<section class="manage-editor-uploads">
+								<div class="panel-heading">
+									<h2>{t('manage.editor.uploads.title')}</h2>
+								</div>
+
+								<label
+									class:manage-editor-upload-picker-active={isUploadDragActive}
+									class="manage-editor-upload-picker"
+									ondragenter={handleUploadDragEnter}
+									ondragleave={handleUploadDragLeave}
+									ondragover={handleUploadDragOver}
+									ondrop={handleUploadDrop}
+								>
+									<input
+										accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+										aria-label={t('manage.editor.uploads.pickFiles')}
+										disabled={editorDisabled}
+										multiple
+										onchange={handleFileSelection}
+										type="file"
+									/>
+									<i aria-hidden="true">+</i>
+									<strong>{t('manage.editor.uploads.dropTitle')}</strong>
+									<span>{t('manage.editor.uploads.dropDescription')}</span>
+								</label>
+
+								{#if pendingUploads.length}
+									<div class="manage-editor-upload-list">
+										{#each pendingUploads as upload (upload.placeholder)}
+											<div class="manage-editor-upload-card">
+												<img alt="" src={upload.previewUrl} />
+												<div>
+													<strong>{upload.file.name}</strong>
+													<code>{upload.placeholder}</code>
+												</div>
+												<div class="manage-editor-upload-actions">
+													<button
+														disabled={editorDisabled}
+														onclick={() => useUploadAsCover(upload.placeholder)}
+														type="button"
+													>
+														{t('manage.editor.uploads.setCover')}
+													</button>
+													<button
+														disabled={editorDisabled}
+														onclick={() => insertUploadIntoSource(upload.placeholder)}
+														type="button"
+													>
+														{t('manage.editor.uploads.insertBody')}
+													</button>
+													<button
+														disabled={editorDisabled}
+														onclick={() => removeUpload(upload.placeholder)}
+														type="button"
+													>
+														{t('manage.editor.uploads.remove')}
+													</button>
+												</div>
+											</div>
+										{/each}
+									</div>
+								{/if}
+							</section>
+
+							<label class="manage-editor-source">
+								<span>{t('manage.editor.source')}</span>
+								<textarea
+									bind:this={sourceTextarea}
+									bind:value={form.source}
+									disabled={editorDisabled}
+									required
+									rows="24"
+								></textarea>
+							</label>
 						</div>
 					{/if}
-				</section>
-
-				<label class="manage-editor-source">
-					<span>{t('manage.editor.source')}</span>
-					<textarea
-						bind:this={sourceTextarea}
-						bind:value={form.source}
-						disabled={editorDisabled}
-						required
-						rows="24"
-					></textarea>
-				</label>
-			</div>
-		{/if}
+				</div>
+			{/key}
+		</ScrollChrome>
 	</form>
 
 	{#if effectivePreviewVisible}
-		<ManagePreviewPane html={previewHtml} />
+		<ManagePreviewPane emptyLabel={t('manage.preview.empty')} html={previewHtml} />
 	{/if}
 </section>
 
@@ -775,7 +793,9 @@
 		display: grid;
 		grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.8fr);
 		gap: 1rem;
-		align-items: start;
+		align-items: stretch;
+		height: 100%;
+		min-height: 0;
 		cursor: inherit;
 	}
 
@@ -798,7 +818,10 @@
 
 	.manage-editor-panel {
 		display: grid;
+		grid-template-rows: auto minmax(0, 1fr);
 		gap: 1rem;
+		height: 100%;
+		min-height: 0;
 		padding: 1.2rem;
 	}
 
@@ -810,13 +833,6 @@
 		gap: 0.75rem;
 		justify-content: space-between;
 		align-items: center;
-	}
-
-	.manage-editor-heading h2 {
-		margin: 0;
-		font-family: var(--font-display);
-		font-size: 2rem;
-		letter-spacing: -0.05em;
 	}
 
 	.manage-editor-toolbar {
@@ -846,6 +862,17 @@
 		stroke-width: 1.8;
 	}
 
+	.manage-editor-preview-toggle-icon {
+		width: 1.25rem;
+		height: 1.25rem;
+		background: currentcolor;
+		mask: url('/icons/topbar/collapse.png') center / contain no-repeat;
+	}
+
+	.manage-editor-preview-toggle[aria-pressed='false'] .manage-editor-preview-toggle-icon {
+		mask-image: url('/icons/topbar/expand.png');
+	}
+
 	.manage-editor-icon-button:disabled {
 		opacity: 0.46;
 	}
@@ -867,6 +894,7 @@
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.35rem;
+		width: min(20rem, 100%);
 		padding: 0.32rem;
 		border: 1px solid var(--line);
 		border-radius: 18px;
@@ -887,6 +915,12 @@
 		background: rgb(255 255 255 / 88%);
 		box-shadow: 0 6px 18px rgb(31 92 153 / 9%);
 		color: var(--ink);
+	}
+
+	.manage-editor-tab-frame {
+		min-height: 100%;
+		animation: manage-editor-tab-enter var(--motion-manage-tab-panel-enter-duration)
+			var(--motion-shared-easing-standard) both;
 	}
 
 	.manage-editor-tab-panel {
@@ -959,9 +993,57 @@
 		background: rgb(240 246 253 / 78%);
 	}
 
-	.manage-editor-fields small {
-		color: var(--ink-faint);
-		font-size: 0.76rem;
+	.manage-editor-input-status-wrap {
+		position: relative;
+	}
+
+	.manage-editor-input-status-wrap input {
+		width: 100%;
+		padding-inline-end: 3rem;
+	}
+
+	.manage-editor-slug-indicator {
+		position: absolute;
+		top: 50%;
+		right: 1rem;
+		display: grid;
+		place-items: center;
+		width: 1.35rem;
+		height: 1.35rem;
+		border-radius: 50%;
+		transform: translateY(-50%);
+	}
+
+	.manage-editor-slug-indicator[data-state='checking'] {
+		border: 2px solid rgb(79 120 255 / 20%);
+		border-top-color: rgb(79 120 255 / 62%);
+	}
+
+	.manage-editor-slug-indicator[data-state='available'] {
+		background: rgb(11 184 135 / 12%);
+		color: #087458;
+	}
+
+	.manage-editor-slug-indicator svg {
+		width: 0.9rem;
+		height: 0.9rem;
+		fill: none;
+		stroke: currentcolor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 2.4;
+	}
+
+	.manage-editor-visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
 	}
 
 	.manage-editor-field-wide {
@@ -1125,9 +1207,26 @@
 		color: #9b3129;
 	}
 
+	@keyframes manage-editor-tab-enter {
+		from {
+			opacity: 0;
+			transform: translateX(var(--motion-manage-tab-panel-enter-offset-x));
+		}
+
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
 	@media (width <= 1180px) {
 		.manage-editor {
 			grid-template-columns: 1fr;
+			height: auto;
+		}
+
+		.manage-editor-panel {
+			height: auto;
 		}
 	}
 

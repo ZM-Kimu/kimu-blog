@@ -60,6 +60,8 @@
 	--motion-notice-offset-y: 14px;
 	--motion-manage-select-options-enter-duration: 140ms;
 	--motion-manage-select-options-exit-duration: 100ms;
+	--motion-manage-tab-panel-enter-duration: 180ms;
+	--motion-manage-tab-panel-enter-offset-x: 10px;
 	--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 	--motion-error-enter-offset-y: 22px;
 	--motion-error-visual-duration: 620ms;
@@ -235,6 +237,8 @@
 		--motion-notice-offset-y: 14px;
 		--motion-manage-select-options-enter-duration: 140ms;
 		--motion-manage-select-options-exit-duration: 100ms;
+		--motion-manage-tab-panel-enter-duration: 180ms;
+		--motion-manage-tab-panel-enter-offset-x: 10px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-error-enter-offset-y: 22px;
 		--motion-error-visual-duration: 620ms;
@@ -411,6 +415,8 @@
 		--motion-notice-offset-y: 14px;
 		--motion-manage-select-options-enter-duration: 1ms;
 		--motion-manage-select-options-exit-duration: 1ms;
+		--motion-manage-tab-panel-enter-duration: 1ms;
+		--motion-manage-tab-panel-enter-offset-x: 0px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-error-enter-offset-y: 22px;
 		--motion-error-visual-duration: 1ms;
@@ -587,6 +593,8 @@
 		--motion-notice-offset-y: 14px;
 		--motion-manage-select-options-enter-duration: 1ms;
 		--motion-manage-select-options-exit-duration: 1ms;
+		--motion-manage-tab-panel-enter-duration: 1ms;
+		--motion-manage-tab-panel-enter-offset-x: 0px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 		--motion-error-enter-offset-y: 22px;
 		--motion-error-visual-duration: 1ms;

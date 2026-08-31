@@ -130,6 +130,41 @@
 	background: rgb(255 255 255 / 68%);
 }
 
+.manage-editor-scroll,
+.manage-editor-scroll-viewport,
+.manage-preview-scroll,
+.manage-preview-viewport {
+	height: 100%;
+	min-height: 0;
+}
+
+.manage-editor-scroll-viewport {
+	padding: 0.1rem 0.75rem 0.35rem 0.1rem;
+	overflow: hidden auto;
+	overscroll-behavior: contain;
+}
+
+.manage-preview-viewport {
+	padding: clamp(1rem, 1.6vw, 1.4rem)
+		calc(clamp(1rem, 1.6vw, 1.4rem) + var(--scroll-chrome-size, 0.44rem));
+	overflow: hidden auto;
+	overscroll-behavior: contain;
+}
+
+@media (width <= 1180px) {
+	.manage-editor-scroll,
+	.manage-editor-scroll-viewport,
+	.manage-preview-scroll,
+	.manage-preview-viewport {
+		height: auto;
+	}
+
+	.manage-editor-scroll-viewport,
+	.manage-preview-viewport {
+		overflow: visible;
+	}
+}
+
 .tag-chip {
 	display: inline-flex;
 	align-items: center;

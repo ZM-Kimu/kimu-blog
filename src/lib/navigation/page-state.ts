@@ -190,8 +190,17 @@ function resolvePageTitle(
 			return t(messages, 'nav.updates')
 		case 'favorites':
 			return t(messages, 'nav.favorites')
-		case 'manage':
+		case 'manage': {
+			if (route.pathname === '/manage/posts/new') {
+				return t(messages, 'manage.editor.createTitle')
+			}
+
+			if (route.pathname.startsWith('/manage/posts/')) {
+				return decodeURIComponent(route.pathname.slice('/manage/posts/'.length))
+			}
+
 			return t(messages, 'manage.list.title')
+		}
 		case 'debugManage':
 			return siteConfig.name
 		case 'error':
