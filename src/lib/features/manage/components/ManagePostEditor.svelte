@@ -18,6 +18,7 @@
 	import { resolveManageErrorMessage } from '$lib/features/manage/copy'
 	import { renderManagePreviewHtml, resolvePreviewAssetPath } from '$lib/features/manage/preview'
 	import type { ManagePostDocument, ManagePostFormState } from '$lib/features/manage/types'
+	import ManageFormatSelect from '$lib/features/manage/components/ManageFormatSelect.svelte'
 	import ManagePreviewPane from '$lib/features/manage/components/ManagePreviewPane.svelte'
 	import { translate } from '$lib/i18n'
 
@@ -59,7 +60,16 @@
 	let errorMessage = $state('')
 	let statusMessage = $state('')
 	let isSubmitting = $state(false)
+	let uploadDragDepth = 0
+	let isUploadDragActive = $state(false)
 	let lastResetKey = $state('__boot__')
+	const acceptedImageTypes = new Set([
+		'image/png',
+		'image/jpeg',
+		'image/webp',
+		'image/avif',
+		'image/gif'
+	])
 
 	function revokePendingUpload(upload: PendingUpload) {
 		URL.revokeObjectURL(upload.previewUrl)
@@ -134,7 +144,7 @@
 	function appendUploads(files: File[]) {
 		const nextUploads = [...pendingUploads]
 
-		for (const file of files) {
+		for (const file of files.filter((candidate) => acceptedImageTypes.has(candidate.type))) {
 			const placeholder = `upload://${file.name}`
 			const existingIndex = nextUploads.findIndex((entry) => entry.placeholder === placeholder)
 
@@ -166,6 +176,50 @@
 		}
 
 		input.value = ''
+	}
+
+	function handleUploadDragEnter(event: DragEvent) {
+		event.preventDefault()
+
+		if (editorDisabled || !event.dataTransfer?.types.includes('Files')) {
+			return
+		}
+
+		uploadDragDepth += 1
+		isUploadDragActive = true
+	}
+
+	function handleUploadDragOver(event: DragEvent) {
+		event.preventDefault()
+
+		if (event.dataTransfer) {
+			event.dataTransfer.dropEffect = editorDisabled ? 'none' : 'copy'
+		}
+	}
+
+	function handleUploadDragLeave(event: DragEvent) {
+		event.preventDefault()
+		uploadDragDepth = Math.max(0, uploadDragDepth - 1)
+
+		if (uploadDragDepth === 0) {
+			isUploadDragActive = false
+		}
+	}
+
+	function handleUploadDrop(event: DragEvent) {
+		event.preventDefault()
+		uploadDragDepth = 0
+		isUploadDragActive = false
+
+		if (editorDisabled) {
+			return
+		}
+
+		const files = Array.from(event.dataTransfer?.files ?? [])
+
+		if (files.length) {
+			appendUploads(files)
+		}
 	}
 
 	function removeUpload(placeholder: string) {
@@ -334,7 +388,7 @@
 			</label>
 
 			<label>
-				<span>{t('common.slug')}</span>
+				<span>{t('manage.editor.fields.slug')}</span>
 				<input bind:value={form.slug} disabled={editorDisabled} required type="text" />
 			</label>
 
@@ -394,13 +448,14 @@
 				/>
 			</label>
 
-			<label>
+			<div class="manage-editor-field">
 				<span>{t('manage.editor.fields.format')}</span>
-				<select bind:value={form.format} disabled={editorDisabled}>
-					<option value="svx">svx</option>
-					<option value="md">md</option>
-				</select>
-			</label>
+				<ManageFormatSelect
+					bind:value={form.format}
+					disabled={editorDisabled}
+					label={t('manage.editor.fields.format')}
+				/>
+			</div>
 
 			<label class="manage-editor-field-wide">
 				<span>{t('manage.editor.fields.tags')}</span>
@@ -446,15 +501,25 @@
 				</div>
 			</div>
 
-			<label class="manage-editor-upload-picker">
-				<span>{t('manage.editor.uploads.pickFiles')}</span>
+			<label
+				class:manage-editor-upload-picker-active={isUploadDragActive}
+				class="manage-editor-upload-picker"
+				ondragenter={handleUploadDragEnter}
+				ondragleave={handleUploadDragLeave}
+				ondragover={handleUploadDragOver}
+				ondrop={handleUploadDrop}
+			>
 				<input
 					accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+					aria-label={t('manage.editor.uploads.pickFiles')}
 					disabled={editorDisabled}
 					multiple
 					onchange={handleFileSelection}
 					type="file"
 				/>
+				<i aria-hidden="true">+</i>
+				<strong>{t('manage.editor.uploads.dropTitle')}</strong>
+				<span>{t('manage.editor.uploads.dropDescription')}</span>
 			</label>
 
 			{#if pendingUploads.length}
@@ -593,15 +658,17 @@
 	}
 
 	.manage-editor-fields label,
-	.manage-editor-source,
-	.manage-editor-upload-picker {
+	.manage-editor-field,
+	.manage-editor-source {
 		display: grid;
 		gap: 0.35rem;
 	}
 
-	.manage-editor-fields span,
-	.manage-editor-source span,
-	.manage-editor-upload-picker span {
+	:where(
+		.manage-editor-fields label > span,
+		.manage-editor-field > span,
+		.manage-editor-source > span
+	) {
 		font-family: var(--font-mono);
 		font-size: 0.74rem;
 		letter-spacing: 0.08em;
@@ -611,7 +678,6 @@
 
 	.manage-editor-fields input,
 	.manage-editor-fields textarea,
-	.manage-editor-fields select,
 	.manage-editor-source textarea {
 		padding: 0.82rem 0.92rem;
 		border: 1px solid var(--line);
@@ -647,11 +713,66 @@
 		background: rgb(255 255 255 / 54%);
 	}
 
-	.manage-editor-upload-picker input {
-		padding: 0.8rem;
+	.manage-editor-upload-picker {
+		position: relative;
+		display: grid;
+		place-items: center;
+		gap: 0.38rem;
+		min-height: 9.5rem;
+		padding: 1.35rem;
 		border: 1px dashed rgb(79 120 255 / 28%);
-		border-radius: 18px;
-		background: rgb(255 255 255 / 82%);
+		border-radius: 20px;
+		background:
+			radial-gradient(circle at 50% 0%, rgb(79 120 255 / 9%), transparent 62%),
+			rgb(255 255 255 / 72%);
+		text-align: center;
+		cursor: inherit;
+		transition:
+			border-color var(--motion-shared-ease-standard),
+			background-color var(--motion-shared-ease-standard),
+			box-shadow var(--motion-shared-ease-standard);
+	}
+
+	.manage-editor-upload-picker:focus-within,
+	.manage-editor-upload-picker-active {
+		border-color: rgb(79 120 255 / 52%);
+		background-color: rgb(241 247 255 / 92%);
+		box-shadow: 0 0 0 4px rgb(79 120 255 / 8%);
+	}
+
+	.manage-editor-upload-picker input {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		cursor: inherit;
+	}
+
+	.manage-editor-upload-picker i {
+		display: grid;
+		place-items: center;
+		width: 2.55rem;
+		height: 2.55rem;
+		border: 1px solid rgb(79 120 255 / 18%);
+		border-radius: 50%;
+		background: rgb(79 120 255 / 10%);
+		color: #557fd0;
+		font-size: 1.4rem;
+		font-style: normal;
+		line-height: 1;
+	}
+
+	.manage-editor-upload-picker strong {
+		font-family: var(--font-display);
+		font-size: 1rem;
+	}
+
+	.manage-editor-upload-picker span {
+		max-width: 34rem;
+		color: var(--ink-faint);
+		font-size: 0.82rem;
+		line-height: 1.5;
 	}
 
 	.manage-editor-upload-list {

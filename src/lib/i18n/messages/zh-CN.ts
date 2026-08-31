@@ -306,7 +306,7 @@ export const zhCNMessages = {
 		eyebrowFault: 'Unhandled Fault',
 		headlineNotFound: '未找到页面~ (´・ω・`)',
 		headlineFault: '系统故障 (´；ω；`)',
-		headlineInterrupted: '系统信号中断，页面未能完成装载。',
+		headlineInterrupted: '系统中断 (´；ω；`)',
 		detailNotFound: '请求的页面不存在。',
 		detailUnknown: '发生了未知错误。',
 		detailFallback: '页面发生错误，fallback 页面已接管。',
@@ -331,7 +331,8 @@ export const zhCNMessages = {
 			loadingDescription: '管理壳体已经就绪，文章索引正在从仓库同步。',
 			errorTitle: '文章列表装载失败',
 			search: '搜索',
-			searchPlaceholder: 'title / slug / category',
+			searchPlaceholder: '搜索标题、slug 或分类…',
+			articleCount: '{count}篇文章',
 			newPost: '新建文章',
 			retry: '重新载入',
 			noMatchesTitle: '没有匹配结果',
@@ -340,7 +341,7 @@ export const zhCNMessages = {
 			featured: 'featured'
 		},
 		editor: {
-			eyebrow: 'Editor',
+			eyebrow: '编辑器',
 			createTitle: '新建文章',
 			editTitle: '编辑 {slug}',
 			loadingTitle: '正在装载文章内容',
@@ -351,38 +352,41 @@ export const zhCNMessages = {
 			submitting: '提交中…',
 			delete: '删除',
 			retry: '重新载入',
-			source: 'Source',
+			source: '正文内容',
 			fields: {
 				title: '标题',
+				slug: '路径标识',
 				description: '摘要',
 				date: '发布日期',
 				updated: '更新日期',
 				category: '分类',
 				author: '作者',
-				series: 'Series',
-				readingTime: 'Reading Time',
-				canonical: 'Canonical',
+				series: '系列',
+				readingTime: '阅读时长',
+				canonical: '规范链接',
 				format: '格式',
-				tags: 'Tags',
-				cover: 'Cover'
+				tags: '标签',
+				cover: '封面'
 			},
 			placeholders: {
-				category: 'Engineering / Notes',
-				readingTime: '6 min',
+				category: '技术 / 随笔',
+				readingTime: '6 分钟',
 				canonical: 'https://...',
-				tags: 'svelte, cloudflare, devlog',
-				cover: '/images/... or upload://file.png'
+				tags: 'svelte, cloudflare, 开发日志',
+				cover: '/images/... 或 upload://file.png'
 			},
 			toggles: {
-				draft: 'Draft',
-				featured: 'Featured',
-				toc: 'TOC'
+				draft: '草稿',
+				featured: '精选',
+				toc: '文章目录'
 			},
 			uploads: {
-				eyebrow: 'Uploads',
+				eyebrow: '图片上传',
 				title: '图片与占位符',
 				pickFiles: '选择图片',
-				setCover: '设为 cover',
+				dropTitle: '拖放图片到这里',
+				dropDescription: '或点击选择图片，支持 PNG、JPEG、WebP、AVIF 与 GIF',
+				setCover: '设为封面',
 				insertBody: '插入正文',
 				remove: '移除',
 				empty: '上传图片后会生成 `upload://filename` 占位符，并在右侧预览中即时替换。'
@@ -395,11 +399,11 @@ export const zhCNMessages = {
 			}
 		},
 		preview: {
-			eyebrow: 'Live Preview',
+			eyebrow: '即时预览',
 			title: '正文预览',
 			intro: 'Markdown / GFM / 图片按正文样式即时渲染；mdsvex 组件与 import 会显示占位块。',
-			heroEyebrow: 'Article Record',
-			assetsEyebrow: 'Asset Index',
+			heroEyebrow: '文章信息',
+			assetsEyebrow: '资源索引',
 			assetsTitle: '已解析资源',
 			placeholders: {
 				description: '预览面板不会执行这段 mdsvex / Svelte 逻辑。',

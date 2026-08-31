@@ -191,7 +191,7 @@ function resolvePageTitle(
 		case 'favorites':
 			return t(messages, 'nav.favorites')
 		case 'manage':
-			return siteConfig.name
+			return t(messages, 'manage.list.title')
 		case 'debugManage':
 			return siteConfig.name
 		case 'error':
@@ -269,7 +269,7 @@ export function createPageState({
 			showGlobalChrome: false,
 			backgroundPolicy: 'replace',
 			backgroundScene: 'neutral-default',
-			topbarShellVariant: 'none',
+			topbarShellVariant: 'subpage',
 			topbar: {
 				variant: 'subpage',
 				title,

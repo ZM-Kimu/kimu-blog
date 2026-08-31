@@ -211,8 +211,9 @@ export async function validateManageSource(source: string) {
 export function serializeManagedPost(payload: ManageWritePayload) {
 	const frontmatter = normalizeFrontmatter(payload)
 	const yaml = stringify(frontmatter).trimEnd()
+	const source = payload.source.trimEnd()
 
-	return `---\n${yaml}\n---\n\n${payload.source}`
+	return `---\n${yaml}\n---\n\n${source}\n`
 }
 
 export async function prepareUploadedAssets(files: File[], slug: string) {
