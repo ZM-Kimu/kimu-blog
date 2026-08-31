@@ -329,7 +329,6 @@ export const appMessageSkeleton = {
 			eyebrow: '',
 			title: '',
 			loadingTitle: '',
-			loadingDescription: '',
 			errorTitle: '',
 			search: '',
 			searchPlaceholder: '',
@@ -342,11 +341,9 @@ export const appMessageSkeleton = {
 			featured: ''
 		},
 		editor: {
-			eyebrow: '',
 			createTitle: '',
 			editTitle: '',
 			loadingTitle: '',
-			loadingDescription: '',
 			errorTitle: '',
 			createSubmit: '',
 			saveChanges: '',
@@ -354,6 +351,23 @@ export const appMessageSkeleton = {
 			delete: '',
 			retry: '',
 			source: '',
+			tabs: {
+				ariaLabel: '',
+				information: '',
+				content: ''
+			},
+			previewVisibility: {
+				show: '',
+				hide: ''
+			},
+			confirmSubmit: {
+				create: '',
+				update: ''
+			},
+			slugStatus: {
+				checking: '',
+				available: ''
+			},
 			fields: {
 				title: '',
 				slug: '',
@@ -382,15 +396,13 @@ export const appMessageSkeleton = {
 				toc: ''
 			},
 			uploads: {
-				eyebrow: '',
 				title: '',
 				pickFiles: '',
 				dropTitle: '',
 				dropDescription: '',
 				setCover: '',
 				insertBody: '',
-				remove: '',
-				empty: ''
+				remove: ''
 			},
 			statusCommitted: '',
 			errors: {
@@ -400,12 +412,6 @@ export const appMessageSkeleton = {
 			}
 		},
 		preview: {
-			eyebrow: '',
-			title: '',
-			intro: '',
-			heroEyebrow: '',
-			assetsEyebrow: '',
-			assetsTitle: '',
 			placeholders: {
 				description: '',
 				scriptBlock: '',

@@ -329,12 +329,6 @@
 		background: rgb(233 242 255 / 96%);
 	}
 
-	.manage-debug-controls-chips button:hover,
-	.manage-debug-controls-toggle:hover {
-		transform: translateY(-1px);
-		border-color: rgb(79 120 255 / 24%);
-	}
-
 	.manage-debug-controls-toggle input {
 		accent-color: #4f78ff;
 	}

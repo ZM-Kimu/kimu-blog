@@ -70,7 +70,7 @@
 					type="button"
 					onclick={() => followDebugHref(createHref)}
 				>
-					<span aria-hidden="true">+</span>
+					<span aria-hidden="true"></span>
 				</button>
 			{:else}
 				<a
@@ -79,7 +79,7 @@
 					href={resolve(createHref)}
 					title={t('manage.list.newPost')}
 				>
-					<span aria-hidden="true">+</span>
+					<span aria-hidden="true"></span>
 				</a>
 			{/if}
 		</div>
@@ -234,11 +234,26 @@
 	}
 
 	.manage-create-button span {
-		font-family: var(--font-sans);
-		font-size: 1.65rem;
-		font-weight: 300;
-		line-height: 1;
-		translate: 0 -0.05em;
+		position: relative;
+		width: 1.05rem;
+		height: 1.05rem;
+	}
+
+	.manage-create-button span::before,
+	.manage-create-button span::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 1.05rem;
+		height: 2px;
+		border-radius: 999px;
+		background: currentcolor;
+		transform: translate(-50%, -50%);
+	}
+
+	.manage-create-button span::after {
+		transform: translate(-50%, -50%) rotate(90deg);
 	}
 
 	.manage-create-button:focus-visible {

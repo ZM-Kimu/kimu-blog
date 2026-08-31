@@ -95,6 +95,7 @@
 		aria-label={label}
 		bind:this={trigger}
 		class:manage-format-trigger-open={open}
+		data-press-disabled="true"
 		{disabled}
 		onclick={() => (open ? closeMenu() : void openMenu())}
 		onkeydown={handleTriggerKeydown}
@@ -104,23 +105,29 @@
 		<i aria-hidden="true"></i>
 	</button>
 
-	{#if open}
-		<div aria-label={label} class="manage-format-options" role="listbox">
-			{#each options as option, index (option)}
-				<button
-					aria-selected={value === option}
-					class:active={value === option}
-					onclick={() => selectOption(option)}
-					onkeydown={(event) => handleOptionKeydown(event, index)}
-					role="option"
-					type="button"
-				>
-					<span>{option}</span>
-					{#if value === option}<i aria-hidden="true">✓</i>{/if}
-				</button>
-			{/each}
-		</div>
-	{/if}
+	<div
+		aria-hidden={!open}
+		aria-label={label}
+		class:manage-format-options-open={open}
+		class="manage-format-options"
+		role="listbox"
+	>
+		{#each options as option, index (option)}
+			<button
+				aria-selected={value === option}
+				class:active={value === option}
+				data-press-disabled="true"
+				onclick={() => selectOption(option)}
+				onkeydown={(event) => handleOptionKeydown(event, index)}
+				role="option"
+				tabindex={open ? 0 : -1}
+				type="button"
+			>
+				<span>{option}</span>
+				{#if value === option}<i aria-hidden="true">✓</i>{/if}
+			</button>
+		{/each}
+	</div>
 </div>
 
 <style>
@@ -141,10 +148,6 @@
 		background: rgb(255 255 255 / 78%);
 		color: var(--ink);
 		cursor: inherit;
-		transition:
-			border-color var(--motion-shared-ease-standard),
-			background-color var(--motion-shared-ease-standard),
-			box-shadow var(--motion-shared-ease-standard);
 	}
 
 	.manage-format-options {
@@ -153,13 +156,30 @@
 		left: 0;
 		z-index: 12;
 		display: grid;
+		gap: 0.28rem;
 		width: 100%;
-		padding: 0.38rem;
+		padding: 0.45rem;
 		border: 1px solid var(--line-strong);
 		border-radius: 17px;
 		background: rgb(248 252 255 / 96%);
 		box-shadow: 0 18px 42px rgb(31 92 153 / 18%);
 		backdrop-filter: blur(18px);
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transition:
+			opacity var(--motion-manage-select-options-exit-duration) var(--motion-shared-easing-standard),
+			visibility 0s linear var(--motion-manage-select-options-exit-duration);
+	}
+
+	.manage-format-options-open {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		transition:
+			opacity var(--motion-manage-select-options-enter-duration)
+				var(--motion-shared-easing-standard),
+			visibility 0s linear;
 	}
 
 	.manage-format-options button {
@@ -175,6 +195,7 @@
 		font: inherit;
 		text-align: left;
 		cursor: inherit;
+		transition: background-color var(--motion-shared-ease-standard);
 	}
 
 	.manage-format-options button i {
@@ -201,7 +222,6 @@
 		border-bottom: 2px solid currentcolor;
 		rotate: 45deg;
 		translate: 0 -0.16rem;
-		transition: rotate var(--motion-shared-ease-standard);
 	}
 
 	.manage-format-select > .manage-format-trigger-open > i {

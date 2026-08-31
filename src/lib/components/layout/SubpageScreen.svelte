@@ -1,22 +1,31 @@
 <script lang="ts">
 	import { getPublicLayoutContext } from '$lib/layout/public-layout'
 
-	let { children } = $props<{ children: () => unknown }>()
+	let { children, containedScroll = false } = $props<{
+		children: () => unknown
+		containedScroll?: boolean
+	}>()
 
 	const { getMode } = getPublicLayoutContext()
 	const isPortraitLayout = $derived(getMode() === 'portrait')
 </script>
 
 {#if isPortraitLayout}
-	<section class="portrait-subpage-screen">
-		<div class="portrait-subpage-screen-content">
+	<section
+		class:portrait-subpage-screen-contained={containedScroll}
+		class="portrait-subpage-screen"
+	>
+		<div
+			class:portrait-subpage-screen-content-contained={containedScroll}
+			class="portrait-subpage-screen-content"
+		>
 			{@render children()}
 		</div>
 	</section>
 {:else}
-	<section class="subpage-screen">
+	<section class:subpage-screen-contained={containedScroll} class="subpage-screen">
 		<div class="subpage-screen-viewport">
-			<div class="subpage-screen-content">
+			<div class:subpage-screen-content-contained={containedScroll} class="subpage-screen-content">
 				{@render children()}
 			</div>
 		</div>
@@ -43,11 +52,29 @@
 		padding: var(--subpage-stage-top-offset) var(--home-shell-padding) var(--subpage-stage-gap);
 	}
 
+	.subpage-screen-contained {
+		height: 100dvh;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.subpage-screen-contained .subpage-screen-viewport {
+		height: 100dvh;
+		overflow: hidden;
+	}
+
 	.subpage-screen-content {
 		width: min(1460px, calc(100vw - (var(--home-shell-padding) * 2)));
 		margin: 0 auto;
 		display: grid;
 		gap: 1rem;
+	}
+
+	.subpage-screen-content-contained {
+		height: var(--subpage-stage-available-height);
+		overflow: hidden auto;
+		overscroll-behavior: contain;
+		scrollbar-gutter: stable;
 	}
 
 	.portrait-subpage-screen {
@@ -60,6 +87,17 @@
 		display: grid;
 		gap: 1.15rem;
 		padding: 0.05rem 0 0.75rem;
+	}
+
+	.portrait-subpage-screen-contained {
+		height: 100dvh;
+		overflow: hidden;
+	}
+
+	.portrait-subpage-screen-content-contained {
+		max-height: 100dvh;
+		overflow: hidden auto;
+		overscroll-behavior: contain;
 	}
 
 	@media (width <= 760px) {

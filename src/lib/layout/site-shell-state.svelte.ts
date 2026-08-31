@@ -15,6 +15,9 @@ export function createSiteShellState(args: {
 	siteRuntime: SiteLayoutRuntime
 }) {
 	const isManageRoute = $derived(args.getRouteState().kind === 'manage')
+	const isManageInteractionRoute = $derived(
+		args.getRouteState().kind === 'manage' || args.getRouteState().kind === 'debugManage'
+	)
 	const isPublicScreenRoute = $derived(args.getPageState().shellMode === 'screen' && !isManageRoute)
 	const isPortraitPublicLayout = $derived(
 		isPublicScreenRoute && args.siteRuntime.publicLayoutMode === 'portrait'
@@ -44,7 +47,9 @@ export function createSiteShellState(args: {
 			args.navigationManager.pendingBackgroundScene !== null
 	)
 	const enableSiteClickEffect = $derived(
-		!args.siteRuntime.prefersReducedMotion && args.siteRuntime.siteBootPhase !== 'boot'
+		!isManageInteractionRoute &&
+			!args.siteRuntime.prefersReducedMotion &&
+			args.siteRuntime.siteBootPhase !== 'boot'
 	)
 	const motionTokens = $derived(
 		getMotionTokens({

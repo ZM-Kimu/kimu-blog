@@ -335,8 +335,7 @@ export const enUSMessages = {
 		list: {
 			eyebrow: 'Repository Records',
 			title: 'Post list',
-			loadingTitle: 'Loading post list',
-			loadingDescription: 'The manage shell is ready. The repository index is syncing now.',
+			loadingTitle: 'Loading…',
 			errorTitle: 'Failed to load the post list',
 			search: 'Search',
 			searchPlaceholder: 'Search title, slug, or category…',
@@ -349,11 +348,9 @@ export const enUSMessages = {
 			featured: 'featured'
 		},
 		editor: {
-			eyebrow: 'Editor',
 			createTitle: 'Create post',
 			editTitle: 'Edit {slug}',
-			loadingTitle: 'Loading post content',
-			loadingDescription: 'The editor shell is ready. The document is syncing now.',
+			loadingTitle: 'Loading…',
 			errorTitle: 'Failed to load the post content',
 			createSubmit: 'Create post',
 			saveChanges: 'Save changes',
@@ -361,6 +358,23 @@ export const enUSMessages = {
 			delete: 'Delete',
 			retry: 'Retry',
 			source: 'Source',
+			tabs: {
+				ariaLabel: 'Post editing mode',
+				information: 'Information',
+				content: 'Content'
+			},
+			previewVisibility: {
+				show: 'Show preview',
+				hide: 'Hide preview'
+			},
+			confirmSubmit: {
+				create: 'Create and submit this post?',
+				update: 'Save and submit the current changes?'
+			},
+			slugStatus: {
+				checking: 'Checking path…',
+				available: 'Path available'
+			},
 			fields: {
 				title: 'Title',
 				slug: 'Slug',
@@ -389,16 +403,13 @@ export const enUSMessages = {
 				toc: 'TOC'
 			},
 			uploads: {
-				eyebrow: 'Uploads',
 				title: 'Images and placeholders',
 				pickFiles: 'Pick images',
 				dropTitle: 'Drop images here',
 				dropDescription: 'Or click to browse PNG, JPEG, WebP, AVIF, and GIF images',
 				setCover: 'Use as cover',
 				insertBody: 'Insert into body',
-				remove: 'Remove',
-				empty:
-					'Uploaded images generate `upload://filename` placeholders and are swapped live in the preview panel.'
+				remove: 'Remove'
 			},
 			statusCommitted: 'Committed {sha}; the latest content has been synced to the repository.',
 			errors: {
@@ -409,13 +420,6 @@ export const enUSMessages = {
 			}
 		},
 		preview: {
-			eyebrow: 'Live Preview',
-			title: 'Body preview',
-			intro:
-				'Markdown / GFM / images render with article styles instantly; mdsvex components and imports are shown as placeholders.',
-			heroEyebrow: 'Article Record',
-			assetsEyebrow: 'Asset Index',
-			assetsTitle: 'Resolved assets',
 			placeholders: {
 				description: 'The preview panel does not execute this mdsvex / Svelte logic.',
 				scriptBlock: '<script> block',

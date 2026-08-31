@@ -38,10 +38,8 @@
 </script>
 
 {#if isLoading}
-	<section class="manage-state panel">
-		<p class="eyebrow">{t('manage.list.eyebrow')}</p>
-		<h2>{t('manage.list.loadingTitle')}</h2>
-		<p>{t('manage.list.loadingDescription')}</p>
+	<section aria-busy="true" aria-live="polite" class="manage-loading panel">
+		<p>{t('manage.list.loadingTitle')}</p>
 	</section>
 {:else if errorMessage}
 	<section class="manage-state panel">
@@ -57,6 +55,18 @@
 {/if}
 
 <style>
+	.manage-loading {
+		display: flex;
+		align-items: center;
+		min-height: 5.5rem;
+		padding: 1.2rem 1.35rem;
+	}
+
+	.manage-loading p {
+		margin: 0;
+		color: var(--ink-soft);
+	}
+
 	.manage-state {
 		display: grid;
 		gap: 0.55rem;

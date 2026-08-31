@@ -4,7 +4,7 @@ import type {
 	ManagePostWritePayload
 } from '$lib/features/manage/types'
 
-function getTodayString() {
+export function getTodayString() {
 	const now = new Date()
 	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
 

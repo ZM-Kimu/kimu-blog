@@ -327,8 +327,7 @@ export const zhCNMessages = {
 		list: {
 			eyebrow: 'Repository Records',
 			title: '文章列表',
-			loadingTitle: '正在装载文章列表',
-			loadingDescription: '管理壳体已经就绪，文章索引正在从仓库同步。',
+			loadingTitle: '加载中…',
 			errorTitle: '文章列表装载失败',
 			search: '搜索',
 			searchPlaceholder: '搜索标题、slug 或分类…',
@@ -341,11 +340,9 @@ export const zhCNMessages = {
 			featured: 'featured'
 		},
 		editor: {
-			eyebrow: '编辑器',
 			createTitle: '新建文章',
 			editTitle: '编辑 {slug}',
-			loadingTitle: '正在装载文章内容',
-			loadingDescription: '编辑器壳体已经就绪，文章正文正在同步。',
+			loadingTitle: '加载中…',
 			errorTitle: '文章内容装载失败',
 			createSubmit: '创建文章',
 			saveChanges: '保存更改',
@@ -353,6 +350,23 @@ export const zhCNMessages = {
 			delete: '删除',
 			retry: '重新载入',
 			source: '正文内容',
+			tabs: {
+				ariaLabel: '文章编辑模式',
+				information: '信息编辑',
+				content: '内容编辑'
+			},
+			previewVisibility: {
+				show: '展开预览',
+				hide: '关闭预览'
+			},
+			confirmSubmit: {
+				create: '确认创建并提交这篇文章？',
+				update: '确认保存并提交当前更改？'
+			},
+			slugStatus: {
+				checking: '正在检查路径…',
+				available: '路径可用'
+			},
 			fields: {
 				title: '标题',
 				slug: '路径标识',
@@ -381,15 +395,13 @@ export const zhCNMessages = {
 				toc: '文章目录'
 			},
 			uploads: {
-				eyebrow: '图片上传',
 				title: '图片与占位符',
 				pickFiles: '选择图片',
 				dropTitle: '拖放图片到这里',
 				dropDescription: '或点击选择图片，支持 PNG、JPEG、WebP、AVIF 与 GIF',
 				setCover: '设为封面',
 				insertBody: '插入正文',
-				remove: '移除',
-				empty: '上传图片后会生成 `upload://filename` 占位符，并在右侧预览中即时替换。'
+				remove: '移除'
 			},
 			statusCommitted: '已提交 {sha}，最新内容已同步到仓库。',
 			errors: {
@@ -399,12 +411,6 @@ export const zhCNMessages = {
 			}
 		},
 		preview: {
-			eyebrow: '即时预览',
-			title: '正文预览',
-			intro: 'Markdown / GFM / 图片按正文样式即时渲染；mdsvex 组件与 import 会显示占位块。',
-			heroEyebrow: '文章信息',
-			assetsEyebrow: '资源索引',
-			assetsTitle: '已解析资源',
 			placeholders: {
 				description: '预览面板不会执行这段 mdsvex / Svelte 逻辑。',
 				scriptBlock: '<script> 区块',

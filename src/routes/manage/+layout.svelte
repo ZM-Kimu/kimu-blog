@@ -5,7 +5,7 @@
 	let { children, data } = $props()
 </script>
 
-<SubpageScreen>
+<SubpageScreen containedScroll>
 	<ManageShell session={data.session}>
 		{@render children()}
 	</ManageShell>

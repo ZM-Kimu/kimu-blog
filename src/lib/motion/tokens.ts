@@ -123,6 +123,11 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		offsetYPx: 14
 	}
 
+	const manage = {
+		selectOptionsEnterDurationMs: reducedMotion ? 1 : 140,
+		selectOptionsExitDurationMs: reducedMotion ? 1 : 100
+	}
+
 	const error = {
 		enterEase: standardEase,
 		enterOffsetYPx: 22,
@@ -323,6 +328,7 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 		route,
 		background,
 		notice,
+		manage,
 		error,
 		about,
 		homeAmbient,
@@ -396,6 +402,8 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-notice-exit-duration', ms(tokens.notice.exitDurationMs)],
 		['motion-notice-visible-duration', ms(tokens.notice.visibleDurationMs)],
 		['motion-notice-offset-y', px(tokens.notice.offsetYPx)],
+		['motion-manage-select-options-enter-duration', ms(tokens.manage.selectOptionsEnterDurationMs)],
+		['motion-manage-select-options-exit-duration', ms(tokens.manage.selectOptionsExitDurationMs)],
 		['motion-error-enter-ease', tokens.error.enterEase],
 		['motion-error-enter-offset-y', px(tokens.error.enterOffsetYPx)],
 		['motion-error-visual-duration', ms(tokens.error.visualDurationMs)],
