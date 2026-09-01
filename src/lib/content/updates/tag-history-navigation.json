@@ -1,0 +1,10 @@
+{
+	"id": "tag-history-navigation",
+	"date": "2026-07-10",
+	"kind": "site",
+	"status": "shipped",
+	"title": "标签页返回路径修正",
+	"summary": "顶部返回按钮跳过连续 tag 历史，回到进入标签页之前的非 tag 页面。",
+	"tags": ["tags", "navigation", "history"],
+	"href": "/tags/engineering"
+}

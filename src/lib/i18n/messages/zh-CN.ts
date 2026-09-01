@@ -315,6 +315,59 @@ export const zhCNMessages = {
 		fallbackIllustration: 'Fallback 插画'
 	},
 	manage: {
+		nav: {
+			ariaLabel: '内容管理',
+			posts: '文章',
+			updates: '动态',
+			favorites: '收藏'
+		},
+		records: {
+			common: {
+				loading: '加载中…',
+				retry: '重新载入',
+				save: '保存',
+				delete: '删除',
+				committed: '已提交 {sha}',
+				confirm: {
+					create: '确认创建并发布这条记录？',
+					edit: '确认保存并发布当前更改？',
+					delete: '确认删除“{title}”？这会直接提交到仓库。'
+				}
+			},
+			updates: {
+				count: '{count}条动态',
+				create: '新建动态',
+				searchLabel: '搜索动态',
+				searchPlaceholder: '搜索标题、内容、标签或标识…',
+				empty: '没有匹配的动态。'
+			},
+			favorites: {
+				count: '{count}项收藏',
+				create: '新建收藏',
+				searchLabel: '搜索收藏',
+				searchPlaceholder: '搜索标题、简介、来源或标识…',
+				empty: '没有匹配的收藏。'
+			},
+			fields: {
+				title: '标题',
+				id: '记录标识',
+				date: '发布日期',
+				added: '收藏日期',
+				kind: '类型',
+				status: '状态',
+				summary: '内容',
+				description: '简介',
+				tags: '标签',
+				href: '链接',
+				sourceLabel: '来源名称',
+				collection: '集合标识'
+			},
+			placeholders: {
+				tags: '设计, 站点, 进度',
+				href: 'https://… 或 /blog/…',
+				hrefOptional: '可选：https://… 或 /blog/…'
+			}
+		},
 		shell: {
 			eyebrow: 'Private Content Workbench',
 			title: 'Manage / {repo}',
@@ -475,6 +528,13 @@ export const zhCNMessages = {
 			manageRequestFailed: 'Manage 请求失败。',
 			postListLoadFailed: '文章列表加载失败。',
 			postLoadFailed: '文章内容加载失败。',
+			recordListLoadFailed: '记录列表加载失败。',
+			recordLoadFailed: '记录内容加载失败。',
+			recordNotFound: '记录不存在。',
+			duplicateRecordId: '记录标识已存在。',
+			invalidRecord: '仓库中的记录格式无效。',
+			invalidRecordKind: '不支持此记录类型。',
+			invalidRecordId: '记录标识无效。',
 			sessionInitFailed: '管理会话初始化失败。',
 			invalidContentType: '请求必须使用 multipart/form-data。',
 			missingPayload: '缺少 payload JSON 字段。',

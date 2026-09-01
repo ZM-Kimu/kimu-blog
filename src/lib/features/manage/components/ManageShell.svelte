@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import { page } from '$app/state'
+	import ManageContentNav from './ManageContentNav.svelte'
 
 	let { children }: { children: Snippet } = $props()
 </script>
@@ -9,6 +11,9 @@
 </svelte:head>
 
 <div class="manage-shell">
+	{#if page.url.pathname.startsWith('/manage')}
+		<ManageContentNav />
+	{/if}
 	{@render children()}
 </div>
 

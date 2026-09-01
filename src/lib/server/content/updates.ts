@@ -1,5 +1,5 @@
-import { updateEntries } from '$lib/content/updates'
 import type { UpdateGroup, UpdatesPageData } from '$lib/types/info-flow'
+import { getUpdateEntries } from './info-flow-records'
 
 function getGroupId(date: string) {
 	return date.slice(0, 7)
@@ -10,6 +10,7 @@ function getGroupLabel(date: string) {
 }
 
 export function getUpdatesPageData(): UpdatesPageData {
+	const updateEntries = getUpdateEntries()
 	const entries = [...updateEntries].sort((left, right) => right.date.localeCompare(left.date))
 	const groupMap = new Map<string, UpdateGroup>()
 

@@ -1,0 +1,10 @@
+{
+	"id": "archive-page",
+	"title": "完整归档",
+	"description": "当前站点的高效率文章浏览入口，用于沉淀全部内容记录。",
+	"href": "/blog/archive",
+	"kind": "article",
+	"sourceLabel": "Kimu Blog",
+	"collection": "site",
+	"added": "2026-07-08"
+}

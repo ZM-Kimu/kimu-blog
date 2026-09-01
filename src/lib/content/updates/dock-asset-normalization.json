@@ -1,0 +1,10 @@
+{
+	"id": "dock-asset-normalization",
+	"date": "2026-07-03",
+	"kind": "site",
+	"status": "shipped",
+	"title": "Dock 图标资源命名规范化",
+	"summary": "将标签、收藏、动态与归档的 dock 图标整理为统一命名，减少静态资源引用的歧义。",
+	"tags": ["assets", "dock", "naming"],
+	"href": "/"
+}

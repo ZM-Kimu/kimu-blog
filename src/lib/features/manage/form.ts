@@ -11,6 +11,39 @@ export function getTodayString() {
 	return local.toISOString().slice(0, 10)
 }
 
+export function createRecordId(value: string) {
+	const source = value.trim()
+	const normalized = source
+		.normalize('NFKD')
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/gu, '-')
+		.replace(/^-+|-+$/gu, '')
+		.slice(0, 96)
+
+	if (normalized || !source) {
+		return normalized
+	}
+
+	let hash = 2166136261
+	for (const character of source) {
+		hash ^= character.codePointAt(0) ?? 0
+		hash = Math.imul(hash, 16777619)
+	}
+
+	return `record-${(hash >>> 0).toString(36)}`
+}
+
+export function parseCommaSeparatedValues(value: string) {
+	return Array.from(
+		new Set(
+			value
+				.split(',')
+				.map((item) => item.trim())
+				.filter(Boolean)
+		)
+	)
+}
+
 function normalizeOptionalField(value: string) {
 	const normalized = value.trim()
 

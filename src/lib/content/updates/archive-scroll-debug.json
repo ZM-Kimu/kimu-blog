@@ -1,0 +1,10 @@
+{
+	"id": "archive-scroll-debug",
+	"date": "2026-07-11",
+	"kind": "work",
+	"status": "tracking",
+	"title": "归档底部选择滚动稳定性排查",
+	"summary": "继续跟踪 archive entry column 底部点击时的 reader rail 越界与布局跳动问题。",
+	"tags": ["archive", "scroll", "qa"],
+	"href": "/blog/archive"
+}

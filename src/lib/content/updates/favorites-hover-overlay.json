@@ -1,0 +1,10 @@
+{
+	"id": "favorites-hover-overlay",
+	"date": "2026-07-01",
+	"kind": "design",
+	"status": "shipped",
+	"title": "收藏卡片 hover 光效改造",
+	"summary": "收藏条目的 hover 从位移改为透明度驱动的渐变光效，保留全局按压缩放作为统一交互反馈。",
+	"tags": ["favorites", "hover", "motion"],
+	"href": "/favorites"
+}

@@ -323,6 +323,59 @@ export const enUSMessages = {
 		fallbackIllustration: 'Fallback illustration'
 	},
 	manage: {
+		nav: {
+			ariaLabel: 'Content management',
+			posts: 'Posts',
+			updates: 'Updates',
+			favorites: 'Favorites'
+		},
+		records: {
+			common: {
+				loading: 'Loading…',
+				retry: 'Retry',
+				save: 'Save',
+				delete: 'Delete',
+				committed: 'Committed {sha}',
+				confirm: {
+					create: 'Create and publish this record?',
+					edit: 'Save and publish the current changes?',
+					delete: 'Delete “{title}”? This will commit directly to the repository.'
+				}
+			},
+			updates: {
+				count: '{count} updates',
+				create: 'New update',
+				searchLabel: 'Search updates',
+				searchPlaceholder: 'Search title, content, tags, or ID…',
+				empty: 'No matching updates.'
+			},
+			favorites: {
+				count: '{count} favorites',
+				create: 'New favorite',
+				searchLabel: 'Search favorites',
+				searchPlaceholder: 'Search title, summary, source, or ID…',
+				empty: 'No matching favorites.'
+			},
+			fields: {
+				title: 'Title',
+				id: 'Record ID',
+				date: 'Publish date',
+				added: 'Saved date',
+				kind: 'Type',
+				status: 'Status',
+				summary: 'Content',
+				description: 'Summary',
+				tags: 'Tags',
+				href: 'Link',
+				sourceLabel: 'Source label',
+				collection: 'Collection ID'
+			},
+			placeholders: {
+				tags: 'design, site, progress',
+				href: 'https://… or /blog/…',
+				hrefOptional: 'Optional: https://… or /blog/…'
+			}
+		},
 		shell: {
 			eyebrow: 'Private Content Workbench',
 			title: 'Manage / {repo}',
@@ -485,6 +538,13 @@ export const enUSMessages = {
 			manageRequestFailed: 'Manage request failed.',
 			postListLoadFailed: 'Failed to load the post list.',
 			postLoadFailed: 'Failed to load the post content.',
+			recordListLoadFailed: 'Failed to load the record list.',
+			recordLoadFailed: 'Failed to load the record.',
+			recordNotFound: 'The record could not be found.',
+			duplicateRecordId: 'The record ID already exists.',
+			invalidRecord: 'A repository record is invalid.',
+			invalidRecordKind: 'This record type is not supported.',
+			invalidRecordId: 'The record ID is invalid.',
 			sessionInitFailed: 'Failed to initialize the manage session.',
 			invalidContentType: 'The request must use multipart/form-data.',
 			missingPayload: 'The payload JSON field is missing.',

@@ -195,8 +195,32 @@ function resolvePageTitle(
 				return t(messages, 'manage.editor.createTitle')
 			}
 
+			if (route.pathname === '/manage/updates/new') {
+				return t(messages, 'manage.records.updates.create')
+			}
+
+			if (route.pathname === '/manage/favorites/new') {
+				return t(messages, 'manage.records.favorites.create')
+			}
+
 			if (route.pathname.startsWith('/manage/posts/')) {
 				return decodeURIComponent(route.pathname.slice('/manage/posts/'.length))
+			}
+
+			if (route.pathname.startsWith('/manage/updates/')) {
+				return decodeURIComponent(route.pathname.slice('/manage/updates/'.length))
+			}
+
+			if (route.pathname.startsWith('/manage/favorites/')) {
+				return decodeURIComponent(route.pathname.slice('/manage/favorites/'.length))
+			}
+
+			if (route.pathname === '/manage/updates') {
+				return t(messages, 'manage.nav.updates')
+			}
+
+			if (route.pathname === '/manage/favorites') {
+				return t(messages, 'manage.nav.favorites')
 			}
 
 			return t(messages, 'manage.list.title')

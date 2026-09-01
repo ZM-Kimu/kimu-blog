@@ -1,0 +1,10 @@
+{
+	"id": "subpage-route-motion-audit",
+	"date": "2026-06-29",
+	"kind": "work",
+	"status": "tracking",
+	"title": "子页面进入退出动效审查",
+	"summary": "检查收藏、动态、标签等子页面的 route layer 动画是否完整保留 animation-name 与 duration。",
+	"tags": ["motion", "subpage", "qa"],
+	"href": "/favorites"
+}

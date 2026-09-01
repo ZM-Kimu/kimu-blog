@@ -1,4 +1,5 @@
 import type { PostFrontmatter } from '$lib/content/schema'
+import type { FavoriteEntry, UpdateEntry } from '$lib/types/info-flow'
 
 export type ManagedPostFormat = 'md' | 'svx'
 
@@ -65,4 +66,32 @@ export interface ManagePostWritePayload extends ManagePostFrontmatter {
 	expectedSha?: string
 	format?: ManagedPostFormat
 	source: string
+}
+
+export type ManageRecordKind = 'updates' | 'favorites'
+
+export interface ManageRecordDocument<TEntry> {
+	entry: TEntry
+	path: string
+	sha: string
+}
+
+export type ManageUpdateDocument = ManageRecordDocument<UpdateEntry>
+export type ManageFavoriteDocument = ManageRecordDocument<FavoriteEntry>
+
+export interface ManageRecordListResponse<TEntry> {
+	items: ManageRecordDocument<TEntry>[]
+}
+
+export type ManageUpdateListResponse = ManageRecordListResponse<UpdateEntry>
+export type ManageFavoriteListResponse = ManageRecordListResponse<FavoriteEntry>
+
+export type ManageUpdateWritePayload = UpdateEntry & { expectedSha?: string }
+export type ManageFavoriteWritePayload = FavoriteEntry & { expectedSha?: string }
+
+export interface ManageRecordWriteResponse {
+	commitSha: string
+	id: string
+	path: string
+	sha: string
 }

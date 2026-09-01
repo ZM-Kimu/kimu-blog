@@ -201,7 +201,7 @@
 											{:else}
 												<a
 													class="favorite-card"
-													href={resolve(item.href)}
+													href={resolve(item.href as `/${string}`)}
 													aria-label={t('favorites.openItem', { title: item.title })}
 												>
 													{@render favoriteCardContent(item)}

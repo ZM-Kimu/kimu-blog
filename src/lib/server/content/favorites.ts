@@ -1,5 +1,5 @@
-import { favoriteEntries } from '$lib/content/favorites'
 import type { FavoriteCollection, FavoritesPageData } from '$lib/types/info-flow'
+import { getFavoriteEntries } from './info-flow-records'
 
 const collectionMeta: Record<string, { title: string; description: string }> = {
 	engineering: {
@@ -17,6 +17,7 @@ const collectionMeta: Record<string, { title: string; description: string }> = {
 }
 
 export function getFavoritesPageData(): FavoritesPageData {
+	const favoriteEntries = getFavoriteEntries()
 	const entries = [...favoriteEntries].sort((left, right) => right.added.localeCompare(left.added))
 	const collectionMap = new Map<string, FavoriteCollection>()
 

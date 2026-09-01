@@ -316,6 +316,59 @@ export const appMessageSkeleton = {
 		fallbackIllustration: ''
 	},
 	manage: {
+		nav: {
+			ariaLabel: '',
+			posts: '',
+			updates: '',
+			favorites: ''
+		},
+		records: {
+			common: {
+				loading: '',
+				retry: '',
+				save: '',
+				delete: '',
+				committed: '',
+				confirm: {
+					create: '',
+					edit: '',
+					delete: ''
+				}
+			},
+			updates: {
+				count: '',
+				create: '',
+				searchLabel: '',
+				searchPlaceholder: '',
+				empty: ''
+			},
+			favorites: {
+				count: '',
+				create: '',
+				searchLabel: '',
+				searchPlaceholder: '',
+				empty: ''
+			},
+			fields: {
+				title: '',
+				id: '',
+				date: '',
+				added: '',
+				kind: '',
+				status: '',
+				summary: '',
+				description: '',
+				tags: '',
+				href: '',
+				sourceLabel: '',
+				collection: ''
+			},
+			placeholders: {
+				tags: '',
+				href: '',
+				hrefOptional: ''
+			}
+		},
 		shell: {
 			eyebrow: '',
 			title: '',
@@ -468,6 +521,13 @@ export const appMessageSkeleton = {
 			manageRequestFailed: '',
 			postListLoadFailed: '',
 			postLoadFailed: '',
+			recordListLoadFailed: '',
+			recordLoadFailed: '',
+			recordNotFound: '',
+			duplicateRecordId: '',
+			invalidRecord: '',
+			invalidRecordKind: '',
+			invalidRecordId: '',
 			sessionInitFailed: '',
 			invalidContentType: '',
 			missingPayload: '',

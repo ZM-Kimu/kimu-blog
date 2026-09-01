@@ -1,0 +1,10 @@
+{
+	"id": "article-dossier-polish",
+	"date": "2026-07-08",
+	"kind": "writing",
+	"status": "queued",
+	"title": "文章档案页视觉继续细化",
+	"summary": "下一轮会把文章详情页的 dossier 结构、相关记录和 metadata rail 继续统一到当前视觉语言。",
+	"tags": ["article", "dossier", "visual-system"],
+	"href": "/blog/archive"
+}

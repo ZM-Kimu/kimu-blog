@@ -1,0 +1,10 @@
+{
+	"id": "archive-category-key-test",
+	"date": "2026-06-25",
+	"kind": "work",
+	"status": "queued",
+	"title": "归档分类切换滚动复测",
+	"summary": "为归档页分类切换准备更长列表场景，复测底部起始位置下 viewport 是否发生瞬时越界。",
+	"tags": ["archive", "scroll", "test"],
+	"href": "/blog/archive"
+}

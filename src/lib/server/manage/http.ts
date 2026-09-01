@@ -2,6 +2,8 @@ import { json } from '@sveltejs/kit'
 import { z } from 'zod'
 
 import { postFrontmatterSchema } from '$lib/content/schema'
+import { favoriteEntrySchema, updateEntrySchema } from '$lib/content/info-flow-schema'
+import type { ManageRecordKind } from '$lib/features/manage/contracts'
 import { ManageError, isManageError } from '$lib/server/manage/errors'
 import type { ManageWritePayload } from '$lib/server/manage/types'
 
@@ -19,6 +21,11 @@ const updateWritePayloadSchema = baseWritePayloadSchema.extend({
 const deletePayloadSchema = z.object({
 	expectedSha: z.string().min(1, 'expectedSha 不能为空')
 })
+const recordKindSchema = z.enum(['updates', 'favorites'])
+const recordSchemas = {
+	updates: updateEntrySchema,
+	favorites: favoriteEntrySchema
+} as const
 
 function formatZodError(error: z.ZodError) {
 	return error.issues.map((issue) => ({
@@ -88,11 +95,66 @@ export async function parseDeletePayload(request: Request) {
 	return parsed.data
 }
 
+export async function parseManageRecordWritePayload(
+	request: Request,
+	kind: ManageRecordKind,
+	mode: 'create' | 'update'
+) {
+	let body: unknown
+
+	try {
+		body = await request.json()
+	} catch {
+		throw new ManageError(422, 'invalid_payload_json', 'Request body must be valid JSON')
+	}
+
+	const baseSchema = recordSchemas[kind]
+	const schema =
+		mode === 'update' ? baseSchema.and(z.object({ expectedSha: z.string().min(1) })) : baseSchema
+	const parsed = schema.safeParse(body)
+
+	if (!parsed.success) {
+		throw new ManageError(
+			422,
+			'invalid_payload',
+			'Record validation failed',
+			formatZodError(parsed.error)
+		)
+	}
+
+	return parsed.data
+}
+
 export function parseManageSlug(value: string) {
 	const parsed = slugSchema.safeParse(value)
 
 	if (!parsed.success) {
 		throw new ManageError(422, 'invalid_slug', 'slug 非法', formatZodError(parsed.error))
+	}
+
+	return parsed.data
+}
+
+export function parseManageRecordKind(value: string) {
+	const parsed = recordKindSchema.safeParse(value)
+
+	if (!parsed.success) {
+		throw new ManageError(422, 'invalid_record_kind', 'Unsupported record kind')
+	}
+
+	return parsed.data
+}
+
+export function parseManageRecordId(value: string) {
+	const parsed = slugSchema.safeParse(value)
+
+	if (!parsed.success) {
+		throw new ManageError(
+			422,
+			'invalid_record_id',
+			'Invalid record id',
+			formatZodError(parsed.error)
+		)
 	}
 
 	return parsed.data

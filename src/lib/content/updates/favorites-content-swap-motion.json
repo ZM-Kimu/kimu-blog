@@ -1,0 +1,10 @@
+{
+	"id": "favorites-content-swap-motion",
+	"date": "2026-06-27",
+	"kind": "design",
+	"status": "shipped",
+	"title": "收藏分类切换动效稳定",
+	"summary": "收藏列表分类切换使用透明度、轻位移与 blur，避免切换过程中卡片宽高被 outgoing panel 拉伸。",
+	"tags": ["favorites", "motion", "layout"],
+	"href": "/favorites"
+}

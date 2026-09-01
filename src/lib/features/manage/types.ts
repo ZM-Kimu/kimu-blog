@@ -1,5 +1,8 @@
 export type {
 	ManageAccessActor,
+	ManageFavoriteDocument,
+	ManageFavoriteListResponse,
+	ManageFavoriteWritePayload,
 	ManagePostDocument,
 	ManagePostFrontmatter,
 	ManagePostListItem,
@@ -7,7 +10,14 @@ export type {
 	ManagePostWritePayload,
 	ManagePostWriteResponse,
 	ManageRepositoryInfo,
+	ManageRecordDocument,
+	ManageRecordKind,
+	ManageRecordListResponse,
+	ManageRecordWriteResponse,
 	ManageSessionResponse,
+	ManageUpdateDocument,
+	ManageUpdateListResponse,
+	ManageUpdateWritePayload,
 	ManagedPostFormat
 } from './contracts'
 

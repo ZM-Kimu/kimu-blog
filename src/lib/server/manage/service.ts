@@ -10,3 +10,11 @@ export {
 	listManagedPosts,
 	updateManagedPost
 } from '$lib/server/manage/posts'
+
+export {
+	createManagedRecord,
+	deleteManagedRecord,
+	getManagedRecord,
+	listManagedRecords,
+	updateManagedRecord
+} from '$lib/server/manage/records'

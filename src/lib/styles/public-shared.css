@@ -130,6 +130,70 @@
 	background: rgb(255 255 255 / 68%);
 }
 
+.manage-record-form .manage-record-fields {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.9rem;
+}
+
+.manage-record-form .manage-record-fields label {
+	display: grid;
+	gap: 0.42rem;
+	min-width: 0;
+	color: var(--ink-soft);
+	font-size: 0.8rem;
+}
+
+.manage-record-form .manage-record-fields label > span {
+	font-family: var(--font-mono);
+	letter-spacing: 0.045em;
+}
+
+.manage-record-form .manage-record-fields .wide {
+	grid-column: 1 / -1;
+}
+
+.manage-record-form .manage-record-fields input,
+.manage-record-form .manage-record-fields textarea {
+	width: 100%;
+	min-width: 0;
+	border: 1px solid var(--line);
+	border-radius: 18px;
+	outline: none;
+	background: rgb(255 255 255 / 78%);
+	color: var(--ink);
+	font: inherit;
+	cursor: inherit;
+}
+
+.manage-record-form .manage-record-fields input {
+	height: 3.15rem;
+	padding: 0 1rem;
+}
+
+.manage-record-form .manage-record-fields textarea {
+	min-height: 7.5rem;
+	padding: 0.9rem 1rem;
+	line-height: 1.55;
+	resize: none;
+}
+
+.manage-record-form .manage-record-fields input:focus,
+.manage-record-form .manage-record-fields textarea:focus {
+	border-color: var(--line-strong);
+	box-shadow: 0 0 0 3px rgb(79 120 255 / 8%);
+}
+
+@media (width <= 720px) {
+	.manage-record-form .manage-record-fields {
+		grid-template-columns: 1fr;
+	}
+
+	.manage-record-form .manage-record-fields .wide {
+		grid-column: auto;
+	}
+}
+
 .manage-editor-scroll,
 .manage-editor-scroll-viewport,
 .manage-preview-scroll,

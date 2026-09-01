@@ -1,10 +1,18 @@
 import type {
 	ManageApiErrorPayload,
+	ManageFavoriteDocument,
+	ManageFavoriteListResponse,
+	ManageFavoriteWritePayload,
 	ManagePostDocument,
 	ManagePostListResponse,
 	ManagePostWritePayload,
 	ManagePostWriteResponse,
-	ManageSessionResponse
+	ManageRecordKind,
+	ManageRecordWriteResponse,
+	ManageSessionResponse,
+	ManageUpdateDocument,
+	ManageUpdateListResponse,
+	ManageUpdateWritePayload
 } from '$lib/features/manage/types'
 
 export class ManageApiError extends Error {
@@ -109,6 +117,100 @@ export async function deleteManagedPostRequest(
 ) {
 	return parseManageJson<ManagePostWriteResponse>(
 		await fetchImpl(`/api/manage/posts/${encodeURIComponent(slug)}`, {
+			body: JSON.stringify({ expectedSha }),
+			headers: {
+				'content-type': 'application/json',
+				'x-manage-csrf': csrfToken
+			},
+			method: 'DELETE'
+		})
+	)
+}
+
+type ManageRecordListByKind = {
+	favorites: ManageFavoriteListResponse
+	updates: ManageUpdateListResponse
+}
+
+type ManageRecordDocumentByKind = {
+	favorites: ManageFavoriteDocument
+	updates: ManageUpdateDocument
+}
+
+type ManageRecordPayloadByKind = {
+	favorites: ManageFavoriteWritePayload
+	updates: ManageUpdateWritePayload
+}
+
+export async function fetchManagedRecords<K extends ManageRecordKind>(
+	fetchImpl: typeof fetch,
+	kind: K
+) {
+	return parseManageJson<ManageRecordListByKind[K]>(await fetchImpl(`/api/manage/records/${kind}`))
+}
+
+export async function fetchManagedRecord<K extends ManageRecordKind>(
+	fetchImpl: typeof fetch,
+	kind: K,
+	id: string
+) {
+	return parseManageJson<ManageRecordDocumentByKind[K]>(
+		await fetchImpl(`/api/manage/records/${kind}/${encodeURIComponent(id)}`)
+	)
+}
+
+async function writeManagedRecord<K extends ManageRecordKind>(
+	fetchImpl: typeof fetch,
+	csrfToken: string,
+	kind: K,
+	id: string | null,
+	method: 'POST' | 'PUT',
+	payload: ManageRecordPayloadByKind[K]
+) {
+	const url = id
+		? `/api/manage/records/${kind}/${encodeURIComponent(id)}`
+		: `/api/manage/records/${kind}`
+
+	return parseManageJson<ManageRecordWriteResponse>(
+		await fetchImpl(url, {
+			body: JSON.stringify(payload),
+			headers: {
+				'content-type': 'application/json',
+				'x-manage-csrf': csrfToken
+			},
+			method
+		})
+	)
+}
+
+export function createManagedRecordRequest<K extends ManageRecordKind>(
+	fetchImpl: typeof fetch,
+	csrfToken: string,
+	kind: K,
+	payload: ManageRecordPayloadByKind[K]
+) {
+	return writeManagedRecord(fetchImpl, csrfToken, kind, null, 'POST', payload)
+}
+
+export function updateManagedRecordRequest<K extends ManageRecordKind>(
+	fetchImpl: typeof fetch,
+	csrfToken: string,
+	kind: K,
+	id: string,
+	payload: ManageRecordPayloadByKind[K]
+) {
+	return writeManagedRecord(fetchImpl, csrfToken, kind, id, 'PUT', payload)
+}
+
+export async function deleteManagedRecordRequest(
+	fetchImpl: typeof fetch,
+	csrfToken: string,
+	kind: ManageRecordKind,
+	id: string,
+	expectedSha: string
+) {
+	return parseManageJson<ManageRecordWriteResponse>(
+		await fetchImpl(`/api/manage/records/${kind}/${encodeURIComponent(id)}`, {
 			body: JSON.stringify({ expectedSha }),
 			headers: {
 				'content-type': 'application/json',
