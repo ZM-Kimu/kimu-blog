@@ -335,6 +335,12 @@
 		text-align: left;
 	}
 
+	.manage-select-rename-form button {
+		display: grid;
+		place-items: center;
+		padding: 0;
+	}
+
 	.manage-select-options > button[aria-selected='true'],
 	.manage-select-option-row.active {
 		background: rgb(79 120 255 / 10%);
@@ -375,12 +381,6 @@
 	.manage-select-rename-form input {
 		height: 2.65rem;
 		border-radius: 10px;
-	}
-
-	.manage-select-rename-form button {
-		display: grid;
-		place-items: center;
-		padding: 0;
 	}
 
 	.manage-select-rename-form svg {
