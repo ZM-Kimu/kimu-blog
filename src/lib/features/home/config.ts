@@ -9,5 +9,5 @@ export const homeDockItems = [
 	{ href: '/blog/archive', labelKey: 'shell.section.dossier', accent: 'archive' },
 	{ href: '/updates', labelKey: 'nav.updates', accent: 'live' },
 	{ href: '/favorites', labelKey: 'nav.favorites', accent: 'vault' },
-	{ href: '/tags/engineering', labelKey: 'nav.tags', accent: 'tags' }
+	{ href: '/blog', labelKey: 'nav.blog', accent: 'tags' }
 ] as const

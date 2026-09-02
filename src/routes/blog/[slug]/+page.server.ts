@@ -8,11 +8,12 @@ import {
 import { error } from '@sveltejs/kit'
 
 const postModules = import.meta.glob('/src/lib/content/blog/*.{md,svx}')
+const postEntries = getPostEntries()
 
-export const prerender = true
+export const prerender = postEntries.length > 0
 
 export function entries() {
-	return getPostEntries()
+	return postEntries
 }
 
 export function load({ params }) {
