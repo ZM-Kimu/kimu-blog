@@ -152,13 +152,6 @@
 					</button>
 				{/each}
 			</div>
-
-			<div class="info-flow-band-side" aria-label={t('favorites.summaryAria')}>
-				<div class="info-flow-stat">
-					<span>{t('favorites.totalLabel')}</span>
-					<strong>{data.totalEntries}</strong>
-				</div>
-			</div>
 		</header>
 
 		<div class="info-flow-stage favorites-stage">
@@ -202,7 +195,6 @@
 								</div>
 							{:else}
 								<div class="info-flow-empty">
-									<h2>{t('favorites.emptyTitle')}</h2>
 									<p>{t('favorites.emptyDescription')}</p>
 								</div>
 							{/if}

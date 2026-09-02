@@ -358,6 +358,8 @@ export const appMessageSkeleton = {
 			createProject: '',
 			createSeries: '',
 			rename: '',
+			renameSave: '',
+			renameCancel: '',
 			confirmRename: ''
 		},
 		shell: {
@@ -410,7 +412,10 @@ export const appMessageSkeleton = {
 			},
 			slugStatus: {
 				checking: '',
-				available: ''
+				available: '',
+				invalid: '',
+				duplicate: '',
+				unavailable: ''
 			},
 			fields: {
 				title: '',

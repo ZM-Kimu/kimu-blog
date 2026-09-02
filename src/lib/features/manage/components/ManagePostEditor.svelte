@@ -29,6 +29,7 @@
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import ManageFormatSelect from '$lib/features/manage/components/ManageFormatSelect.svelte'
 	import ManageGroupSelect from '$lib/features/manage/components/ManageGroupSelect.svelte'
+	import ManageIdentifierField from '$lib/features/manage/components/ManageIdentifierField.svelte'
 	import ManagePreviewPane from '$lib/features/manage/components/ManagePreviewPane.svelte'
 	import { translate } from '$lib/i18n'
 
@@ -147,18 +148,22 @@
 	const effectiveSubmitting = $derived(debugMode ? debugSubmitting : isSubmitting)
 	const editorDisabled = $derived(debugDisabled || effectiveSubmitting)
 	const effectivePreviewVisible = $derived(previewVisible && (!debugMode || debugPreviewVisible))
+	const slugStatus = $derived.by(() => {
+		if (!form.slug) return titleEdited ? ('invalid' as const) : ('idle' as const)
+		if (slugIndexLoading) return 'checking' as const
+		if (!titleEdited || slugIndexReady) return 'available' as const
+		return 'invalid' as const
+	})
 	const slugStatusText = $derived(
-		titleEdited && form.slug
-			? slugIndexLoading
-				? t('manage.editor.slugStatus.checking')
-				: slugIndexReady
-					? t('manage.editor.slugStatus.available')
+		slugStatus === 'checking'
+			? t('manage.editor.slugStatus.checking')
+			: slugStatus === 'available'
+				? t('manage.editor.slugStatus.available')
+				: slugStatus === 'invalid'
+					? form.slug
+						? t('manage.editor.slugStatus.unavailable')
+						: t('manage.editor.slugStatus.invalid')
 					: ''
-			: ''
-	)
-	const slugChecking = $derived(Boolean(titleEdited && form.slug && slugIndexLoading))
-	const slugAvailable = $derived(
-		Boolean(titleEdited && form.slug && slugIndexReady && !slugIndexLoading)
 	)
 
 	function hashSlugSource(value: string) {
@@ -417,6 +422,12 @@
 			return
 		}
 
+		if (slugStatus !== 'available') {
+			titleEdited = true
+			errorMessage = slugStatusText || t('manage.editor.slugStatus.invalid')
+			return
+		}
+
 		const confirmKey =
 			mode === 'create'
 				? 'manage.editor.confirmSubmit.create'
@@ -600,39 +611,15 @@
 									/>
 								</label>
 
-								<label>
-									<span>{t('manage.editor.fields.slug')}</span>
-									<div class="manage-editor-input-status-wrap">
-										<input
-											aria-describedby="manage-editor-slug-status"
-											disabled={editorDisabled}
-											readonly
-											required
-											type="text"
-											value={form.slug}
-										/>
-										{#if slugChecking}
-											<span
-												aria-hidden="true"
-												class="manage-editor-slug-indicator"
-												data-state="checking"
-											></span>
-										{:else if slugAvailable}
-											<span
-												aria-hidden="true"
-												class="manage-editor-slug-indicator"
-												data-state="available"
-											>
-												<svg viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" /></svg>
-											</span>
-										{/if}
-									</div>
-									<span
-										aria-live="polite"
-										class="manage-editor-visually-hidden"
-										id="manage-editor-slug-status">{slugStatusText}</span
-									>
-								</label>
+								<ManageIdentifierField
+									bind:value={form.slug}
+									disabled={editorDisabled}
+									fieldId="manage-editor-slug"
+									label={t('manage.editor.fields.slug')}
+									readonly
+									status={slugStatus}
+									statusText={slugStatusText}
+								/>
 
 								<label class="manage-editor-field-wide">
 									<span>{t('manage.editor.fields.description')}</span>
@@ -681,7 +668,9 @@
 										label={t('manage.editor.fields.series')}
 										noneLabel={t('manage.groups.none')}
 										onrename={handleRenameSeries}
+										renameCancelLabel={t('manage.groups.renameCancel')}
 										renameLabel={t('manage.groups.rename')}
+										renameSaveLabel={t('manage.groups.renameSave')}
 									/>
 								</div>
 
@@ -720,6 +709,7 @@
 										bind:value={form.cover}
 										disabled={editorDisabled}
 										placeholder={t('manage.editor.placeholders.cover')}
+										readonly
 										type="text"
 									/>
 								</label>
@@ -1055,59 +1045,6 @@
 
 	.manage-editor-fields input[readonly] {
 		background: rgb(240 246 253 / 78%);
-	}
-
-	.manage-editor-input-status-wrap {
-		position: relative;
-	}
-
-	.manage-editor-input-status-wrap input {
-		width: 100%;
-		padding-inline-end: 3rem;
-	}
-
-	.manage-editor-slug-indicator {
-		position: absolute;
-		top: 50%;
-		right: 1rem;
-		display: grid;
-		place-items: center;
-		width: 1.35rem;
-		height: 1.35rem;
-		border-radius: 50%;
-		transform: translateY(-50%);
-	}
-
-	.manage-editor-slug-indicator[data-state='checking'] {
-		border: 2px solid rgb(79 120 255 / 20%);
-		border-top-color: rgb(79 120 255 / 62%);
-	}
-
-	.manage-editor-slug-indicator[data-state='available'] {
-		background: rgb(11 184 135 / 12%);
-		color: #087458;
-	}
-
-	.manage-editor-slug-indicator svg {
-		width: 0.9rem;
-		height: 0.9rem;
-		fill: none;
-		stroke: currentcolor;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-		stroke-width: 2.4;
-	}
-
-	.manage-editor-visually-hidden {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
-		border: 0;
 	}
 
 	.manage-editor-field-wide {

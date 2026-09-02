@@ -16,6 +16,7 @@ import {
 	type ManageRepositoryBaseContext
 } from '$lib/server/manage/repository'
 import type { RepositoryManagedGroup } from '$lib/server/manage/types'
+import { serializeManagedJson } from '$lib/server/manage/json'
 
 const descriptors = {
 	projects: {
@@ -39,7 +40,7 @@ export function buildManagedGroupPath(kind: ManageGroupKind, id: string) {
 }
 
 export function serializeManagedGroup(group: UpdateProject | BlogSeries) {
-	return `${JSON.stringify(group, null, 2)}\n`
+	return serializeManagedJson(group)
 }
 
 export async function loadRepositoryGroups(

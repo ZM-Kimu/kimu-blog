@@ -4,6 +4,8 @@ import type {
 	ManagePostWritePayload
 } from '$lib/features/manage/types'
 
+const recordIdPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
 export function getTodayString() {
 	const now = new Date()
 	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
@@ -31,6 +33,10 @@ export function createRecordId(value: string) {
 	}
 
 	return `record-${(hash >>> 0).toString(36)}`
+}
+
+export function isValidRecordId(value: string) {
+	return recordIdPattern.test(value)
 }
 
 export function parseCommaSeparatedValues(value: string) {

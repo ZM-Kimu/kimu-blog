@@ -64,7 +64,6 @@
 					</div>
 				{:else}
 					<div class="info-flow-empty">
-						<h2>{t('updates.emptyTitle')}</h2>
 						<p>{t('updates.emptyDescription')}</p>
 					</div>
 				{/if}

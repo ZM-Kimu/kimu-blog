@@ -6,6 +6,7 @@
 		createManagedRecordRequest,
 		deleteManagedRecordRequest,
 		fetchManagedGroups,
+		fetchManagedRecords,
 		ManageApiError,
 		renameManagedGroupRequest,
 		updateManagedRecordRequest
@@ -14,6 +15,7 @@
 	import {
 		createRecordId,
 		getTodayString,
+		isValidRecordId,
 		parseCommaSeparatedValues
 	} from '$lib/features/manage/form'
 	import type {
@@ -24,6 +26,7 @@
 	import { translate } from '$lib/i18n'
 	import { onMount } from 'svelte'
 	import ManageGroupSelect from './ManageGroupSelect.svelte'
+	import ManageIdentifierField from './ManageIdentifierField.svelte'
 	import ManageRecordForm from './ManageRecordForm.svelte'
 
 	type EditorMode = 'create' | 'edit'
@@ -57,16 +60,16 @@
 	let statusMessage = $state('')
 	let errorMessage = $state('')
 	let projects = $state<ManageGroupDocument[]>([])
+	let knownIds = $state<Set<string>>(new Set())
+	let idIndexLoading = $state(true)
+	let idIndexReady = $state(false)
 	const messages = $derived(page.data.i18n?.messages)
 	const t = (key: string, params?: Record<string, string | number>) =>
 		translate(messages, key, params)
 
-	onMount(async () => {
-		try {
-			projects = (await fetchManagedGroups(fetch, 'projects')).items
-		} catch (cause) {
-			errorMessage = friendlyError(cause)
-		}
+	onMount(() => {
+		void loadProjects()
+		void loadKnownIds()
 	})
 
 	$effect(() => {
@@ -84,6 +87,50 @@
 		form.title = (event.currentTarget as HTMLInputElement).value
 		if (!idWasEdited) form.id = createRecordId(form.title)
 	}
+
+	async function loadProjects() {
+		try {
+			projects = (await fetchManagedGroups(fetch, 'projects')).items
+		} catch (cause) {
+			errorMessage = friendlyError(cause)
+		}
+	}
+
+	async function loadKnownIds() {
+		idIndexLoading = true
+		try {
+			const response = await fetchManagedRecords(fetch, 'updates')
+			knownIds = new Set(response.items.map((item) => item.entry.id))
+			idIndexReady = true
+		} catch (cause) {
+			idIndexReady = false
+			errorMessage = friendlyError(cause)
+		} finally {
+			idIndexLoading = false
+		}
+	}
+
+	const idIsDuplicate = $derived(Boolean(form.id && form.id !== currentId && knownIds.has(form.id)))
+	const idStatus = $derived.by(() => {
+		if (!form.id) return idWasEdited ? ('invalid' as const) : ('idle' as const)
+		if (!isValidRecordId(form.id)) return 'invalid' as const
+		if (idIndexLoading) return 'checking' as const
+		if (!idIndexReady || idIsDuplicate) return 'invalid' as const
+		return 'available' as const
+	})
+	const idStatusText = $derived(
+		idStatus === 'checking'
+			? t('manage.editor.slugStatus.checking')
+			: idStatus === 'available'
+				? t('manage.editor.slugStatus.available')
+				: idStatus === 'invalid'
+					? idIsDuplicate
+						? t('manage.editor.slugStatus.duplicate')
+						: form.id && !idIndexReady && !idIndexLoading
+							? t('manage.editor.slugStatus.unavailable')
+							: t('manage.editor.slugStatus.invalid')
+					: ''
+	)
 
 	function toPayload(): ManageUpdateWritePayload {
 		return {
@@ -131,6 +178,11 @@
 
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault()
+		if (idStatus !== 'available') {
+			idWasEdited = true
+			errorMessage = idStatusText || t('manage.editor.slugStatus.invalid')
+			return
+		}
 		if (!window.confirm(t(`manage.records.common.confirm.${mode}`))) return
 
 		isSubmitting = true
@@ -190,16 +242,14 @@
 			<span>{t('manage.records.fields.title')}</span>
 			<input maxlength="160" oninput={handleTitleInput} required value={form.title} />
 		</label>
-		<label>
-			<span>{t('manage.records.fields.id')}</span>
-			<input
-				bind:value={form.id}
-				maxlength="96"
-				oninput={() => (idWasEdited = true)}
-				pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-				required
-			/>
-		</label>
+		<ManageIdentifierField
+			bind:value={form.id}
+			fieldId="manage-update-id"
+			label={t('manage.records.fields.id')}
+			oninput={() => (idWasEdited = true)}
+			status={idStatus}
+			statusText={idStatusText}
+		/>
 		<label>
 			<span>{t('manage.records.fields.date')}</span>
 			<input bind:value={form.date} required type="date" />
@@ -214,7 +264,9 @@
 				label={t('manage.records.fields.project')}
 				noneLabel={t('manage.groups.none')}
 				onrename={handleRenameProject}
+				renameCancelLabel={t('manage.groups.renameCancel')}
 				renameLabel={t('manage.groups.rename')}
+				renameSaveLabel={t('manage.groups.renameSave')}
 			/>
 		</div>
 		{#if form.projectId}

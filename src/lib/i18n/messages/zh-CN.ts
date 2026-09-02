@@ -357,6 +357,8 @@ export const zhCNMessages = {
 			createProject: '创建项目',
 			createSeries: '创建系列',
 			rename: '重命名',
+			renameSave: '保存新名称',
+			renameCancel: '取消重命名',
 			confirmRename: '确认将“{name}”改名为“{next}”？这会直接提交到仓库。'
 		},
 		shell: {
@@ -409,7 +411,10 @@ export const zhCNMessages = {
 			},
 			slugStatus: {
 				checking: '正在检查路径…',
-				available: '路径可用'
+				available: '路径可用',
+				invalid: '路径标识格式无效',
+				duplicate: '路径标识已存在',
+				unavailable: '暂时无法检查路径，请稍后重试'
 			},
 			fields: {
 				title: '标题',
@@ -429,7 +434,7 @@ export const zhCNMessages = {
 				category: '技术 / 随笔',
 				readingTime: '6 分钟',
 				tags: 'svelte, cloudflare, 开发日志',
-				cover: '/images/... 或 upload://file.png'
+				cover: '请从内容设置中设置封面'
 			},
 			toggles: {
 				draft: '草稿',

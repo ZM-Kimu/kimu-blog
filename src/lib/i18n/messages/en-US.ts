@@ -364,6 +364,8 @@ export const enUSMessages = {
 			createProject: 'Create project',
 			createSeries: 'Create series',
 			rename: 'Rename',
+			renameSave: 'Save new name',
+			renameCancel: 'Cancel rename',
 			confirmRename: 'Rename “{name}” to “{next}”? This will commit directly to the repository.'
 		},
 		shell: {
@@ -416,7 +418,10 @@ export const enUSMessages = {
 			},
 			slugStatus: {
 				checking: 'Checking path…',
-				available: 'Path available'
+				available: 'Path available',
+				invalid: 'The path identifier format is invalid',
+				duplicate: 'The path identifier already exists',
+				unavailable: 'The path cannot be checked right now; try again shortly'
 			},
 			fields: {
 				title: 'Title',
@@ -436,7 +441,7 @@ export const enUSMessages = {
 				category: 'Engineering / Notes',
 				readingTime: '6 min',
 				tags: 'svelte, cloudflare, devlog',
-				cover: '/images/... or upload://file.png'
+				cover: 'Set the cover from Content settings'
 			},
 			toggles: {
 				draft: 'Draft',

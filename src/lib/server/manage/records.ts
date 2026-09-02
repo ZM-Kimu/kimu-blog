@@ -26,6 +26,7 @@ import {
 	loadRepositoryGroups,
 	serializeManagedGroup
 } from '$lib/server/manage/groups'
+import { serializeManagedJson } from '$lib/server/manage/json'
 
 const recordDescriptors = {
 	updates: {
@@ -202,7 +203,7 @@ async function buildProjectChanges(
 }
 
 function serializeRecord(entry: ManageRecordEntry) {
-	return `${JSON.stringify(entry, null, 2)}\n`
+	return serializeManagedJson(entry)
 }
 
 function findRecord(records: RepositoryManagedRecord[], id: string) {

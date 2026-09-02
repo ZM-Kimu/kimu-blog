@@ -310,7 +310,8 @@ export function createPageState({
 				actions: createDefaultSubpageActions(messages),
 				back: {
 					kind: 'history',
-					fallbackHref: '/'
+					fallbackHref: '/',
+					skipRouteKinds: ['manage']
 				},
 				motionPolicy: 'reduced'
 			}
