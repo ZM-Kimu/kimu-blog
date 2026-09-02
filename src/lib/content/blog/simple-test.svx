@@ -1,0 +1,18 @@
+---
+title: simple-test
+description: 就是一个测试而已
+date: 2026-09-02
+updated: 2026-09-02
+tags: []
+category: 测试
+draft: false
+cover: /images/posts/simple-test/20260902-075905-00-default-cover-03-candidate-01.png
+slug: simple-test
+featured: false
+author: Kimu
+seriesId: group-1blp8dp
+toc: false
+---
+
+![image](/images/posts/simple-test/20260902-075905-00-default-cover-03-candidate-01.png)
+哎哟我滴妈
