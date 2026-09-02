@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { browser } from '$app/environment'
+	import { resolve } from '$app/paths'
 	import type { AppLocale } from '$lib/i18n/config'
 	import { msToSeconds } from '$lib/motion/tokens'
-	import type { BlogPost } from '$lib/types/content'
+	import type { BlogPost, BlogSeriesNavigation } from '$lib/types/content'
 	import { formatDate } from '$lib/utils/date'
 	import { onDestroy, tick, untrack } from 'svelte'
 
@@ -19,6 +20,7 @@
 
 	let {
 		post,
+		seriesNavigation,
 		transitionKey,
 		locale,
 		metadataTitle,
@@ -26,15 +28,20 @@
 		descriptionLabel,
 		publishedAtLabel,
 		updatedAtLabel,
+		seriesLabel,
+		newerLabel,
+		olderLabel,
 		uncategorizedLabel,
 		textOutDurationMs,
 		textInDurationMs,
 		layoutDurationMs,
 		tagCollapsedScaleX,
 		reducedMotion,
-		motionEnabled
+		motionEnabled,
+		onSelectPost
 	}: {
 		post: BlogPost
+		seriesNavigation: BlogSeriesNavigation | null
 		transitionKey: string
 		locale?: AppLocale
 		metadataTitle: string
@@ -42,6 +49,9 @@
 		descriptionLabel: string
 		publishedAtLabel: string
 		updatedAtLabel: string
+		seriesLabel: string
+		newerLabel: string
+		olderLabel: string
 		uncategorizedLabel: string
 		textOutDurationMs: number
 		textInDurationMs: number
@@ -49,6 +59,7 @@
 		tagCollapsedScaleX: number
 		reducedMotion: boolean
 		motionEnabled: boolean
+		onSelectPost: (post: BlogPost, event: MouseEvent) => void
 	} = $props()
 
 	let root: HTMLElement | null = $state(null)
@@ -260,7 +271,34 @@
 					<dt>{updatedAtLabel}</dt>
 					<dd><span class="post-aside-value">{formatDate(post.updated, locale)}</span></dd>
 				</div>
+				{#if seriesNavigation}
+					<div class="post-aside-fact" data-flip-id="post-aside-series" data-post-aside-flip>
+						<dt>{seriesLabel}</dt>
+						<dd><span class="post-aside-value">{seriesNavigation.series.name}</span></dd>
+					</div>
+				{/if}
 			</dl>
+
+			{#if seriesNavigation && (seriesNavigation.newer || seriesNavigation.older)}
+				<nav class="post-aside-series-nav" aria-label={seriesNavigation.series.name}>
+					{#if seriesNavigation.newer}
+						<a
+							href={resolve(seriesNavigation.newer.permalink)}
+							onclick={(event) => onSelectPost(seriesNavigation.newer!, event)}
+						>
+							<span>{newerLabel}</span><strong>{seriesNavigation.newer.title}</strong>
+						</a>
+					{/if}
+					{#if seriesNavigation.older}
+						<a
+							href={resolve(seriesNavigation.older.permalink)}
+							onclick={(event) => onSelectPost(seriesNavigation.older!, event)}
+						>
+							<span>{olderLabel}</span><strong>{seriesNavigation.older.title}</strong>
+						</a>
+					{/if}
+				</nav>
+			{/if}
 
 			<div class="post-aside-tag-block" data-flip-id="post-aside-tag-block" data-post-aside-flip>
 				<div class="post-aside-tags" data-flip-id="post-aside-tags" data-post-aside-flip>

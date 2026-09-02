@@ -2,7 +2,7 @@
 	import { page } from '$app/state'
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import { translate } from '$lib/i18n'
-	import type { UpdateKind, UpdateStatus, UpdatesPageData } from '$lib/types/info-flow'
+	import type { UpdatesPageData } from '$lib/types/info-flow'
 	import { formatDate } from '$lib/utils/date'
 
 	let { data }: { data: UpdatesPageData } = $props()
@@ -14,14 +14,6 @@
 	const latestDateLabel = $derived(
 		data.latestDate ? formatDate(data.latestDate, locale) : t('updates.emptyTitle')
 	)
-
-	function kindLabel(kind: UpdateKind) {
-		return t(`updates.kind.${kind}`)
-	}
-
-	function statusLabel(status: UpdateStatus) {
-		return t(`updates.status.${status}`)
-	}
 </script>
 
 <section class="info-flow-screen updates-screen">
@@ -52,15 +44,13 @@
 								<div class="updates-group-list">
 									{#each group.entries as entry (entry.id)}
 										<article class="updates-card">
-											<div
-												class="updates-card-marker"
-												data-update-status={entry.status}
-												aria-hidden="true"
-											></div>
+											<div class="updates-card-marker" aria-hidden="true"></div>
 											<div class="updates-card-main">
 												<div class="info-flow-card-hud">
-													<span>{kindLabel(entry.kind)}</span>
-													<span>{statusLabel(entry.status)}</span>
+													{#if entry.project && entry.projectName}
+														<span>{entry.projectName}</span>
+														<span>{entry.project.progress}%</span>
+													{/if}
 													<time datetime={entry.date}>{formatDate(entry.date, locale)}</time>
 												</div>
 												<h2>{entry.title}</h2>

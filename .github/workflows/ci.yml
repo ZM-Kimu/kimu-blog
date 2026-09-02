@@ -6,6 +6,8 @@ on:
       - 'src/lib/content/blog/**'
       - 'src/lib/content/updates/**'
       - 'src/lib/content/favorites/**'
+      - 'src/lib/content/update-projects/**'
+      - 'src/lib/content/blog-series/**'
       - 'static/images/posts/**'
   push:
     branches:
@@ -15,6 +17,8 @@ on:
       - 'src/lib/content/blog/**'
       - 'src/lib/content/updates/**'
       - 'src/lib/content/favorites/**'
+      - 'src/lib/content/update-projects/**'
+      - 'src/lib/content/blog-series/**'
       - 'static/images/posts/**'
 
 concurrency:

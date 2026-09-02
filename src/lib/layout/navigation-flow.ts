@@ -104,7 +104,9 @@ export function prepareNavigationTransition(args: {
 		args.pageState.route.kind === 'post' && targetRouteState.kind === 'post'
 	const isIntraTagNavigation =
 		args.pageState.route.kind === 'tag' && targetRouteState.kind === 'tag'
-	if (isIntraPostNavigation || isIntraTagNavigation) {
+	const isIntraManageNavigation =
+		args.pageState.route.kind === 'manage' && targetRouteState.kind === 'manage'
+	if (isIntraPostNavigation || isIntraTagNavigation || isIntraManageNavigation) {
 		return null
 	}
 

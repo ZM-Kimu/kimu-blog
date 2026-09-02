@@ -229,6 +229,9 @@ export const zhCNMessages = {
 			listEyebrow: 'Article Index',
 			listTitle: '文章列表',
 			descriptionLabel: '简介',
+			seriesLabel: '系列',
+			seriesNewer: '上一篇',
+			seriesOlder: '下一篇',
 			asideEyebrow: 'content 无关内容',
 			statusFeatured: '精选',
 			statusPublished: '已发布',
@@ -264,41 +267,22 @@ export const zhCNMessages = {
 		summaryAria: '动态概览',
 		totalLabel: '总动态',
 		latestLabel: '最近更新',
-		filtersLabel: '动态类型筛选',
 		feedAria: '动态时间线',
 		openItem: '打开动态：{title}',
 		openLabel: '进入',
 		emptyTitle: '暂无动态',
-		emptyDescription: '当前筛选条件下没有动态记录。',
-		kind: {
-			site: '站点',
-			writing: '写作',
-			design: '设计',
-			work: '任务'
-		},
-		status: {
-			live: '进行中',
-			shipped: '已完成',
-			tracking: '跟踪中',
-			queued: '排队'
-		}
+		emptyDescription: '还没有发布任何动态记录。'
 	},
 	favorites: {
 		title: '收藏',
-		description: '收藏文章、工具、外部参考与站内入口会按精选和分组收藏板的方式沉淀在这里。',
+		description: '收藏内容按标签整理，便于快速回访文章、工具、外部参考与站内入口。',
 		summaryAria: '收藏概览',
 		totalLabel: '总收藏',
-		filtersLabel: '收藏分类筛选',
-		collectionsAria: '收藏分组',
+		filtersLabel: '收藏标签筛选',
+		collectionsAria: '收藏标签',
 		openItem: '打开收藏：{title}',
 		emptyTitle: '暂无收藏',
-		emptyDescription: '当前筛选条件下没有收藏条目。',
-		kind: {
-			article: '文章',
-			tool: '工具',
-			reference: '参考',
-			site: '站点'
-		}
+		emptyDescription: '当前标签下没有收藏条目。'
 	},
 	error: {
 		title: '错误',
@@ -353,20 +337,27 @@ export const zhCNMessages = {
 				id: '记录标识',
 				date: '发布日期',
 				added: '收藏日期',
-				kind: '类型',
-				status: '状态',
+				project: '项目',
+				progress: '项目进度',
 				summary: '内容',
 				description: '简介',
 				tags: '标签',
 				href: '链接',
-				sourceLabel: '来源名称',
-				collection: '集合标识'
+				sourceLabel: '来源名称'
 			},
 			placeholders: {
 				tags: '设计, 站点, 进度',
 				href: 'https://… 或 /blog/…',
-				hrefOptional: '可选：https://… 或 /blog/…'
+				hrefOptional: '可选：https://… 或 /blog/…',
+				favoriteTags: '输入标签，按 Enter 创建'
 			}
+		},
+		groups: {
+			none: '不加入分组',
+			createProject: '创建项目',
+			createSeries: '创建系列',
+			rename: '重命名',
+			confirmRename: '确认将“{name}”改名为“{next}”？这会直接提交到仓库。'
 		},
 		shell: {
 			eyebrow: 'Private Content Workbench',
@@ -430,7 +421,6 @@ export const zhCNMessages = {
 				author: '作者',
 				series: '系列',
 				readingTime: '阅读时长',
-				canonical: '规范链接',
 				format: '格式',
 				tags: '标签',
 				cover: '封面'
@@ -438,7 +428,6 @@ export const zhCNMessages = {
 			placeholders: {
 				category: '技术 / 随笔',
 				readingTime: '6 分钟',
-				canonical: 'https://...',
 				tags: 'svelte, cloudflare, 开发日志',
 				cover: '/images/... 或 upload://file.png'
 			},
@@ -535,6 +524,14 @@ export const zhCNMessages = {
 			invalidRecord: '仓库中的记录格式无效。',
 			invalidRecordKind: '不支持此记录类型。',
 			invalidRecordId: '记录标识无效。',
+			invalidGroup: '仓库中的分组格式无效。',
+			invalidGroupId: '分组标识无效。',
+			invalidGroupKind: '不支持此分组类型。',
+			invalidGroupName: '分组名称无效。',
+			groupNotFound: '分组不存在。',
+			duplicateGroupName: '已存在同名分组。',
+			duplicateGroupId: '自动生成的分组标识已被占用，请调整名称。',
+			missingGroupName: '创建分组时必须提供名称。',
 			sessionInitFailed: '管理会话初始化失败。',
 			invalidContentType: '请求必须使用 multipart/form-data。',
 			missingPayload: '缺少 payload JSON 字段。',

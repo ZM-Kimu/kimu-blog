@@ -136,7 +136,7 @@
 	gap: 0.9rem;
 }
 
-.manage-record-form .manage-record-fields label {
+.manage-record-form .manage-record-fields :where(label, .manage-record-field) {
 	display: grid;
 	gap: 0.42rem;
 	min-width: 0;
@@ -144,7 +144,7 @@
 	font-size: 0.8rem;
 }
 
-.manage-record-form .manage-record-fields label > span {
+.manage-record-form .manage-record-fields :where(label, .manage-record-field) > span {
 	font-family: var(--font-mono);
 	letter-spacing: 0.045em;
 }

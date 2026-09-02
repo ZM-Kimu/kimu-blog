@@ -7,8 +7,10 @@
 	import {
 		createManagedPostRequest,
 		deleteManagedPostRequest,
+		fetchManagedGroups,
 		fetchManagedPostList,
 		ManageApiError,
+		renameManagedGroupRequest,
 		updateManagedPostRequest
 	} from '$lib/features/manage/api'
 	import {
@@ -19,9 +21,14 @@
 	} from '$lib/features/manage/form'
 	import { resolveManageErrorMessage } from '$lib/features/manage/copy'
 	import { renderManagePreviewHtml } from '$lib/features/manage/preview'
-	import type { ManagePostDocument, ManagePostFormState } from '$lib/features/manage/types'
+	import type {
+		ManageGroupDocument,
+		ManagePostDocument,
+		ManagePostFormState
+	} from '$lib/features/manage/types'
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import ManageFormatSelect from '$lib/features/manage/components/ManageFormatSelect.svelte'
+	import ManageGroupSelect from '$lib/features/manage/components/ManageGroupSelect.svelte'
 	import ManagePreviewPane from '$lib/features/manage/components/ManagePreviewPane.svelte'
 	import { translate } from '$lib/i18n'
 
@@ -66,6 +73,7 @@
 	let activeEditorTab = $state<EditorTab>('information')
 	let previewVisible = $state(true)
 	let knownSlugs = $state<Set<string>>(new Set())
+	let seriesItems = $state<ManageGroupDocument[]>([])
 	let slugIndexLoading = $state(false)
 	let slugIndexReady = $state(false)
 	let titleEdited = $state(false)
@@ -235,8 +243,40 @@
 		}
 	}
 
+	async function loadSeries() {
+		if (debugMode) return
+		try {
+			seriesItems = (await fetchManagedGroups(fetch, 'series')).items
+		} catch (error) {
+			errorMessage = toFriendlyError(error)
+		}
+	}
+
+	async function handleRenameSeries(item: ManageGroupDocument, name: string) {
+		if (!window.confirm(t('manage.groups.confirmRename', { name: item.group.name, next: name })))
+			return
+		try {
+			const response = await renameManagedGroupRequest(
+				fetch,
+				csrfToken,
+				'series',
+				item.group.id,
+				item.sha,
+				name
+			)
+			seriesItems = seriesItems.map((entry) =>
+				entry.group.id === item.group.id
+					? { group: response.group, path: response.path, sha: response.sha }
+					: entry
+			)
+		} catch (error) {
+			errorMessage = toFriendlyError(error)
+		}
+	}
+
 	onMount(() => {
 		void loadKnownSlugs()
+		void loadSeries()
 	})
 
 	function appendUploads(files: File[]) {
@@ -454,7 +494,12 @@
 >
 	<form class="manage-editor-panel panel" onsubmit={handleSubmit}>
 		<div class="manage-editor-heading">
-			<div aria-label={t('manage.editor.tabs.ariaLabel')} class="manage-editor-tabs" role="tablist">
+			<div
+				aria-label={t('manage.editor.tabs.ariaLabel')}
+				class="manage-editor-tabs"
+				data-active-index={activeEditorTab === 'information' ? 0 : 1}
+				role="tablist"
+			>
 				<button
 					aria-controls="manage-editor-information-panel"
 					aria-selected={activeEditorTab === 'information'}
@@ -625,10 +670,20 @@
 									<input bind:value={form.author} disabled={editorDisabled} type="text" />
 								</label>
 
-								<label>
+								<div class="manage-editor-field">
 									<span>{t('manage.editor.fields.series')}</span>
-									<input bind:value={form.series} disabled={editorDisabled} type="text" />
-								</label>
+									<ManageGroupSelect
+										bind:value={form.seriesId}
+										bind:newName={form.seriesName}
+										createLabel={t('manage.groups.createSeries')}
+										disabled={editorDisabled}
+										items={seriesItems}
+										label={t('manage.editor.fields.series')}
+										noneLabel={t('manage.groups.none')}
+										onrename={handleRenameSeries}
+										renameLabel={t('manage.groups.rename')}
+									/>
+								</div>
 
 								<label>
 									<span>{t('manage.editor.fields.readingTime')}</span>
@@ -637,16 +692,6 @@
 										disabled={editorDisabled}
 										placeholder={t('manage.editor.placeholders.readingTime')}
 										type="text"
-									/>
-								</label>
-
-								<label>
-									<span>{t('manage.editor.fields.canonical')}</span>
-									<input
-										bind:value={form.canonical}
-										disabled={editorDisabled}
-										placeholder={t('manage.editor.placeholders.canonical')}
-										type="url"
 									/>
 								</label>
 
@@ -891,6 +936,7 @@
 	}
 
 	.manage-editor-tabs {
+		position: relative;
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.35rem;
@@ -901,7 +947,27 @@
 		background: rgb(235 244 255 / 56%);
 	}
 
+	.manage-editor-tabs::before {
+		content: '';
+		position: absolute;
+		top: 0.32rem;
+		bottom: 0.32rem;
+		left: 0.32rem;
+		width: calc((100% - 0.99rem) / 2);
+		border-radius: 13px;
+		background: rgb(255 255 255 / 88%);
+		box-shadow: 0 6px 18px rgb(31 92 153 / 9%);
+		transition: transform var(--motion-manage-active-indicator-duration)
+			var(--motion-shared-easing-standard);
+	}
+
+	.manage-editor-tabs[data-active-index='1']::before {
+		transform: translateX(calc(100% + 0.35rem));
+	}
+
 	.manage-editor-tabs button {
+		position: relative;
+		z-index: 1;
 		min-height: 2.7rem;
 		padding: 0.4rem 0.8rem;
 		border: 0;
@@ -912,8 +978,6 @@
 	}
 
 	.manage-editor-tabs button.active {
-		background: rgb(255 255 255 / 88%);
-		box-shadow: 0 6px 18px rgb(31 92 153 / 9%);
 		color: var(--ink);
 	}
 

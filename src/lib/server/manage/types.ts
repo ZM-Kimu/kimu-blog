@@ -1,4 +1,5 @@
 import type { PostFrontmatter } from '$lib/content/schema'
+import type { BlogSeries, ManageGroupKind, UpdateProject } from '$lib/content/group-schema'
 import type {
 	ManageFavoriteWritePayload,
 	ManagePostWritePayload,
@@ -54,6 +55,15 @@ export interface RepositoryManagedPost {
 
 export interface RepositoryManagedRecord {
 	entry: ManageRecordEntry
+	path: string
+	sha: string
+}
+
+export interface RepositoryManagedGroup<
+	TGroup extends UpdateProject | BlogSeries = UpdateProject | BlogSeries
+> {
+	group: TGroup
+	kind: ManageGroupKind
 	path: string
 	sha: string
 }

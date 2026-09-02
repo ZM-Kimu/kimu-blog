@@ -18,3 +18,5 @@ export {
 	listManagedRecords,
 	updateManagedRecord
 } from '$lib/server/manage/records'
+
+export { listManagedGroups, renameManagedGroup } from '$lib/server/manage/groups'

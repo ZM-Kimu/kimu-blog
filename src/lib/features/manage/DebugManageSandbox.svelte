@@ -63,10 +63,8 @@
 				slug: variant === 'long' ? 'manage-debug-long' : 'manage-debug',
 				category: t('manage.debug.categories.workbench'),
 				author: 'Kimu',
-				series: t('manage.debug.eyebrow'),
 				toc: true,
 				readingTime: '6 min',
-				canonical: '',
 				featured: variant !== 'empty'
 			},
 			path: '/src/lib/content/blog/manage-debug.svx',

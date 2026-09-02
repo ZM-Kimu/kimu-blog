@@ -5,7 +5,9 @@
 	import {
 		createManagedRecordRequest,
 		deleteManagedRecordRequest,
+		fetchManagedGroups,
 		ManageApiError,
+		renameManagedGroupRequest,
 		updateManagedRecordRequest
 	} from '$lib/features/manage/api'
 	import { resolveManageErrorMessage } from '$lib/features/manage/copy'
@@ -14,11 +16,15 @@
 		getTodayString,
 		parseCommaSeparatedValues
 	} from '$lib/features/manage/form'
-	import type { ManageUpdateDocument, ManageUpdateWritePayload } from '$lib/features/manage/types'
+	import type {
+		ManageGroupDocument,
+		ManageUpdateDocument,
+		ManageUpdateWritePayload
+	} from '$lib/features/manage/types'
 	import { translate } from '$lib/i18n'
-	import type { UpdateKind, UpdateStatus } from '$lib/types/info-flow'
+	import { onMount } from 'svelte'
+	import ManageGroupSelect from './ManageGroupSelect.svelte'
 	import ManageRecordForm from './ManageRecordForm.svelte'
-	import ManageRecordSelect from './ManageRecordSelect.svelte'
 
 	type EditorMode = 'create' | 'edit'
 
@@ -33,8 +39,9 @@
 			date: record?.entry.date ?? getTodayString(),
 			href: record?.entry.href ?? '',
 			id: record?.entry.id ?? '',
-			kind: record?.entry.kind ?? ('site' as UpdateKind),
-			status: record?.entry.status ?? ('shipped' as UpdateStatus),
+			progress: record?.entry.project?.progress ?? 0,
+			projectId: record?.entry.project?.id ?? '',
+			projectName: '',
 			summary: record?.entry.summary ?? '',
 			tagsInput: record?.entry.tags.join(', ') ?? '',
 			title: record?.entry.title ?? ''
@@ -49,21 +56,18 @@
 	let isSubmitting = $state(false)
 	let statusMessage = $state('')
 	let errorMessage = $state('')
+	let projects = $state<ManageGroupDocument[]>([])
 	const messages = $derived(page.data.i18n?.messages)
 	const t = (key: string, params?: Record<string, string | number>) =>
 		translate(messages, key, params)
-	const kindOptions = $derived(
-		(['site', 'writing', 'design', 'work'] as const).map((value) => ({
-			value,
-			label: t(`updates.kind.${value}`)
-		}))
-	)
-	const statusOptions = $derived(
-		(['live', 'shipped', 'tracking', 'queued'] as const).map((value) => ({
-			value,
-			label: t(`updates.status.${value}`)
-		}))
-	)
+
+	onMount(async () => {
+		try {
+			projects = (await fetchManagedGroups(fetch, 'projects')).items
+		} catch (cause) {
+			errorMessage = friendlyError(cause)
+		}
+	})
 
 	$effect(() => {
 		const resetKey = initialRecord?.sha ?? '__new__'
@@ -87,11 +91,35 @@
 			expectedSha,
 			href: form.href.trim() || undefined,
 			id: form.id.trim(),
-			kind: form.kind,
-			status: form.status,
+			project: form.projectId
+				? { id: form.projectId, progress: Math.round(Number(form.progress)) }
+				: undefined,
+			projectName: form.projectName.trim() || undefined,
 			summary: form.summary.trim(),
 			tags: parseCommaSeparatedValues(form.tagsInput),
 			title: form.title.trim()
+		}
+	}
+
+	async function handleRenameProject(item: ManageGroupDocument, name: string) {
+		if (!window.confirm(t('manage.groups.confirmRename', { name: item.group.name, next: name })))
+			return
+		try {
+			const response = await renameManagedGroupRequest(
+				fetch,
+				csrfToken,
+				'projects',
+				item.group.id,
+				item.sha,
+				name
+			)
+			projects = projects.map((entry) =>
+				entry.group.id === item.group.id
+					? { group: response.group, path: response.path, sha: response.sha }
+					: entry
+			)
+		} catch (cause) {
+			errorMessage = friendlyError(cause)
 		}
 	}
 
@@ -176,22 +204,25 @@
 			<span>{t('manage.records.fields.date')}</span>
 			<input bind:value={form.date} required type="date" />
 		</label>
-		<label>
-			<span>{t('manage.records.fields.kind')}</span>
-			<ManageRecordSelect
-				bind:value={form.kind}
-				label={t('manage.records.fields.kind')}
-				options={kindOptions}
+		<div class="manage-record-field">
+			<span>{t('manage.records.fields.project')}</span>
+			<ManageGroupSelect
+				bind:value={form.projectId}
+				bind:newName={form.projectName}
+				createLabel={t('manage.groups.createProject')}
+				items={projects}
+				label={t('manage.records.fields.project')}
+				noneLabel={t('manage.groups.none')}
+				onrename={handleRenameProject}
+				renameLabel={t('manage.groups.rename')}
 			/>
-		</label>
-		<label>
-			<span>{t('manage.records.fields.status')}</span>
-			<ManageRecordSelect
-				bind:value={form.status}
-				label={t('manage.records.fields.status')}
-				options={statusOptions}
-			/>
-		</label>
+		</div>
+		{#if form.projectId}
+			<label>
+				<span>{t('manage.records.fields.progress')}</span>
+				<input bind:value={form.progress} max="100" min="0" required type="number" />
+			</label>
+		{/if}
 		<label class="wide">
 			<span>{t('manage.records.fields.summary')}</span>
 			<textarea bind:value={form.summary} maxlength="800" required></textarea>

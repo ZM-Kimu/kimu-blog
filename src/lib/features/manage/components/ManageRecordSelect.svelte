@@ -10,8 +10,15 @@
 		value = $bindable(),
 		label,
 		options,
-		disabled = false
-	}: { value: string; label: string; options: readonly Option[]; disabled?: boolean } = $props()
+		disabled = false,
+		onchange
+	}: {
+		value: string
+		label: string
+		options: readonly Option[]
+		disabled?: boolean
+		onchange?: (value: string) => void
+	} = $props()
 
 	let root: HTMLDivElement
 	let trigger: HTMLButtonElement
@@ -30,6 +37,39 @@
 		root.querySelector<HTMLButtonElement>('[aria-selected="true"]')?.focus()
 	}
 
+	function focusOption(index: number) {
+		const elements = root.querySelectorAll<HTMLButtonElement>('[role="option"]')
+		elements[Math.max(0, Math.min(index, elements.length - 1))]?.focus()
+	}
+
+	function selectOption(next: string) {
+		value = next
+		onchange?.(next)
+		close(true)
+	}
+
+	function handleTriggerKeydown(event: KeyboardEvent) {
+		if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+			event.preventDefault()
+			void show().then(() => focusOption(event.key === 'ArrowDown' ? 0 : options.length - 1))
+		}
+	}
+
+	function handleOptionKeydown(event: KeyboardEvent, index: number) {
+		let next = index
+		if (event.key === 'ArrowDown') next = (index + 1) % options.length
+		else if (event.key === 'ArrowUp') next = (index - 1 + options.length) % options.length
+		else if (event.key === 'Home') next = 0
+		else if (event.key === 'End') next = options.length - 1
+		else if (event.key === 'Escape') {
+			event.preventDefault()
+			close(true)
+			return
+		} else return
+		event.preventDefault()
+		focusOption(next)
+	}
+
 	function handleWindowPointerDown(event: PointerEvent) {
 		if (open && event.target instanceof Node && !root.contains(event.target)) close()
 	}
@@ -46,19 +86,18 @@
 		data-press-disabled="true"
 		{disabled}
 		onclick={() => (open ? close() : void show())}
+		onkeydown={handleTriggerKeydown}
 		type="button"
 	>
 		<span>{selectedLabel}</span><i aria-hidden="true"></i>
 	</button>
 	<div aria-hidden={!open} class:open class="manage-record-options" role="listbox">
-		{#each options as option (option.value)}
+		{#each options as option, index (option.value)}
 			<button
 				aria-selected={value === option.value}
 				data-press-disabled="true"
-				onclick={() => {
-					value = option.value
-					close(true)
-				}}
+				onclick={() => selectOption(option.value)}
+				onkeydown={(event) => handleOptionKeydown(event, index)}
 				role="option"
 				tabindex={open ? 0 : -1}
 				type="button"
@@ -148,7 +187,6 @@
 		cursor: inherit;
 	}
 
-	.manage-record-select .manage-record-options button:hover,
 	.manage-record-select .manage-record-options button:focus-visible,
 	.manage-record-select .manage-record-options button[aria-selected='true'] {
 		outline: none;

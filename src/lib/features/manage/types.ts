@@ -3,6 +3,11 @@ export type {
 	ManageFavoriteDocument,
 	ManageFavoriteListResponse,
 	ManageFavoriteWritePayload,
+	ManageGroup,
+	ManageGroupDocument,
+	ManageGroupKind,
+	ManageGroupListResponse,
+	ManageGroupRenamePayload,
 	ManagePostDocument,
 	ManagePostFrontmatter,
 	ManagePostListItem,
@@ -25,7 +30,6 @@ import type { ManagedPostFormat } from './contracts'
 
 export interface ManagePostFormState {
 	author: string
-	canonical: string
 	category: string
 	cover: string
 	date: string
@@ -35,7 +39,8 @@ export interface ManagePostFormState {
 	featured: boolean
 	format: ManagedPostFormat
 	readingTime: string
-	series: string
+	seriesId: string
+	seriesName: string
 	slug: string
 	source: string
 	tagsInput: string

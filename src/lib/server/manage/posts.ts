@@ -11,6 +11,17 @@ import { getManageConfig } from '$lib/server/manage/config'
 import { ManageError } from '$lib/server/manage/errors'
 import type { GitHubRepositoryClient } from '$lib/server/manage/github'
 import {
+	blogSeriesSchema,
+	groupNameSchema,
+	normalizeGroupName,
+	type BlogSeries
+} from '$lib/content/group-schema'
+import {
+	buildManagedGroupPath,
+	loadRepositoryGroups,
+	serializeManagedGroup
+} from '$lib/server/manage/groups'
+import {
 	assertManagedSlugAvailable,
 	findManagedRepositoryPost,
 	loadManageRepositoryContext
@@ -30,6 +41,57 @@ interface PreparedManagedWrite {
 	assetPaths: string[]
 	postBlobSha: string
 	rewrittenPayload: ManageWritePayload
+}
+
+async function buildSeriesChanges(
+	client: GitHubRepositoryClient,
+	seriesRecords: Awaited<ReturnType<typeof loadRepositoryGroups>>,
+	seriesIds: Array<string | undefined>,
+	newSeries?: { id: string; name: string }
+) {
+	const referencedIds = new Set(seriesIds.filter((id): id is string => Boolean(id)))
+	const recordsById = new Map(seriesRecords.map((record) => [record.group.id, record]))
+	const changes: Array<{ path: string; sha: string | null }> = []
+
+	for (const id of referencedIds) {
+		const existing = recordsById.get(id)
+		if (existing) {
+			if (
+				newSeries?.id === id &&
+				existing.group.name.localeCompare(normalizeGroupName(newSeries.name), undefined, {
+					sensitivity: 'accent'
+				}) !== 0
+			) {
+				throw new ManageError(409, 'duplicate_group_id', 'Generated series id already exists')
+			}
+			continue
+		}
+		const parsedName = groupNameSchema.safeParse(
+			newSeries?.id === id ? normalizeGroupName(newSeries.name) : undefined
+		)
+		if (!parsedName.success) {
+			throw new ManageError(422, 'missing_group_name', 'A new series requires a name')
+		}
+		if (
+			seriesRecords.some(
+				(item) =>
+					item.group.name.localeCompare(parsedName.data, undefined, { sensitivity: 'accent' }) === 0
+			)
+		) {
+			throw new ManageError(409, 'duplicate_group_name', 'Series name already exists')
+		}
+		const series: BlogSeries = blogSeriesSchema.parse({ id, name: parsedName.data })
+		changes.push({
+			path: buildManagedGroupPath('series', id),
+			sha: await client.createTextBlob(serializeManagedGroup(series))
+		})
+	}
+
+	for (const existing of seriesRecords) {
+		if (!referencedIds.has(existing.group.id)) changes.push({ path: existing.path, sha: null })
+	}
+
+	return changes
 }
 
 function buildCommitMessage(
@@ -177,6 +239,10 @@ export async function createManagedPost(
 	files: File[]
 ) {
 	const { client, snapshot } = await loadManageRepositoryContext(platform)
+	const seriesRecords = await loadRepositoryGroups(
+		{ client, config: getManageConfig(platform), snapshot },
+		'series'
+	)
 	assertManagedSlugAvailable(snapshot.posts, payload.slug)
 
 	const format = payload.format ?? 'svx'
@@ -187,12 +253,24 @@ export async function createManagedPost(
 	}
 
 	const prepared = await prepareManagedWrite(client, snapshot, payload, files)
+	const seriesChanges = await buildSeriesChanges(
+		client,
+		seriesRecords,
+		[
+			...snapshot.posts.map((post) => post.frontmatter.seriesId),
+			prepared.rewrittenPayload.seriesId
+		],
+		prepared.rewrittenPayload.seriesId && prepared.rewrittenPayload.seriesName
+			? { id: prepared.rewrittenPayload.seriesId, name: prepared.rewrittenPayload.seriesName }
+			: undefined
+	)
 	const treeSha = await client.createTree(snapshot.branchTreeSha, [
 		{
 			path: targetPath,
 			sha: prepared.postBlobSha
 		},
-		...prepared.assetBlobEntries
+		...prepared.assetBlobEntries,
+		...seriesChanges
 	])
 	const commitSha = await client.createCommit(
 		buildCommitMessage('create', prepared.rewrittenPayload.slug, actor),
@@ -221,6 +299,10 @@ export async function updateManagedPost(
 	files: File[]
 ) {
 	const { client, snapshot } = await loadManageRepositoryContext(platform)
+	const seriesRecords = await loadRepositoryGroups(
+		{ client, config: getManageConfig(platform), snapshot },
+		'series'
+	)
 	const existing = findManagedRepositoryPost(snapshot.posts, currentSlug)
 
 	if (!existing) {
@@ -256,6 +338,22 @@ export async function updateManagedPost(
 		})
 	}
 
+	treeChanges.push(
+		...(await buildSeriesChanges(
+			client,
+			seriesRecords,
+			[
+				...snapshot.posts
+					.filter((post) => post.path !== existing.path)
+					.map((post) => post.frontmatter.seriesId),
+				prepared.rewrittenPayload.seriesId
+			],
+			prepared.rewrittenPayload.seriesId && prepared.rewrittenPayload.seriesName
+				? { id: prepared.rewrittenPayload.seriesId, name: prepared.rewrittenPayload.seriesName }
+				: undefined
+		))
+	)
+
 	const treeSha = await client.createTree(snapshot.branchTreeSha, treeChanges)
 	const commitSha = await client.createCommit(
 		buildCommitMessage('update', prepared.rewrittenPayload.slug, actor),
@@ -283,6 +381,10 @@ export async function deleteManagedPost(
 	expectedSha: string
 ) {
 	const { client, snapshot } = await loadManageRepositoryContext(platform)
+	const seriesRecords = await loadRepositoryGroups(
+		{ client, config: getManageConfig(platform), snapshot },
+		'series'
+	)
 	const existing = findManagedRepositoryPost(snapshot.posts, slug)
 
 	if (!existing) {
@@ -293,11 +395,19 @@ export async function deleteManagedPost(
 		throw new ManageError(409, 'sha_conflict', 'expectedSha 与当前文件不一致')
 	}
 
+	const seriesChanges = await buildSeriesChanges(
+		client,
+		seriesRecords,
+		snapshot.posts
+			.filter((post) => post.path !== existing.path)
+			.map((post) => post.frontmatter.seriesId)
+	)
 	const treeSha = await client.createTree(snapshot.branchTreeSha, [
 		{
 			path: existing.path,
 			sha: null
-		}
+		},
+		...seriesChanges
 	])
 	const commitSha = await client.createCommit(
 		buildCommitMessage('delete', existing.slug, actor),

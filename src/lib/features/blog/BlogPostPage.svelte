@@ -401,6 +401,7 @@
 				<BlogPostSidebar
 					bind:this={postSidebar}
 					post={data.post}
+					seriesNavigation={data.seriesNavigation}
 					transitionKey={postTransitionKey}
 					{locale}
 					metadataTitle={t('common.info')}
@@ -408,6 +409,9 @@
 					descriptionLabel={t('blog.post.descriptionLabel')}
 					publishedAtLabel={t('common.publishedAt').replace('{date}', '').trim()}
 					updatedAtLabel={t('common.updatedAt').replace('{date}', '').trim()}
+					seriesLabel={t('blog.post.seriesLabel')}
+					newerLabel={t('blog.post.seriesNewer')}
+					olderLabel={t('blog.post.seriesOlder')}
 					uncategorizedLabel={t('common.uncategorized')}
 					textOutDurationMs={blogMotion.postAsideTextOutDurationMs}
 					textInDurationMs={blogMotion.postAsideTextInDurationMs}
@@ -415,6 +419,7 @@
 					tagCollapsedScaleX={blogMotion.postAsideTagCollapsedScaleX}
 					{reducedMotion}
 					motionEnabled={isLandscapeLayout && !reducedMotion}
+					onSelectPost={handlePostSelect}
 				/>
 			</div>
 		</div>

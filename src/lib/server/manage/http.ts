@@ -11,6 +11,7 @@ const slugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u, 'slug 非法'
 
 const baseWritePayloadSchema = postFrontmatterSchema.extend({
 	format: z.enum(['md', 'svx']).optional(),
+	seriesName: z.string().trim().min(1).max(96).optional(),
 	source: z.string().trim().min(1, 'source 不能为空')
 })
 
@@ -23,7 +24,7 @@ const deletePayloadSchema = z.object({
 })
 const recordKindSchema = z.enum(['updates', 'favorites'])
 const recordSchemas = {
-	updates: updateEntrySchema,
+	updates: updateEntrySchema.extend({ projectName: z.string().trim().min(1).max(96).optional() }),
 	favorites: favoriteEntrySchema
 } as const
 

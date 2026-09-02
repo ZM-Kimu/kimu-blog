@@ -85,7 +85,11 @@
 					</div>
 					<div class="manage-record-meta">
 						<strong>{document.entry.id}</strong>
-						<span>{document.entry.kind}</span>
+						{#if 'date' in document.entry && document.entry.project}
+							<span>{document.entry.project.id} · {document.entry.project.progress}%</span>
+						{:else if 'tags' in document.entry && document.entry.tags.length}
+							<span>{document.entry.tags.join(' · ')}</span>
+						{/if}
 						<time>
 							{'date' in document.entry ? document.entry.date : document.entry.added}
 						</time>

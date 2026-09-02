@@ -1,4 +1,11 @@
 import { favoriteEntrySchema, updateEntrySchema } from '$lib/content/info-flow-schema'
+import {
+	groupNameSchema,
+	normalizeGroupName,
+	resolveProjectCurrentProgress,
+	updateProjectSchema,
+	type UpdateProject
+} from '$lib/content/group-schema'
 import type {
 	ManageAccessActor,
 	ManageRecordKind,
@@ -14,6 +21,11 @@ import type {
 	ManageRecordWritePayload,
 	RepositoryManagedRecord
 } from '$lib/server/manage/types'
+import {
+	buildManagedGroupPath,
+	loadRepositoryGroups,
+	serializeManagedGroup
+} from '$lib/server/manage/groups'
 
 const recordDescriptors = {
 	updates: {
@@ -90,15 +102,18 @@ async function loadManagedRecordContext(
 		ids.add(record.entry.id)
 	}
 
-	return { ...context, records }
+	const projects = kind === 'updates' ? await loadRepositoryGroups(context, 'projects') : []
+
+	return { ...context, projects, records }
 }
 
 function normalizeRecordEntry(
 	kind: ManageRecordKind,
 	payload: ManageRecordWritePayload
 ): ManageRecordEntry {
-	const rawEntry: Partial<ManageRecordWritePayload> = { ...payload }
+	const rawEntry: Record<string, unknown> = { ...payload }
 	delete rawEntry.expectedSha
+	delete rawEntry.projectName
 	const descriptor = getRecordDescriptor(kind)
 	const parsed = descriptor.schema.safeParse(rawEntry)
 
@@ -108,7 +123,82 @@ function normalizeRecordEntry(
 		})
 	}
 
+	if (kind === 'favorites' && 'added' in parsed.data) {
+		const tags = new Map<string, string>()
+		for (const tag of parsed.data.tags) {
+			const display = tag.trim().replace(/\s+/gu, ' ')
+			const key = display.toLocaleLowerCase()
+			if (key && !tags.has(key)) tags.set(key, display)
+		}
+		return { ...parsed.data, tags: Array.from(tags.values()) }
+	}
+
 	return parsed.data
+}
+
+async function buildProjectChanges(
+	client: Awaited<ReturnType<typeof loadManageRepositoryBaseContext>>['client'],
+	projects: Awaited<ReturnType<typeof loadRepositoryGroups>>,
+	entries: ManageRecordEntry[],
+	newProject?: { id: string; name: string }
+) {
+	const updates = entries.filter(
+		(entry): entry is Extract<ManageRecordEntry, { date: string }> => 'date' in entry
+	)
+	const referencedIds = new Set(
+		updates.flatMap((entry) => (entry.project ? [entry.project.id] : []))
+	)
+	const projectsById = new Map(projects.map((record) => [record.group.id, record]))
+	const changes: Array<{ path: string; sha: string | null }> = []
+
+	for (const id of referencedIds) {
+		const existing = projectsById.get(id)
+		let project: UpdateProject
+
+		if (existing) {
+			if (
+				newProject?.id === id &&
+				existing.group.name.localeCompare(normalizeGroupName(newProject.name), undefined, {
+					sensitivity: 'accent'
+				}) !== 0
+			) {
+				throw new ManageError(409, 'duplicate_group_id', 'Generated project id already exists')
+			}
+			project = updateProjectSchema.parse(existing.group)
+		} else {
+			const parsedName = groupNameSchema.safeParse(
+				newProject?.id === id ? normalizeGroupName(newProject.name) : undefined
+			)
+			if (!parsedName.success) {
+				throw new ManageError(422, 'missing_group_name', 'A new project requires a name')
+			}
+			if (
+				projects.some(
+					(item) =>
+						item.group.name.localeCompare(parsedName.data, undefined, { sensitivity: 'accent' }) ===
+						0
+				)
+			) {
+				throw new ManageError(409, 'duplicate_group_name', 'Project name already exists')
+			}
+			project = { id, name: parsedName.data, currentProgress: 0 }
+		}
+
+		const next = { ...project, currentProgress: resolveProjectCurrentProgress(updates, id) ?? 0 }
+
+		if (!existing || JSON.stringify(next) !== JSON.stringify(existing.group)) {
+			changes.push({
+				path: buildManagedGroupPath('projects', id),
+				sha: await client.createTextBlob(serializeManagedGroup(next))
+			})
+		}
+	}
+
+	for (const existing of projects) {
+		if (!referencedIds.has(existing.group.id)) changes.push({ path: existing.path, sha: null })
+	}
+
+	return changes
 }
 
 function serializeRecord(entry: ManageRecordEntry) {
@@ -188,7 +278,7 @@ export async function createManagedRecord(
 	kind: ManageRecordKind,
 	payload: ManageRecordWritePayload
 ) {
-	const { client, records, snapshot } = await loadManagedRecordContext(platform, kind)
+	const { client, projects, records, snapshot } = await loadManagedRecordContext(platform, kind)
 	const entry = normalizeRecordEntry(kind, payload)
 	const targetPath = buildManagedRecordPath(kind, entry.id)
 
@@ -197,8 +287,20 @@ export async function createManagedRecord(
 	}
 
 	const blobSha = await client.createTextBlob(serializeRecord(entry))
+	const groupChanges =
+		kind === 'updates'
+			? await buildProjectChanges(
+					client,
+					projects,
+					[...records.map((record) => record.entry), entry],
+					'project' in entry && entry.project && 'projectName' in payload && payload.projectName
+						? { id: entry.project.id, name: payload.projectName }
+						: undefined
+				)
+			: []
 	const treeSha = await client.createTree(snapshot.branchTreeSha, [
-		{ path: targetPath, sha: blobSha }
+		{ path: targetPath, sha: blobSha },
+		...groupChanges
 	])
 	const commitSha = await client.createCommit(
 		buildCommitMessage('create', kind, entry.id, actor),
@@ -217,7 +319,7 @@ export async function updateManagedRecord(
 	currentId: string,
 	payload: ManageRecordWritePayload
 ) {
-	const { client, records, snapshot } = await loadManagedRecordContext(platform, kind)
+	const { client, projects, records, snapshot } = await loadManagedRecordContext(platform, kind)
 	const existing = findRecord(records, currentId)
 
 	if (!existing) {
@@ -245,6 +347,22 @@ export async function updateManagedRecord(
 	if (nextPath !== existing.path) {
 		changes.push({ path: existing.path, sha: null })
 	}
+	if (kind === 'updates') {
+		const resultingEntries = records
+			.filter((record) => record.path !== existing.path)
+			.map((record) => record.entry)
+			.concat(entry)
+		changes.push(
+			...(await buildProjectChanges(
+				client,
+				projects,
+				resultingEntries,
+				'project' in entry && entry.project && 'projectName' in payload && payload.projectName
+					? { id: entry.project.id, name: payload.projectName }
+					: undefined
+			))
+		)
+	}
 
 	const treeSha = await client.createTree(snapshot.branchTreeSha, changes)
 	const commitSha = await client.createCommit(
@@ -264,7 +382,7 @@ export async function deleteManagedRecord(
 	id: string,
 	expectedSha: string
 ) {
-	const { client, records, snapshot } = await loadManagedRecordContext(platform, kind)
+	const { client, projects, records, snapshot } = await loadManagedRecordContext(platform, kind)
 	const existing = findRecord(records, id)
 
 	if (!existing) {
@@ -275,9 +393,17 @@ export async function deleteManagedRecord(
 		throw new ManageError(409, 'sha_conflict', 'expectedSha does not match the current file')
 	}
 
-	const treeSha = await client.createTree(snapshot.branchTreeSha, [
-		{ path: existing.path, sha: null }
-	])
+	const changes: Array<{ path: string; sha: string | null }> = [{ path: existing.path, sha: null }]
+	if (kind === 'updates') {
+		changes.push(
+			...(await buildProjectChanges(
+				client,
+				projects,
+				records.filter((record) => record.path !== existing.path).map((record) => record.entry)
+			))
+		)
+	}
+	const treeSha = await client.createTree(snapshot.branchTreeSha, changes)
 	const commitSha = await client.createCommit(
 		buildCommitMessage('delete', kind, existing.entry.id, actor),
 		treeSha,

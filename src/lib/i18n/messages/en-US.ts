@@ -234,6 +234,9 @@ export const enUSMessages = {
 			listEyebrow: 'Article Index',
 			listTitle: 'Article List',
 			descriptionLabel: 'Summary',
+			seriesLabel: 'Series',
+			seriesNewer: 'Previous',
+			seriesOlder: 'Next',
 			asideEyebrow: 'Outside content',
 			statusFeatured: 'Featured',
 			statusPublished: 'Published',
@@ -271,42 +274,22 @@ export const enUSMessages = {
 		summaryAria: 'Updates summary',
 		totalLabel: 'Total updates',
 		latestLabel: 'Latest update',
-		filtersLabel: 'Update type filters',
 		feedAria: 'Updates timeline',
 		openItem: 'Open update: {title}',
 		openLabel: 'Open',
 		emptyTitle: 'No updates',
-		emptyDescription: 'There are no updates under the current filter.',
-		kind: {
-			site: 'Site',
-			writing: 'Writing',
-			design: 'Design',
-			work: 'Work'
-		},
-		status: {
-			live: 'Live',
-			shipped: 'Shipped',
-			tracking: 'Tracking',
-			queued: 'Queued'
-		}
+		emptyDescription: 'No updates have been published yet.'
 	},
 	favorites: {
 		title: 'Favorites',
-		description:
-			'Saved articles, tools, references, and internal entries are organized as featured picks and collection groups.',
+		description: 'Saved articles, tools, references, and internal entries are organized with tags.',
 		summaryAria: 'Favorites summary',
 		totalLabel: 'Total saves',
-		filtersLabel: 'Favorite category filters',
-		collectionsAria: 'Favorite collections',
+		filtersLabel: 'Favorite tag filters',
+		collectionsAria: 'Favorite tags',
 		openItem: 'Open favorite: {title}',
 		emptyTitle: 'No favorites',
-		emptyDescription: 'There are no saved items under the current filter.',
-		kind: {
-			article: 'Article',
-			tool: 'Tool',
-			reference: 'Reference',
-			site: 'Site'
-		}
+		emptyDescription: 'There are no saved items under the current tag.'
 	},
 	error: {
 		title: 'Error',
@@ -361,20 +344,27 @@ export const enUSMessages = {
 				id: 'Record ID',
 				date: 'Publish date',
 				added: 'Saved date',
-				kind: 'Type',
-				status: 'Status',
+				project: 'Project',
+				progress: 'Project progress',
 				summary: 'Content',
 				description: 'Summary',
 				tags: 'Tags',
 				href: 'Link',
-				sourceLabel: 'Source label',
-				collection: 'Collection ID'
+				sourceLabel: 'Source label'
 			},
 			placeholders: {
 				tags: 'design, site, progress',
 				href: 'https://… or /blog/…',
-				hrefOptional: 'Optional: https://… or /blog/…'
+				hrefOptional: 'Optional: https://… or /blog/…',
+				favoriteTags: 'Type a tag and press Enter'
 			}
+		},
+		groups: {
+			none: 'No group',
+			createProject: 'Create project',
+			createSeries: 'Create series',
+			rename: 'Rename',
+			confirmRename: 'Rename “{name}” to “{next}”? This will commit directly to the repository.'
 		},
 		shell: {
 			eyebrow: 'Private Content Workbench',
@@ -438,7 +428,6 @@ export const enUSMessages = {
 				author: 'Author',
 				series: 'Series',
 				readingTime: 'Reading Time',
-				canonical: 'Canonical',
 				format: 'Format',
 				tags: 'Tags',
 				cover: 'Cover'
@@ -446,7 +435,6 @@ export const enUSMessages = {
 			placeholders: {
 				category: 'Engineering / Notes',
 				readingTime: '6 min',
-				canonical: 'https://...',
 				tags: 'svelte, cloudflare, devlog',
 				cover: '/images/... or upload://file.png'
 			},
@@ -545,6 +533,14 @@ export const enUSMessages = {
 			invalidRecord: 'A repository record is invalid.',
 			invalidRecordKind: 'This record type is not supported.',
 			invalidRecordId: 'The record ID is invalid.',
+			invalidGroup: 'A repository group is invalid.',
+			invalidGroupId: 'The group ID is invalid.',
+			invalidGroupKind: 'This group type is not supported.',
+			invalidGroupName: 'The group name is invalid.',
+			groupNotFound: 'The group could not be found.',
+			duplicateGroupName: 'A group with this name already exists.',
+			duplicateGroupId: 'The generated group ID is already in use. Adjust the name.',
+			missingGroupName: 'A name is required when creating a group.',
 			sessionInitFailed: 'Failed to initialize the manage session.',
 			invalidContentType: 'The request must use multipart/form-data.',
 			missingPayload: 'The payload JSON field is missing.',

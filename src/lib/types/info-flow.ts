@@ -1,36 +1,26 @@
-import type {
-	FavoriteEntry,
-	FavoriteKind,
-	UpdateEntry,
-	UpdateKind,
-	UpdateStatus
-} from '$lib/content/info-flow-schema'
+import type { FavoriteEntry, UpdateEntry } from '$lib/content/info-flow-schema'
 
-export type { FavoriteEntry, FavoriteKind, UpdateEntry, UpdateKind, UpdateStatus }
+export type { FavoriteEntry, UpdateEntry }
+
+export interface PublicUpdateEntry extends UpdateEntry {
+	projectName?: string
+}
 
 export interface UpdateGroup {
 	id: string
 	label: string
-	entries: UpdateEntry[]
+	entries: PublicUpdateEntry[]
 }
 
 export interface UpdatesPageData {
-	entries: UpdateEntry[]
+	entries: PublicUpdateEntry[]
 	groups: UpdateGroup[]
-	filters: UpdateKind[]
 	latestDate: string | null
 	totalEntries: number
 }
 
-export interface FavoriteCollection {
-	id: string
-	title: string
-	description: string
-	entries: FavoriteEntry[]
-}
-
 export interface FavoritesPageData {
 	entries: FavoriteEntry[]
-	collections: FavoriteCollection[]
+	tags: string[]
 	totalEntries: number
 }

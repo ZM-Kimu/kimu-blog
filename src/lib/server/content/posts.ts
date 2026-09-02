@@ -1,6 +1,8 @@
 import { postFrontmatterSchema } from '$lib/content/schema'
 import { parseContentFrontmatter } from '$lib/server/content/frontmatter'
 import type { BlogPost, CategorySummary, TagResult, TagSummary } from '$lib/types/content'
+import type { BlogSeriesNavigation } from '$lib/types/content'
+import { getBlogSeries } from './group-records'
 
 const modules = import.meta.glob('/src/lib/content/blog/*.{md,svx}', {
 	query: '?raw',
@@ -147,4 +149,24 @@ export function getRelatedPosts(post: BlogPost, limit = 3) {
 		)
 		.slice(0, limit)
 		.map((entry) => entry.candidate)
+}
+
+export function getPostSeriesNavigation(post: BlogPost): BlogSeriesNavigation | null {
+	if (!post.seriesId) return null
+
+	const series = getBlogSeries().find((item) => item.id === post.seriesId)
+	if (!series) return null
+
+	const posts = publishedPosts
+		.filter((candidate) => candidate.seriesId === post.seriesId)
+		.sort(
+			(left, right) => right.date.localeCompare(left.date) || left.slug.localeCompare(right.slug)
+		)
+	const index = posts.findIndex((candidate) => candidate.slug === post.slug)
+
+	return {
+		series,
+		newer: index > 0 ? posts[index - 1] : null,
+		older: index >= 0 && index < posts.length - 1 ? posts[index + 1] : null
+	}
 }

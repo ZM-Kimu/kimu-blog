@@ -19,19 +19,19 @@ const contentHrefSchema = z
 		'href must be an internal path or an HTTP(S) URL'
 	)
 
-export const updateKindSchema = z.enum(['site', 'writing', 'design', 'work'])
-export const updateStatusSchema = z.enum(['live', 'shipped', 'tracking', 'queued'])
-export const favoriteKindSchema = z.enum(['article', 'tool', 'reference', 'site'])
-
 export const updateEntrySchema = z.object({
 	id: recordIdSchema,
 	date: dateSchema,
-	kind: updateKindSchema,
-	status: updateStatusSchema,
 	title: z.string().trim().min(1).max(160),
 	summary: z.string().trim().min(1).max(800),
 	tags: z.array(z.string().trim().min(1).max(48)).max(16).default([]),
-	href: contentHrefSchema.optional()
+	href: contentHrefSchema.optional(),
+	project: z
+		.object({
+			id: recordIdSchema,
+			progress: z.number().int().min(0).max(100)
+		})
+		.optional()
 })
 
 export const favoriteEntrySchema = z.object({
@@ -39,14 +39,10 @@ export const favoriteEntrySchema = z.object({
 	title: z.string().trim().min(1).max(160),
 	description: z.string().trim().min(1).max(800),
 	href: contentHrefSchema,
-	kind: favoriteKindSchema,
 	sourceLabel: z.string().trim().min(1).max(96),
-	collection: recordIdSchema,
+	tags: z.array(z.string().trim().min(1).max(48)).max(24).default([]),
 	added: dateSchema
 })
 
-export type UpdateKind = z.infer<typeof updateKindSchema>
-export type UpdateStatus = z.infer<typeof updateStatusSchema>
 export type UpdateEntry = z.infer<typeof updateEntrySchema>
-export type FavoriteKind = z.infer<typeof favoriteKindSchema>
 export type FavoriteEntry = z.infer<typeof favoriteEntrySchema>

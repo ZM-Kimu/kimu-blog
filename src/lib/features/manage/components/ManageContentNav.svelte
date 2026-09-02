@@ -10,9 +10,19 @@
 		{ href: '/manage/updates' as const, label: t('manage.nav.updates') },
 		{ href: '/manage/favorites' as const, label: t('manage.nav.favorites') }
 	])
+	const activeIndex = $derived(
+		Math.max(
+			0,
+			items.findIndex((item) => page.url.pathname.startsWith(item.href))
+		)
+	)
 </script>
 
-<nav aria-label={t('manage.nav.ariaLabel')} class="manage-content-nav">
+<nav
+	aria-label={t('manage.nav.ariaLabel')}
+	class="manage-content-nav"
+	style:--manage-active-index={activeIndex}
+>
 	{#each items as item (item.href)}
 		<a class:active={page.url.pathname.startsWith(item.href)} href={resolve(item.href)}>
 			{item.label}
@@ -22,7 +32,9 @@
 
 <style>
 	.manage-content-nav {
-		display: flex;
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(5.6rem, 1fr));
 		gap: 0.35rem;
 		align-items: center;
 		width: fit-content;
@@ -32,7 +44,25 @@
 		background: rgb(247 251 255 / 62%);
 	}
 
+	.manage-content-nav::before {
+		content: '';
+		position: absolute;
+		top: 0.3rem;
+		bottom: 0.3rem;
+		left: 0.3rem;
+		width: calc((100% - 0.6rem - 0.7rem) / 3);
+		border-radius: 999px;
+		background: rgb(79 120 255 / 12%);
+		transform: translateX(calc(var(--manage-active-index) * (100% + 0.35rem)));
+		transition: transform var(--motion-manage-active-indicator-duration)
+			var(--motion-shared-easing-standard);
+	}
+
 	a {
+		position: relative;
+		z-index: 1;
+		min-width: max-content;
+		text-align: center;
 		padding: 0.58rem 0.9rem;
 		border-radius: 999px;
 		color: var(--ink-soft);
@@ -43,7 +73,6 @@
 	}
 
 	a.active {
-		background: rgb(79 120 255 / 12%);
 		color: var(--ink);
 	}
 

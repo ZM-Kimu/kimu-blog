@@ -83,7 +83,6 @@ function replacePlaceholder(input: string, placeholder: string, value: string) {
 function normalizeFrontmatter(payload: ManageWritePayload) {
 	return postFrontmatterSchema.parse({
 		author: payload.author,
-		canonical: payload.canonical,
 		category: payload.category,
 		cover: payload.cover,
 		date: payload.date,
@@ -91,7 +90,7 @@ function normalizeFrontmatter(payload: ManageWritePayload) {
 		draft: payload.draft,
 		featured: payload.featured,
 		readingTime: payload.readingTime,
-		series: payload.series,
+		seriesId: payload.seriesId,
 		slug: normalizeSlug(payload.slug),
 		tags: payload.tags,
 		title: payload.title,

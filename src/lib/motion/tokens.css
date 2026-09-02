@@ -60,6 +60,9 @@
 	--motion-notice-offset-y: 14px;
 	--motion-manage-select-options-enter-duration: 140ms;
 	--motion-manage-select-options-exit-duration: 100ms;
+	--motion-manage-active-indicator-duration: 220ms;
+	--motion-manage-content-enter-duration: 160ms;
+	--motion-manage-content-enter-offset-y: 6px;
 	--motion-manage-tab-panel-enter-duration: 180ms;
 	--motion-manage-tab-panel-enter-offset-x: 10px;
 	--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -237,6 +240,9 @@
 		--motion-notice-offset-y: 14px;
 		--motion-manage-select-options-enter-duration: 140ms;
 		--motion-manage-select-options-exit-duration: 100ms;
+		--motion-manage-active-indicator-duration: 220ms;
+		--motion-manage-content-enter-duration: 160ms;
+		--motion-manage-content-enter-offset-y: 6px;
 		--motion-manage-tab-panel-enter-duration: 180ms;
 		--motion-manage-tab-panel-enter-offset-x: 10px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -415,6 +421,9 @@
 		--motion-notice-offset-y: 14px;
 		--motion-manage-select-options-enter-duration: 1ms;
 		--motion-manage-select-options-exit-duration: 1ms;
+		--motion-manage-active-indicator-duration: 1ms;
+		--motion-manage-content-enter-duration: 1ms;
+		--motion-manage-content-enter-offset-y: 0px;
 		--motion-manage-tab-panel-enter-duration: 1ms;
 		--motion-manage-tab-panel-enter-offset-x: 0px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -593,6 +602,9 @@
 		--motion-notice-offset-y: 14px;
 		--motion-manage-select-options-enter-duration: 1ms;
 		--motion-manage-select-options-exit-duration: 1ms;
+		--motion-manage-active-indicator-duration: 1ms;
+		--motion-manage-content-enter-duration: 1ms;
+		--motion-manage-content-enter-offset-y: 0px;
 		--motion-manage-tab-panel-enter-duration: 1ms;
 		--motion-manage-tab-panel-enter-offset-x: 0px;
 		--motion-error-enter-ease: cubic-bezier(0.2, 0.8, 0.2, 1);

@@ -3,6 +3,9 @@ import type {
 	ManageFavoriteDocument,
 	ManageFavoriteListResponse,
 	ManageFavoriteWritePayload,
+	ManageGroupDocument,
+	ManageGroupKind,
+	ManageGroupListResponse,
 	ManagePostDocument,
 	ManagePostListResponse,
 	ManagePostWritePayload,
@@ -217,6 +220,30 @@ export async function deleteManagedRecordRequest(
 				'x-manage-csrf': csrfToken
 			},
 			method: 'DELETE'
+		})
+	)
+}
+
+export async function fetchManagedGroups(fetchImpl: typeof fetch, kind: ManageGroupKind) {
+	return parseManageJson<ManageGroupListResponse>(await fetchImpl(`/api/manage/groups/${kind}`))
+}
+
+export async function renameManagedGroupRequest(
+	fetchImpl: typeof fetch,
+	csrfToken: string,
+	kind: ManageGroupKind,
+	id: string,
+	expectedSha: string,
+	name: string
+) {
+	return parseManageJson<ManageGroupDocument & { commitSha: string }>(
+		await fetchImpl(`/api/manage/groups/${kind}/${encodeURIComponent(id)}`, {
+			body: JSON.stringify({ expectedSha, name }),
+			headers: {
+				'content-type': 'application/json',
+				'x-manage-csrf': csrfToken
+			},
+			method: 'PUT'
 		})
 	)
 }

@@ -366,6 +366,33 @@
 	border-top: 1px solid rgb(96 141 198 / 12%);
 }
 
+.post-aside-series-nav {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.post-aside-series-nav a {
+	display: grid;
+	gap: 0.2rem;
+	padding: 0.65rem 0.72rem;
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	background: rgb(255 255 255 / 36%);
+	color: inherit;
+}
+
+.post-aside-series-nav span {
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	letter-spacing: 0.06em;
+	color: var(--ink-faint);
+}
+
+.post-aside-series-nav strong {
+	font-size: 0.82rem;
+	line-height: 1.35;
+}
+
 .post-aside-info-content {
 	display: grid;
 	gap: 0.75rem;

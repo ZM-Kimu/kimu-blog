@@ -778,30 +778,6 @@
 		0 0 16px var(--updates-marker-glow);
 }
 
-.updates-card-marker[data-update-status='live'] {
-	--updates-marker-fill: rgb(18 181 238);
-	--updates-marker-ring: rgb(56 189 248 / 22%);
-	--updates-marker-glow: rgb(56 189 248 / 34%);
-}
-
-.updates-card-marker[data-update-status='shipped'] {
-	--updates-marker-fill: rgb(11 184 135);
-	--updates-marker-ring: rgb(11 184 135 / 20%);
-	--updates-marker-glow: rgb(11 184 135 / 30%);
-}
-
-.updates-card-marker[data-update-status='tracking'] {
-	--updates-marker-fill: rgb(247 185 79);
-	--updates-marker-ring: rgb(247 185 79 / 22%);
-	--updates-marker-glow: rgb(247 185 79 / 32%);
-}
-
-.updates-card-marker[data-update-status='queued'] {
-	--updates-marker-fill: rgb(105 120 220);
-	--updates-marker-ring: rgb(105 120 220 / 18%);
-	--updates-marker-glow: rgb(105 120 220 / 28%);
-}
-
 .updates-card-main {
 	display: grid;
 	gap: 0.48rem;

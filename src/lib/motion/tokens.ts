@@ -126,6 +126,9 @@ export function getMotionTokens({ portrait, reducedMotion }: MotionEnvironment) 
 	const manage = {
 		selectOptionsEnterDurationMs: reducedMotion ? 1 : 140,
 		selectOptionsExitDurationMs: reducedMotion ? 1 : 100,
+		activeIndicatorDurationMs: reducedMotion ? 1 : 220,
+		contentEnterDurationMs: reducedMotion ? 1 : 160,
+		contentEnterOffsetYPx: reducedMotion ? 0 : 6,
 		tabPanelEnterDurationMs: reducedMotion ? 1 : 180,
 		tabPanelEnterOffsetXPx: reducedMotion ? 0 : 10
 	}
@@ -406,6 +409,9 @@ export function createGlobalMotionCssVars(tokens: MotionTokens) {
 		['motion-notice-offset-y', px(tokens.notice.offsetYPx)],
 		['motion-manage-select-options-enter-duration', ms(tokens.manage.selectOptionsEnterDurationMs)],
 		['motion-manage-select-options-exit-duration', ms(tokens.manage.selectOptionsExitDurationMs)],
+		['motion-manage-active-indicator-duration', ms(tokens.manage.activeIndicatorDurationMs)],
+		['motion-manage-content-enter-duration', ms(tokens.manage.contentEnterDurationMs)],
+		['motion-manage-content-enter-offset-y', px(tokens.manage.contentEnterOffsetYPx)],
 		['motion-manage-tab-panel-enter-duration', ms(tokens.manage.tabPanelEnterDurationMs)],
 		['motion-manage-tab-panel-enter-offset-x', px(tokens.manage.tabPanelEnterOffsetXPx)],
 		['motion-error-enter-ease', tokens.error.enterEase],

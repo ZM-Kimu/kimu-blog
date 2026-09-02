@@ -230,6 +230,9 @@ export const appMessageSkeleton = {
 			listEyebrow: '',
 			listTitle: '',
 			descriptionLabel: '',
+			seriesLabel: '',
+			seriesNewer: '',
+			seriesOlder: '',
 			asideEyebrow: '',
 			statusFeatured: '',
 			statusPublished: '',
@@ -265,24 +268,11 @@ export const appMessageSkeleton = {
 		summaryAria: '',
 		totalLabel: '',
 		latestLabel: '',
-		filtersLabel: '',
 		feedAria: '',
 		openItem: '',
 		openLabel: '',
 		emptyTitle: '',
-		emptyDescription: '',
-		kind: {
-			site: '',
-			writing: '',
-			design: '',
-			work: ''
-		},
-		status: {
-			live: '',
-			shipped: '',
-			tracking: '',
-			queued: ''
-		}
+		emptyDescription: ''
 	},
 	favorites: {
 		title: '',
@@ -293,13 +283,7 @@ export const appMessageSkeleton = {
 		collectionsAria: '',
 		openItem: '',
 		emptyTitle: '',
-		emptyDescription: '',
-		kind: {
-			article: '',
-			tool: '',
-			reference: '',
-			site: ''
-		}
+		emptyDescription: ''
 	},
 	error: {
 		title: '',
@@ -354,20 +338,27 @@ export const appMessageSkeleton = {
 				id: '',
 				date: '',
 				added: '',
-				kind: '',
-				status: '',
+				project: '',
+				progress: '',
 				summary: '',
 				description: '',
 				tags: '',
 				href: '',
-				sourceLabel: '',
-				collection: ''
+				sourceLabel: ''
 			},
 			placeholders: {
 				tags: '',
 				href: '',
-				hrefOptional: ''
+				hrefOptional: '',
+				favoriteTags: ''
 			}
+		},
+		groups: {
+			none: '',
+			createProject: '',
+			createSeries: '',
+			rename: '',
+			confirmRename: ''
 		},
 		shell: {
 			eyebrow: '',
@@ -431,7 +422,6 @@ export const appMessageSkeleton = {
 				author: '',
 				series: '',
 				readingTime: '',
-				canonical: '',
 				format: '',
 				tags: '',
 				cover: ''
@@ -439,7 +429,6 @@ export const appMessageSkeleton = {
 			placeholders: {
 				category: '',
 				readingTime: '',
-				canonical: '',
 				tags: '',
 				cover: ''
 			},
@@ -528,6 +517,14 @@ export const appMessageSkeleton = {
 			invalidRecord: '',
 			invalidRecordKind: '',
 			invalidRecordId: '',
+			invalidGroup: '',
+			invalidGroupId: '',
+			invalidGroupKind: '',
+			invalidGroupName: '',
+			groupNotFound: '',
+			duplicateGroupName: '',
+			duplicateGroupId: '',
+			missingGroupName: '',
 			sessionInitFailed: '',
 			invalidContentType: '',
 			missingPayload: '',

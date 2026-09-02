@@ -4,11 +4,11 @@
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import { translate } from '$lib/i18n'
 	import { untrack } from 'svelte'
-	import type { FavoriteEntry, FavoriteKind, FavoritesPageData } from '$lib/types/info-flow'
+	import type { FavoriteEntry, FavoritesPageData } from '$lib/types/info-flow'
 
 	type FavoriteContentPanel = {
 		key: string
-		collection: string
+		tag: string
 		entries: FavoriteEntry[]
 		phase: 'current' | 'outgoing'
 		entryMode: 'initial' | 'switch'
@@ -19,21 +19,19 @@
 	const t = (key: string, params?: Record<string, string | number>) =>
 		translate(messages, key, params)
 
-	let activeCollection = $state('all')
+	let activeTag = $state('all')
 	let contentPanelSequence = 0
-	let renderedCollection = $state<string | null>(null)
+	let renderedTag = $state<string | null>(null)
 	let contentPanels = $state<FavoriteContentPanel[]>([])
 
-	const visibleEntries = $derived.by(() =>
-		data.entries.filter((entry) => matchesActiveCollection(entry))
-	)
+	const visibleEntries = $derived.by(() => data.entries.filter((entry) => matchesActiveTag(entry)))
 	const renderedContentPanels = $derived.by(() =>
 		contentPanels.length
 			? contentPanels
 			: [
 					{
-						key: `${activeCollection}:0`,
-						collection: activeCollection,
+						key: `${activeTag}:0`,
+						tag: activeTag,
 						entries: visibleEntries,
 						phase: 'current' as const,
 						entryMode: 'initial' as const
@@ -42,15 +40,15 @@
 	)
 
 	$effect(() => {
-		const nextCollection = activeCollection
+		const nextTag = activeTag
 		const nextEntries = visibleEntries
 
-		if (renderedCollection === null) {
-			renderedCollection = nextCollection
+		if (renderedTag === null) {
+			renderedTag = nextTag
 			contentPanels = [
 				{
-					key: `${nextCollection}:${contentPanelSequence}`,
-					collection: nextCollection,
+					key: `${nextTag}:${contentPanelSequence}`,
+					tag: nextTag,
 					entries: nextEntries,
 					phase: 'current',
 					entryMode: 'initial'
@@ -59,7 +57,7 @@
 			return
 		}
 
-		if (nextCollection === renderedCollection) {
+		if (nextTag === renderedTag) {
 			contentPanels = untrack(() =>
 				contentPanels.map((panel) =>
 					panel.phase === 'current' ? { ...panel, entries: nextEntries } : panel
@@ -77,27 +75,20 @@
 		contentPanels = [
 			...outgoingPanels,
 			{
-				key: `${nextCollection}:${++contentPanelSequence}`,
-				collection: nextCollection,
+				key: `${nextTag}:${++contentPanelSequence}`,
+				tag: nextTag,
 				entries: nextEntries,
 				phase: 'current',
 				entryMode: 'switch'
 			}
 		]
-		renderedCollection = nextCollection
+		renderedTag = nextTag
 	})
 
-	function matchesActiveCollection(entry: FavoriteEntry) {
-		return activeCollection === 'all' || entry.collection === activeCollection
-	}
-
-	function kindLabel(kind: FavoriteKind) {
-		return t(`favorites.kind.${kind}`)
-	}
-
-	function collectionLabel(collectionId: string) {
+	function matchesActiveTag(entry: FavoriteEntry) {
 		return (
-			data.collections.find((collection) => collection.id === collectionId)?.title ?? collectionId
+			activeTag === 'all' ||
+			entry.tags.some((tag) => tag.toLocaleLowerCase() === activeTag.toLocaleLowerCase())
 		)
 	}
 
@@ -127,8 +118,7 @@
 
 {#snippet favoriteCardContent(item: FavoriteEntry)}
 	<div class="info-flow-card-hud">
-		<span>{kindLabel(item.kind)}</span>
-		<span>{collectionLabel(item.collection)}</span>
+		{#each item.tags as tag (tag)}<span>{tag}</span>{/each}
 		<span>{item.sourceLabel}</span>
 	</div>
 	<h3>{item.title}</h3>
@@ -140,25 +130,25 @@
 		<header class="favorites-flow-head">
 			<div class="info-flow-filter-row" aria-label={t('favorites.filtersLabel')}>
 				<button
-					class:info-flow-filter-active={activeCollection === 'all'}
+					class:info-flow-filter-active={activeTag === 'all'}
 					type="button"
-					aria-pressed={activeCollection === 'all'}
+					aria-pressed={activeTag === 'all'}
 					onclick={() => {
-						activeCollection = 'all'
+						activeTag = 'all'
 					}}
 				>
 					{t('common.all')}
 				</button>
-				{#each data.collections as collection (collection.id)}
+				{#each data.tags as tag (tag)}
 					<button
-						class:info-flow-filter-active={activeCollection === collection.id}
+						class:info-flow-filter-active={activeTag === tag}
 						type="button"
-						aria-pressed={activeCollection === collection.id}
+						aria-pressed={activeTag === tag}
 						onclick={() => {
-							activeCollection = collection.id
+							activeTag = tag
 						}}
 					>
-						{collection.title}
+						{tag}
 					</button>
 				{/each}
 			</div>

@@ -2,6 +2,7 @@ import {
 	getAllPosts,
 	getPostBySlug,
 	getPostEntries,
+	getPostSeriesNavigation,
 	getRelatedPosts
 } from '$lib/server/content/posts'
 import { error } from '@sveltejs/kit'
@@ -28,6 +29,7 @@ export function load({ params }) {
 	return {
 		post,
 		allPosts: getAllPosts(),
+		seriesNavigation: getPostSeriesNavigation(post),
 		relatedPosts: getRelatedPosts(post)
 	}
 }

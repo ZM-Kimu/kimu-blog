@@ -5,6 +5,7 @@
 	import {
 		createManagedRecordRequest,
 		deleteManagedRecordRequest,
+		fetchManagedRecords,
 		ManageApiError,
 		updateManagedRecordRequest
 	} from '$lib/features/manage/api'
@@ -15,9 +16,9 @@
 		ManageFavoriteWritePayload
 	} from '$lib/features/manage/types'
 	import { translate } from '$lib/i18n'
-	import type { FavoriteKind } from '$lib/types/info-flow'
+	import { onMount } from 'svelte'
 	import ManageRecordForm from './ManageRecordForm.svelte'
-	import ManageRecordSelect from './ManageRecordSelect.svelte'
+	import ManageTagInput from './ManageTagInput.svelte'
 
 	type EditorMode = 'create' | 'edit'
 
@@ -34,12 +35,11 @@
 	function createForm(record: ManageFavoriteDocument | null) {
 		return {
 			added: record?.entry.added ?? getTodayString(),
-			collection: record?.entry.collection ?? 'general',
 			description: record?.entry.description ?? '',
 			href: record?.entry.href ?? '',
 			id: record?.entry.id ?? '',
-			kind: record?.entry.kind ?? ('article' as FavoriteKind),
 			sourceLabel: record?.entry.sourceLabel ?? '',
+			tags: record?.entry.tags ?? [],
 			title: record?.entry.title ?? ''
 		}
 	}
@@ -52,15 +52,27 @@
 	let isSubmitting = $state(false)
 	let statusMessage = $state('')
 	let errorMessage = $state('')
+	let availableTags = $state<string[]>([])
 	const messages = $derived(page.data.i18n?.messages)
 	const t = (key: string, params?: Record<string, string | number>) =>
 		translate(messages, key, params)
-	const kindOptions = $derived(
-		(['article', 'tool', 'reference', 'site'] as const).map((value) => ({
-			value,
-			label: t(`favorites.kind.${value}`)
-		}))
-	)
+
+	onMount(async () => {
+		try {
+			const response = await fetchManagedRecords(fetch, 'favorites')
+			const names: string[] = []
+			for (const item of response.items) {
+				for (const tag of item.entry.tags) {
+					if (!names.some((name) => name.toLocaleLowerCase() === tag.toLocaleLowerCase())) {
+						names.push(tag)
+					}
+				}
+			}
+			availableTags = names.sort((a, b) => a.localeCompare(b))
+		} catch (cause) {
+			errorMessage = friendlyError(cause)
+		}
+	})
 
 	$effect(() => {
 		const resetKey = initialRecord?.sha ?? '__new__'
@@ -81,13 +93,12 @@
 	function toPayload(): ManageFavoriteWritePayload {
 		return {
 			added: form.added,
-			collection: form.collection.trim(),
 			description: form.description.trim(),
 			expectedSha,
 			href: form.href.trim(),
 			id: form.id.trim(),
-			kind: form.kind,
 			sourceLabel: form.sourceLabel.trim(),
+			tags: form.tags,
 			title: form.title.trim()
 		}
 	}
@@ -171,18 +182,15 @@
 			<span>{t('manage.records.fields.added')}</span>
 			<input bind:value={form.added} required type="date" />
 		</label>
-		<label>
-			<span>{t('manage.records.fields.kind')}</span>
-			<ManageRecordSelect
-				bind:value={form.kind}
-				label={t('manage.records.fields.kind')}
-				options={kindOptions}
+		<div class="manage-record-field wide">
+			<span>{t('manage.records.fields.tags')}</span>
+			<ManageTagInput
+				available={availableTags}
+				bind:value={form.tags}
+				label={t('manage.records.fields.tags')}
+				placeholder={t('manage.records.placeholders.favoriteTags')}
 			/>
-		</label>
-		<label>
-			<span>{t('manage.records.fields.collection')}</span>
-			<input bind:value={form.collection} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required />
-		</label>
+		</div>
 		<label class="wide">
 			<span>{t('manage.records.fields.description')}</span>
 			<textarea bind:value={form.description} maxlength="800" required></textarea>
