@@ -8,6 +8,7 @@ export const appMessageSkeleton = {
 	},
 	common: {
 		back: '',
+		all: '',
 		home: '',
 		close: '',
 		info: '',
@@ -45,7 +46,8 @@ export const appMessageSkeleton = {
 		blog: '',
 		updates: '',
 		favorites: '',
-		about: ''
+		about: '',
+		tags: ''
 	},
 	shell: {
 		brand: {
@@ -105,6 +107,17 @@ export const appMessageSkeleton = {
 		profile: {
 			info: ''
 		},
+		music: {
+			emptyTitle: '',
+			play: '',
+			pause: '',
+			previous: '',
+			next: '',
+			progress: '',
+			volume: '',
+			mute: '',
+			unmute: ''
+		},
 		missions: {
 			engineering: {
 				title: '',
@@ -149,8 +162,8 @@ export const appMessageSkeleton = {
 		},
 		metrics: {
 			articles: '',
-			todos: '',
-			recentActivity: ''
+			recentActiveArticles: '',
+			recentUpdates: ''
 		},
 		settings: {
 			title: '',
@@ -177,7 +190,9 @@ export const appMessageSkeleton = {
 			introTitle: '',
 			introDescription: '',
 			backToBlog: '',
+			openPost: '',
 			categoryEyebrow: '',
+			tagsScrollHint: '',
 			emptyDate: '',
 			emptyTitle: '',
 			emptyDescription: '',
@@ -193,11 +208,32 @@ export const appMessageSkeleton = {
 			boardEyebrow: '',
 			boardTitle: '',
 			recentEyebrow: '',
-			recentTitle: ''
+			recentTitle: '',
+			cards: {
+				engineering: {
+					title: ''
+				},
+				designLog: {
+					title: ''
+				},
+				fieldNotes: {
+					title: ''
+				},
+				favorites: {
+					title: ''
+				}
+			}
 		},
 		post: {
-			heroEyebrow: '',
+			headerEyebrow: '',
 			backArchive: '',
+			listEyebrow: '',
+			listTitle: '',
+			descriptionLabel: '',
+			seriesLabel: '',
+			seriesNewer: '',
+			seriesOlder: '',
+			asideEyebrow: '',
 			statusFeatured: '',
 			statusPublished: '',
 			metadataEyebrow: '',
@@ -216,35 +252,38 @@ export const appMessageSkeleton = {
 		}
 	},
 	about: {
-		heroEyebrow: '',
-		backHome: '',
 		title: '',
-		description: '',
-		systemsEyebrow: '',
-		systemsTitle: '',
-		nextEyebrow: '',
-		nextTitle: '',
-		items: {
-			cloudflarePages: '',
-			mdsvex: '',
-			schemaValidation: '',
-			entries: '',
-			gameUi: '',
-			replacePlaceholders: '',
-			profileData: '',
-			realContent: '',
-			searchCommentsAnalytics: ''
-		}
+		personalTitle: '',
+		githubAriaLabel: '',
+		githubFooterLabel: '',
+		techStackTitle: '',
+		entertainmentTitle: '',
+		emailAriaLabel: '',
+		mailFooterLabel: '',
+		maimaiImageAlt: ''
 	},
 	updates: {
-		eyebrow: '',
 		title: '',
-		description: ''
+		description: '',
+		summaryAria: '',
+		totalLabel: '',
+		latestLabel: '',
+		feedAria: '',
+		openItem: '',
+		openLabel: '',
+		emptyTitle: '',
+		emptyDescription: ''
 	},
 	favorites: {
-		eyebrow: '',
 		title: '',
-		description: ''
+		description: '',
+		summaryAria: '',
+		totalLabel: '',
+		filtersLabel: '',
+		collectionsAria: '',
+		openItem: '',
+		emptyTitle: '',
+		emptyDescription: ''
 	},
 	error: {
 		title: '',
@@ -261,6 +300,68 @@ export const appMessageSkeleton = {
 		fallbackIllustration: ''
 	},
 	manage: {
+		nav: {
+			ariaLabel: '',
+			posts: '',
+			updates: '',
+			favorites: ''
+		},
+		records: {
+			common: {
+				loading: '',
+				retry: '',
+				save: '',
+				delete: '',
+				committed: '',
+				confirm: {
+					create: '',
+					edit: '',
+					delete: ''
+				}
+			},
+			updates: {
+				count: '',
+				create: '',
+				searchLabel: '',
+				searchPlaceholder: '',
+				empty: ''
+			},
+			favorites: {
+				count: '',
+				create: '',
+				searchLabel: '',
+				searchPlaceholder: '',
+				empty: ''
+			},
+			fields: {
+				title: '',
+				id: '',
+				date: '',
+				added: '',
+				project: '',
+				progress: '',
+				summary: '',
+				description: '',
+				tags: '',
+				href: '',
+				sourceLabel: ''
+			},
+			placeholders: {
+				tags: '',
+				href: '',
+				hrefOptional: '',
+				favoriteTags: ''
+			}
+		},
+		groups: {
+			none: '',
+			createProject: '',
+			createSeries: '',
+			rename: '',
+			renameSave: '',
+			renameCancel: '',
+			confirmRename: ''
+		},
 		shell: {
 			eyebrow: '',
 			title: '',
@@ -274,10 +375,10 @@ export const appMessageSkeleton = {
 			eyebrow: '',
 			title: '',
 			loadingTitle: '',
-			loadingDescription: '',
 			errorTitle: '',
 			search: '',
 			searchPlaceholder: '',
+			articleCount: '',
 			newPost: '',
 			retry: '',
 			noMatchesTitle: '',
@@ -286,11 +387,9 @@ export const appMessageSkeleton = {
 			featured: ''
 		},
 		editor: {
-			eyebrow: '',
 			createTitle: '',
 			editTitle: '',
 			loadingTitle: '',
-			loadingDescription: '',
 			errorTitle: '',
 			createSubmit: '',
 			saveChanges: '',
@@ -298,8 +397,29 @@ export const appMessageSkeleton = {
 			delete: '',
 			retry: '',
 			source: '',
+			tabs: {
+				ariaLabel: '',
+				information: '',
+				content: ''
+			},
+			previewVisibility: {
+				show: '',
+				hide: ''
+			},
+			confirmSubmit: {
+				create: '',
+				update: ''
+			},
+			slugStatus: {
+				checking: '',
+				available: '',
+				invalid: '',
+				duplicate: '',
+				unavailable: ''
+			},
 			fields: {
 				title: '',
+				slug: '',
 				description: '',
 				date: '',
 				updated: '',
@@ -307,7 +427,6 @@ export const appMessageSkeleton = {
 				author: '',
 				series: '',
 				readingTime: '',
-				canonical: '',
 				format: '',
 				tags: '',
 				cover: ''
@@ -315,7 +434,6 @@ export const appMessageSkeleton = {
 			placeholders: {
 				category: '',
 				readingTime: '',
-				canonical: '',
 				tags: '',
 				cover: ''
 			},
@@ -325,13 +443,13 @@ export const appMessageSkeleton = {
 				toc: ''
 			},
 			uploads: {
-				eyebrow: '',
 				title: '',
 				pickFiles: '',
+				dropTitle: '',
+				dropDescription: '',
 				setCover: '',
 				insertBody: '',
-				remove: '',
-				empty: ''
+				remove: ''
 			},
 			statusCommitted: '',
 			errors: {
@@ -341,12 +459,7 @@ export const appMessageSkeleton = {
 			}
 		},
 		preview: {
-			eyebrow: '',
-			title: '',
-			intro: '',
-			heroEyebrow: '',
-			assetsEyebrow: '',
-			assetsTitle: '',
+			empty: '',
 			placeholders: {
 				description: '',
 				scriptBlock: '',
@@ -402,6 +515,21 @@ export const appMessageSkeleton = {
 			manageRequestFailed: '',
 			postListLoadFailed: '',
 			postLoadFailed: '',
+			recordListLoadFailed: '',
+			recordLoadFailed: '',
+			recordNotFound: '',
+			duplicateRecordId: '',
+			invalidRecord: '',
+			invalidRecordKind: '',
+			invalidRecordId: '',
+			invalidGroup: '',
+			invalidGroupId: '',
+			invalidGroupKind: '',
+			invalidGroupName: '',
+			groupNotFound: '',
+			duplicateGroupName: '',
+			duplicateGroupId: '',
+			missingGroupName: '',
 			sessionInitFailed: '',
 			invalidContentType: '',
 			missingPayload: '',
@@ -474,6 +602,7 @@ export const appMessageSkeleton = {
 	a11y: {
 		home: {
 			missionBanner: '',
+			musicPlayer: '',
 			footerNav: ''
 		}
 	}

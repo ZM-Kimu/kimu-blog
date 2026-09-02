@@ -1,10 +1,19 @@
-import { getPostBySlug, getPostEntries, getRelatedPosts } from '$lib/server/content/posts'
+import {
+	getAllPosts,
+	getPostBySlug,
+	getPostEntries,
+	getPostSeriesNavigation,
+	getRelatedPosts
+} from '$lib/server/content/posts'
 import { error } from '@sveltejs/kit'
 
-export const prerender = true
+const postModules = import.meta.glob('/src/lib/content/blog/*.{md,svx}')
+const postEntries = getPostEntries()
+
+export const prerender = postEntries.length > 0
 
 export function entries() {
-	return getPostEntries()
+	return postEntries
 }
 
 export function load({ params }) {
@@ -14,8 +23,14 @@ export function load({ params }) {
 		throw error(404, 'post_not_found')
 	}
 
+	if (!postModules[post.path]) {
+		throw error(404, 'post_module_missing')
+	}
+
 	return {
 		post,
+		allPosts: getAllPosts(),
+		seriesNavigation: getPostSeriesNavigation(post),
 		relatedPosts: getRelatedPosts(post)
 	}
 }

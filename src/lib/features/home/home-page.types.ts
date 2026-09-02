@@ -22,7 +22,7 @@ export type HomePageData = {
 export type HomePageMissionPreviewItem = {
 	slug: string
 	id: 'engineering' | 'designLog' | 'fieldNotes' | 'favorites'
-	href: '/blog/archive' | '/favorites'
+	href: `/blog/archive?category=${string}` | '/favorites'
 	tone: 'cyan' | 'blue' | 'amber' | 'slate'
 	count: number
 }

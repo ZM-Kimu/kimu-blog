@@ -83,7 +83,6 @@ function replacePlaceholder(input: string, placeholder: string, value: string) {
 function normalizeFrontmatter(payload: ManageWritePayload) {
 	return postFrontmatterSchema.parse({
 		author: payload.author,
-		canonical: payload.canonical,
 		category: payload.category,
 		cover: payload.cover,
 		date: payload.date,
@@ -91,7 +90,7 @@ function normalizeFrontmatter(payload: ManageWritePayload) {
 		draft: payload.draft,
 		featured: payload.featured,
 		readingTime: payload.readingTime,
-		series: payload.series,
+		seriesId: payload.seriesId,
 		slug: normalizeSlug(payload.slug),
 		tags: payload.tags,
 		title: payload.title,
@@ -211,8 +210,9 @@ export async function validateManageSource(source: string) {
 export function serializeManagedPost(payload: ManageWritePayload) {
 	const frontmatter = normalizeFrontmatter(payload)
 	const yaml = stringify(frontmatter).trimEnd()
+	const source = payload.source.trimEnd()
 
-	return `---\n${yaml}\n---\n\n${payload.source}`
+	return `---\n${yaml}\n---\n\n${source}\n`
 }
 
 export async function prepareUploadedAssets(files: File[], slug: string) {

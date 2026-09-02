@@ -5,6 +5,7 @@
 	import FavoritesPage from '$lib/features/favorites/FavoritesPage.svelte'
 	import SeoHead from '$lib/components/ui/SeoHead.svelte'
 
+	let { data } = $props()
 	const messages = $derived(page.data.i18n?.messages)
 </script>
 
@@ -15,5 +16,5 @@
 />
 
 <SubpageScreen>
-	<FavoritesPage />
+	<FavoritesPage {data} />
 </SubpageScreen>

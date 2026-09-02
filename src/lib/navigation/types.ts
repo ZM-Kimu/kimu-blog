@@ -61,8 +61,8 @@ export type TopbarAction = {
 
 export type TopbarMetricsData = {
 	articleCount: number
-	todoCount: number | null
 	recentPostActivityCount30d: number
+	recentUpdateCount30d: number
 }
 
 export type BackgroundAnimationPreference = 'on' | 'off'
@@ -72,6 +72,7 @@ export type BackgroundAnimationStatus = 'idle' | 'loading' | 'ready' | 'failed'
 export type BackBehavior = {
 	kind: 'history'
 	fallbackHref: InternalHref
+	skipRouteKinds?: readonly RouteKind[]
 }
 
 export type TopbarState = {

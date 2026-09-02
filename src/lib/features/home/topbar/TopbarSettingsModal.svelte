@@ -4,6 +4,7 @@
 	import { onMount, tick } from 'svelte'
 	import { fade } from 'svelte/transition'
 
+	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import { getMotionTokens } from '$lib/motion/tokens'
 	import type { BackgroundAnimationPreference } from '$lib/navigation/types'
 
@@ -122,7 +123,7 @@
 			</button>
 		</header>
 
-		<div class="home-topbar-settings-body">
+		<ScrollChrome class="home-topbar-settings-scroll" viewportClass="home-topbar-settings-body">
 			<div class="home-topbar-settings-options">
 				<section class="home-topbar-settings-option">
 					<div class="home-topbar-settings-copy">
@@ -212,6 +213,6 @@
 					</div>
 				</section>
 			</div>
-		</div>
+		</ScrollChrome>
 	</div>
 </div>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import SubpageScreen from '$lib/components/layout/SubpageScreen.svelte'
 	import BlogPostPage from '$lib/features/blog/BlogPostPage.svelte'
 	import SeoHead from '$lib/components/ui/SeoHead.svelte'
 
@@ -13,6 +12,4 @@
 	type="article"
 />
 
-<SubpageScreen>
-	<BlogPostPage {data} />
-</SubpageScreen>
+<BlogPostPage {data} />

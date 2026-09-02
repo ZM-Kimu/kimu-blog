@@ -16,7 +16,7 @@
 	const isNotFound = $derived(status === 404)
 	const isServerFault = $derived(status >= 500)
 	const isPortraitLayout = $derived(getMode() === 'portrait')
-	const usesCompactHeadline = $derived(isNotFound || isServerFault)
+	const usesCondensedHeadline = $derived(isNotFound || isServerFault)
 	const eyebrow = $derived(
 		isNotFound
 			? translate(messages, 'error.eyebrowNotFound')
@@ -53,7 +53,7 @@
 
 		<article class="error-screen-copy">
 			<p class="eyebrow error-screen-eyebrow">{eyebrow}</p>
-			<h1 class="error-screen-headline" class:error-screen-title-compact={usesCompactHeadline}>
+			<h1 class="error-screen-headline" class:error-screen-title-condensed={usesCondensedHeadline}>
 				{headline}
 			</h1>
 			<p class="error-screen-message">{detailMessage}</p>
@@ -134,7 +134,7 @@
 		max-width: 12ch;
 	}
 
-	.error-screen-title-compact {
+	.error-screen-title-condensed {
 		font-size: clamp(0.9rem, 2.08vw, 1.68rem);
 		letter-spacing: -0.04em;
 		max-width: none;

@@ -36,11 +36,9 @@
 		<div class="mission-grid">
 			{#each missions as mission (mission.slug)}
 				<MissionCard
-					title={t(`home.missions.${mission.id}.title`)}
-					kicker={t(`home.missions.${mission.id}.kicker`)}
+					title={t(`blog.mission.cards.${mission.id}.title`)}
 					description={t(`home.missions.${mission.id}.description`)}
 					href={mission.href}
-					state={t(`home.missions.${mission.id}.state`)}
 					tone={mission.tone}
 					count={mission.count}
 				/>

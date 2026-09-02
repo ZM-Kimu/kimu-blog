@@ -14,6 +14,6 @@
 	pathname="/__debug/manage"
 />
 
-<SubpageScreen>
+<SubpageScreen containedScroll>
 	<DebugManageSandbox />
 </SubpageScreen>

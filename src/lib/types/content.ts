@@ -1,10 +1,17 @@
 import type { PostFrontmatter } from '$lib/content/schema'
+import type { BlogSeries } from '$lib/content/group-schema'
 
 export interface BlogPost extends PostFrontmatter {
 	path: string
 	permalink: `/blog/${string}`
 	tagSlugs: string[]
 	categorySlug: string | null
+}
+
+export interface BlogSeriesNavigation {
+	series: BlogSeries
+	newer: BlogPost | null
+	older: BlogPost | null
 }
 
 export interface TagSummary {
@@ -21,15 +28,5 @@ export interface CategorySummary {
 
 export interface TagResult {
 	tag: TagSummary
-	posts: BlogPost[]
-}
-
-export interface ArchiveCategoryGroup {
-	category: CategorySummary
-	posts: BlogPost[]
-}
-
-export interface ArchiveYearGroup {
-	year: string
 	posts: BlogPost[]
 }

@@ -13,15 +13,17 @@ const topbarMetricIcons = {
 	articles: {
 		src: '/icons/topbar/article.png',
 		mode: 'mask' as const,
-		tint: '#4277be'
+		tint: '#5688cf'
 	},
-	todos: {
-		src: '/icons/topbar/question_mark_green.png',
-		mode: 'image' as const
+	recentActiveArticles: {
+		src: '/icons/topbar/recent-active-articles.png',
+		mode: 'mask' as const,
+		tint: '#5b91d6'
 	},
-	recentActivity: {
-		src: '/icons/topbar/tick_mark_yellow.png',
-		mode: 'image' as const
+	recentUpdates: {
+		src: '/icons/topbar/recent-updates.png',
+		mode: 'mask' as const,
+		tint: '#4fa8d8'
 	}
 }
 
@@ -72,8 +74,8 @@ function createSharedMetrics(
 ): readonly TopbarMetric[] {
 	const metricsData = resolveTopbarMetricsData(data)
 	const articleValue = formatMetricValue(metricsData?.articleCount)
-	const todoValue = formatMetricValue(metricsData?.todoCount)
-	const recentActivityValue = formatMetricValue(metricsData?.recentPostActivityCount30d)
+	const recentActiveArticleValue = formatMetricValue(metricsData?.recentPostActivityCount30d)
+	const recentUpdateValue = formatMetricValue(metricsData?.recentUpdateCount30d)
 
 	return [
 		{
@@ -84,18 +86,18 @@ function createSharedMetrics(
 			icon: topbarMetricIcons.articles
 		},
 		{
-			key: 'todos',
-			value: todoValue,
-			label: t(messages, 'topbar.metrics.todos'),
-			ariaLabel: `${t(messages, 'topbar.metrics.todos')} ${todoValue}`,
-			icon: topbarMetricIcons.todos
+			key: 'recent-active-articles',
+			value: recentActiveArticleValue,
+			label: t(messages, 'topbar.metrics.recentActiveArticles'),
+			ariaLabel: `${t(messages, 'topbar.metrics.recentActiveArticles')} ${recentActiveArticleValue}`,
+			icon: topbarMetricIcons.recentActiveArticles
 		},
 		{
-			key: 'recent-activity',
-			value: recentActivityValue,
-			label: t(messages, 'topbar.metrics.recentActivity'),
-			ariaLabel: `${t(messages, 'topbar.metrics.recentActivity')} ${recentActivityValue}`,
-			icon: topbarMetricIcons.recentActivity
+			key: 'recent-updates',
+			value: recentUpdateValue,
+			label: t(messages, 'topbar.metrics.recentUpdates'),
+			ariaLabel: `${t(messages, 'topbar.metrics.recentUpdates')} ${recentUpdateValue}`,
+			icon: topbarMetricIcons.recentUpdates
 		}
 	]
 }
@@ -172,20 +174,57 @@ function resolvePageTitle(
 				? data.post.title
 				: t(messages, 'shell.section.dossier')
 		case 'tag':
-			return typeof data.tag === 'object' &&
+			if (
+				typeof data.tag === 'object' &&
 				data.tag !== null &&
 				'name' in data.tag &&
 				typeof data.tag.name === 'string'
-				? `#${data.tag.name}`
-				: '#tag'
+			) {
+				return `#${data.tag.name}`
+			}
+
+			return route.tag ? `#${decodeURIComponent(route.tag)}` : '#tag'
 		case 'about':
 			return t(messages, 'nav.about')
 		case 'updates':
 			return t(messages, 'nav.updates')
 		case 'favorites':
 			return t(messages, 'nav.favorites')
-		case 'manage':
-			return siteConfig.name
+		case 'manage': {
+			if (route.pathname === '/manage/posts/new') {
+				return t(messages, 'manage.editor.createTitle')
+			}
+
+			if (route.pathname === '/manage/updates/new') {
+				return t(messages, 'manage.records.updates.create')
+			}
+
+			if (route.pathname === '/manage/favorites/new') {
+				return t(messages, 'manage.records.favorites.create')
+			}
+
+			if (route.pathname.startsWith('/manage/posts/')) {
+				return decodeURIComponent(route.pathname.slice('/manage/posts/'.length))
+			}
+
+			if (route.pathname.startsWith('/manage/updates/')) {
+				return decodeURIComponent(route.pathname.slice('/manage/updates/'.length))
+			}
+
+			if (route.pathname.startsWith('/manage/favorites/')) {
+				return decodeURIComponent(route.pathname.slice('/manage/favorites/'.length))
+			}
+
+			if (route.pathname === '/manage/updates') {
+				return t(messages, 'manage.nav.updates')
+			}
+
+			if (route.pathname === '/manage/favorites') {
+				return t(messages, 'manage.nav.favorites')
+			}
+
+			return t(messages, 'manage.list.title')
+		}
 		case 'debugManage':
 			return siteConfig.name
 		case 'error':
@@ -263,7 +302,7 @@ export function createPageState({
 			showGlobalChrome: false,
 			backgroundPolicy: 'replace',
 			backgroundScene: 'neutral-default',
-			topbarShellVariant: 'none',
+			topbarShellVariant: 'subpage',
 			topbar: {
 				variant: 'subpage',
 				title,
@@ -271,7 +310,8 @@ export function createPageState({
 				actions: createDefaultSubpageActions(messages),
 				back: {
 					kind: 'history',
-					fallbackHref: '/'
+					fallbackHref: '/',
+					skipRouteKinds: ['manage']
 				},
 				motionPolicy: 'reduced'
 			}
@@ -294,7 +334,7 @@ export function createPageState({
 			: routeState.kind === 'post'
 				? '/blog'
 				: routeState.kind === 'tag'
-					? '/blog'
+					? '/'
 					: routeState.kind === 'about'
 						? '/'
 						: routeState.kind === 'updates'
@@ -304,6 +344,13 @@ export function createPageState({
 								: routeState.kind === 'debugManage'
 									? '/'
 									: '/'
+	const inheritsBackground =
+		routeState.kind === 'blog' ||
+		routeState.kind === 'archive' ||
+		routeState.kind === 'tag' ||
+		routeState.kind === 'about' ||
+		routeState.kind === 'updates' ||
+		routeState.kind === 'favorites'
 
 	return {
 		route: routeState,
@@ -312,13 +359,12 @@ export function createPageState({
 		motionFamily: 'subpage',
 		shellMode: isScreenRoute || usesSubpageScreen ? 'screen' : 'shell',
 		showGlobalChrome: !(isScreenRoute || usesSubpageScreen),
-		backgroundPolicy: routeState.kind === 'blog' ? 'inherit' : 'replace',
-		backgroundScene:
-			routeState.kind === 'blog'
-				? undefined
-				: usesSubpageScreen
-					? 'subpage-room'
-					: 'neutral-default',
+		backgroundPolicy: inheritsBackground ? 'inherit' : 'replace',
+		backgroundScene: inheritsBackground
+			? undefined
+			: usesSubpageScreen
+				? 'subpage-room'
+				: 'neutral-default',
 		topbarShellVariant: usesSubpageScreen ? 'subpage' : 'none',
 		topbar: {
 			variant: 'subpage',
@@ -327,7 +373,9 @@ export function createPageState({
 			actions: createDefaultSubpageActions(messages),
 			back: {
 				kind: 'history',
-				fallbackHref
+				fallbackHref,
+				skipRouteKinds:
+					routeState.kind === 'tag' ? ['tag'] : routeState.kind === 'post' ? ['post'] : undefined
 			},
 			motionPolicy: 'rich'
 		}

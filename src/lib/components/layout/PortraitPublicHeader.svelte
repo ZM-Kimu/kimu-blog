@@ -89,9 +89,12 @@
 
 		{#if isHome}
 			<nav aria-label={t('shell.aria.quickNav')} class="portrait-public-header-nav">
-				<a class="action-work portrait-home-work" href={workHref}>
-					<span class="action-badge">{t('home.action.badge')}</span>
-					<span class="action-label">{t('home.action.enterContent')}</span>
+				<a
+					class="action-work portrait-home-work"
+					href={workHref}
+					aria-label={`${t('home.action.enterContent')} ${t('nav.blog')}`}
+				>
+					<span class="action-work-icon" aria-hidden="true"></span>
 					<span class="action-label action-label-primary">{t('nav.blog')}</span>
 				</a>
 			</nav>

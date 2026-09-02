@@ -4,6 +4,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	align-items: flex-end;
 	align-self: stretch;
 	min-height: 100%;
 	padding-top: var(--home-side-rail-offset);
@@ -13,6 +14,7 @@
 
 .home-event-banner {
 	display: grid;
+	width: 66.666%;
 	gap: 0.35rem;
 	padding: var(--home-card-padding);
 	border-radius: var(--home-card-radius);
@@ -40,22 +42,28 @@
 }
 
 .action-work {
+	--action-work-icon-image: url('/icons/home-action/Lobby_Icon_Work.png');
+	--action-work-label-mask-image: url('/icons/home-action/Img_Deco_LobbyBottom.png');
+	--action-work-label-shape: url('/icons/home-action/action-label-trapezoid-mask.svg');
+	--action-work-label-left-overhang: 0.24rem;
+
 	position: relative;
+	isolation: isolate;
 	margin-top: auto;
 	font: inherit;
-	text-align: left;
+	text-align: center;
 	border: 0;
-	border-radius: var(--home-action-radius);
-	background: linear-gradient(180deg, rgb(88 190 255 / 94%), rgb(57 143 228 / 92%));
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 0.25em;
-	color: white;
-	min-height: calc(var(--home-action-min-height) + 1.25rem);
-	padding: 1.1rem 1rem;
-	box-shadow: 0 22px 40px rgb(57 143 228 / 22%);
+	border-radius: 0;
+	background: transparent;
+	display: grid;
+	place-items: center;
+	color: rgb(255 255 255 / 98%);
+	width: 56.25%;
+	aspect-ratio: 1 / 1;
+	min-height: 0;
+	padding: 0;
+	box-shadow: none;
+	cursor: inherit;
 	transition:
 		transform var(--motion-shared-ease-standard),
 		translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
@@ -64,31 +72,86 @@
 	appearance: none;
 }
 
-.action-work:hover {
-	transform: translateY(-2px);
-}
-
 .action-work:disabled {
 	opacity: 0.78;
 	transform: none;
-	box-shadow: 0 18px 32px rgb(57 143 228 / 18%);
+	box-shadow: none;
 }
 
-.action-badge {
-	font-size: clamp(9px, 0.68vw, 13px);
-	white-space: nowrap;
-	font-family: var(--font-mono);
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
+.action-work-icon {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: var(--action-work-icon-image) center 75% / 75% auto no-repeat;
+	filter: drop-shadow(0 12px 16px rgb(26 77 136 / 20%));
+	pointer-events: none;
+	transform-origin: center;
+	transition: transform var(--motion-shared-ease-standard);
 }
 
 .action-label {
-	font-size: clamp(11px, 0.8vw, 15px);
+	position: relative;
+	z-index: 2;
+	font-family: var(--font-display);
+	pointer-events: none;
 	white-space: nowrap;
 }
 
 .action-label-primary {
-	font-size: clamp(16px, 1.05vw, 22px);
-	font-weight: 700;
+	position: absolute;
+	inset-block-start: calc(100% - 0.58rem);
+	inset-inline-end: calc(-1 * var(--home-shell-padding));
+	display: grid;
+	place-items: center;
+	width: calc(100% + var(--home-shell-padding) + var(--action-work-label-left-overhang));
+	min-height: clamp(2.76rem, 3.24vw, 3.56rem);
+	padding: 0.16rem clamp(0.82rem, 1vw, 1.05rem) 0.22rem;
+	margin-block-end: 0;
+	color: rgb(255 255 255 / 98%);
+	font-size: clamp(1.14rem, 1.32vw, 1.5rem);
+	font-weight: 800;
 	line-height: 1;
+	-webkit-text-stroke: 0.07em rgb(22 43 74 / 78%);
+	paint-order: stroke fill;
+	text-shadow:
+		0 1px 0 rgb(22 43 74 / 64%),
+		0 3px 8px rgb(7 24 48 / 42%),
+		0 0 14px rgb(56 189 248 / 36%);
+	isolation: isolate;
+	pointer-events: auto;
+	cursor: inherit;
+}
+
+.action-label-primary::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -2;
+	border-radius: 0.7rem 0.54rem 0.54rem 0.72rem;
+	background: rgb(116 133 149 / 75%);
+	backdrop-filter: blur(0.12rem) saturate(80%);
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / 14%),
+		inset 0 -1px 0 rgb(31 43 54 / 32%);
+	mask: var(--action-work-label-shape) center / 100% 100% no-repeat;
+	filter: drop-shadow(0 0.18rem 0 rgb(42 53 64 / 52%));
+	transform-origin: center;
+}
+
+.action-label-primary::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: 0.7rem 0.54rem 0.54rem 0.72rem;
+	background: var(--action-work-label-mask-image) center / cover no-repeat;
+	mask: var(--action-work-label-shape) center / 100% 100% no-repeat;
+}
+
+.action-work:focus-visible {
+	outline: 2px solid rgb(56 189 248 / 54%);
+	outline-offset: 0.22rem;
 }

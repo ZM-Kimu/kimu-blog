@@ -1,12 +1,73 @@
 <script lang="ts">
 	import { page } from '$app/state'
+	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import { translate } from '$lib/i18n'
+	import type { UpdatesPageData } from '$lib/types/info-flow'
+	import { formatDate } from '$lib/utils/date'
 
+	let { data }: { data: UpdatesPageData } = $props()
 	const messages = $derived(page.data.i18n?.messages)
+	const locale = $derived(page.data.i18n?.locale)
+	const t = (key: string, params?: Record<string, string | number>) =>
+		translate(messages, key, params)
+
+	const latestDateLabel = $derived(
+		data.latestDate ? formatDate(data.latestDate, locale) : t('updates.emptyTitle')
+	)
 </script>
 
-<section class="panel placeholder-screen">
-	<p class="eyebrow">{translate(messages, 'updates.eyebrow')}</p>
-	<h1>{translate(messages, 'updates.title')}</h1>
-	<p>{translate(messages, 'updates.description')}</p>
+<section class="info-flow-screen updates-screen">
+	<section class="panel updates-flow-panel" aria-label={t('updates.feedAria')}>
+		<div class="info-flow-stage updates-stage">
+			<ScrollChrome class="info-flow-scroll" viewportClass="info-flow-viewport">
+				{#if data.groups.length}
+					<div class="updates-timeline">
+						{#each data.groups as group, index (group.id)}
+							<section class="updates-group">
+								<header class="updates-group-header">
+									{#if index === 0}
+										<div class="updates-group-summary" aria-label={t('updates.summaryAria')}>
+											<div class="info-flow-stat">
+												<span>{t('updates.totalLabel')}</span>
+												<strong>{data.totalEntries}</strong>
+											</div>
+											<div class="info-flow-stat">
+												<span>{t('updates.latestLabel')}</span>
+												<strong>{latestDateLabel}</strong>
+											</div>
+										</div>
+									{/if}
+									<span>{group.label}</span>
+									<i></i>
+								</header>
+
+								<div class="updates-group-list">
+									{#each group.entries as entry (entry.id)}
+										<article class="updates-card">
+											<div class="updates-card-marker" aria-hidden="true"></div>
+											<div class="updates-card-main">
+												<div class="info-flow-card-hud">
+													{#if entry.project && entry.projectName}
+														<span>{entry.projectName}</span>
+														<span>{entry.project.progress}%</span>
+													{/if}
+													<time datetime={entry.date}>{formatDate(entry.date, locale)}</time>
+												</div>
+												<h2>{entry.title}</h2>
+												<p>{entry.summary}</p>
+											</div>
+										</article>
+									{/each}
+								</div>
+							</section>
+						{/each}
+					</div>
+				{:else}
+					<div class="info-flow-empty">
+						<p>{t('updates.emptyDescription')}</p>
+					</div>
+				{/if}
+			</ScrollChrome>
+		</div>
+	</section>
 </section>

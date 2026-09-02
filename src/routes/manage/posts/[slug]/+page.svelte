@@ -43,14 +43,11 @@
 </script>
 
 {#if isLoading}
-	<section class="manage-state panel">
-		<p class="eyebrow">{t('manage.editor.eyebrow')}</p>
-		<h2>{t('manage.editor.loadingTitle')}</h2>
-		<p>{t('manage.editor.loadingDescription')}</p>
+	<section aria-busy="true" aria-live="polite" class="manage-loading panel">
+		<p>{t('manage.editor.loadingTitle')}</p>
 	</section>
 {:else if errorMessage}
 	<section class="manage-state panel">
-		<p class="eyebrow">{t('manage.editor.eyebrow')}</p>
 		<h2>{t('manage.editor.errorTitle')}</h2>
 		<p>{errorMessage}</p>
 		<button
@@ -66,6 +63,18 @@
 {/if}
 
 <style>
+	.manage-loading {
+		display: flex;
+		align-items: center;
+		min-height: 5.5rem;
+		padding: 1.2rem 1.35rem;
+	}
+
+	.manage-loading p {
+		margin: 0;
+		color: var(--ink-soft);
+	}
+
 	.manage-state {
 		display: grid;
 		gap: 0.55rem;

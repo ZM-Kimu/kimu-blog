@@ -10,12 +10,10 @@
 	--home-topbar-height: 5.2rem;
 	--home-topbar-gap: 0.85rem;
 	--home-side-rail-offset: 6rem;
-	--home-left-tools-offset-extra: 0vh;
 	--home-profile-min-width: 13rem;
 	--home-profile-padding: 0.85rem 1rem;
 	--home-resource-gap: 0.65rem;
 	--home-resource-padding: 0.72rem 0.88rem;
-	--home-left-tools-gap: 0.75rem;
 	--home-tool-tile-size: 5.35rem;
 	--home-tool-padding: 0.72rem 0.8rem;
 	--home-tool-radius: 18px;
@@ -23,8 +21,11 @@
 	--home-mission-gap: 0.65rem;
 	--home-mission-width: min(100%, 20rem);
 	--home-mission-min-height: 7.2rem;
+	--home-footer-left-offset: calc((100vw - (2 * var(--home-shell-padding))) * 0.02);
 	--home-footer-gap: 0.75rem;
-	--home-footer-dock-gap: 5rem;
+	--home-footer-dock-gap: clamp(2.1rem, 4.2vw, 5rem);
+	--home-footer-dock-offset-inline: 2%;
+	--home-footer-dock-offset-block: -3%;
 	--home-footer-action-gap: 0.65rem;
 	--home-dock-tile-size: 5.8rem;
 	--home-dock-padding: 0.8rem 0.9rem;
@@ -60,12 +61,6 @@
 	line-height: 1.7;
 }
 
-.home-height-guard-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.75rem;
-}
-
 .screen-home {
 	position: relative;
 	display: grid;
@@ -79,10 +74,4 @@
 	align-items: start;
 	overflow: clip;
 	background: transparent;
-}
-
-@media (width >= 901px) and (aspect-ratio >= 29/20) {
-	.home-shell {
-		--home-left-tools-offset-extra: 5vh;
-	}
 }

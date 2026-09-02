@@ -5,6 +5,7 @@
 	import {
 		getNextHomeSpineVariantChange,
 		homeSpineConfigs,
+		resolveHomeSpineIdleTracks,
 		resolveHomeSpineVariant,
 		type HomeSpineVariant
 	} from './home-spine.config'
@@ -128,7 +129,10 @@
 				}
 
 				const config = homeSpineConfigs[variant]
-				localViewer = await mountBundleOnCanvas(canvas, [config.entry], config.options)
+				localViewer = await mountBundleOnCanvas(canvas, [config.entry], {
+					...config.options,
+					idleTracks: resolveHomeSpineIdleTracks(variant)
+				})
 
 				if (disposed) {
 					localViewer.destroy()

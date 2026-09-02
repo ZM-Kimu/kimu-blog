@@ -1,4 +1,5 @@
 import { getAllPosts } from './posts'
+import { getUpdateEntries } from './info-flow-records'
 
 import type { TopbarMetricsData } from '$lib/navigation/types'
 
@@ -10,15 +11,20 @@ function parseIsoDate(date: string) {
 
 export function getTopbarMetrics(referenceDate = new Date()): TopbarMetricsData {
 	const posts = getAllPosts()
+	const updateEntries = getUpdateEntries()
 	const threshold = referenceDate.getTime() - THIRTY_DAYS_MS
 	const recentPostActivityCount30d = posts.filter((post) => {
 		const activityAt = Math.max(parseIsoDate(post.date), parseIsoDate(post.updated))
 		return Number.isFinite(activityAt) && activityAt >= threshold
 	}).length
+	const recentUpdateCount30d = updateEntries.filter((entry) => {
+		const activityAt = parseIsoDate(entry.date)
+		return Number.isFinite(activityAt) && activityAt >= threshold
+	}).length
 
 	return {
 		articleCount: posts.length,
-		todoCount: null,
-		recentPostActivityCount30d
+		recentPostActivityCount30d,
+		recentUpdateCount30d
 	}
 }

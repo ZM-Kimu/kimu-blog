@@ -7,17 +7,13 @@ import { ManageError } from '$lib/server/manage/errors'
 import { toManageErrorResponse } from '$lib/server/manage/http'
 
 const MANAGE_PATH_PREFIX = '/api/manage/'
-const MANAGE_APP_PREFIX = '/manage'
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.manageAccess = null
 
 	const isManageApiRoute = event.url.pathname.startsWith(MANAGE_PATH_PREFIX)
-	const isManageAppRoute =
-		event.url.pathname === MANAGE_APP_PREFIX ||
-		event.url.pathname.startsWith(`${MANAGE_APP_PREFIX}/`)
 
-	if (!isManageApiRoute && !isManageAppRoute) {
+	if (!isManageApiRoute) {
 		return resolve(event)
 	}
 
@@ -39,19 +35,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			assertManageWriteRequestProtection(event)
 		}
 	} catch (error) {
-		if (isManageApiRoute) {
-			return toManageErrorResponse(error)
-		}
-
-		const status = error instanceof ManageError ? error.status : 500
-		const message =
-			error instanceof ManageError
-				? error.message
-				: error instanceof Error
-					? error.message
-					: 'Manage access 校验失败'
-
-		return new Response(message, { status })
+		return toManageErrorResponse(error)
 	}
 
 	return resolve(event)

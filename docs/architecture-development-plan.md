@@ -33,6 +33,7 @@ Kimu Blog 当前不是传统“博客列表首页 + 文章详情页”的模板�
 - frontmatter：统一 schema 校验
 - 内容索引：`import.meta.glob(...)`
 - 动态详情页：`entries()` + prerender
+- 当前 `archive-fake-*` 文章保留在真实内容目录内，只作为 `/blog/archive` 的结构与滚动 QA 语料；后续会单独迁移或从聚合中隔离
 
 ### 部署层
 

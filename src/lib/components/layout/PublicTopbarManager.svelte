@@ -24,15 +24,20 @@
 		transitionTo: (nextMode: TopbarMode, origin: 'cta' | 'back') => Promise<void>
 		setModeImmediate: (nextMode: TopbarMode) => void
 	}
+	type TopbarBridgeOptions = {
+		immediate?: boolean
+	}
 
 	let {
 		host = null,
 		messages,
+		allowWarmup = false,
 		portrait = false,
 		reducedMotion = false
 	}: {
 		host?: HTMLElement | null
 		messages?: LocaleMessages
+		allowWarmup?: boolean
 		portrait?: boolean
 		reducedMotion?: boolean
 	} = $props()
@@ -80,6 +85,14 @@
 			renderedShellVariant === 'main' &&
 			!topbarCollapsed &&
 			!stageHidden
+	)
+	const warmupEnabled = $derived(
+		allowWarmup &&
+			!portrait &&
+			!reducedMotion &&
+			!stageHidden &&
+			!topbarCollapsed &&
+			renderedShellVariant !== 'none'
 	)
 	const expandAriaLabel = $derived(t('topbar.actions.expand'))
 	const mainTopbarState = $derived.by(() =>
@@ -141,11 +154,12 @@
 	}
 
 	async function handleTopbarAction(event: CustomEvent<HomeTopbarActionDetail>) {
-		if (topbarMotionLocked) {
+		const actionKey = event.detail.action.key
+		if (topbarMotionLocked && actionKey !== 'home') {
 			return
 		}
 
-		switch (event.detail.action.key) {
+		switch (actionKey) {
 			case 'language':
 				await navigationManager.toggleLocale()
 				break
@@ -161,8 +175,12 @@
 		}
 	}
 
-	export async function bridgeTo(targetShellVariant: TopbarShellVariant) {
+	export async function bridgeTo(
+		targetShellVariant: TopbarShellVariant,
+		options: TopbarBridgeOptions = {}
+	) {
 		const requestToken = ++bridgeRequestToken
+		const immediate = options.immediate ?? false
 		navigationManager.closeTopbarSettings()
 
 		if (targetShellVariant === 'none') {
@@ -192,7 +210,7 @@
 
 		const nextMode: TopbarMode = targetShellVariant === 'subpage' ? 'subpage' : 'main'
 		if (homeTopbar && topbarMode !== nextMode) {
-			if (topbarCollapsed) {
+			if (immediate || topbarCollapsed) {
 				homeTopbar.setModeImmediate(nextMode)
 			} else {
 				await homeTopbar.transitionTo(nextMode, 'cta')
@@ -257,6 +275,7 @@
 			authorName={siteConfig.author}
 			infoLabel={t('home.profile.info')}
 			profileHref="/about"
+			{warmupEnabled}
 			{portrait}
 			{reducedMotion}
 			onSubpageBack={handleBack}

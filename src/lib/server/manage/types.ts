@@ -1,9 +1,15 @@
 import type { PostFrontmatter } from '$lib/content/schema'
+import type { BlogSeries, ManageGroupKind, UpdateProject } from '$lib/content/group-schema'
 import type {
+	ManageFavoriteWritePayload,
 	ManagePostWritePayload,
+	ManageRecordKind,
+	ManageRecordWriteResponse,
 	ManagePostWriteResponse,
+	ManageUpdateWritePayload,
 	ManagedPostFormat
 } from '$lib/features/manage/contracts'
+import type { FavoriteEntry, UpdateEntry } from '$lib/types/info-flow'
 
 export type {
 	ManageAccessActor,
@@ -27,6 +33,9 @@ export interface ManageConfig {
 }
 
 export type ManageWritePayload = ManagePostWritePayload
+export type ManageRecordEntry = UpdateEntry | FavoriteEntry
+export type ManageRecordWritePayload = ManageUpdateWritePayload | ManageFavoriteWritePayload
+export type { ManageRecordKind, ManageRecordWriteResponse }
 
 export interface RepoFileRecord {
 	content: string
@@ -42,6 +51,21 @@ export interface RepositoryManagedPost {
 	sha: string
 	slug: string
 	source: string
+}
+
+export interface RepositoryManagedRecord {
+	entry: ManageRecordEntry
+	path: string
+	sha: string
+}
+
+export interface RepositoryManagedGroup<
+	TGroup extends UpdateProject | BlogSeries = UpdateProject | BlogSeries
+> {
+	group: TGroup
+	kind: ManageGroupKind
+	path: string
+	sha: string
 }
 
 export interface GitHubTreeEntry {
@@ -66,5 +90,11 @@ export interface RepositorySnapshot {
 	branchCommitSha: string
 	branchTreeSha: string
 	posts: RepositoryManagedPost[]
+	treeEntries: Map<string, GitHubTreeEntry>
+}
+
+export interface RepositoryBaseSnapshot {
+	branchCommitSha: string
+	branchTreeSha: string
 	treeEntries: Map<string, GitHubTreeEntry>
 }

@@ -2,7 +2,12 @@ import { getManageConfig } from '$lib/server/manage/config'
 import { parseRepositoryPost } from '$lib/server/manage/content'
 import { ManageError } from '$lib/server/manage/errors'
 import { createGitHubRepositoryClient } from '$lib/server/manage/github'
-import type { RepositoryManagedPost, RepositorySnapshot } from '$lib/server/manage/types'
+import type {
+	RepoFileRecord,
+	RepositoryBaseSnapshot,
+	RepositoryManagedPost,
+	RepositorySnapshot
+} from '$lib/server/manage/types'
 
 const BLOG_FILE_PATTERN = /^src\/lib\/content\/blog\/[^/]+\.(md|svx)$/u
 
@@ -12,25 +17,53 @@ export interface ManageRepositoryContext {
 	snapshot: RepositorySnapshot
 }
 
-export async function loadManageRepositoryContext(
+export interface ManageRepositoryBaseContext {
+	client: Awaited<ReturnType<typeof createGitHubRepositoryClient>>
+	config: ReturnType<typeof getManageConfig>
+	snapshot: RepositoryBaseSnapshot
+}
+
+export async function loadManageRepositoryBaseContext(
 	platform: App.Platform | undefined
-): Promise<ManageRepositoryContext> {
+): Promise<ManageRepositoryBaseContext> {
 	const config = getManageConfig(platform)
 	const client = await createGitHubRepositoryClient(config)
 	const branchState = await client.getBranchState()
 	const tree = await client.getRecursiveTree(branchState.treeSha)
-	const treeEntries = new Map(tree.map((entry) => [entry.path, entry]))
-	const blogFiles = tree.filter(
-		(entry) =>
-			entry.type === 'blob' && typeof entry.sha === 'string' && BLOG_FILE_PATTERN.test(entry.path)
+
+	return {
+		client,
+		config,
+		snapshot: {
+			branchCommitSha: branchState.commitSha,
+			branchTreeSha: branchState.treeSha,
+			treeEntries: new Map(tree.map((entry) => [entry.path, entry]))
+		}
+	}
+}
+
+export async function loadRepositoryTextFiles(
+	context: ManageRepositoryBaseContext,
+	matchesPath: (path: string) => boolean
+): Promise<RepoFileRecord[]> {
+	const entries = Array.from(context.snapshot.treeEntries.values()).filter(
+		(entry) => entry.type === 'blob' && typeof entry.sha === 'string' && matchesPath(entry.path)
 	)
-	const repoFiles = await Promise.all(
-		blogFiles.map(async (entry) => ({
-			content: await client.getBlobText(entry.sha as string),
+
+	return Promise.all(
+		entries.map(async (entry) => ({
+			content: await context.client.getBlobText(entry.sha as string),
 			path: entry.path,
 			sha: entry.sha as string
 		}))
 	)
+}
+
+export async function loadManageRepositoryContext(
+	platform: App.Platform | undefined
+): Promise<ManageRepositoryContext> {
+	const context = await loadManageRepositoryBaseContext(platform)
+	const repoFiles = await loadRepositoryTextFiles(context, (path) => BLOG_FILE_PATTERN.test(path))
 	const posts = repoFiles.map(parseRepositoryPost)
 	const slugBucket = new Set<string>()
 
@@ -43,13 +76,13 @@ export async function loadManageRepositoryContext(
 	}
 
 	return {
-		client,
-		config,
+		client: context.client,
+		config: context.config,
 		snapshot: {
-			branchCommitSha: branchState.commitSha,
-			branchTreeSha: branchState.treeSha,
+			branchCommitSha: context.snapshot.branchCommitSha,
+			branchTreeSha: context.snapshot.branchTreeSha,
 			posts,
-			treeEntries
+			treeEntries: context.snapshot.treeEntries
 		}
 	}
 }

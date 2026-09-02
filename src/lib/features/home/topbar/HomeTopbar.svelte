@@ -8,6 +8,7 @@
 		focusAfterTransition,
 		loadMotionLibs,
 		loadProfileShellPath,
+		primeRichTransitionCaches,
 		resetTransitionStyles,
 		runRichTransition,
 		runSimpleTransition
@@ -34,6 +35,7 @@
 		authorName,
 		infoLabel,
 		profileHref = '/about',
+		warmupEnabled = false,
 		portrait = false,
 		reducedMotion = false,
 		onSubpageBack
@@ -48,6 +50,7 @@
 		authorName: string
 		infoLabel: string
 		profileHref?: '/' | '/about'
+		warmupEnabled?: boolean
 		portrait?: boolean
 		reducedMotion?: boolean
 		onSubpageBack?: (() => void) | undefined
@@ -63,6 +66,8 @@
 	let motionLibs: MotionLibs | null = null
 	let currentTimeline: ReturnType<typeof import('gsap').gsap.timeline> | null = null
 	let profileShellPath = $state(fallbackProfilePath)
+	let warmupCancel: (() => void) | null = null
+	let warmupCompleted = $state(false)
 	let topbarRoot: HTMLElement | null = $state(null)
 	let backButton: HTMLButtonElement | null = $state(null)
 	let backGlyph: HTMLSpanElement | null = $state(null)
@@ -137,6 +142,25 @@
 
 	function handleAction(action: HomeTopbarAction) {
 		dispatch('action', { action })
+	}
+
+	async function warmupMotionRuntime() {
+		if (warmupCompleted || portrait || reducedMotion) {
+			return
+		}
+
+		const [loadedProfileShellPath, loadedMotionLibs] = await Promise.all([
+			loadProfileShellPath(),
+			loadMotionLibs()
+		])
+		profileShellPath = loadedProfileShellPath
+		motionLibs = loadedMotionLibs
+
+		if (loadedMotionLibs) {
+			primeRichTransitionCaches(loadedMotionLibs, loadedProfileShellPath)
+		}
+
+		warmupCompleted = true
 	}
 
 	async function requestTransition(nextMode: TopbarMode) {
@@ -223,16 +247,63 @@
 	}
 
 	onMount(() => {
-		void (async () => {
-			profileShellPath = await loadProfileShellPath()
-			motionLibs = await loadMotionLibs()
-		})()
-
 		return () => {
+			warmupCancel?.()
+			warmupCancel = null
 			currentTimeline?.kill()
 			currentTimeline = null
 			getRefs().motionLayer?.replaceChildren()
 			resetTransitionStyles(motionLibs, getRefs())
+		}
+	})
+
+	$effect(() => {
+		if (typeof window === 'undefined') {
+			return
+		}
+
+		warmupCancel?.()
+		warmupCancel = null
+
+		if (!warmupEnabled || warmupCompleted || portrait || reducedMotion) {
+			return
+		}
+
+		const idleWindow = window as Window & {
+			requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number
+			cancelIdleCallback?: (handle: number) => void
+		}
+		let cancelled = false
+		const runWarmup = () => {
+			if (cancelled) {
+				return
+			}
+
+			void warmupMotionRuntime()
+		}
+
+		if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+			const idleCallbackId = idleWindow.requestIdleCallback(
+				() => {
+					runWarmup()
+				},
+				{ timeout: 1200 }
+			)
+
+			warmupCancel = () => {
+				cancelled = true
+				idleWindow.cancelIdleCallback?.(idleCallbackId)
+			}
+			return
+		}
+
+		const fallbackTimer = window.setTimeout(() => {
+			runWarmup()
+		}, 180)
+
+		warmupCancel = () => {
+			cancelled = true
+			window.clearTimeout(fallbackTimer)
 		}
 	})
 </script>

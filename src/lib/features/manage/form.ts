@@ -4,11 +4,50 @@ import type {
 	ManagePostWritePayload
 } from '$lib/features/manage/types'
 
-function getTodayString() {
+const recordIdPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+export function getTodayString() {
 	const now = new Date()
 	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
 
 	return local.toISOString().slice(0, 10)
+}
+
+export function createRecordId(value: string) {
+	const source = value.trim()
+	const normalized = source
+		.normalize('NFKD')
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/gu, '-')
+		.replace(/^-+|-+$/gu, '')
+		.slice(0, 96)
+
+	if (normalized || !source) {
+		return normalized
+	}
+
+	let hash = 2166136261
+	for (const character of source) {
+		hash ^= character.codePointAt(0) ?? 0
+		hash = Math.imul(hash, 16777619)
+	}
+
+	return `record-${(hash >>> 0).toString(36)}`
+}
+
+export function isValidRecordId(value: string) {
+	return recordIdPattern.test(value)
+}
+
+export function parseCommaSeparatedValues(value: string) {
+	return Array.from(
+		new Set(
+			value
+				.split(',')
+				.map((item) => item.trim())
+				.filter(Boolean)
+		)
+	)
 }
 
 function normalizeOptionalField(value: string) {
@@ -22,7 +61,6 @@ export function createEmptyManagePostFormState(): ManagePostFormState {
 
 	return {
 		author: 'Kimu',
-		canonical: '',
 		category: '',
 		cover: '',
 		date: today,
@@ -31,7 +69,8 @@ export function createEmptyManagePostFormState(): ManagePostFormState {
 		featured: false,
 		format: 'svx',
 		readingTime: '',
-		series: '',
+		seriesId: '',
+		seriesName: '',
 		slug: '',
 		source: '',
 		tagsInput: '',
@@ -44,7 +83,6 @@ export function createEmptyManagePostFormState(): ManagePostFormState {
 export function createManagePostFormState(post: ManagePostDocument): ManagePostFormState {
 	return {
 		author: post.frontmatter.author ?? 'Kimu',
-		canonical: post.frontmatter.canonical ?? '',
 		category: post.frontmatter.category ?? '',
 		cover: post.frontmatter.cover,
 		date: post.frontmatter.date,
@@ -54,7 +92,8 @@ export function createManagePostFormState(post: ManagePostDocument): ManagePostF
 		featured: post.frontmatter.featured,
 		format: post.format,
 		readingTime: post.frontmatter.readingTime ?? '',
-		series: post.frontmatter.series ?? '',
+		seriesId: post.frontmatter.seriesId ?? '',
+		seriesName: '',
 		slug: post.frontmatter.slug,
 		source: post.source,
 		tagsInput: post.frontmatter.tags.join(', '),
@@ -72,7 +111,6 @@ export function toManageWritePayload(state: ManagePostFormState): ManagePostWrit
 
 	return {
 		author: normalizeOptionalField(state.author),
-		canonical: normalizeOptionalField(state.canonical),
 		category: normalizeOptionalField(state.category),
 		cover: state.cover.trim(),
 		date: state.date.trim(),
@@ -82,7 +120,8 @@ export function toManageWritePayload(state: ManagePostFormState): ManagePostWrit
 		featured: state.featured,
 		format: state.format,
 		readingTime: normalizeOptionalField(state.readingTime),
-		series: normalizeOptionalField(state.series),
+		seriesId: normalizeOptionalField(state.seriesId),
+		seriesName: normalizeOptionalField(state.seriesName),
 		slug: state.slug.trim(),
 		source: state.source,
 		tags,

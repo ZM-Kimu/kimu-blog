@@ -255,14 +255,28 @@
 }
 
 .home-topbar-stage-collapsed .home-topbar-main .home-profile-chip {
-	transform: translateX(var(--motion-topbar-profile-collapse-offset-x))
-		scale(var(--motion-topbar-profile-collapse-scale));
-	opacity: 0;
+	animation: home-profile-chip-collapse var(--motion-topbar-surface-duration)
+		var(--motion-topbar-profile-easing) both;
 }
 
 .home-topbar-stage-collapsed .home-topbar-main .home-topbar-aside {
 	transform: translateY(var(--motion-topbar-aside-collapse-offset-y));
 	opacity: var(--motion-topbar-aside-collapse-opacity);
+}
+
+@keyframes home-profile-chip-collapse {
+	from {
+		opacity: 1;
+		filter: blur(0);
+		transform: translateX(0) scale(1);
+	}
+
+	to {
+		opacity: 0;
+		filter: blur(4px);
+		transform: translateX(var(--motion-topbar-profile-collapse-offset-x))
+			scale(var(--motion-topbar-profile-collapse-scale));
+	}
 }
 
 .home-topbar-tools {
@@ -418,6 +432,10 @@
 	max-height: min(24rem, calc(100dvh - 12rem));
 	overflow: auto;
 	padding-right: 0.2rem;
+}
+
+.home-topbar-settings-scroll {
+	min-height: 0;
 }
 
 .home-topbar-settings .home-topbar-settings-header strong {

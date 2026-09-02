@@ -6,6 +6,7 @@ export const enUSMessages = {
 	},
 	common: {
 		back: 'Back',
+		all: 'All',
 		home: 'Home',
 		close: 'Close',
 		info: 'Info',
@@ -43,7 +44,8 @@ export const enUSMessages = {
 		blog: 'Missions',
 		updates: 'Updates',
 		favorites: 'Favorites',
-		about: 'About'
+		about: 'About',
+		tags: 'Tags'
 	},
 	shell: {
 		brand: {
@@ -104,6 +106,17 @@ export const enUSMessages = {
 		profile: {
 			info: 'Info'
 		},
+		music: {
+			emptyTitle: 'No tracks',
+			play: 'Play',
+			pause: 'Pause',
+			previous: 'Previous track',
+			next: 'Next track',
+			progress: 'Playback progress',
+			volume: 'Volume',
+			mute: 'Mute',
+			unmute: 'Unmute'
+		},
 		missions: {
 			engineering: {
 				title: 'Engineering',
@@ -149,8 +162,8 @@ export const enUSMessages = {
 		},
 		metrics: {
 			articles: 'Site articles',
-			todos: 'Open todos',
-			recentActivity: 'Posts added or updated in the last 30 days'
+			recentActiveArticles: 'Recently active articles',
+			recentUpdates: 'Recent updates'
 		},
 		settings: {
 			title: 'Site Settings',
@@ -168,8 +181,7 @@ export const enUSMessages = {
 				'Automatically disabled on portrait document-flow layout or reduced motion.',
 			backgroundAnimationFailed: 'Asset loading failed, so the default background is being used.',
 			manage: 'Manage Workbench',
-			manageDescription:
-				'Open the content maintenance panel for post lists, editor states, and repository writes.',
+			manageDescription: 'Enter the post management page.',
 			manageAction: 'Open'
 		}
 	},
@@ -181,8 +193,10 @@ export const enUSMessages = {
 			introDescription:
 				'The mission page handles entry and selection; this screen is for high-speed browsing across every record.',
 			backToBlog: 'Back to mission page',
+			openPost: 'Open article',
 			categoryEyebrow: 'Category',
-			emptyDate: 'No Records',
+			tagsScrollHint: 'Scroll',
+			emptyDate: 'No content...',
 			emptyTitle: 'Waiting for content',
 			emptyDescription: 'This category is reserved, but there are no published posts in it yet.',
 			yearEyebrow: 'Year Index',
@@ -198,11 +212,32 @@ export const enUSMessages = {
 			boardEyebrow: 'Primary Categories',
 			boardTitle: 'Mission Board',
 			recentEyebrow: 'Recent Output',
-			recentTitle: 'Latest Records'
+			recentTitle: 'Latest Records',
+			cards: {
+				engineering: {
+					title: 'Engineering Records'
+				},
+				designLog: {
+					title: 'Study Records'
+				},
+				fieldNotes: {
+					title: 'Daily Notes'
+				},
+				favorites: {
+					title: 'Favorites'
+				}
+			}
 		},
 		post: {
-			heroEyebrow: 'Dossier / Article Record',
+			headerEyebrow: 'Article Record',
 			backArchive: 'Back to archive',
+			listEyebrow: 'Article Index',
+			listTitle: 'Article List',
+			descriptionLabel: 'Summary',
+			seriesLabel: 'Series',
+			seriesNewer: 'Previous',
+			seriesOlder: 'Next',
+			asideEyebrow: 'Outside content',
 			statusFeatured: 'Featured',
 			statusPublished: 'Published',
 			metadataEyebrow: 'Metadata',
@@ -217,44 +252,44 @@ export const enUSMessages = {
 		},
 		tag: {
 			introEyebrow: 'Tag Filter',
-			introDescription:
-				'There are currently {count} posts grouped under this tag, so it can serve as a secondary filter entry.',
+			introDescription: '{count} posts include this tag.',
 			backArchive: 'Back to archive'
 		}
 	},
 	about: {
-		heroEyebrow: 'Profile Dossier',
-		backHome: 'Back to home',
-		title: 'About this site',
-		description:
-			'Kimu Blog is designed as a game-like personal command center: content stays central, while the interface structure borrows from mission board and dossier UI patterns.',
-		systemsEyebrow: 'Loaded Systems',
-		systemsTitle: 'Current capabilities',
-		nextEyebrow: 'Next Missions',
-		nextTitle: 'Next steps',
-		items: {
-			cloudflarePages: 'Cloudflare Pages build and delivery',
-			mdsvex: 'mdsvex content integration',
-			schemaValidation: 'frontmatter schema validation',
-			entries: '`entries()` + prerender detail generation',
-			gameUi: 'game UI styled page framework',
-			replacePlaceholders: 'replace placeholder assets',
-			profileData: 'add dynamic data and richer profile fields',
-			realContent: 'ship real archive / favorites / updates content',
-			searchCommentsAnalytics: 'add search, comments, and analytics'
-		}
+		title: 'Kimu Profile',
+		personalTitle: 'Personal',
+		githubAriaLabel: 'GitHub: {account}',
+		githubFooterLabel: 'Github',
+		techStackTitle: 'Tech Stack',
+		entertainmentTitle: 'Other',
+		emailAriaLabel: 'Send email to {email}',
+		mailFooterLabel: 'Mail',
+		maimaiImageAlt: 'MaiMai DX Rating image'
 	},
 	updates: {
-		eyebrow: 'Live Log',
-		title: 'Updates module',
+		title: 'Updates',
 		description:
-			'This page will hold site updates, in-progress work, recent state changes, and short status notes. It stays as a placeholder for now.'
+			'Site changes, in-progress work, short status notes, and recent shifts are collected here as a scan-friendly timeline.',
+		summaryAria: 'Updates summary',
+		totalLabel: 'Total updates',
+		latestLabel: 'Latest update',
+		feedAria: 'Updates timeline',
+		openItem: 'Open update: {title}',
+		openLabel: 'Open',
+		emptyTitle: 'No updates',
+		emptyDescription: 'No updates have been published yet.'
 	},
 	favorites: {
-		eyebrow: 'Curated Vault',
-		title: 'Favorites module',
-		description:
-			'This page will hold saved articles, inspiration references, link lists, and archived resources. It stays as a placeholder for now.'
+		title: 'Favorites',
+		description: 'Saved articles, tools, references, and internal entries are organized with tags.',
+		summaryAria: 'Favorites summary',
+		totalLabel: 'Total saves',
+		filtersLabel: 'Favorite tag filters',
+		collectionsAria: 'Favorite tags',
+		openItem: 'Open favorite: {title}',
+		emptyTitle: 'No favorites',
+		emptyDescription: 'There are no saved items under the current tag.'
 	},
 	error: {
 		title: 'Error',
@@ -271,6 +306,68 @@ export const enUSMessages = {
 		fallbackIllustration: 'Fallback illustration'
 	},
 	manage: {
+		nav: {
+			ariaLabel: 'Content management',
+			posts: 'Posts',
+			updates: 'Updates',
+			favorites: 'Favorites'
+		},
+		records: {
+			common: {
+				loading: 'Loading…',
+				retry: 'Retry',
+				save: 'Save',
+				delete: 'Delete',
+				committed: 'Committed {sha}',
+				confirm: {
+					create: 'Create and publish this record?',
+					edit: 'Save and publish the current changes?',
+					delete: 'Delete “{title}”? This will commit directly to the repository.'
+				}
+			},
+			updates: {
+				count: '{count} updates',
+				create: 'New update',
+				searchLabel: 'Search updates',
+				searchPlaceholder: 'Search title, content, tags, or ID…',
+				empty: 'No matching updates.'
+			},
+			favorites: {
+				count: '{count} favorites',
+				create: 'New favorite',
+				searchLabel: 'Search favorites',
+				searchPlaceholder: 'Search title, summary, source, or ID…',
+				empty: 'No matching favorites.'
+			},
+			fields: {
+				title: 'Title',
+				id: 'Record ID',
+				date: 'Publish date',
+				added: 'Saved date',
+				project: 'Project',
+				progress: 'Project progress',
+				summary: 'Content',
+				description: 'Summary',
+				tags: 'Tags',
+				href: 'Link',
+				sourceLabel: 'Source label'
+			},
+			placeholders: {
+				tags: 'design, site, progress',
+				href: 'https://… or /blog/…',
+				hrefOptional: 'Optional: https://… or /blog/…',
+				favoriteTags: 'Type a tag and press Enter'
+			}
+		},
+		groups: {
+			none: 'No group',
+			createProject: 'Create project',
+			createSeries: 'Create series',
+			rename: 'Rename',
+			renameSave: 'Save new name',
+			renameCancel: 'Cancel rename',
+			confirmRename: 'Rename “{name}” to “{next}”? This will commit directly to the repository.'
+		},
 		shell: {
 			eyebrow: 'Private Content Workbench',
 			title: 'Manage / {repo}',
@@ -283,11 +380,11 @@ export const enUSMessages = {
 		list: {
 			eyebrow: 'Repository Records',
 			title: 'Post list',
-			loadingTitle: 'Loading post list',
-			loadingDescription: 'The manage shell is ready. The repository index is syncing now.',
+			loadingTitle: 'Loading…',
 			errorTitle: 'Failed to load the post list',
 			search: 'Search',
-			searchPlaceholder: 'title / slug / category',
+			searchPlaceholder: 'Search title, slug, or category…',
+			articleCount: '{count} posts',
 			newPost: 'New post',
 			retry: 'Retry',
 			noMatchesTitle: 'No matches',
@@ -296,11 +393,9 @@ export const enUSMessages = {
 			featured: 'featured'
 		},
 		editor: {
-			eyebrow: 'Editor',
 			createTitle: 'Create post',
 			editTitle: 'Edit {slug}',
-			loadingTitle: 'Loading post content',
-			loadingDescription: 'The editor shell is ready. The document is syncing now.',
+			loadingTitle: 'Loading…',
 			errorTitle: 'Failed to load the post content',
 			createSubmit: 'Create post',
 			saveChanges: 'Save changes',
@@ -308,8 +403,29 @@ export const enUSMessages = {
 			delete: 'Delete',
 			retry: 'Retry',
 			source: 'Source',
+			tabs: {
+				ariaLabel: 'Post editing mode',
+				information: 'Information',
+				content: 'Content'
+			},
+			previewVisibility: {
+				show: 'Show preview',
+				hide: 'Hide preview'
+			},
+			confirmSubmit: {
+				create: 'Create and submit this post?',
+				update: 'Save and submit the current changes?'
+			},
+			slugStatus: {
+				checking: 'Checking path…',
+				available: 'Path available',
+				invalid: 'The path identifier format is invalid',
+				duplicate: 'The path identifier already exists',
+				unavailable: 'The path cannot be checked right now; try again shortly'
+			},
 			fields: {
 				title: 'Title',
+				slug: 'Slug',
 				description: 'Description',
 				date: 'Published date',
 				updated: 'Updated date',
@@ -317,7 +433,6 @@ export const enUSMessages = {
 				author: 'Author',
 				series: 'Series',
 				readingTime: 'Reading Time',
-				canonical: 'Canonical',
 				format: 'Format',
 				tags: 'Tags',
 				cover: 'Cover'
@@ -325,9 +440,8 @@ export const enUSMessages = {
 			placeholders: {
 				category: 'Engineering / Notes',
 				readingTime: '6 min',
-				canonical: 'https://...',
 				tags: 'svelte, cloudflare, devlog',
-				cover: '/images/... or upload://file.png'
+				cover: 'Set the cover from Content settings'
 			},
 			toggles: {
 				draft: 'Draft',
@@ -335,14 +449,13 @@ export const enUSMessages = {
 				toc: 'TOC'
 			},
 			uploads: {
-				eyebrow: 'Uploads',
 				title: 'Images and placeholders',
 				pickFiles: 'Pick images',
+				dropTitle: 'Drop images here',
+				dropDescription: 'Or click to browse PNG, JPEG, WebP, AVIF, and GIF images',
 				setCover: 'Use as cover',
 				insertBody: 'Insert into body',
-				remove: 'Remove',
-				empty:
-					'Uploaded images generate `upload://filename` placeholders and are swapped live in the preview panel.'
+				remove: 'Remove'
 			},
 			statusCommitted: 'Committed {sha}; the latest content has been synced to the repository.',
 			errors: {
@@ -353,13 +466,7 @@ export const enUSMessages = {
 			}
 		},
 		preview: {
-			eyebrow: 'Live Preview',
-			title: 'Body preview',
-			intro:
-				'Markdown / GFM / images render with article styles instantly; mdsvex components and imports are shown as placeholders.',
-			heroEyebrow: 'Article Record',
-			assetsEyebrow: 'Asset Index',
-			assetsTitle: 'Resolved assets',
+			empty: 'There is no body content to render yet.',
 			placeholders: {
 				description: 'The preview panel does not execute this mdsvex / Svelte logic.',
 				scriptBlock: '<script> block',
@@ -424,6 +531,21 @@ export const enUSMessages = {
 			manageRequestFailed: 'Manage request failed.',
 			postListLoadFailed: 'Failed to load the post list.',
 			postLoadFailed: 'Failed to load the post content.',
+			recordListLoadFailed: 'Failed to load the record list.',
+			recordLoadFailed: 'Failed to load the record.',
+			recordNotFound: 'The record could not be found.',
+			duplicateRecordId: 'The record ID already exists.',
+			invalidRecord: 'A repository record is invalid.',
+			invalidRecordKind: 'This record type is not supported.',
+			invalidRecordId: 'The record ID is invalid.',
+			invalidGroup: 'A repository group is invalid.',
+			invalidGroupId: 'The group ID is invalid.',
+			invalidGroupKind: 'This group type is not supported.',
+			invalidGroupName: 'The group name is invalid.',
+			groupNotFound: 'The group could not be found.',
+			duplicateGroupName: 'A group with this name already exists.',
+			duplicateGroupId: 'The generated group ID is already in use. Adjust the name.',
+			missingGroupName: 'A name is required when creating a group.',
 			sessionInitFailed: 'Failed to initialize the manage session.',
 			invalidContentType: 'The request must use multipart/form-data.',
 			missingPayload: 'The payload JSON field is missing.',
@@ -460,8 +582,8 @@ export const enUSMessages = {
 				'The main interface of Kimu Blog, organized like a game home screen for personal identity, updates, and content entry points.'
 		},
 		about: {
-			title: 'About',
-			description: 'The current scaffold and development direction of Kimu Blog.'
+			title: 'Profile',
+			description: 'Personal and other information for Kimu.'
 		},
 		blog: {
 			title: 'Mission Page',
@@ -474,11 +596,12 @@ export const enUSMessages = {
 		},
 		updates: {
 			title: 'Updates',
-			description: 'Placeholder page for the updates module of Kimu Blog.'
+			description: 'Browse Kimu Blog site updates, in-progress work, and recent status changes.'
 		},
 		favorites: {
 			title: 'Favorites',
-			description: 'Placeholder page for the favorites module of Kimu Blog.'
+			description:
+				'Browse curated links, internal entries, tools, and inspiration references from Kimu Blog.'
 		},
 		manageDebug: {
 			title: 'Manage Debug',
@@ -499,6 +622,7 @@ export const enUSMessages = {
 	a11y: {
 		home: {
 			missionBanner: 'Mission banner',
+			musicPlayer: 'Home music player',
 			footerNav: 'Primary destinations'
 		}
 	}

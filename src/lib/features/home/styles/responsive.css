@@ -15,10 +15,6 @@
 }
 
 @media (width <= 640px) {
-	.home-left-tools {
-		--home-tool-tile-size: 4.7rem;
-	}
-
 	.home-shell {
 		--home-dock-tile-size: 4.9rem;
 	}

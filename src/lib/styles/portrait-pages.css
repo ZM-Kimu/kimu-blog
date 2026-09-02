@@ -1,0 +1,252 @@
+.site-main-public-portrait .panel,
+.site-main-public-portrait .content-prose,
+.site-main-public-portrait .profile-screen,
+.site-main-public-portrait .tag-screen {
+	position: relative;
+	border: 1px solid var(--portrait-surface-border);
+	background: var(--portrait-surface-bg);
+	box-shadow: var(--portrait-surface-shadow);
+	backdrop-filter: blur(16px);
+}
+
+.site-main-public-portrait .panel,
+.site-main-public-portrait .profile-screen,
+.site-main-public-portrait .tag-screen {
+	border-radius: 28px;
+}
+
+.site-main-public-portrait .profile-screen.about-profile-screen {
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	backdrop-filter: none;
+}
+
+.site-main-public-portrait .content-prose {
+	border-radius: 26px;
+}
+
+.site-main-public-portrait .panel::before,
+.site-main-public-portrait .content-prose::before,
+.site-main-public-portrait .profile-screen::before,
+.site-main-public-portrait .tag-screen::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(circle at top left, rgb(255 255 255 / 72%), transparent 30%),
+		radial-gradient(circle at top right, rgb(154 234 255 / 12%), transparent 26%),
+		linear-gradient(180deg, rgb(255 255 255 / 18%), transparent 34%);
+}
+
+.site-main-public-portrait .profile-screen.about-profile-screen::before {
+	content: none;
+}
+
+.site-main-public-portrait .panel-heading {
+	margin-bottom: 0.9rem;
+}
+
+.site-main-public-portrait .eyebrow {
+	color: color-mix(in srgb, var(--cyan-strong) 78%, #27598e);
+}
+
+.site-main-public-portrait .panel-heading h2 {
+	color: var(--ink);
+	font-size: 1.18rem;
+	line-height: 1.02;
+	letter-spacing: -0.05em;
+}
+
+.site-main-public-portrait .placeholder-screen {
+	position: relative;
+	border: 1px solid var(--portrait-surface-border);
+	border-radius: 30px;
+	background: var(--portrait-surface-bg);
+	box-shadow: var(--portrait-surface-shadow);
+	backdrop-filter: blur(18px);
+}
+
+.site-main-public-portrait .placeholder-screen::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(circle at top right, rgb(255 255 255 / 72%), transparent 28%),
+		linear-gradient(180deg, rgb(255 255 255 / 24%), transparent 32%);
+}
+
+@media (orientation: portrait) {
+	.hud-header-surface,
+	.hud-status,
+	.site-footer-inner,
+	.panel-heading,
+	.content-intro,
+	.dossier-hero-header,
+	.dossier-hero-top {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.archive-layout,
+	.profile-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.blog-mission-page,
+	.blog-mission-grid-rail {
+		display: block;
+	}
+
+	.archive-screen {
+		min-height: 0;
+	}
+
+	.archive-layout {
+		min-height: 0;
+	}
+
+	.archive-entry-column,
+	.archive-reader-rail {
+		min-height: 0;
+	}
+
+	.archive-entry-list {
+		overflow: visible;
+	}
+
+	.archive-entry-stack {
+		max-height: none;
+		overflow: visible;
+	}
+
+	.blog-mission-grid-rail {
+		width: 100%;
+		margin-left: 0;
+	}
+
+	.mission-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.hud-nav {
+		justify-content: flex-start;
+	}
+}
+
+@media (orientation: portrait) and (width <=840px) {
+	.site-main {
+		padding-top: 0.9rem;
+	}
+
+	.hud-header-surface {
+		padding: 0.9rem;
+	}
+
+	.hud-nav,
+	.hud-status-chips,
+	.dock-nav-surface,
+	.mission-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.hud-nav {
+		display: grid;
+		width: 100%;
+	}
+
+	.hud-nav a {
+		justify-content: space-between;
+	}
+
+	.dock-nav-surface {
+		display: grid;
+	}
+
+	.archive-entry-item,
+	.archive-reader-meta {
+		grid-template-columns: 1fr;
+	}
+
+	.archive-entry-item-meta {
+		justify-items: start;
+		min-width: 0;
+	}
+
+	.archive-entry-tag-row {
+		justify-content: flex-start;
+	}
+}
+
+@media (orientation: portrait) and (width <=640px) {
+	:root {
+		--shell: min(100vw - 1rem, 100%);
+	}
+
+	.hud-header,
+	.dock-nav {
+		padding-inline: 0;
+	}
+
+	.site-main {
+		padding-bottom: 1rem;
+	}
+
+	.site-main-home {
+		padding: 0;
+	}
+
+	.hud-header-surface,
+	.dock-nav-surface,
+	.site-footer-inner,
+	.panel {
+		border-radius: 24px;
+	}
+
+	.content-prose {
+		padding: 1rem;
+	}
+
+	.content-intro h1,
+	.dossier-hero h1,
+	.profile-screen h1,
+	.placeholder-screen h1,
+	.tag-screen h1 {
+		font-size: clamp(2rem, 12vw, 3rem);
+	}
+
+	.hero-actions,
+	.post-meta,
+	.tag-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.button-primary,
+	.button-secondary,
+	.section-link {
+		width: 100%;
+	}
+
+	.dock-nav-surface,
+	.mission-grid,
+	.post-grid,
+	.profile-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.portrait-public-header {
+		padding-inline: max(0.75rem, env(safe-area-inset-left));
+	}
+
+	.site-main-public-portrait .screen-route-layer {
+		padding-inline: 0.75rem;
+	}
+
+	.dock-nav-item {
+		min-height: 4rem;
+	}
+}

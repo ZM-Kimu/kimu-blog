@@ -63,10 +63,8 @@
 				slug: variant === 'long' ? 'manage-debug-long' : 'manage-debug',
 				category: t('manage.debug.categories.workbench'),
 				author: 'Kimu',
-				series: t('manage.debug.eyebrow'),
 				toc: true,
 				readingTime: '6 min',
-				canonical: '',
 				featured: variant !== 'empty'
 			},
 			path: '/src/lib/content/blog/manage-debug.svx',
@@ -149,7 +147,7 @@
 	const debugErrorMessage = $derived(visualState === 'error' ? t('manage.debug.errorState') : '')
 </script>
 
-<ManageShell session={mockSession} postsHref="#debug-list" backHref="/">
+<ManageShell>
 	<section class="panel manage-debug-controls">
 		<div class="panel-heading">
 			<div>
@@ -327,12 +325,6 @@
 	.manage-debug-controls-chips button.active {
 		border-color: rgb(79 120 255 / 28%);
 		background: rgb(233 242 255 / 96%);
-	}
-
-	.manage-debug-controls-chips button:hover,
-	.manage-debug-controls-toggle:hover {
-		transform: translateY(-1px);
-		border-color: rgb(79 120 255 / 24%);
 	}
 
 	.manage-debug-controls-toggle input {

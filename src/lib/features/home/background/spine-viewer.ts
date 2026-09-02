@@ -21,7 +21,6 @@ export type SpineMountOptions = {
 	backgroundAlpha?: number
 	fps?: number
 	defaultMix?: number
-	startAnimation?: string
 	idleAnimation?: string
 	idleTracks?: ReadonlyArray<{
 		track: number
@@ -257,27 +256,11 @@ export class SpineViewer {
 	}
 
 	start({
-		startAnimation = 'Start_Idle_01',
 		idleAnimation = 'Idle_01',
 		idleTracks
-	}: Pick<SpineMountOptions, 'startAnimation' | 'idleAnimation' | 'idleTracks'> = {}) {
+	}: Pick<SpineMountOptions, 'idleAnimation' | 'idleTracks'> = {}) {
 		const spine = this.main
 		if (!spine) {
-			return
-		}
-
-		if (this.hasAnimation(startAnimation)) {
-			spine.state.setAnimation(0, startAnimation, false)
-			const listener = {
-				complete: (entry: { trackIndex: number }) => {
-					if (entry.trackIndex !== 0) {
-						return
-					}
-					this.idle(idleAnimation, idleTracks)
-					spine.state.removeListener(listener)
-				}
-			}
-			spine.state.addListener(listener)
 			return
 		}
 
@@ -501,7 +484,6 @@ export async function mountBundleOnCanvas(
 	}
 
 	viewer.start({
-		startAnimation: options.startAnimation,
 		idleAnimation: options.idleAnimation,
 		idleTracks: options.idleTracks
 	})

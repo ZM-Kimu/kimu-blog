@@ -6,6 +6,7 @@ export const zhCNMessages = {
 	},
 	common: {
 		back: '返回',
+		all: '全部',
 		home: '主页',
 		close: '关闭',
 		info: 'Info',
@@ -43,7 +44,8 @@ export const zhCNMessages = {
 		blog: '分类',
 		updates: '动态',
 		favorites: '收藏',
-		about: '关于'
+		about: '关于',
+		tags: '标签'
 	},
 	shell: {
 		brand: {
@@ -103,6 +105,17 @@ export const zhCNMessages = {
 		profile: {
 			info: 'Info'
 		},
+		music: {
+			emptyTitle: '暂无曲目',
+			play: '播放',
+			pause: '暂停',
+			previous: '上一首',
+			next: '下一首',
+			progress: '播放进度',
+			volume: '音量',
+			mute: '静音',
+			unmute: '取消静音'
+		},
 		missions: {
 			engineering: {
 				title: 'Engineering',
@@ -147,8 +160,8 @@ export const zhCNMessages = {
 		},
 		metrics: {
 			articles: '站点文章数',
-			todos: '待办事项数',
-			recentActivity: '最近 30 天更新/新增文章数'
+			recentActiveArticles: '最近活跃文章数',
+			recentUpdates: '最近动态数'
 		},
 		settings: {
 			title: '站点配置',
@@ -164,7 +177,7 @@ export const zhCNMessages = {
 			backgroundAnimationDisabled: '当前在 portrait 文档流布局或减动效模式下自动停用。',
 			backgroundAnimationFailed: '资源加载失败，已回退到默认背景。',
 			manage: 'Manage 工作台',
-			manageDescription: '打开内容维护面板，进入文章列表、编辑器与仓库写入流程。',
+			manageDescription: '进入文章管理页。',
 			manageAction: '进入'
 		}
 	},
@@ -175,8 +188,10 @@ export const zhCNMessages = {
 			introTitle: '完整归档',
 			introDescription: '分类界面负责入口与选择，这里负责高效率浏览全部文章记录。',
 			backToBlog: '返回分类界面',
+			openPost: '进入文章',
 			categoryEyebrow: '分类',
-			emptyDate: '暂无记录',
+			tagsScrollHint: '滑动',
+			emptyDate: '暂无内容...',
 			emptyTitle: '等待内容接入',
 			emptyDescription: '这个分类已经预留，但当前还没有正式文章。',
 			yearEyebrow: '年份索引',
@@ -192,11 +207,32 @@ export const zhCNMessages = {
 			boardEyebrow: 'Primary Categories',
 			boardTitle: 'Mission Board',
 			recentEyebrow: 'Recent Output',
-			recentTitle: 'Latest Records'
+			recentTitle: 'Latest Records',
+			cards: {
+				engineering: {
+					title: '工程记录'
+				},
+				designLog: {
+					title: '学习记录'
+				},
+				fieldNotes: {
+					title: '日常记录'
+				},
+				favorites: {
+					title: '收藏'
+				}
+			}
 		},
 		post: {
-			heroEyebrow: 'Dossier / Article Record',
+			headerEyebrow: 'Article Record',
 			backArchive: '返回归档',
+			listEyebrow: 'Article Index',
+			listTitle: '文章列表',
+			descriptionLabel: '简介',
+			seriesLabel: '系列',
+			seriesNewer: '上一篇',
+			seriesOlder: '下一篇',
+			asideEyebrow: 'content 无关内容',
 			statusFeatured: '精选',
 			statusPublished: '已发布',
 			metadataEyebrow: 'Metadata',
@@ -210,42 +246,43 @@ export const zhCNMessages = {
 		},
 		tag: {
 			introEyebrow: 'Tag Filter',
-			introDescription: '当前共有 {count} 篇文章归类在这个标签下，可作为辅助筛选入口使用。',
+			introDescription: '有 {count} 篇文章包含了此标签',
 			backArchive: '返回归档'
 		}
 	},
 	about: {
-		heroEyebrow: 'Profile Dossier',
-		backHome: '返回主界面',
-		title: '关于这个站点',
-		description:
-			'Kimu Blog 被设计成一个游戏主界面式的个人站：内容是核心，界面组织方式则参考 mission board 与 dossier UI。',
-		systemsEyebrow: 'Loaded Systems',
-		systemsTitle: '当前能力',
-		nextEyebrow: 'Next Missions',
-		nextTitle: '下一步',
-		items: {
-			cloudflarePages: 'Cloudflare Pages 构建与分发',
-			mdsvex: 'mdsvex 内容接入',
-			schemaValidation: 'frontmatter schema 校验',
-			entries: '`entries()` + prerender 详情页生成',
-			gameUi: '游戏 UI 风格页面骨架',
-			replacePlaceholders: '替换 placeholder 资产',
-			profileData: '补动态数据和更细的个人资料字段',
-			realContent: '完善 archive / favorites / updates 的真实内容',
-			searchCommentsAnalytics: '补搜索、评论、统计'
-		}
+		title: 'Kimu Profile',
+		personalTitle: '个人',
+		githubAriaLabel: 'GitHub: {account}',
+		githubFooterLabel: 'Github',
+		techStackTitle: '技术栈',
+		entertainmentTitle: '其他',
+		emailAriaLabel: '发送邮件到 {email}',
+		mailFooterLabel: 'Mail',
+		maimaiImageAlt: 'MaiMai DX Rating 图片'
 	},
 	updates: {
-		eyebrow: 'Live Log',
-		title: '动态模块',
-		description:
-			'这里会承接站点动态、正在进行的任务、最近状态变化与简短更新。当前阶段先保留为占位页面。'
+		title: '动态',
+		description: '站点改动、正在推进的任务、短状态与最近变化会在这里汇总成一条可扫描的时间线。',
+		summaryAria: '动态概览',
+		totalLabel: '总动态',
+		latestLabel: '最近更新',
+		feedAria: '动态时间线',
+		openItem: '打开动态：{title}',
+		openLabel: '进入',
+		emptyTitle: '暂无动态',
+		emptyDescription: '还没有发布任何动态记录。'
 	},
 	favorites: {
-		eyebrow: 'Curated Vault',
-		title: '收藏模块',
-		description: '这里会承接收藏文章、灵感参考、链接清单与资源归档。当前阶段先保留为占位页面。'
+		title: '收藏',
+		description: '收藏内容按标签整理，便于快速回访文章、工具、外部参考与站内入口。',
+		summaryAria: '收藏概览',
+		totalLabel: '总收藏',
+		filtersLabel: '收藏标签筛选',
+		collectionsAria: '收藏标签',
+		openItem: '打开收藏：{title}',
+		emptyTitle: '暂无收藏',
+		emptyDescription: '当前标签下没有收藏条目。'
 	},
 	error: {
 		title: '错误',
@@ -253,7 +290,7 @@ export const zhCNMessages = {
 		eyebrowFault: 'Unhandled Fault',
 		headlineNotFound: '未找到页面~ (´・ω・`)',
 		headlineFault: '系统故障 (´；ω；`)',
-		headlineInterrupted: '系统信号中断，页面未能完成装载。',
+		headlineInterrupted: '系统中断 (´；ω；`)',
 		detailNotFound: '请求的页面不存在。',
 		detailUnknown: '发生了未知错误。',
 		detailFallback: '页面发生错误，fallback 页面已接管。',
@@ -262,6 +299,68 @@ export const zhCNMessages = {
 		fallbackIllustration: 'Fallback 插画'
 	},
 	manage: {
+		nav: {
+			ariaLabel: '内容管理',
+			posts: '文章',
+			updates: '动态',
+			favorites: '收藏'
+		},
+		records: {
+			common: {
+				loading: '加载中…',
+				retry: '重新载入',
+				save: '保存',
+				delete: '删除',
+				committed: '已提交 {sha}',
+				confirm: {
+					create: '确认创建并发布这条记录？',
+					edit: '确认保存并发布当前更改？',
+					delete: '确认删除“{title}”？这会直接提交到仓库。'
+				}
+			},
+			updates: {
+				count: '{count}条动态',
+				create: '新建动态',
+				searchLabel: '搜索动态',
+				searchPlaceholder: '搜索标题、内容、标签或标识…',
+				empty: '没有匹配的动态。'
+			},
+			favorites: {
+				count: '{count}项收藏',
+				create: '新建收藏',
+				searchLabel: '搜索收藏',
+				searchPlaceholder: '搜索标题、简介、来源或标识…',
+				empty: '没有匹配的收藏。'
+			},
+			fields: {
+				title: '标题',
+				id: '记录标识',
+				date: '发布日期',
+				added: '收藏日期',
+				project: '项目',
+				progress: '项目进度',
+				summary: '内容',
+				description: '简介',
+				tags: '标签',
+				href: '链接',
+				sourceLabel: '来源名称'
+			},
+			placeholders: {
+				tags: '设计, 站点, 进度',
+				href: 'https://… 或 /blog/…',
+				hrefOptional: '可选：https://… 或 /blog/…',
+				favoriteTags: '输入标签，按 Enter 创建'
+			}
+		},
+		groups: {
+			none: '不加入分组',
+			createProject: '创建项目',
+			createSeries: '创建系列',
+			rename: '重命名',
+			renameSave: '保存新名称',
+			renameCancel: '取消重命名',
+			confirmRename: '确认将“{name}”改名为“{next}”？这会直接提交到仓库。'
+		},
 		shell: {
 			eyebrow: 'Private Content Workbench',
 			title: 'Manage / {repo}',
@@ -274,11 +373,11 @@ export const zhCNMessages = {
 		list: {
 			eyebrow: 'Repository Records',
 			title: '文章列表',
-			loadingTitle: '正在装载文章列表',
-			loadingDescription: '管理壳体已经就绪，文章索引正在从仓库同步。',
+			loadingTitle: '加载中…',
 			errorTitle: '文章列表装载失败',
 			search: '搜索',
-			searchPlaceholder: 'title / slug / category',
+			searchPlaceholder: '搜索标题、slug 或分类…',
+			articleCount: '{count}篇文章',
 			newPost: '新建文章',
 			retry: '重新载入',
 			noMatchesTitle: '没有匹配结果',
@@ -287,52 +386,69 @@ export const zhCNMessages = {
 			featured: 'featured'
 		},
 		editor: {
-			eyebrow: 'Editor',
 			createTitle: '新建文章',
 			editTitle: '编辑 {slug}',
-			loadingTitle: '正在装载文章内容',
-			loadingDescription: '编辑器壳体已经就绪，文章正文正在同步。',
+			loadingTitle: '加载中…',
 			errorTitle: '文章内容装载失败',
 			createSubmit: '创建文章',
 			saveChanges: '保存更改',
 			submitting: '提交中…',
 			delete: '删除',
 			retry: '重新载入',
-			source: 'Source',
+			source: '正文内容',
+			tabs: {
+				ariaLabel: '文章编辑模式',
+				information: '信息',
+				content: '内容'
+			},
+			previewVisibility: {
+				show: '展开预览',
+				hide: '关闭预览'
+			},
+			confirmSubmit: {
+				create: '确认创建并提交这篇文章？',
+				update: '确认保存并提交当前更改？'
+			},
+			slugStatus: {
+				checking: '正在检查路径…',
+				available: '路径可用',
+				invalid: '路径标识格式无效',
+				duplicate: '路径标识已存在',
+				unavailable: '暂时无法检查路径，请稍后重试'
+			},
 			fields: {
 				title: '标题',
+				slug: '路径标识',
 				description: '摘要',
 				date: '发布日期',
 				updated: '更新日期',
 				category: '分类',
 				author: '作者',
-				series: 'Series',
-				readingTime: 'Reading Time',
-				canonical: 'Canonical',
+				series: '系列',
+				readingTime: '阅读时长',
 				format: '格式',
-				tags: 'Tags',
-				cover: 'Cover'
+				tags: '标签',
+				cover: '封面'
 			},
 			placeholders: {
-				category: 'Engineering / Notes',
-				readingTime: '6 min',
-				canonical: 'https://...',
-				tags: 'svelte, cloudflare, devlog',
-				cover: '/images/... or upload://file.png'
+				category: '技术 / 随笔',
+				readingTime: '6 分钟',
+				tags: 'svelte, cloudflare, 开发日志',
+				cover: '请从内容设置中设置封面'
 			},
 			toggles: {
-				draft: 'Draft',
-				featured: 'Featured',
-				toc: 'TOC'
+				draft: '草稿',
+				featured: '精选',
+				toc: '文章目录'
 			},
 			uploads: {
-				eyebrow: 'Uploads',
 				title: '图片与占位符',
 				pickFiles: '选择图片',
-				setCover: '设为 cover',
+				dropTitle: '拖放图片到这里',
+				dropDescription: '或点击选择图片，支持 PNG、JPEG、WebP、AVIF 与 GIF',
+				setCover: '设为封面',
 				insertBody: '插入正文',
-				remove: '移除',
-				empty: '上传图片后会生成 `upload://filename` 占位符，并在右侧预览中即时替换。'
+				remove: '移除'
 			},
 			statusCommitted: '已提交 {sha}，最新内容已同步到仓库。',
 			errors: {
@@ -342,12 +458,7 @@ export const zhCNMessages = {
 			}
 		},
 		preview: {
-			eyebrow: 'Live Preview',
-			title: '正文预览',
-			intro: 'Markdown / GFM / 图片按正文样式即时渲染；mdsvex 组件与 import 会显示占位块。',
-			heroEyebrow: 'Article Record',
-			assetsEyebrow: 'Asset Index',
-			assetsTitle: '已解析资源',
+			empty: '当前没有可渲染的正文。',
 			placeholders: {
 				description: '预览面板不会执行这段 mdsvex / Svelte 逻辑。',
 				scriptBlock: '<script> 区块',
@@ -411,6 +522,21 @@ export const zhCNMessages = {
 			manageRequestFailed: 'Manage 请求失败。',
 			postListLoadFailed: '文章列表加载失败。',
 			postLoadFailed: '文章内容加载失败。',
+			recordListLoadFailed: '记录列表加载失败。',
+			recordLoadFailed: '记录内容加载失败。',
+			recordNotFound: '记录不存在。',
+			duplicateRecordId: '记录标识已存在。',
+			invalidRecord: '仓库中的记录格式无效。',
+			invalidRecordKind: '不支持此记录类型。',
+			invalidRecordId: '记录标识无效。',
+			invalidGroup: '仓库中的分组格式无效。',
+			invalidGroupId: '分组标识无效。',
+			invalidGroupKind: '不支持此分组类型。',
+			invalidGroupName: '分组名称无效。',
+			groupNotFound: '分组不存在。',
+			duplicateGroupName: '已存在同名分组。',
+			duplicateGroupId: '自动生成的分组标识已被占用，请调整名称。',
+			missingGroupName: '创建分组时必须提供名称。',
 			sessionInitFailed: '管理会话初始化失败。',
 			invalidContentType: '请求必须使用 multipart/form-data。',
 			missingPayload: '缺少 payload JSON 字段。',
@@ -446,8 +572,8 @@ export const zhCNMessages = {
 			description: 'Kimu Blog 的主界面。以 game home screen 的方式组织个人信息、动态和内容入口。'
 		},
 		about: {
-			title: '关于项目',
-			description: 'Kimu Blog 当前脚手架与开发方向说明。'
+			title: '个人资料',
+			description: 'Kimu 的个人与其他信息。'
 		},
 		blog: {
 			title: '分类界面',
@@ -459,11 +585,11 @@ export const zhCNMessages = {
 		},
 		updates: {
 			title: '动态',
-			description: 'Kimu Blog 的动态模块占位页。'
+			description: '浏览 Kimu Blog 的站点动态、进行中任务与最近状态变化。'
 		},
 		favorites: {
 			title: '收藏',
-			description: 'Kimu Blog 的收藏模块占位页。'
+			description: '浏览 Kimu Blog 的精选链接、站内入口、工具与灵感参考。'
 		},
 		manageDebug: {
 			title: 'Manage Debug',
@@ -483,6 +609,7 @@ export const zhCNMessages = {
 	a11y: {
 		home: {
 			missionBanner: 'Mission 横幅',
+			musicPlayer: '主页音乐播放器',
 			footerNav: '主入口'
 		}
 	}

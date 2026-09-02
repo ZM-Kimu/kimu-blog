@@ -4,9 +4,15 @@
 	interface Props {
 		href: `/tags/${string}`
 		label: string
+		active?: boolean
 	}
 
-	let { href, label }: Props = $props()
+	let { href, label, active = false }: Props = $props()
 </script>
 
-<a class="tag-chip" href={resolve(href)}>{label}</a>
+<a
+	class:tag-chip-selected={active}
+	class="tag-chip"
+	href={resolve(href)}
+	aria-current={active ? 'page' : undefined}><span class="tag-chip-label">{label}</span></a
+>

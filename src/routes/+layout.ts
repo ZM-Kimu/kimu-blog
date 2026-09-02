@@ -29,6 +29,7 @@ export const load: LayoutLoad = async ({ data }) => {
 		: (data.i18n?.locale ?? DEFAULT_LOCALE)
 
 	return {
-		i18n: createI18nPayload(locale)
+		i18n: createI18nPayload(locale),
+		topbarMetrics: data.topbarMetrics
 	}
 }

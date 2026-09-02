@@ -1,4 +1,6 @@
 import type { PostFrontmatter } from '$lib/content/schema'
+import type { BlogSeries, ManageGroupKind, UpdateProject } from '$lib/content/group-schema'
+import type { FavoriteEntry, UpdateEntry } from '$lib/types/info-flow'
 
 export type ManagedPostFormat = 'md' | 'svx'
 
@@ -64,5 +66,55 @@ export interface ManagePostWriteResponse {
 export interface ManagePostWritePayload extends ManagePostFrontmatter {
 	expectedSha?: string
 	format?: ManagedPostFormat
+	seriesName?: string
 	source: string
+}
+
+export type ManageRecordKind = 'updates' | 'favorites'
+
+export interface ManageRecordDocument<TEntry> {
+	entry: TEntry
+	path: string
+	sha: string
+}
+
+export type ManageUpdateDocument = ManageRecordDocument<UpdateEntry>
+export type ManageFavoriteDocument = ManageRecordDocument<FavoriteEntry>
+
+export interface ManageRecordListResponse<TEntry> {
+	items: ManageRecordDocument<TEntry>[]
+}
+
+export type ManageUpdateListResponse = ManageRecordListResponse<UpdateEntry>
+export type ManageFavoriteListResponse = ManageRecordListResponse<FavoriteEntry>
+
+export type ManageUpdateWritePayload = UpdateEntry & {
+	expectedSha?: string
+	projectName?: string
+}
+export type ManageFavoriteWritePayload = FavoriteEntry & { expectedSha?: string }
+
+export type ManageGroup = UpdateProject | BlogSeries
+export type { ManageGroupKind }
+
+export interface ManageGroupListResponse {
+	items: ManageGroupDocument[]
+}
+
+export interface ManageGroupRenamePayload {
+	expectedSha: string
+	name: string
+}
+
+export interface ManageGroupDocument<TGroup extends ManageGroup = ManageGroup> {
+	group: TGroup
+	path: string
+	sha: string
+}
+
+export interface ManageRecordWriteResponse {
+	commitSha: string
+	id: string
+	path: string
+	sha: string
 }

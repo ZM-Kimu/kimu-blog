@@ -8,10 +8,16 @@
 
 	let {
 		items,
+		loading = false,
+		errorMessage = '',
+		onRetry,
 		createHref = '/manage/posts/new',
 		resolveItemHref = (slug: string) => `/manage/posts/${slug}` as InternalHref
 	} = $props<{
 		items: ManagePostListItem[]
+		loading?: boolean
+		errorMessage?: string
+		onRetry?: () => void
 		createHref?: InternalHref | `#${string}`
 		resolveItemHref?: (slug: string) => InternalHref | `#${string}`
 	}>()
@@ -48,38 +54,59 @@
 
 <section class="manage-list panel">
 	<div class="manage-list-toolbar">
-		<div>
-			<p class="eyebrow">{t('manage.list.eyebrow')}</p>
-			<h2>{t('manage.list.title')}</h2>
-		</div>
+		<label class="manage-list-search">
+			<input
+				aria-label={t('manage.list.search')}
+				bind:value={query}
+				placeholder={t('manage.list.searchPlaceholder')}
+				type="search"
+			/>
+		</label>
 
-		<div class="manage-list-actions">
-			<label class="manage-list-search">
-				<span>{t('manage.list.search')}</span>
-				<input bind:value={query} placeholder={t('manage.list.searchPlaceholder')} type="search" />
-			</label>
+		<div class="manage-list-controls">
+			<span class="manage-list-total">
+				{t('manage.list.articleCount', { count: items.length })}
+			</span>
 
 			{#if createHref.startsWith('#')}
-				<button class="button-primary" type="button" onclick={() => followDebugHref(createHref)}>
-					{t('manage.list.newPost')}
+				<button
+					aria-label={t('manage.list.newPost')}
+					class="manage-create-button"
+					title={t('manage.list.newPost')}
+					type="button"
+					onclick={() => followDebugHref(createHref)}
+				>
+					<span aria-hidden="true"></span>
 				</button>
 			{:else}
-				<a class="button-primary" href={resolve(createHref)}>{t('manage.list.newPost')}</a>
+				<a
+					aria-label={t('manage.list.newPost')}
+					class="manage-create-button"
+					href={resolve(createHref)}
+					title={t('manage.list.newPost')}
+				>
+					<span aria-hidden="true"></span>
+				</a>
 			{/if}
 		</div>
 	</div>
 
-	<div class="manage-list-meta">
-		<strong
-			>{t('common.visibleRecords', {
-				count: String(filteredItems.length).padStart(2, '0')
-			})}</strong
-		>
-		<span>{t('common.totalRecords', { count: String(items.length).padStart(2, '0') })}</span>
-	</div>
-
 	<div class="manage-list-rows">
-		{#if filteredItems.length}
+		{#if loading}
+			<div aria-busy="true" aria-live="polite" class="manage-list-state">
+				<span>{t('manage.list.loadingTitle')}</span>
+			</div>
+		{:else if errorMessage}
+			<div class="manage-list-state manage-list-state-error">
+				<strong>{t('manage.list.errorTitle')}</strong>
+				<span>{errorMessage}</span>
+				{#if onRetry}
+					<button class="button-secondary" type="button" onclick={onRetry}>
+						{t('manage.list.retry')}
+					</button>
+				{/if}
+			</div>
+		{:else if filteredItems.length}
 			{#each filteredItems as item (item.slug)}
 				{@const itemHref = resolveItemHref(item.slug)}
 				{#if itemHref.startsWith('#')}
@@ -148,13 +175,13 @@
 <style>
 	.manage-list {
 		display: grid;
-		gap: 1rem;
-		padding: 1.2rem;
+		gap: clamp(0.85rem, 1.2vw, 1.1rem);
+		align-self: start;
+		padding: clamp(0.9rem, 1.35vw, 1.25rem);
 	}
 
 	.manage-list-toolbar,
-	.manage-list-actions,
-	.manage-list-meta,
+	.manage-list-controls,
 	.manage-post-row-headline {
 		display: flex;
 		gap: 0.8rem;
@@ -163,94 +190,124 @@
 	}
 
 	.manage-list-toolbar {
-		flex-wrap: wrap;
-	}
-
-	.manage-list-toolbar h2 {
-		margin: 0.15rem 0 0;
-		font-family: var(--font-display);
-		font-size: 2rem;
-		letter-spacing: -0.04em;
-	}
-
-	.manage-list-actions {
-		flex-wrap: wrap;
+		width: 100%;
 	}
 
 	.manage-list-search {
-		display: grid;
-		gap: 0.35rem;
-		min-width: min(24rem, 100%);
+		display: block;
+		flex: 1 1 32rem;
+		min-width: 0;
+		cursor: inherit;
 	}
 
-	.manage-list-search span,
-	.manage-list-meta span,
+	.manage-list-total,
 	.manage-post-row-side small {
 		font-family: var(--font-mono);
 		font-size: 0.74rem;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.065em;
 		text-transform: uppercase;
 		color: var(--ink-faint);
 	}
 
 	.manage-list-search input {
-		padding: 0.8rem 0.95rem;
+		width: 100%;
+		height: 3.1rem;
+		padding: 0 1.05rem;
 		border: 1px solid var(--line);
-		border-radius: 18px;
-		background: rgb(255 255 255 / 74%);
+		border-radius: 999px;
+		outline: none;
+		background: rgb(247 251 255 / 76%);
+		color: var(--ink);
+		cursor: inherit;
+		transition:
+			border-color var(--motion-shared-ease-standard),
+			box-shadow var(--motion-shared-ease-standard),
+			background-color var(--motion-shared-ease-standard);
 	}
 
-	.manage-list-meta strong {
-		font-family: var(--font-display);
+	.manage-list-search input::placeholder {
+		color: color-mix(in srgb, var(--ink-faint) 80%, transparent);
+	}
+
+	.manage-list-search input:focus {
+		border-color: var(--line-strong);
+		background: rgb(255 255 255 / 90%);
+		box-shadow: 0 0 0 3px rgb(79 120 255 / 8%);
+	}
+
+	.manage-list-controls {
+		flex: 0 0 auto;
+	}
+
+	.manage-create-button {
+		display: inline-grid;
+		place-items: center;
+		width: 3.1rem;
+		height: 3.1rem;
+		padding: 0;
+		border: 1px solid rgb(68 112 201 / 22%);
+		border-radius: 50%;
+		appearance: none;
+		background: linear-gradient(145deg, #78a9ed, #557fd0);
+		box-shadow: 0 10px 24px rgb(54 95 174 / 18%);
+		color: white;
+		cursor: inherit;
+	}
+
+	.manage-create-button span {
+		position: relative;
+		width: 1.05rem;
+		height: 1.05rem;
+	}
+
+	.manage-create-button span::before,
+	.manage-create-button span::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 1.05rem;
+		height: 2px;
+		border-radius: 999px;
+		background: currentcolor;
+		transform: translate(-50%, -50%);
+	}
+
+	.manage-create-button span::after {
+		transform: translate(-50%, -50%) rotate(90deg);
+	}
+
+	.manage-create-button:focus-visible {
+		outline: 2px solid rgb(79 120 255 / 44%);
+		outline-offset: 3px;
 	}
 
 	.manage-list-rows {
 		display: grid;
-		gap: 0.8rem;
-	}
-
-	.manage-post-row,
-	.manage-list-empty {
-		--site-press-scale: 1;
-		--site-press-translate-y: 0px;
-
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 1rem;
-		padding: 1rem 1.05rem;
-		border: 1px solid var(--line);
-		border-radius: 22px;
-		background: rgb(255 255 255 / 64%);
-		scale: var(--site-press-scale);
-		translate: 0 var(--site-press-translate-y);
-		transform-origin: center;
-		touch-action: manipulation;
-		transition:
-			transform var(--motion-shared-ease-standard),
-			translate var(--motion-press-out-duration) var(--motion-shared-easing-standard),
-			scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
-			border-color var(--motion-shared-ease-standard),
-			background-color var(--motion-shared-ease-standard);
+		gap: 0.55rem;
 	}
 
 	.manage-post-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.32fr);
+		gap: clamp(1rem, 2vw, 2rem);
 		width: 100%;
+		min-height: 6.5rem;
+		padding: 1rem 1.15rem 1rem 1.25rem;
+		border: 1px solid var(--line);
+		border-radius: 17px;
+		appearance: none;
+		background:
+			linear-gradient(90deg, rgb(79 120 255 / 8%) 0 3px, transparent 3px), rgb(250 253 255 / 58%);
+		color: inherit;
 		font: inherit;
 		text-align: left;
-		cursor: pointer;
+		cursor: inherit;
 	}
 
-	.manage-post-row:hover {
-		transform: translateY(-2px);
-		border-color: rgb(79 120 255 / 24%);
-		background: rgb(255 255 255 / 84%);
-	}
-
-	.manage-post-row:active {
-		--site-press-scale: var(--motion-press-active-scale);
-		--site-press-translate-y: var(--motion-press-active-translate-y);
-
-		transition-duration: var(--motion-press-in-duration);
+	.manage-post-row:focus-visible {
+		outline: 2px solid rgb(79 120 255 / 44%);
+		outline-offset: 3px;
 	}
 
 	.manage-post-row-headline {
@@ -261,12 +318,15 @@
 	.manage-post-row-headline h3 {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: 1.2rem;
+		font-size: clamp(1.08rem, 1.4vw, 1.28rem);
+		letter-spacing: -0.02em;
 	}
 
 	.manage-post-row p {
-		margin: 0.45rem 0 0;
+		margin: 0.5rem 0 0;
+		max-width: 76ch;
 		color: var(--ink-soft);
+		line-height: 1.55;
 	}
 
 	.manage-post-row-chips {
@@ -276,12 +336,12 @@
 	}
 
 	.manage-chip {
-		padding: 0.22rem 0.55rem;
+		padding: 0.2rem 0.5rem;
 		border-radius: 999px;
 		border: 1px solid var(--line);
-		background: rgb(255 255 255 / 82%);
+		background: rgb(255 255 255 / 70%);
 		font-family: var(--font-mono);
-		font-size: 0.72rem;
+		font-size: 0.68rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 	}
@@ -300,7 +360,9 @@
 		display: grid;
 		align-content: start;
 		justify-items: end;
-		gap: 0.2rem;
+		gap: 0.28rem;
+		padding-left: 1rem;
+		border-left: 1px solid var(--line);
 		text-align: right;
 	}
 
@@ -310,20 +372,63 @@
 	}
 
 	.manage-list-empty {
-		grid-template-columns: 1fr;
+		display: grid;
+		gap: 0.35rem;
 		justify-items: center;
+		padding: 2.5rem 1rem;
+		border: 1px dashed var(--line-strong);
+		border-radius: 17px;
+		background: rgb(250 253 255 / 42%);
 		text-align: center;
 	}
 
+	.manage-list-state {
+		display: grid;
+		gap: 0.4rem;
+		align-content: center;
+		justify-items: start;
+		min-height: 6.5rem;
+		padding: 1rem 1.2rem;
+		border: 1px solid var(--line);
+		border-radius: 17px;
+		background: rgb(250 253 255 / 58%);
+		color: var(--ink-soft);
+	}
+
+	.manage-list-state-error strong {
+		color: var(--ink);
+	}
+
+	.manage-list-state .button-secondary {
+		margin-top: 0.25rem;
+	}
+
 	@media (width <= 860px) {
-		.manage-post-row,
-		.manage-list-empty {
+		.manage-post-row {
 			grid-template-columns: 1fr;
 		}
 
 		.manage-post-row-side {
 			justify-items: start;
+			padding: 0.8rem 0 0;
+			border-top: 1px solid var(--line);
+			border-left: 0;
 			text-align: left;
+		}
+	}
+
+	@media (width <= 620px) {
+		.manage-list-toolbar {
+			align-items: stretch;
+			flex-wrap: wrap;
+		}
+
+		.manage-list-search {
+			flex-basis: 100%;
+		}
+
+		.manage-list-controls {
+			width: 100%;
 		}
 	}
 </style>

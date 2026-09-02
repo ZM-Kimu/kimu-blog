@@ -27,6 +27,10 @@
 
 	const messages = $derived(page.data.i18n?.messages)
 	const t = (key: string) => translate(messages, key)
+
+	function isActionLocked(action: HomeTopbarAction) {
+		return motionLocked && action.key !== 'home'
+	}
 </script>
 
 <header
@@ -76,13 +80,14 @@
 		>
 			{#each actions as action, index (action.key)}
 				{#if action.kind === 'link' && action.href}
+					{@const actionLocked = isActionLocked(action)}
 					<a
 						class="home-topbar-tool-button"
 						href={resolve(action.href)}
 						aria-label={action.ariaLabel}
-						aria-disabled={motionLocked || action.disabled ? 'true' : undefined}
-						data-motion-locked={motionLocked && !action.disabled ? 'true' : undefined}
-						tabindex={motionLocked || action.disabled ? -1 : undefined}
+						aria-disabled={actionLocked || action.disabled ? 'true' : undefined}
+						data-motion-locked={actionLocked && !action.disabled ? 'true' : undefined}
+						tabindex={actionLocked || action.disabled ? -1 : undefined}
 					>
 						<span
 							class={`home-topbar-icon home-topbar-icon-${action.icon.mode}`}
@@ -91,12 +96,13 @@
 						></span>
 					</a>
 				{:else}
+					{@const actionLocked = isActionLocked(action)}
 					<button
 						class="home-topbar-tool-button"
 						type="button"
 						aria-label={action.ariaLabel}
-						data-motion-locked={motionLocked && !action.disabled ? 'true' : undefined}
-						disabled={motionLocked || action.disabled}
+						data-motion-locked={actionLocked && !action.disabled ? 'true' : undefined}
+						disabled={actionLocked || action.disabled}
 						onclick={() => onAction(action)}
 					>
 						<span

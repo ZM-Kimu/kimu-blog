@@ -43,7 +43,7 @@
 		<div class="portrait-home-mission-list">
 			{#each viewModel.missionPreview as mission (mission.slug)}
 				<a
-					class={`mission-strip-item mission-strip-item-${mission.tone}`}
+					class={`portrait-home-mission-item portrait-home-mission-item-${mission.tone}`}
 					href={resolve(mission.href)}
 				>
 					<span>{t(`home.missions.${mission.id}.kicker`)}</span>

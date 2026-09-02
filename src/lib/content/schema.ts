@@ -15,10 +15,9 @@ export const postFrontmatterSchema = z.object({
 	slug: z.string().regex(slugPattern, 'slug 只允许小写字母、数字和中划线'),
 	featured: z.boolean().default(false),
 	author: z.string().min(1).optional(),
-	series: z.string().min(1).optional(),
+	seriesId: z.string().regex(slugPattern, 'seriesId 只允许小写字母、数字和中划线').optional(),
 	toc: z.boolean().default(true),
-	readingTime: z.string().min(1).optional(),
-	canonical: z.url().optional()
+	readingTime: z.string().min(1).optional()
 })
 
 export type PostFrontmatter = z.infer<typeof postFrontmatterSchema>

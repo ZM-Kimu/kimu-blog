@@ -1,17 +1,4 @@
-/* Home tool rail. */
-.home-left-tools {
-	grid-area: left;
-	position: relative;
-	z-index: 1;
-	display: grid;
-	grid-template-columns: repeat(2, var(--home-tool-tile-size));
-	grid-auto-rows: var(--home-tool-tile-size);
-	place-content: start start;
-	justify-self: start;
-	padding-top: calc(var(--home-side-rail-offset) + var(--home-left-tools-offset-extra));
-	gap: var(--home-left-tools-gap);
-}
-
+/* Shared Home quick action tiles. */
 .tool-chip {
 	position: relative;
 	display: grid;
@@ -32,12 +19,6 @@
 		scale var(--motion-press-out-duration) var(--motion-shared-easing-standard),
 		box-shadow var(--motion-shared-ease-standard),
 		border-color var(--motion-shared-ease-standard);
-}
-
-.tool-chip:hover {
-	transform: translateY(-2px);
-	border-color: rgb(79 120 255 / 24%);
-	box-shadow: 0 18px 34px rgb(57 116 177 / 14%);
 }
 
 .tool-chip-icon {

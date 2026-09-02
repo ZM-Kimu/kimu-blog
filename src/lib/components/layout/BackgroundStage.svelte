@@ -49,6 +49,10 @@
 			return 'live'
 		}
 
+		if (bridgeActive && pendingScene === 'home-spine') {
+			return 'live'
+		}
+
 		return 'hidden'
 	})
 	const spineOverlayVisible = $derived(spineOverlayMode !== 'hidden')

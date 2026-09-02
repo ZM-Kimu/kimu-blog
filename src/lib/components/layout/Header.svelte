@@ -6,8 +6,6 @@
 	import { siteConfig } from '$lib/config/site'
 
 	let { messages }: { messages?: LocaleMessages } = $props()
-
-	let compact = $state(false)
 	const t = (key: string) => translate(messages, key)
 
 	const currentSection = $derived.by(() => {
@@ -27,13 +25,9 @@
 
 		return activeItem ? t(activeItem.labelKey) : t('shell.section.interface')
 	})
-
-	const toggleCompact = () => {
-		compact = !compact
-	}
 </script>
 
-<header class:compact class="hud-header">
+<header class="hud-header">
 	<div class="shell hud-header-surface">
 		<a class="hud-brand" href={resolve('/')}>
 			<span class="hud-brand-mark">KB</span>
@@ -62,19 +56,14 @@
 				<span>{t('shell.status.current')}</span>
 				<strong>{currentSection}</strong>
 			</div>
-			{#if !compact}
-				<div class="hud-status-chips">
-					{#each hudStatusChips as chip (chip.labelKey)}
-						<div class="hud-inline-chip">
-							<span>{t(chip.labelKey)}</span>
-							<strong>{t(chip.valueKey)}</strong>
-						</div>
-					{/each}
-				</div>
-			{/if}
-			<button class="hud-toggle" type="button" onclick={toggleCompact}>
-				{compact ? t('shell.toggle.expand') : t('shell.toggle.collapse')}
-			</button>
+			<div class="hud-status-chips">
+				{#each hudStatusChips as chip (chip.labelKey)}
+					<div class="hud-inline-chip">
+						<span>{t(chip.labelKey)}</span>
+						<strong>{t(chip.valueKey)}</strong>
+					</div>
+				{/each}
+			</div>
 		</div>
 	</div>
 </header>

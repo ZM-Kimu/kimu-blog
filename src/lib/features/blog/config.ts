@@ -1,7 +1,7 @@
 export interface MissionDefinition {
 	slug: string
 	id: 'engineering' | 'designLog' | 'fieldNotes' | 'favorites'
-	href: '/blog/archive' | '/favorites'
+	href: `/blog/archive?category=${string}` | '/favorites'
 	matches: string[]
 	tone: 'cyan' | 'blue' | 'amber' | 'slate'
 }
@@ -10,21 +10,21 @@ export const missionCatalog: MissionDefinition[] = [
 	{
 		slug: 'engineering',
 		id: 'engineering',
-		href: '/blog/archive',
+		href: '/blog/archive?category=engineering',
 		matches: ['engineering', '工程'],
 		tone: 'cyan'
 	},
 	{
 		slug: 'design-log',
 		id: 'designLog',
-		href: '/blog/archive',
+		href: '/blog/archive?category=design-log',
 		matches: ['design-log', '设计', '设计记录'],
 		tone: 'blue'
 	},
 	{
 		slug: 'field-notes',
 		id: 'fieldNotes',
-		href: '/blog/archive',
+		href: '/blog/archive?category=field-notes',
 		matches: ['field-notes', '随笔', '笔记', 'notes'],
 		tone: 'amber'
 	},

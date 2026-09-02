@@ -1,16 +1,18 @@
 import type { SpineEntryConfig, SpineMountOptions } from './spine-viewer'
 
 export type HomeSpineVariant = 'daytime' | 'nighttime'
+type HomeSpineIdleTrack = NonNullable<SpineMountOptions['idleTracks']>[number]
+type HomeSpineIdleCombo = readonly [string] | readonly [string, string]
 
 const daytimeEntry = {
 	name: 'Arona Daytime',
-	skel: '/spine/home/daytime/arona_workpage_daytime.skel',
+	skel: '/spine/home/daytime/arona_workpage_daytime_2.skel',
 	atlas: {
-		src: '/spine/home/daytime/arona_workpage_daytime.atlas',
+		src: '/spine/home/daytime/arona_workpage_daytime_2.atlas',
 		data: {
 			images: {
-				'arona_workpage_daytime.png': '/spine/home/daytime/arona_workpage_daytime.png',
-				'arona_workpage_daytime2.png': '/spine/home/daytime/arona_workpage_daytime2.png'
+				'arona_workpage_daytime_2.png': '/spine/home/daytime/arona_workpage_daytime_2.png',
+				'arona_workpage_daytime_2_2.png': '/spine/home/daytime/arona_workpage_daytime_2_2.png'
 			}
 		}
 	}
@@ -18,13 +20,13 @@ const daytimeEntry = {
 
 const nighttimeEntry = {
 	name: 'Arona Nighttime',
-	skel: '/spine/home/nighttime/arona_workpage_nighttime.skel',
+	skel: '/spine/home/nighttime/arona_workpage_nighttime_2.skel',
 	atlas: {
-		src: '/spine/home/nighttime/arona_workpage_nighttime.atlas',
+		src: '/spine/home/nighttime/arona_workpage_nighttime_2.atlas',
 		data: {
 			images: {
-				'arona_workpage_nighttime.png': '/spine/home/nighttime/arona_workpage_nighttime.png',
-				'arona_workpage_nighttime2.png': '/spine/home/nighttime/arona_workpage_nighttime2.png'
+				'arona_workpage_nighttime_2.png': '/spine/home/nighttime/arona_workpage_nighttime_2.png',
+				'arona_workpage_nighttime_2_2.png': '/spine/home/nighttime/arona_workpage_nighttime_2_2.png'
 			}
 		}
 	}
@@ -42,6 +44,33 @@ const sharedBaseOptions = {
 	centerPivot: true
 } satisfies SpineMountOptions
 
+const homeSpineIdleComboPools = {
+	daytime: [
+		['Idle_00', 'Idle_11'],
+		['Idle_00', 'Idle_12'],
+		['Idle_01'],
+		['Idle_02', 'Idle_11'],
+		['Idle_02', 'Idle_12'],
+		['Idle_03', 'Idle_12']
+	],
+	nighttime: [
+		['Idle_00'],
+		['Idle_00', 'Idle_11'],
+		['Idle_01'],
+		['Idle_01', 'Idle_11'],
+		['Idle_02'],
+		['Idle_02', 'Idle_11'],
+		['Idle_03'],
+		['Idle_04']
+	]
+} as const satisfies Record<HomeSpineVariant, readonly HomeSpineIdleCombo[]>
+
+const homeSpineBackgroundTrack = {
+	track: 0,
+	animation: 'Idle_background_00',
+	alpha: 1
+} satisfies HomeSpineIdleTrack
+
 export const homeSpineConfigs: Record<
 	HomeSpineVariant,
 	{
@@ -51,45 +80,24 @@ export const homeSpineConfigs: Record<
 > = {
 	daytime: {
 		entry: daytimeEntry,
-		options: {
-			...sharedBaseOptions,
-			idleTracks: [
-				{
-					track: 0,
-					animation: 'Idle_background_00',
-					alpha: 1
-				},
-				{
-					track: 1,
-					animation: 'Idle_00',
-					alpha: 1
-				},
-				{
-					track: 2,
-					animation: 'Idle_11',
-					alpha: 1
-				}
-			]
-		}
+		options: sharedBaseOptions
 	},
 	nighttime: {
 		entry: nighttimeEntry,
-		options: {
-			...sharedBaseOptions,
-			idleTracks: [
-				{
-					track: 0,
-					animation: 'Idle_background_00',
-					alpha: 1
-				},
-				{
-					track: 1,
-					animation: 'Idle_03',
-					alpha: 1
-				}
-			]
-		}
+		options: sharedBaseOptions
 	}
+}
+
+export function resolveHomeSpineIdleTracks(variant: HomeSpineVariant) {
+	const comboPool = homeSpineIdleComboPools[variant]
+	const combo = comboPool[Math.floor(Math.random() * comboPool.length)] ?? comboPool[0]
+	const characterTracks = combo.map((animation, index) => ({
+		track: index + 1,
+		animation,
+		alpha: 1
+	}))
+
+	return [homeSpineBackgroundTrack, ...characterTracks] satisfies SpineMountOptions['idleTracks']
 }
 
 const DAYTIME_START_HOUR = 6
