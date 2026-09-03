@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
+	import { getBlogCategoryMessageKey } from '$lib/content/blog-categories'
 	import { homeDockItems } from './config'
 	import HomeMiniPlayer from './components/HomeMiniPlayer.svelte'
 	import PortraitHomePage from './PortraitHomePage.svelte'
@@ -43,7 +44,7 @@
 					<a class="home-event-banner" href={resolve(data.featuredPost.permalink)}>
 						<span class="home-event-banner-tag">{t('home.banner.featured')}</span>
 						<strong>{data.featuredPost.title}</strong>
-						<small>{data.featuredPost.category ?? t('common.uncategorized')}</small>
+						<small>{t(getBlogCategoryMessageKey(data.featuredPost.category))}</small>
 					</a>
 				{/if}
 

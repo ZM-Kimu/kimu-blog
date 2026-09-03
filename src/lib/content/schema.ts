@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { blogCategories } from './blog-categories'
+
 const datePattern = /^\d{4}-\d{2}-\d{2}$/
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
@@ -9,7 +11,7 @@ export const postFrontmatterSchema = z.object({
 	date: z.string().regex(datePattern, 'date 必须使用 YYYY-MM-DD 格式'),
 	updated: z.string().regex(datePattern, 'updated 必须使用 YYYY-MM-DD 格式'),
 	tags: z.array(z.string().min(1)).default([]),
-	category: z.string().min(1).optional(),
+	category: z.enum(blogCategories),
 	draft: z.boolean().default(false),
 	cover: z.string().min(1),
 	slug: z.string().regex(slugPattern, 'slug 只允许小写字母、数字和中划线'),
@@ -17,7 +19,7 @@ export const postFrontmatterSchema = z.object({
 	author: z.string().min(1).optional(),
 	seriesId: z.string().regex(slugPattern, 'seriesId 只允许小写字母、数字和中划线').optional(),
 	toc: z.boolean().default(true),
-	readingTime: z.string().min(1).optional()
+	readingMinutes: z.number().int().positive().optional()
 })
 
 export type PostFrontmatter = z.infer<typeof postFrontmatterSchema>

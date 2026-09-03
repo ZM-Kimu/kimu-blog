@@ -17,7 +17,16 @@
 		<p class="post-reader-description">{post.description}</p>
 	</header>
 
-	<div class="content-prose article-prose post-reader-prose">
+	<img
+		alt={post.title}
+		class="post-reader-cover"
+		decoding="async"
+		draggable="false"
+		fetchpriority="high"
+		src={post.cover}
+	/>
+
+	<div class="content-prose article-prose post-reader-prose" data-allow-selection>
 		{#if Content}
 			<Content />
 		{/if}

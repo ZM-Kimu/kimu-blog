@@ -23,6 +23,8 @@ export const appMessageSkeleton = {
 		updatedAt: '',
 		author: '',
 		category: '',
+		readingTime: '',
+		readingMinutes: '',
 		slug: '',
 		tagCount: '',
 		renderMode: '',
@@ -39,6 +41,11 @@ export const appMessageSkeleton = {
 			live: '',
 			standby: '',
 			comingSoon: ''
+		},
+		categories: {
+			development: '',
+			daily: '',
+			notes: ''
 		}
 	},
 	nav: {
@@ -119,19 +126,19 @@ export const appMessageSkeleton = {
 			unmute: ''
 		},
 		missions: {
-			engineering: {
+			development: {
 				title: '',
 				kicker: '',
 				description: '',
 				state: ''
 			},
-			designLog: {
+			daily: {
 				title: '',
 				kicker: '',
 				description: '',
 				state: ''
 			},
-			fieldNotes: {
+			notes: {
 				title: '',
 				kicker: '',
 				description: '',
@@ -210,13 +217,13 @@ export const appMessageSkeleton = {
 			recentEyebrow: '',
 			recentTitle: '',
 			cards: {
-				engineering: {
+				development: {
 					title: ''
 				},
-				designLog: {
+				daily: {
 					title: ''
 				},
-				fieldNotes: {
+				notes: {
 					title: ''
 				},
 				favorites: {
@@ -426,14 +433,13 @@ export const appMessageSkeleton = {
 				category: '',
 				author: '',
 				series: '',
-				readingTime: '',
+				readingMinutes: '',
 				format: '',
 				tags: '',
 				cover: ''
 			},
 			placeholders: {
-				category: '',
-				readingTime: '',
+				readingMinutes: '',
 				tags: '',
 				cover: ''
 			},

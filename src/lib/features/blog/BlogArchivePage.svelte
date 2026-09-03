@@ -15,6 +15,7 @@
 	import { page } from '$app/state'
 	import { createArchiveBrowserState } from '$lib/features/blog/archive-browser.svelte'
 	import { missionCatalog } from '$lib/features/blog/config'
+	import { getBlogCategoryMessageKey } from '$lib/content/blog-categories'
 	import { translate } from '$lib/i18n'
 	import type { CategorySummary, BlogPost } from '$lib/types/content'
 	import { onMount } from 'svelte'
@@ -53,22 +54,22 @@
 
 	function filterPostsByCategory(slug: string | null) {
 		const mission = resolveMission(slug)
-		return mission
-			? data.posts.filter(
-					(post) =>
-						(post.categorySlug && mission.matches.includes(post.categorySlug)) ||
-						(post.category && mission.matches.includes(post.category))
-				)
-			: data.posts
+		return mission ? data.posts.filter((post) => post.category === mission.category) : data.posts
 	}
 
 	const filteredPosts = $derived.by(() => filterPostsByCategory(requestedCategory))
-	const archiveFilterMissions = missionCatalog.filter((entry) => entry.href !== '/favorites')
+	const archiveFilterMissions = missionCatalog.filter(
+		(
+			entry
+		): entry is (typeof missionCatalog)[number] & {
+			category: NonNullable<typeof entry.category>
+		} => entry.category !== null
+	)
 	const categoryOptions = $derived.by(() =>
 		archiveFilterMissions.map((mission) => ({
 			slug: mission.slug,
-			title: t(`home.missions.${mission.id}.title`),
-			count: data.categories.find((entry) => mission.matches.includes(entry.slug))?.count ?? 0
+			title: t(getBlogCategoryMessageKey(mission.category)),
+			count: data.categories.find((entry) => entry.slug === mission.category)?.count ?? 0
 		}))
 	)
 	const selectedPost = $derived.by(
@@ -135,7 +136,7 @@
 			{locale}
 			allLabel={t('common.all')}
 			sectionLabel={t('blog.archive.introTitle')}
-			uncategorizedLabel={t('common.uncategorized')}
+			getCategoryLabel={(category) => t(getBlogCategoryMessageKey(category))}
 			emptyLabel={t('blog.archive.emptyDate')}
 			onSelectCategory={selectCategory}
 			onSelectPost={selectPost}

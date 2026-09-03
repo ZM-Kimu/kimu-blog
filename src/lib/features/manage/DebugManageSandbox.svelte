@@ -61,10 +61,10 @@
 				draft: false,
 				cover: '/images/og-default.svg',
 				slug: variant === 'long' ? 'manage-debug-long' : 'manage-debug',
-				category: t('manage.debug.categories.workbench'),
+				category: 'development',
 				author: 'Kimu',
 				toc: true,
-				readingTime: '6 min',
+				readingMinutes: 6,
 				featured: variant !== 'empty'
 			},
 			path: '/src/lib/content/blog/manage-debug.svx',
@@ -82,7 +82,7 @@
 	function createMockList(variant: CopyVariant): ManagePostListItem[] {
 		return [
 			{
-				category: t('manage.debug.categories.workbench'),
+				category: 'development',
 				date: '2026-03-28',
 				description:
 					variant === 'long'
@@ -100,7 +100,7 @@
 				updated: '2026-03-28'
 			},
 			{
-				category: t('manage.debug.categories.drafts'),
+				category: 'daily',
 				date: '2026-03-24',
 				description: t('manage.debug.documents.draftDescription'),
 				draft: true,
@@ -112,7 +112,7 @@
 				updated: '2026-03-27'
 			},
 			{
-				category: t('manage.debug.categories.archive'),
+				category: 'notes',
 				date: '2026-02-10',
 				description:
 					variant === 'empty'

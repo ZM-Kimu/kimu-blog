@@ -148,7 +148,7 @@
 .post-list-viewport {
 	height: 100%;
 	min-height: 0;
-	padding: 0 calc(var(--scroll-chrome-size, 0.44rem) + 0.3rem) 0 0;
+	padding: 0.65rem calc(var(--scroll-chrome-size, 0.44rem) + 1.35rem) 2rem 0.65rem;
 	overflow: hidden auto;
 	cursor: inherit;
 }
@@ -255,10 +255,29 @@
 	color: var(--ink-soft);
 }
 
+.post-reader-cover {
+	display: block;
+	width: min(100%, 56rem);
+	max-height: min(52vh, 34rem);
+	margin-inline: auto;
+	border-radius: 24px;
+	object-fit: cover;
+	box-shadow: 0 18px 42px rgb(31 92 153 / 11%);
+	pointer-events: none;
+}
+
 .post-reader-prose {
 	width: 100%;
 	padding: 0;
 	line-height: 1.88;
+	user-select: text;
+}
+
+.post-reader-prose img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	border-radius: 20px;
 }
 
 .post-reader-prose h2,

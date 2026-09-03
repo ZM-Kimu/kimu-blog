@@ -25,13 +25,15 @@
 		locale,
 		metadataTitle,
 		categoryLabel,
+		categoryValue,
 		descriptionLabel,
+		readingTimeLabel,
+		readingTimeValue,
 		publishedAtLabel,
 		updatedAtLabel,
 		seriesLabel,
 		newerLabel,
 		olderLabel,
-		uncategorizedLabel,
 		textOutDurationMs,
 		textInDurationMs,
 		layoutDurationMs,
@@ -46,13 +48,15 @@
 		locale?: AppLocale
 		metadataTitle: string
 		categoryLabel: string
+		categoryValue: string
 		descriptionLabel: string
+		readingTimeLabel: string
+		readingTimeValue: string | null
 		publishedAtLabel: string
 		updatedAtLabel: string
 		seriesLabel: string
 		newerLabel: string
 		olderLabel: string
-		uncategorizedLabel: string
 		textOutDurationMs: number
 		textInDurationMs: number
 		layoutDurationMs: number
@@ -253,7 +257,7 @@
 			<dl class="post-aside-facts" data-flip-id="post-aside-facts" data-post-aside-flip>
 				<div class="post-aside-fact" data-flip-id="post-aside-category" data-post-aside-flip>
 					<dt>{categoryLabel}</dt>
-					<dd><span class="post-aside-value">{post.category ?? uncategorizedLabel}</span></dd>
+					<dd><span class="post-aside-value">{categoryValue}</span></dd>
 				</div>
 				<div
 					class="post-aside-fact post-aside-fact-description"
@@ -271,6 +275,12 @@
 					<dt>{updatedAtLabel}</dt>
 					<dd><span class="post-aside-value">{formatDate(post.updated, locale)}</span></dd>
 				</div>
+				{#if readingTimeValue}
+					<div class="post-aside-fact" data-flip-id="post-aside-reading-time" data-post-aside-flip>
+						<dt>{readingTimeLabel}</dt>
+						<dd><span class="post-aside-value">{readingTimeValue}</span></dd>
+					</div>
+				{/if}
 				{#if seriesNavigation}
 					<div class="post-aside-fact" data-flip-id="post-aside-series" data-post-aside-flip>
 						<dt>{seriesLabel}</dt>

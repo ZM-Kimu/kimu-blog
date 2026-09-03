@@ -4,6 +4,7 @@
 	import type { AppLocale } from '$lib/i18n/config'
 	import { getMotionTokens } from '$lib/motion/tokens'
 	import type { BlogPost } from '$lib/types/content'
+	import type { BlogCategory } from '$lib/content/blog-categories'
 	import { formatDate } from '$lib/utils/date'
 
 	type ArchiveCategoryOption = {
@@ -28,7 +29,7 @@
 		locale,
 		allLabel,
 		sectionLabel,
-		uncategorizedLabel,
+		getCategoryLabel,
 		emptyLabel,
 		onSelectCategory,
 		onSelectPost
@@ -41,7 +42,7 @@
 		locale?: AppLocale
 		allLabel: string
 		sectionLabel: string
-		uncategorizedLabel: string
+		getCategoryLabel: (category: BlogCategory) => string
 		emptyLabel: string
 		onSelectCategory: (slug: string | null) => void
 		onSelectPost: (slug: string, sourceRect: ArchiveSelectionSourceRect | null) => void
@@ -254,7 +255,16 @@
 								<p>{post.description}</p>
 							</div>
 							<div class="archive-entry-item-meta">
-								<span>{post.category ?? uncategorizedLabel}</span>
+								<span>{getCategoryLabel(post.category)}</span>
+								<img
+									alt=""
+									aria-hidden="true"
+									class="archive-entry-item-cover"
+									decoding="async"
+									draggable="false"
+									loading="lazy"
+									src={post.cover}
+								/>
 								<div class="archive-entry-tag-row">
 									{#each post.tags.slice(0, 2) as tag, index (post.tagSlugs[index] ?? tag)}
 										<span class="tag-chip archive-entry-tag">{tag}</span>

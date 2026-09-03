@@ -20,13 +20,9 @@
 	const missions = $derived.by(() =>
 		missionCatalog.map((mission) => ({
 			...mission,
-			count:
-				data.categories
-					.filter(
-						(category: CategorySummary) =>
-							mission.matches.includes(category.slug) || mission.matches.includes(category.name)
-					)
-					.reduce((total: number, category: CategorySummary) => total + category.count, 0) ?? 0
+			count: mission.category
+				? (data.categories.find((category) => category.slug === mission.category)?.count ?? 0)
+				: 0
 		}))
 	)
 </script>

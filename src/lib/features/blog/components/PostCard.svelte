@@ -2,6 +2,7 @@
 	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
 	import { translate } from '$lib/i18n'
+	import { getBlogCategoryMessageKey } from '$lib/content/blog-categories'
 	import type { BlogPost } from '$lib/types/content'
 	import { formatDate } from '$lib/utils/date'
 	import TagChip from './TagChip.svelte'
@@ -32,8 +33,7 @@
 	{/if}
 
 	<div class="post-card-hud">
-		<span class="post-card-code">{post.categorySlug ? post.categorySlug.toUpperCase() : 'LOG'}</span
-		>
+		<span class="post-card-code">{post.categorySlug.toUpperCase()}</span>
 		{#if showStatus}
 			<span
 				>{post.featured
@@ -47,7 +47,7 @@
 		<div class="post-meta">
 			<span>{formatDate(post.date, locale)}</span>
 			{#if showCategoryMeta}
-				<span>{post.category ?? translate(messages, 'common.uncategorized')}</span>
+				<span>{translate(messages, getBlogCategoryMessageKey(post.category))}</span>
 			{/if}
 		</div>
 		<h3><a href={resolve(post.permalink)}>{post.title}</a></h3>

@@ -21,6 +21,8 @@ export const zhCNMessages = {
 		updatedAt: '更新于 {date}',
 		author: '作者',
 		category: '分类',
+		readingTime: '阅读时间',
+		readingMinutes: '{count} 分钟',
 		slug: 'Slug',
 		tagCount: '{count} 个标签',
 		renderMode: '渲染模式',
@@ -37,6 +39,11 @@ export const zhCNMessages = {
 			live: '在线',
 			standby: '待命',
 			comingSoon: '即将开放'
+		},
+		categories: {
+			development: '开发',
+			daily: '日常',
+			notes: '笔记'
 		}
 	},
 	nav: {
@@ -117,20 +124,20 @@ export const zhCNMessages = {
 			unmute: '取消静音'
 		},
 		missions: {
-			engineering: {
-				title: 'Engineering',
+			development: {
+				title: '开发',
 				kicker: 'Mission 01',
 				description: 'SvelteKit、Cloudflare、工具链、架构记录与实现日志。',
 				state: '在线'
 			},
-			designLog: {
-				title: 'Design Log',
+			daily: {
+				title: '日常',
 				kicker: 'Mission 02',
 				description: '交互研究、布局思路、字体选择与样式系统记录。',
 				state: '待命'
 			},
-			fieldNotes: {
-				title: 'Field Notes',
+			notes: {
+				title: '笔记',
 				kicker: 'Mission 03',
 				description: '短篇观察、参考摘录、实验记录与个人笔记。',
 				state: '待命'
@@ -209,14 +216,14 @@ export const zhCNMessages = {
 			recentEyebrow: 'Recent Output',
 			recentTitle: 'Latest Records',
 			cards: {
-				engineering: {
-					title: '工程记录'
+				development: {
+					title: '开发'
 				},
-				designLog: {
-					title: '学习记录'
+				daily: {
+					title: '日常'
 				},
-				fieldNotes: {
-					title: '日常记录'
+				notes: {
+					title: '笔记'
 				},
 				favorites: {
 					title: '收藏'
@@ -425,14 +432,13 @@ export const zhCNMessages = {
 				category: '分类',
 				author: '作者',
 				series: '系列',
-				readingTime: '阅读时长',
+				readingMinutes: '阅读时间（分钟）',
 				format: '格式',
 				tags: '标签',
 				cover: '封面'
 			},
 			placeholders: {
-				category: '技术 / 随笔',
-				readingTime: '6 分钟',
+				readingMinutes: '6',
 				tags: 'svelte, cloudflare, 开发日志',
 				cover: '请从内容设置中设置封面'
 			},

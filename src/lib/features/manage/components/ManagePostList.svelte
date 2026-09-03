@@ -2,6 +2,7 @@
 	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
 	import { translate } from '$lib/i18n'
+	import { getBlogCategoryMessageKey } from '$lib/content/blog-categories'
 	import type { ManagePostListItem } from '$lib/features/manage/types'
 	import type { InternalHref } from '$lib/navigation/types'
 	import { formatDate } from '$lib/utils/date'
@@ -36,7 +37,7 @@
 		}
 
 		return items.filter((item: ManagePostListItem) =>
-			[item.title, item.slug, item.description, item.category ?? '']
+			[item.title, item.slug, item.description, t(getBlogCategoryMessageKey(item.category))]
 				.join(' ')
 				.toLowerCase()
 				.includes(normalized)
@@ -131,7 +132,7 @@
 
 						<div class="manage-post-row-side">
 							<strong>{item.slug}</strong>
-							<span>{item.category ?? t('common.uncategorized')}</span>
+							<span>{t(getBlogCategoryMessageKey(item.category))}</span>
 							<small>{t('common.updatedAt', { date: formatDate(item.updated, locale) })}</small>
 						</div>
 					</button>
@@ -157,7 +158,7 @@
 
 						<div class="manage-post-row-side">
 							<strong>{item.slug}</strong>
-							<span>{item.category ?? t('common.uncategorized')}</span>
+							<span>{t(getBlogCategoryMessageKey(item.category))}</span>
 							<small>{t('common.updatedAt', { date: formatDate(item.updated, locale) })}</small>
 						</div>
 					</a>

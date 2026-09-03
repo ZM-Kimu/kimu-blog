@@ -1,38 +1,40 @@
+import type { BlogCategory } from '$lib/content/blog-categories'
+
 export interface MissionDefinition {
 	slug: string
-	id: 'engineering' | 'designLog' | 'fieldNotes' | 'favorites'
+	id: BlogCategory | 'favorites'
 	href: `/blog/archive?category=${string}` | '/favorites'
-	matches: string[]
+	category: BlogCategory | null
 	tone: 'cyan' | 'blue' | 'amber' | 'slate'
 }
 
 export const missionCatalog: MissionDefinition[] = [
 	{
-		slug: 'engineering',
-		id: 'engineering',
-		href: '/blog/archive?category=engineering',
-		matches: ['engineering', '工程'],
+		slug: 'development',
+		id: 'development',
+		href: '/blog/archive?category=development',
+		category: 'development',
 		tone: 'cyan'
 	},
 	{
-		slug: 'design-log',
-		id: 'designLog',
-		href: '/blog/archive?category=design-log',
-		matches: ['design-log', '设计', '设计记录'],
+		slug: 'daily',
+		id: 'daily',
+		href: '/blog/archive?category=daily',
+		category: 'daily',
 		tone: 'blue'
 	},
 	{
-		slug: 'field-notes',
-		id: 'fieldNotes',
-		href: '/blog/archive?category=field-notes',
-		matches: ['field-notes', '随笔', '笔记', 'notes'],
+		slug: 'notes',
+		id: 'notes',
+		href: '/blog/archive?category=notes',
+		category: 'notes',
 		tone: 'amber'
 	},
 	{
 		slug: 'favorites',
 		id: 'favorites',
 		href: '/favorites',
-		matches: ['favorites'],
+		category: null,
 		tone: 'slate'
 	}
 ]

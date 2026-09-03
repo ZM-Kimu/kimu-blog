@@ -16,6 +16,7 @@
 	import { resolve } from '$app/paths'
 	import { page } from '$app/state'
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
+	import { getBlogCategoryMessageKey } from '$lib/content/blog-categories'
 	import { translate } from '$lib/i18n'
 	import { getPublicLayoutContext } from '$lib/layout/public-layout'
 	import { getMotionTokens } from '$lib/motion/tokens'
@@ -371,7 +372,7 @@
 					currentSlug={data.post.slug}
 					{locale}
 					listTitle={t('blog.post.listTitle')}
-					uncategorizedLabel={t('common.uncategorized')}
+					getCategoryLabel={(category) => t(getBlogCategoryMessageKey(category))}
 					alignDurationMs={blogMotion.postListAlignDurationMs}
 					scrollEasePower={blogMotion.postScrollEasePower}
 					motionEnabled={isLandscapeLayout && !reducedMotion}
@@ -406,13 +407,17 @@
 					{locale}
 					metadataTitle={t('common.info')}
 					categoryLabel={t('common.category')}
+					categoryValue={t(getBlogCategoryMessageKey(data.post.category))}
 					descriptionLabel={t('blog.post.descriptionLabel')}
+					readingTimeLabel={t('common.readingTime')}
+					readingTimeValue={data.post.readingMinutes
+						? t('common.readingMinutes', { count: data.post.readingMinutes })
+						: null}
 					publishedAtLabel={t('common.publishedAt').replace('{date}', '').trim()}
 					updatedAtLabel={t('common.updatedAt').replace('{date}', '').trim()}
 					seriesLabel={t('blog.post.seriesLabel')}
 					newerLabel={t('blog.post.seriesNewer')}
 					olderLabel={t('blog.post.seriesOlder')}
-					uncategorizedLabel={t('common.uncategorized')}
 					textOutDurationMs={blogMotion.postAsideTextOutDurationMs}
 					textInDurationMs={blogMotion.postAsideTextInDurationMs}
 					layoutDurationMs={blogMotion.postAsideLayoutDurationMs}

@@ -89,7 +89,7 @@ function normalizeFrontmatter(payload: ManageWritePayload) {
 		description: payload.description,
 		draft: payload.draft,
 		featured: payload.featured,
-		readingTime: payload.readingTime,
+		readingMinutes: payload.readingMinutes,
 		seriesId: payload.seriesId,
 		slug: normalizeSlug(payload.slug),
 		tags: payload.tags,

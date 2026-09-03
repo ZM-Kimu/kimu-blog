@@ -1,15 +1,16 @@
 import type { TopbarMetricsData } from '$lib/navigation/types'
+import type { BlogCategory } from '$lib/content/blog-categories'
 
 export type HomePageCategory = {
-	slug: string
-	name: string
+	slug: BlogCategory
+	name: BlogCategory
 	count: number
 }
 
 export type HomePageFeaturedPost = {
 	permalink: `/blog/${string}`
 	title: string
-	category?: string | null
+	category: BlogCategory
 }
 
 export type HomePageData = {
@@ -21,7 +22,7 @@ export type HomePageData = {
 
 export type HomePageMissionPreviewItem = {
 	slug: string
-	id: 'engineering' | 'designLog' | 'fieldNotes' | 'favorites'
+	id: BlogCategory | 'favorites'
 	href: `/blog/archive?category=${string}` | '/favorites'
 	tone: 'cyan' | 'blue' | 'amber' | 'slate'
 	count: number

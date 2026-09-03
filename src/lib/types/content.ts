@@ -1,11 +1,12 @@
 import type { PostFrontmatter } from '$lib/content/schema'
+import type { BlogCategory } from '$lib/content/blog-categories'
 import type { BlogSeries } from '$lib/content/group-schema'
 
 export interface BlogPost extends PostFrontmatter {
 	path: string
 	permalink: `/blog/${string}`
 	tagSlugs: string[]
-	categorySlug: string | null
+	categorySlug: BlogCategory
 }
 
 export interface BlogSeriesNavigation {
@@ -21,8 +22,8 @@ export interface TagSummary {
 }
 
 export interface CategorySummary {
-	name: string
-	slug: string
+	name: BlogCategory
+	slug: BlogCategory
 	count: number
 }
 

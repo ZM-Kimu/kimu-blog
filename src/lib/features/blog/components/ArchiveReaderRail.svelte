@@ -2,6 +2,7 @@
 	import type { Component } from 'svelte'
 	import { browser } from '$app/environment'
 	import { page } from '$app/state'
+	import { getBlogCategoryMessageKey } from '$lib/content/blog-categories'
 	import { resolve } from '$app/paths'
 	import { untrack } from 'svelte'
 
@@ -368,8 +369,18 @@
 							<div class="archive-reader-title-line">
 								<div class="archive-reader-title-bar">
 									<h2>{panel.post.title}</h2>
-									<p class="eyebrow">{panel.post.category ?? t('common.uncategorized')}</p>
+									<p class="eyebrow">{t(getBlogCategoryMessageKey(panel.post.category))}</p>
 									<p class="archive-reader-date">{formatDate(panel.post.date, locale)}</p>
+									{#if panel.post.updated !== panel.post.date}
+										<p class="archive-reader-updated">
+											{t('common.updatedAt', { date: formatDate(panel.post.updated, locale) })}
+										</p>
+									{/if}
+									{#if panel.post.readingMinutes}
+										<p class="archive-reader-reading-time">
+											{t('common.readingMinutes', { count: panel.post.readingMinutes })}
+										</p>
+									{/if}
 								</div>
 								{#if panel.post.tags.length}
 									<div class="archive-reader-tags-wrap">
@@ -402,21 +413,6 @@
 						</div>
 						<p>{panel.post.description}</p>
 					</div>
-
-					<dl class="archive-reader-meta">
-						{#if panel.post.updated !== panel.post.date}
-							<div>
-								<dt>{t('common.updated')}</dt>
-								<dd>{formatDate(panel.post.updated, locale)}</dd>
-							</div>
-						{/if}
-						{#if panel.post.readingTime}
-							<div>
-								<dt>{t('blog.post.metadataTitle')}</dt>
-								<dd>{panel.post.readingTime}</dd>
-							</div>
-						{/if}
-					</dl>
 
 					<div class="content-prose article-prose archive-reader-prose">
 						<PanelContent />

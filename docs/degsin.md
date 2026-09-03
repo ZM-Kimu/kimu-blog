@@ -244,7 +244,7 @@ description: '文章摘要'
 date: '2026-03-23'
 updated: '2026-03-23'
 tags: ['frontend', 'blog']
-category: '技术'
+category: 'development'
 draft: false
 cover: '/images/posts/example-cover.jpg'
 slug: 'my-first-post'
@@ -265,6 +265,7 @@ featured: false
 - `date`
 - `updated`
 - `tags`
+- `category`
 - `draft`
 - `cover`
 - `slug`
@@ -272,11 +273,13 @@ featured: false
 可以扩展这些：
 
 - `author`
-- `series`
+- `seriesId`
 - `toc`
-- `readingTime`
-- `canonical`
+- `readingMinutes`
 - `featured`
+
+`category` 只允许 `development` / `daily` / `notes`，内容层保存稳定枚举值，界面通过 i18n 显示分类名。
+`readingMinutes` 使用正整数分钟，显示文案由 i18n 格式化。
 
 ## Frontmatter 校验
 

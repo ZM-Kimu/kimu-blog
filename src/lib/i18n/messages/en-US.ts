@@ -21,6 +21,8 @@ export const enUSMessages = {
 		updatedAt: 'Updated {date}',
 		author: 'Author',
 		category: 'Category',
+		readingTime: 'Reading time',
+		readingMinutes: '{count} min',
 		slug: 'Slug',
 		tagCount: '{count} tags',
 		renderMode: 'Render mode',
@@ -37,6 +39,11 @@ export const enUSMessages = {
 			live: 'Live',
 			standby: 'Standby',
 			comingSoon: 'Coming Soon'
+		},
+		categories: {
+			development: 'Development',
+			daily: 'Daily',
+			notes: 'Notes'
 		}
 	},
 	nav: {
@@ -118,21 +125,21 @@ export const enUSMessages = {
 			unmute: 'Unmute'
 		},
 		missions: {
-			engineering: {
-				title: 'Engineering',
+			development: {
+				title: 'Development',
 				kicker: 'Mission 01',
 				description: 'SvelteKit, Cloudflare, tooling, architecture notes, and implementation logs.',
 				state: 'Live'
 			},
-			designLog: {
-				title: 'Design Log',
+			daily: {
+				title: 'Daily',
 				kicker: 'Mission 02',
 				description:
 					'Interaction studies, layout thinking, typography choices, and style system records.',
 				state: 'Standby'
 			},
-			fieldNotes: {
-				title: 'Field Notes',
+			notes: {
+				title: 'Notes',
 				kicker: 'Mission 03',
 				description: 'Short-form observations, references, experiments, and personal notes.',
 				state: 'Standby'
@@ -214,14 +221,14 @@ export const enUSMessages = {
 			recentEyebrow: 'Recent Output',
 			recentTitle: 'Latest Records',
 			cards: {
-				engineering: {
-					title: 'Engineering Records'
+				development: {
+					title: 'Development'
 				},
-				designLog: {
-					title: 'Study Records'
+				daily: {
+					title: 'Daily'
 				},
-				fieldNotes: {
-					title: 'Daily Notes'
+				notes: {
+					title: 'Notes'
 				},
 				favorites: {
 					title: 'Favorites'
@@ -432,14 +439,13 @@ export const enUSMessages = {
 				category: 'Category',
 				author: 'Author',
 				series: 'Series',
-				readingTime: 'Reading Time',
+				readingMinutes: 'Reading time (minutes)',
 				format: 'Format',
 				tags: 'Tags',
 				cover: 'Cover'
 			},
 			placeholders: {
-				category: 'Engineering / Notes',
-				readingTime: '6 min',
+				readingMinutes: '6',
 				tags: 'svelte, cloudflare, devlog',
 				cover: 'Set the cover from Content settings'
 			},

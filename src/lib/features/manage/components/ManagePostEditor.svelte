@@ -27,6 +27,7 @@
 		ManagePostFormState
 	} from '$lib/features/manage/types'
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
+	import ManageCategorySelect from '$lib/features/manage/components/ManageCategorySelect.svelte'
 	import ManageFormatSelect from '$lib/features/manage/components/ManageFormatSelect.svelte'
 	import ManageGroupSelect from '$lib/features/manage/components/ManageGroupSelect.svelte'
 	import ManageIdentifierField from '$lib/features/manage/components/ManageIdentifierField.svelte'
@@ -642,15 +643,14 @@
 									<input bind:value={form.updated} disabled={editorDisabled} required type="date" />
 								</label>
 
-								<label>
+								<div class="manage-editor-field">
 									<span>{t('manage.editor.fields.category')}</span>
-									<input
+									<ManageCategorySelect
 										bind:value={form.category}
 										disabled={editorDisabled}
-										placeholder={t('manage.editor.placeholders.category')}
-										type="text"
+										label={t('manage.editor.fields.category')}
 									/>
-								</label>
+								</div>
 
 								<label>
 									<span>{t('manage.editor.fields.author')}</span>
@@ -675,12 +675,14 @@
 								</div>
 
 								<label>
-									<span>{t('manage.editor.fields.readingTime')}</span>
+									<span>{t('manage.editor.fields.readingMinutes')}</span>
 									<input
-										bind:value={form.readingTime}
+										bind:value={form.readingMinutes}
 										disabled={editorDisabled}
-										placeholder={t('manage.editor.placeholders.readingTime')}
-										type="text"
+										min="1"
+										placeholder={t('manage.editor.placeholders.readingMinutes')}
+										step="1"
+										type="number"
 									/>
 								</label>
 

@@ -61,14 +61,14 @@ export function createEmptyManagePostFormState(): ManagePostFormState {
 
 	return {
 		author: 'Kimu',
-		category: '',
+		category: 'development',
 		cover: '',
 		date: today,
 		description: '',
 		draft: false,
 		featured: false,
 		format: 'svx',
-		readingTime: '',
+		readingMinutes: undefined,
 		seriesId: '',
 		seriesName: '',
 		slug: '',
@@ -83,7 +83,7 @@ export function createEmptyManagePostFormState(): ManagePostFormState {
 export function createManagePostFormState(post: ManagePostDocument): ManagePostFormState {
 	return {
 		author: post.frontmatter.author ?? 'Kimu',
-		category: post.frontmatter.category ?? '',
+		category: post.frontmatter.category,
 		cover: post.frontmatter.cover,
 		date: post.frontmatter.date,
 		description: post.frontmatter.description,
@@ -91,7 +91,7 @@ export function createManagePostFormState(post: ManagePostDocument): ManagePostF
 		expectedSha: post.sha,
 		featured: post.frontmatter.featured,
 		format: post.format,
-		readingTime: post.frontmatter.readingTime ?? '',
+		readingMinutes: post.frontmatter.readingMinutes,
 		seriesId: post.frontmatter.seriesId ?? '',
 		seriesName: '',
 		slug: post.frontmatter.slug,
@@ -111,7 +111,7 @@ export function toManageWritePayload(state: ManagePostFormState): ManagePostWrit
 
 	return {
 		author: normalizeOptionalField(state.author),
-		category: normalizeOptionalField(state.category),
+		category: state.category,
 		cover: state.cover.trim(),
 		date: state.date.trim(),
 		description: state.description.trim(),
@@ -119,7 +119,7 @@ export function toManageWritePayload(state: ManagePostFormState): ManagePostWrit
 		expectedSha: state.expectedSha,
 		featured: state.featured,
 		format: state.format,
-		readingTime: normalizeOptionalField(state.readingTime),
+		readingMinutes: state.readingMinutes,
 		seriesId: normalizeOptionalField(state.seriesId),
 		seriesName: normalizeOptionalField(state.seriesName),
 		slug: state.slug.trim(),

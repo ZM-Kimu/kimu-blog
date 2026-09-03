@@ -12,13 +12,9 @@ export function createHomePageViewModel(data: HomePageData): HomePageViewModel {
 			id: mission.id,
 			href: mission.href,
 			tone: mission.tone,
-			count:
-				data.categories
-					.filter(
-						(category) =>
-							mission.matches.includes(category.slug) || mission.matches.includes(category.name)
-					)
-					.reduce((total, category) => total + category.count, 0) ?? 0
+			count: mission.category
+				? (data.categories.find((category) => category.slug === mission.category)?.count ?? 0)
+				: 0
 		}))
 	}
 }

@@ -65,7 +65,9 @@
 }
 
 .archive-reader-title-bar > .eyebrow,
-.archive-reader-date {
+.archive-reader-date,
+.archive-reader-updated,
+.archive-reader-reading-time {
 	margin: 0;
 	font-family: var(--font-mono);
 	font-size: 0.72rem;
@@ -132,37 +134,6 @@
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	color: var(--blue);
-}
-
-.archive-reader-meta {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-	gap: 0.75rem;
-	margin: 0;
-}
-
-.archive-reader-meta div {
-	display: grid;
-	gap: 0.2rem;
-	padding: 0.8rem 0.9rem;
-	border-radius: 18px;
-	border: 1px solid rgb(96 141 198 / 14%);
-	background: rgb(255 255 255 / 64%);
-}
-
-.archive-reader-meta dt {
-	margin: 0;
-	font-family: var(--font-mono);
-	font-size: 0.72rem;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	color: var(--ink-faint);
-}
-
-.archive-reader-meta dd {
-	margin: 0;
-	font-size: 0.98rem;
-	color: var(--ink);
 }
 
 .archive-reader-tags {

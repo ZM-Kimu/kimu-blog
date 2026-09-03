@@ -1,4 +1,5 @@
 import type { PostFrontmatter } from '$lib/content/schema'
+import type { BlogCategory } from '$lib/content/blog-categories'
 import type { BlogSeries, ManageGroupKind, UpdateProject } from '$lib/content/group-schema'
 import type { FavoriteEntry, UpdateEntry } from '$lib/types/info-flow'
 
@@ -38,7 +39,7 @@ export interface ManagePostDocument {
 }
 
 export interface ManagePostListItem {
-	category?: string
+	category: BlogCategory
 	date: string
 	description: string
 	draft: boolean

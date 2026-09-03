@@ -7,8 +7,8 @@ const config = {
 	kit: {
 		adapter: adapter({
 			routes: {
-				include: ['/manage', '/manage/*', '/api', '/api/*'],
-				exclude: ['<all>']
+				include: ['/*'],
+				exclude: ['<all>', '/__debug/*']
 			}
 		})
 	},

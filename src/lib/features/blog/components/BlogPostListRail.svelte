@@ -5,6 +5,7 @@
 	import ScrollChrome from '$lib/components/ui/ScrollChrome.svelte'
 	import type { AppLocale } from '$lib/i18n/config'
 	import type { BlogPost } from '$lib/types/content'
+	import type { BlogCategory } from '$lib/content/blog-categories'
 	import { formatDate } from '$lib/utils/date'
 	import { onDestroy, tick } from 'svelte'
 	import { animateScrollTop } from '../post-motion'
@@ -14,7 +15,7 @@
 		currentSlug,
 		locale,
 		listTitle,
-		uncategorizedLabel,
+		getCategoryLabel,
 		alignDurationMs,
 		scrollEasePower,
 		motionEnabled,
@@ -24,7 +25,7 @@
 		currentSlug: string
 		locale?: AppLocale
 		listTitle: string
-		uncategorizedLabel: string
+		getCategoryLabel: (category: BlogCategory) => string
 		alignDurationMs: number
 		scrollEasePower: number
 		motionEnabled: boolean
@@ -276,7 +277,7 @@
 					onclick={(event) => onSelectPost?.(item, event)}
 				>
 					<strong>{item.title}</strong>
-					<span>{item.category ?? uncategorizedLabel}</span>
+					<span>{getCategoryLabel(item.category)}</span>
 					<time datetime={item.date}>{formatDate(item.date, locale)}</time>
 				</a>
 			{/each}

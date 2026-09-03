@@ -30,7 +30,7 @@ import type { ManagedPostFormat } from './contracts'
 
 export interface ManagePostFormState {
 	author: string
-	category: string
+	category: import('$lib/content/blog-categories').BlogCategory
 	cover: string
 	date: string
 	description: string
@@ -38,7 +38,7 @@ export interface ManagePostFormState {
 	expectedSha?: string
 	featured: boolean
 	format: ManagedPostFormat
-	readingTime: string
+	readingMinutes: number | undefined
 	seriesId: string
 	seriesName: string
 	slug: string

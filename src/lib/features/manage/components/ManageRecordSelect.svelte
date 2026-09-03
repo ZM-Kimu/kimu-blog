@@ -77,7 +77,7 @@
 
 <svelte:window onpointerdown={handleWindowPointerDown} />
 
-<div class="manage-record-select" bind:this={root}>
+<div class:open class="manage-record-select" bind:this={root}>
 	<button
 		aria-expanded={open}
 		aria-haspopup="listbox"
@@ -112,6 +112,10 @@
 	.manage-record-select {
 		position: relative;
 		z-index: 4;
+	}
+
+	.manage-record-select.open {
+		z-index: 20;
 	}
 
 	.manage-record-select > button {

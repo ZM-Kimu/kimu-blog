@@ -631,6 +631,13 @@
 .favorites-flow {
 	display: grid;
 	gap: 1rem;
+}
+
+.updates-timeline {
+	padding: 1.35rem 2.25rem 2.6rem 1.35rem;
+}
+
+.favorites-flow {
 	padding: 1.1rem;
 }
 

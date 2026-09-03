@@ -11,7 +11,6 @@ const modules = import.meta.glob('/src/lib/content/blog/*.{md,svx}', {
 }) as Record<string, string>
 
 const normalizeTag = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-')
-const normalizeCategory = (value: string) => value.toLowerCase().trim().replace(/\s+/g, '-')
 
 const rawPosts = Object.entries(modules)
 	.map(([path, source]) => {
@@ -26,7 +25,7 @@ const rawPosts = Object.entries(modules)
 			path,
 			permalink: `/blog/${frontmatter.slug}` as `/blog/${string}`,
 			tagSlugs: frontmatter.tags.map(normalizeTag),
-			categorySlug: frontmatter.category ? normalizeCategory(frontmatter.category) : null
+			categorySlug: frontmatter.category
 		} satisfies BlogPost
 	})
 	.sort((left, right) => right.date.localeCompare(left.date))
@@ -87,10 +86,6 @@ export function getAllCategories() {
 	const bucket = new Map<string, CategorySummary>()
 
 	for (const post of publishedPosts) {
-		if (!post.category || !post.categorySlug) {
-			continue
-		}
-
 		const existing = bucket.get(post.categorySlug)
 
 		if (existing) {
@@ -134,7 +129,7 @@ export function getRelatedPosts(post: BlogPost, limit = 3) {
 		.map((candidate) => {
 			let score = 0
 
-			if (candidate.categorySlug && candidate.categorySlug === post.categorySlug) {
+			if (candidate.categorySlug === post.categorySlug) {
 				score += 2
 			}
 
