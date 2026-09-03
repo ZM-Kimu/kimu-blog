@@ -208,7 +208,7 @@ export async function validateManageSource(source: string) {
 
 export function serializeManagedPost(payload: ManageWritePayload) {
 	const frontmatter = normalizeFrontmatter(payload)
-	const yaml = stringify(frontmatter).trimEnd()
+	const yaml = stringify(frontmatter, { singleQuote: true }).trimEnd()
 	const source = payload.source.trimEnd()
 
 	return `---\n${yaml}\n---\n\n${source}\n`

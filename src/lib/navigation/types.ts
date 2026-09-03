@@ -84,9 +84,7 @@ export type TopbarState = {
 	motionPolicy?: 'rich' | 'reduced'
 }
 
-export type BackgroundPolicy = 'inherit' | 'replace'
-
-export type BackgroundScene = 'neutral-default' | 'home-spine' | 'subpage-room'
+export type BackgroundScene = 'home-spine' | 'subpage-room'
 
 export type TopbarShellVariant = 'main' | 'subpage' | 'none'
 
@@ -97,8 +95,7 @@ export type PageState = {
 	motionFamily: 'main' | 'subpage'
 	shellMode: 'screen' | 'shell'
 	showGlobalChrome: boolean
-	backgroundPolicy: BackgroundPolicy
-	backgroundScene?: BackgroundScene
+	backgroundScene: BackgroundScene
 	topbarShellVariant: TopbarShellVariant
 	topbar: TopbarState
 }

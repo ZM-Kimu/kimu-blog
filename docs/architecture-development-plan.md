@@ -121,10 +121,12 @@ Kimu Blog 当前不是传统“博客列表首页 + 文章详情页”的模板�
   - `subpage -> home` 使用首页内容的独立 route-enter
   - `home -> public subpage` 使用子页内容的独立 route-enter
 - 纵向 portrait 页面使用独立文档流壳体与更轻的页面进入语法，不再复用 desktop app-shell choreography
-- 公开站点当前使用 3 个背景 scene：
+- 站点当前使用 2 个固定背景 scene：
   - `home-spine`
   - `subpage-room`
-  - `neutral-default`
+- `/`、`/blog`、`/blog/archive`、`/tags/*`、`/about`、`/updates`、`/favorites` 固定使用 `home-spine`
+- `/blog/[slug]`、错误页和 `/manage/*` 固定使用 `subpage-room`
+- 背景只由当前 route 决定，不再继承导航会话中的上一背景
 - 错误页当前显式并入 `subpage-room` 与 `subpage` 壳体，不再单列独立背景理念
 - `topbar` 是 shell animation，不计入单页动画套数；它允许 `main <-> subpage` 形态切换，但不应作为页面进入的阻塞门槛
 

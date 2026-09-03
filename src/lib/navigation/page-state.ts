@@ -254,7 +254,6 @@ export function createPageState({
 			motionFamily: 'main',
 			shellMode: 'screen',
 			showGlobalChrome: false,
-			backgroundPolicy: 'replace',
 			backgroundScene: 'home-spine',
 			topbarShellVariant: 'main',
 			topbar: {
@@ -275,7 +274,6 @@ export function createPageState({
 			motionFamily: 'subpage',
 			shellMode: 'screen',
 			showGlobalChrome: false,
-			backgroundPolicy: 'replace',
 			backgroundScene: 'subpage-room',
 			topbarShellVariant: 'subpage',
 			topbar: {
@@ -300,8 +298,7 @@ export function createPageState({
 			motionFamily: 'subpage',
 			shellMode: 'screen',
 			showGlobalChrome: false,
-			backgroundPolicy: 'replace',
-			backgroundScene: 'neutral-default',
+			backgroundScene: 'subpage-room',
 			topbarShellVariant: 'subpage',
 			topbar: {
 				variant: 'subpage',
@@ -344,7 +341,7 @@ export function createPageState({
 								: routeState.kind === 'debugManage'
 									? '/'
 									: '/'
-	const inheritsBackground =
+	const usesHomeBackground =
 		routeState.kind === 'blog' ||
 		routeState.kind === 'archive' ||
 		routeState.kind === 'tag' ||
@@ -359,12 +356,7 @@ export function createPageState({
 		motionFamily: 'subpage',
 		shellMode: isScreenRoute || usesSubpageScreen ? 'screen' : 'shell',
 		showGlobalChrome: !(isScreenRoute || usesSubpageScreen),
-		backgroundPolicy: inheritsBackground ? 'inherit' : 'replace',
-		backgroundScene: inheritsBackground
-			? undefined
-			: usesSubpageScreen
-				? 'subpage-room'
-				: 'neutral-default',
+		backgroundScene: usesHomeBackground ? 'home-spine' : 'subpage-room',
 		topbarShellVariant: usesSubpageScreen ? 'subpage' : 'none',
 		topbar: {
 			variant: 'subpage',

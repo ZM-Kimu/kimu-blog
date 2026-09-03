@@ -14,11 +14,6 @@
 </script>
 
 <section class="post-reader">
-	<header class="post-reader-head">
-		<h1>{post.title}</h1>
-		<p class="post-reader-description">{post.description}</p>
-	</header>
-
 	<img
 		alt={post.title}
 		class="post-reader-cover"
@@ -27,6 +22,11 @@
 		fetchpriority="high"
 		src={post.cover}
 	/>
+
+	<header class="post-reader-head">
+		<h1>{post.title}</h1>
+		<p class="post-reader-description">{post.description}</p>
+	</header>
 
 	<ArticleContent {Content} />
 </section>

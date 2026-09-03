@@ -365,10 +365,12 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
   - `subpage -> home` 使用首页内容的独立进入节奏
   - `home -> public subpage` 使用子页内容的独立进入节奏
 - 纵向 portrait 页面使用独立文档流壳体与更轻的页面进入语法，不再复用 desktop app-shell choreography
-- 公开站点当前的背景 scene 固定为：
+- 站点当前的背景 scene 固定为：
   - `home-spine`
   - `subpage-room`
-  - `neutral-default`
+- `/`、`/blog`、`/blog/archive`、`/tags/*`、`/about`、`/updates`、`/favorites` 固定使用 `home-spine`
+- `/blog/[slug]`、错误页和 `/manage/*` 固定使用 `subpage-room`
+- 背景只由当前 route 决定，不再继承导航会话中的上一背景
 - 错误页明确并回 `subpage` 体系，继续使用 `subpage-room` 背景和 `subpage` topbar 语义，不再拥有独立背景理念
 - 站内所有可视物件默认不可选中、不可拖动；复制或拖拽能力必须通过白名单显式恢复
 
@@ -378,7 +380,7 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `home base scene` 必须在没有 spine 的情况下也能立即被识别为首页
 - `spine overlay` 只负责增强与驻留态生命感，不再承担首页识别的唯一职责
 - desktop 下的 `spine overlay` 采用持久 host 与播放状态切换，避免切页期间反复创建 / 销毁 Pixi viewer
-- 继承当前背景的页面允许继续保留 live home spine；拥有自身背景的页面则让 spine 有过渡地退掉
+- 固定使用 `home-spine` 的页面允许继续保留 live home spine；切换到 `subpage-room` 时让 spine 有过渡地退掉
 
 ## 渲染策略
 

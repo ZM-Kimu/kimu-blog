@@ -3,14 +3,14 @@ import {
 	NavigationPageSwitchRuntime,
 	type PageSwitchStartPhase
 } from './page-switch-runtime.svelte'
-import { resolveBackgroundScene, resolveTransitionDurations } from './transition-runtime'
+import { resolveTransitionDurations } from './transition-runtime'
 
 import type { BackgroundScene, BeginPageSwitchOptions, PageState, RouteState } from './types'
 
 const defaultTransitionDurations = resolveTransitionDurations({
 	options: { origin: 'initial' },
-	backgroundScene: 'neutral-default',
-	pendingBackgroundScene: 'neutral-default'
+	backgroundScene: 'subpage-room',
+	pendingBackgroundScene: 'subpage-room'
 })
 
 export class NavigationTransitionCoordinator {
@@ -31,8 +31,7 @@ export class NavigationTransitionCoordinator {
 			motionFamily: 'subpage',
 			shellMode: 'shell',
 			showGlobalChrome: true,
-			backgroundPolicy: 'replace',
-			backgroundScene: 'neutral-default',
+			backgroundScene: 'subpage-room',
 			topbarShellVariant: 'none',
 			topbar: {
 				variant: 'subpage',
@@ -122,7 +121,7 @@ export class NavigationTransitionCoordinator {
 		targetPageState: PageState,
 		options: BeginPageSwitchOptions
 	): PageSwitchStartPhase | null {
-		const nextBackgroundScene = resolveBackgroundScene(this.backgroundScene, targetPageState)
+		const nextBackgroundScene = targetPageState.backgroundScene
 		const transitionDurations = resolveTransitionDurations({
 			options,
 			backgroundScene: this.backgroundScene,

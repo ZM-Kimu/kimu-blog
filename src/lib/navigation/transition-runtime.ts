@@ -16,14 +16,6 @@ export function createUnknownPageState(): PageState {
 	})
 }
 
-export function resolveBackgroundScene(backgroundScene: BackgroundScene, pageState: PageState) {
-	if (pageState.backgroundPolicy === 'replace' && pageState.backgroundScene) {
-		return pageState.backgroundScene
-	}
-
-	return backgroundScene
-}
-
 export function resolveTransitionDurations(args: {
 	options: BeginPageSwitchOptions
 	backgroundScene: BackgroundScene

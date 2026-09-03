@@ -43,7 +43,6 @@ export function createSiteShellState(args: {
 	const showBackgroundStage = $derived(
 		isBareRoute ||
 			args.navigationManager.phase !== 'idle' ||
-			args.navigationManager.backgroundScene !== 'neutral-default' ||
 			args.navigationManager.pendingBackgroundScene !== null
 	)
 	const enableSiteClickEffect = $derived(

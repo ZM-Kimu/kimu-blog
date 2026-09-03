@@ -16,8 +16,7 @@ export class NavigationPageSwitchRuntime {
 		motionFamily: 'subpage',
 		shellMode: 'shell',
 		showGlobalChrome: true,
-		backgroundPolicy: 'replace',
-		backgroundScene: 'neutral-default',
+		backgroundScene: 'subpage-room',
 		topbarShellVariant: 'none',
 		topbar: {
 			variant: 'subpage',

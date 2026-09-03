@@ -141,14 +141,9 @@
 				class="background-stage-wash background-stage-wash-portrait-home"
 				aria-hidden="true"
 			></div>
-		{:else if activeScene === 'subpage-room'}
-			<div
-				class="background-stage-wash background-stage-wash-portrait-subpage"
-				aria-hidden="true"
-			></div>
 		{:else}
 			<div
-				class="background-stage-wash background-stage-wash-portrait-neutral"
+				class="background-stage-wash background-stage-wash-portrait-subpage"
 				aria-hidden="true"
 			></div>
 		{/if}
@@ -157,7 +152,7 @@
 		<div class="background-stage-room background-stage-room-home" aria-hidden="true"></div>
 		<div class="background-stage-light background-stage-light-home-left" aria-hidden="true"></div>
 		<div class="background-stage-light background-stage-light-home-right" aria-hidden="true"></div>
-	{:else if activeScene === 'subpage-room'}
+	{:else}
 		<div class="background-stage-wash background-stage-wash-subpage" aria-hidden="true"></div>
 		<div class="background-stage-room background-stage-room-subpage" aria-hidden="true"></div>
 		<div
@@ -168,9 +163,6 @@
 			class="background-stage-light background-stage-light-subpage-right"
 			aria-hidden="true"
 		></div>
-	{:else}
-		<div class="background-stage-wash background-stage-wash-neutral" aria-hidden="true"></div>
-		<div class="background-stage-grid" aria-hidden="true"></div>
 	{/if}
 {/snippet}
 
@@ -227,8 +219,7 @@
 	.background-stage-spine-overlay,
 	.background-stage-wash,
 	.background-stage-room,
-	.background-stage-light,
-	.background-stage-grid {
+	.background-stage-light {
 		position: absolute;
 		inset: 0;
 	}
@@ -278,13 +269,6 @@
 		background-size: cover;
 	}
 
-	.background-stage-wash-neutral {
-		background:
-			radial-gradient(circle at top left, rgb(56 189 248 / 22%), transparent 28rem),
-			radial-gradient(circle at top right, rgb(79 120 255 / 14%), transparent 24rem),
-			linear-gradient(180deg, #eef8ff 0%, #e8f3ff 45%, #deebfb 100%);
-	}
-
 	.background-stage-wash-portrait-home {
 		background:
 			radial-gradient(circle at 14% 8%, rgb(154 234 255 / 24%), transparent 22%),
@@ -298,12 +282,6 @@
 			radial-gradient(circle at 10% 12%, rgb(139 225 255 / 12%), transparent 22%),
 			radial-gradient(circle at 88% 18%, rgb(79 120 255 / 9%), transparent 20%),
 			linear-gradient(180deg, rgb(250 252 255 / 98%), rgb(244 248 255 / 96%) 46%, #e7effa 100%);
-	}
-
-	.background-stage-wash-portrait-neutral {
-		background:
-			radial-gradient(circle at top right, rgb(255 255 255 / 48%), transparent 26%),
-			linear-gradient(180deg, #f6f9ff 0%, #ecf3fb 100%);
 	}
 
 	.background-stage-wash-home {
@@ -453,24 +431,6 @@
 		width: 24%;
 		height: 18%;
 		background: radial-gradient(circle, rgb(108 153 255 / 30%), transparent 72%);
-	}
-
-	.background-stage-grid {
-		background:
-			linear-gradient(
-				90deg,
-				rgb(255 255 255 / 8%) 0,
-				rgb(255 255 255 / 8%) 1px,
-				transparent 1px,
-				transparent 5rem
-			),
-			linear-gradient(
-				rgb(255 255 255 / 8%) 0,
-				rgb(255 255 255 / 8%) 1px,
-				transparent 1px,
-				transparent 5rem
-			);
-		mask-image: linear-gradient(180deg, rgb(0 0 0 / 22%), transparent 60%);
 	}
 
 	@media (width <= 760px) {
