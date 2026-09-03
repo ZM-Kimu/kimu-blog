@@ -8,7 +8,7 @@ category: development
 draft: false
 cover: /images/posts/post-4phucm/20260903-032536-00-clanchat-emoji-810-kr.png
 slug: post-4phucm
-featured: false
+featured: true
 author: Kimu
 seriesId: group-11y31ql
 toc: true
