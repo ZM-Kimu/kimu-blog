@@ -3,7 +3,7 @@ const { PUBLIC_GITHUB_REPO_NAME, PUBLIC_GITHUB_REPO_OWNER, PUBLIC_SITE_NAME, PUB
 
 export const siteConfig = {
 	name: PUBLIC_SITE_NAME || 'Kimu Blog',
-	url: PUBLIC_SITE_URL || 'https://example.com',
+	url: PUBLIC_SITE_URL || 'https://zmkimu.com',
 	author: 'ZM-Kimu',
 	ogImage: '/images/og-default.svg',
 	github: {
