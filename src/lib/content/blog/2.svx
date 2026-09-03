@@ -1,0 +1,21 @@
+---
+title: 封面测试2
+description: 啊啊~
+date: 2026-09-03
+updated: 2026-09-03
+tags:
+  - 测试
+  - 喵
+  - 日常
+category: development
+draft: true
+cover: /images/posts/2/20260903-074430-00-bg-cs-arona2-03.jpg
+slug: "2"
+featured: false
+author: Kimu
+toc: false
+---
+
+Arona chan~
+
+素敵な一日
