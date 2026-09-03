@@ -445,8 +445,7 @@ export const appMessageSkeleton = {
 			},
 			toggles: {
 				draft: '',
-				featured: '',
-				toc: ''
+				featured: ''
 			},
 			uploads: {
 				title: '',

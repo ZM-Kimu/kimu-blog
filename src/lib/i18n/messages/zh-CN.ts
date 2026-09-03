@@ -22,7 +22,7 @@ export const zhCNMessages = {
 		author: '作者',
 		category: '分类',
 		readingTime: '阅读时间',
-		readingMinutes: '{count} 分钟',
+		readingMinutes: '阅读时间 {count} 分钟',
 		slug: 'Slug',
 		tagCount: '{count} 个标签',
 		renderMode: '渲染模式',
@@ -444,8 +444,7 @@ export const zhCNMessages = {
 			},
 			toggles: {
 				draft: '草稿',
-				featured: '精选',
-				toc: '文章目录'
+				featured: '精选'
 			},
 			uploads: {
 				title: '图片与占位符',

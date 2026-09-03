@@ -254,17 +254,17 @@
 								<h2>{post.title}</h2>
 								<p>{post.description}</p>
 							</div>
+							<img
+								alt=""
+								aria-hidden="true"
+								class="archive-entry-item-cover"
+								decoding="async"
+								draggable="false"
+								loading="lazy"
+								src={post.cover}
+							/>
 							<div class="archive-entry-item-meta">
 								<span>{getCategoryLabel(post.category)}</span>
-								<img
-									alt=""
-									aria-hidden="true"
-									class="archive-entry-item-cover"
-									decoding="async"
-									draggable="false"
-									loading="lazy"
-									src={post.cover}
-								/>
 								<div class="archive-entry-tag-row">
 									{#each post.tags.slice(0, 2) as tag, index (post.tagSlugs[index] ?? tag)}
 										<span class="tag-chip archive-entry-tag">{tag}</span>

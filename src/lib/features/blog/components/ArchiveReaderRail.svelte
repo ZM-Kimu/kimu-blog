@@ -12,6 +12,7 @@
 	import type { BlogPost } from '$lib/types/content'
 	import { formatDate } from '$lib/utils/date'
 
+	import ArticleContent from './ArticleContent.svelte'
 	import TagChip from './TagChip.svelte'
 
 	type ArchiveSelectionSourceRect = {
@@ -414,9 +415,7 @@
 						<p>{panel.post.description}</p>
 					</div>
 
-					<div class="content-prose article-prose archive-reader-prose">
-						<PanelContent />
-					</div>
+					<ArticleContent Content={PanelContent} className="archive-reader-prose" />
 				</ScrollChrome>
 
 				<a

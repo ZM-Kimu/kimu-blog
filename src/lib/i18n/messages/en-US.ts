@@ -22,7 +22,7 @@ export const enUSMessages = {
 		author: 'Author',
 		category: 'Category',
 		readingTime: 'Reading time',
-		readingMinutes: '{count} min',
+		readingMinutes: 'Reading time {count} min',
 		slug: 'Slug',
 		tagCount: '{count} tags',
 		renderMode: 'Render mode',
@@ -451,8 +451,7 @@ export const enUSMessages = {
 			},
 			toggles: {
 				draft: 'Draft',
-				featured: 'Featured',
-				toc: 'TOC'
+				featured: 'Featured'
 			},
 			uploads: {
 				title: 'Images and placeholders',

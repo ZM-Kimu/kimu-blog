@@ -274,7 +274,6 @@ featured: false
 
 - `author`
 - `seriesId`
-- `toc`
 - `readingMinutes`
 - `featured`
 
@@ -432,7 +431,6 @@ Frontmatter 不只是一组约定字段，这一版建议把它当成**必须校
 - `src/lib/components/PostMeta.svelte`
 - `src/lib/components/PostCover.svelte`
 - `src/lib/components/PostContent.svelte`
-- `src/lib/components/Toc.svelte`
 - `src/lib/components/PrevNextNav.svelte`
 - `src/lib/components/Pagination.svelte`
 - `src/lib/components/TagChip.svelte`

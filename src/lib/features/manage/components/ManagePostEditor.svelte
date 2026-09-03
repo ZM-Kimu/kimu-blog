@@ -726,10 +726,6 @@
 									><input bind:checked={form.featured} disabled={editorDisabled} type="checkbox" />
 									{t('manage.editor.toggles.featured')}</label
 								>
-								<label
-									><input bind:checked={form.toc} disabled={editorDisabled} type="checkbox" />
-									{t('manage.editor.toggles.toc')}</label
-								>
 							</div>
 						</div>
 					{:else}

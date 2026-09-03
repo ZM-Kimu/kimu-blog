@@ -63,7 +63,6 @@
 				slug: variant === 'long' ? 'manage-debug-long' : 'manage-debug',
 				category: 'development',
 				author: 'Kimu',
-				toc: true,
 				readingMinutes: 6,
 				featured: variant !== 'empty'
 			},

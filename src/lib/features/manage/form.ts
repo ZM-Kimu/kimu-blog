@@ -75,7 +75,6 @@ export function createEmptyManagePostFormState(): ManagePostFormState {
 		source: '',
 		tagsInput: '',
 		title: '',
-		toc: true,
 		updated: today
 	}
 }
@@ -98,7 +97,6 @@ export function createManagePostFormState(post: ManagePostDocument): ManagePostF
 		source: post.source,
 		tagsInput: post.frontmatter.tags.join(', '),
 		title: post.frontmatter.title,
-		toc: post.frontmatter.toc,
 		updated: post.frontmatter.updated
 	}
 }
@@ -126,7 +124,6 @@ export function toManageWritePayload(state: ManagePostFormState): ManagePostWrit
 		source: state.source,
 		tags,
 		title: state.title.trim(),
-		toc: state.toc,
 		updated: state.updated.trim()
 	}
 }

@@ -11,7 +11,6 @@ slug: post-4phucm
 featured: true
 author: Kimu
 seriesId: group-11y31ql
-toc: true
 readingMinutes: 114514
 ---
 

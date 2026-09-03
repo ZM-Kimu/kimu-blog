@@ -2,6 +2,8 @@
 	import type { Component } from 'svelte'
 	import type { BlogPost } from '$lib/types/content'
 
+	import ArticleContent from './ArticleContent.svelte'
+
 	let {
 		post,
 		Content
@@ -26,9 +28,5 @@
 		src={post.cover}
 	/>
 
-	<div class="content-prose article-prose post-reader-prose" data-allow-selection>
-		{#if Content}
-			<Content />
-		{/if}
-	</div>
+	<ArticleContent {Content} />
 </section>

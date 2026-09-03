@@ -94,7 +94,6 @@ function normalizeFrontmatter(payload: ManageWritePayload) {
 		slug: normalizeSlug(payload.slug),
 		tags: payload.tags,
 		title: payload.title,
-		toc: payload.toc,
 		updated: payload.updated
 	})
 }

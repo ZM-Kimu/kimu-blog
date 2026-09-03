@@ -18,7 +18,6 @@ export const postFrontmatterSchema = z.object({
 	featured: z.boolean().default(false),
 	author: z.string().min(1).optional(),
 	seriesId: z.string().regex(slugPattern, 'seriesId 只允许小写字母、数字和中划线').optional(),
-	toc: z.boolean().default(true),
 	readingMinutes: z.number().int().positive().optional()
 })
 

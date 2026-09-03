@@ -45,7 +45,6 @@ export interface ManagePostFormState {
 	source: string
 	tagsInput: string
 	title: string
-	toc: boolean
 	updated: string
 }
 
