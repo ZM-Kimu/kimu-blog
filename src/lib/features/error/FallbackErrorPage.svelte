@@ -128,10 +128,11 @@
 	.error-screen-headline {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: clamp(2.25rem, 5.2vw, 4.2rem);
+		font-size: clamp(1.75rem, 5.2vw, 4.2rem);
 		line-height: 0.94;
 		letter-spacing: -0.06em;
-		max-width: 12ch;
+		max-width: none;
+		white-space: nowrap;
 	}
 
 	.error-screen-title-condensed {
