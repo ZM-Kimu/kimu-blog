@@ -5,6 +5,7 @@
 	"compatibility_flags": ["nodejs_als", "nodejs_compat"],
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"vars": {
+		"PUBLIC_SITE_URL": "https://zmkimu.com",
 		"CF_ACCESS_TEAM_DOMAIN": "zmkimu.cloudflareaccess.com",
 		"CF_ACCESS_AUD": "a1299505de5c44035d54007f57627334f52e3cdf2a82df6f26045bfafc2db42e",
 		"GITHUB_APP_ID": "3190893",
